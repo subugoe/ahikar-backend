@@ -8,8 +8,8 @@ stages:
   - package
   - deploy
 
-before_script:
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+# before_script:
+#  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
 #  - 'which ssh-agent || ( apk add --update openssh-client )'
 #  - apk add --update bash
 #  - mkdir -p ~/.ssh
@@ -29,6 +29,7 @@ build_app:
 build_dev:
   stage: package
   script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker build --pull -t "$CI_REGISTRY_IMAGE:CI_COMMIT_REF_NAME" .
     - docker push "$CI_REGISTRY_IMAGE:CI_COMMIT_REF_NAME"
   only:
