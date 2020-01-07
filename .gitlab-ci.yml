@@ -12,8 +12,17 @@ before_script:
 #  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 #  - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
 
-build_dev:
+build_app:
+  image: fogartyp/ant-ivy
   stage: build
+  script:
+    - ant
+  artifacts:
+    paths:
+      - build/*.xar
+
+build_dev:
+  stage: package
   script:
     - docker build --pull -t "$CI_REGISTRY_IMAGE:CI_COMMIT_REF_NAME" .
     - docker push "$CI_REGISTRY_IMAGE:CI_COMMIT_REF_NAME"
@@ -22,7 +31,7 @@ build_dev:
   except:
     - tags
 
-deploy_dev:
+.deploy_dev:
   stage: deploy
   environment:
     name: develop
