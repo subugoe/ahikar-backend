@@ -6,10 +6,11 @@ services:
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   - 'which ssh-agent || ( apk add --update openssh-client )'
+  - apk add --update bash
   - mkdir -p ~/.ssh
   - eval $(ssh-agent -s)
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  - echo $PRIVATE_KEY > key && chmod 600 key && ssh-add key
+  - bash -c 'ssh-add <(echo "$PRIVATE_KEY")'
 
 build_dev:
   stage: build
@@ -21,14 +22,13 @@ build_dev:
   except:
     - tags
 
-.deploy_dev:
+deploy_dev:
   stage: deploy
   environment:
     name: develop
   only:
-    - develop
+    - master
   except:
     - tags
   script:
-    - 'scp docker-compose.yml $SSH_USER@$SSH_IP:docker-compose.yml'
-    - ssh $SSH_USER@$SSH_IP "docker-compose pull && docker-compose stop web && docker-compose up -d"
+    - ssh $DEV_SERVER_USER@$DEV_HOSTNAME "cd $DEV_SERVER_DIRECTORY && docker-compose pull && docker-compose stop web && docker-compose up -d"
