@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://expath.org/ns/pkg"
+  name="https://ahikar-dev.sub.uni-goettingen.de/"
+  abbrev="ahikar-develop"
+  version="0.0.1"
+  spec="1.0">
+    <title>TextAPI for Ahikar</title>
+    <dependency processor="http://exist-db.org" semver-min="5.1.1"/>
+    <dependency package="http://exist-db.org/apps/shared"/>
+    <xquery>
+        <namespace>http://bdn-edition.de/ns/code-view</namespace>
+        <file>main.xqm</file>
+    </xquery>
+</package>

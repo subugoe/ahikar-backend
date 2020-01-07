@@ -1,0 +1,34 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - 'which ssh-agent || ( apk add --update openssh-client bash )'
+  - mkdir -p ~/.ssh
+  - eval $(ssh-agent -s)
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - bash -c 'ssh-add <(echo "$PRIVATE_KEY")'
+
+build_dev:
+  stage: build
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:CI_COMMIT_REF_NAME" .
+    - docker push "$CI_REGISTRY_IMAGE:CI_COMMIT_REF_NAME"
+  only:
+    - develop
+  except:
+    - tags
+
+.deploy_dev:
+  stage: deploy
+  environment:
+    name: develop
+  only:
+    - develop
+  except:
+    - tags
+  script:
+    - 'scp docker-compose.yml $SSH_USER@$SSH_IP:docker-compose.yml'
+    - ssh $SSH_USER@$SSH_IP "docker-compose pull && docker-compose stop web && docker-compose up -d"

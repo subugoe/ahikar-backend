@@ -1,0 +1,13 @@
+version: '3'
+services:
+  existdb:
+    image: existdb/existdb
+    expose:
+      - "9081:8080"
+    restart: unless-stopped
+  httpd:
+    image: httpd
+    links: existdb
+    ports:
+      - "9082:80"
+    restart: unless-stopped
