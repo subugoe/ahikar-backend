@@ -18,7 +18,7 @@ before_script:
 #  - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
 
 build_app:
-  image: fogartyp/ant-ivy
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
   script:
     - ant
