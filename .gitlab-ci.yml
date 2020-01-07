@@ -10,7 +10,7 @@ before_script:
   - mkdir -p ~/.ssh
   - eval $(ssh-agent -s)
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  - bash -c 'ssh-add <(echo "$PRIVATE_KEY")'
+  - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
 
 build_dev:
   stage: build
