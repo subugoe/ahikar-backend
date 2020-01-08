@@ -37,5 +37,5 @@ deploy_dev:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - scp docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
-    - ssh $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
+    - scp -o 'StrictHostKeyChecking no' docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
+    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
