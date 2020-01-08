@@ -1,11 +1,17 @@
 version: '3'
 services:
   existdb:
+    build:
+      context: .
+      dockerfile: Dockerfile-exist
     image: existdb/existdb
     expose:
       - "8080"
     restart: unless-stopped
   httpd:
+    build:
+      context: .
+      dockerfile: Dockerfile-httpd
     image: httpd
     ports:
       - "8094:80"
