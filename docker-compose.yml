@@ -3,11 +3,12 @@ services:
   existdb:
     image: existdb/existdb
     expose:
-      - "9081:8080"
+      - "8080"
     restart: unless-stopped
   httpd:
     image: httpd
-    links: existdb
     ports:
       - "9082:80"
+    volumes:
+      - ./httpd/vhosts:/usr/local/apache2/conf/sites
     restart: unless-stopped
