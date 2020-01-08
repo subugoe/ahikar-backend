@@ -38,4 +38,5 @@ deploy_dev:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - scp -o 'StrictHostKeyChecking no' docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
+    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
