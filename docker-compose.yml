@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-exist
-    image: backend/existdb:develop
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:develop
     expose:
       - "8080"
     restart: unless-stopped
@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-httpd
-    image: backend/httpd:develop
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/httpd:develop
     ports:
       - "8094:80"
     volumes:
