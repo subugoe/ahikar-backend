@@ -8,7 +8,7 @@ services:
   httpd:
     image: httpd
     ports:
-      - "9082:80"
+      - "8094:80"
     volumes:
       - ./httpd/vhosts:/usr/local/apache2/conf/sites
     restart: unless-stopped
