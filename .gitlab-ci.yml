@@ -3,15 +3,6 @@ stages:
   - package
   - deploy
 
-# before_script:
-#  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-#  - 'which ssh-agent || ( apk add --update openssh-client )'
-#  - apk add --update bash
-#  - mkdir -p ~/.ssh
-#  - eval $(ssh-agent -s)
-#  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-#  - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
-
 build_app:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
