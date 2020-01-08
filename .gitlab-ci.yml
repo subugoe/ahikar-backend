@@ -34,6 +34,8 @@ deploy_dev:
   script:
     - which ssh-agent
     - eval $(ssh-agent -s)
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
     - scp docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
     - ssh $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
