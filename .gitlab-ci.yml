@@ -35,13 +35,14 @@ build_dev:
   except:
     - tags
 
-.deploy_dev:
+deploy_dev:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy
   environment:
-    name: develop
-  only:
-    - master
-  except:
-    - tags
+    name: test
   script:
-    - ssh $DEV_SERVER_USER@$DEV_HOSTNAME "cd $DEV_SERVER_DIRECTORY && docker-compose pull && docker-compose stop web && docker-compose up -d"
+    - which ssh-agent
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$PRIVATE_KEY")
+    - scp docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
+    - ssh $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
