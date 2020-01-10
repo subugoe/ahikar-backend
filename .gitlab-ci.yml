@@ -21,8 +21,8 @@ build_docker:
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose build --pull
-    - docker-compose up & sleep 60s;
-    - while ( ! curl --silent --head http://localhost:8094/db/ | grep "200 OK"); do sleep 1s; done
+    - docker-compose up & sleep 30s &&
+    - while ( ! curl --silent --head http://localhost:8094/db/ | grep "200 OK"); do sleep 2s; echo "test failed"; done
     - docker-compose down
     - docker-compose push
   only:
