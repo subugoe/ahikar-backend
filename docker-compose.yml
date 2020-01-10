@@ -15,6 +15,4 @@ services:
     image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/httpd:develop
     ports:
       - "8094:80"
-    volumes:
-      - ./httpd/vhosts:/usr/local/apache2/conf/sites
     restart: unless-stopped
