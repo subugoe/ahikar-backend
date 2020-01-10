@@ -21,11 +21,15 @@ build_docker:
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose build --pull
+    - docker-compose up &
+    - while [ $(curl --silent --head http://localhost:8094/db/ | grep -c "200 OK") == 0 ]; do sleep 1s; done
+    - docker-compose down
     - docker-compose push
   only:
     - develop
   except:
     - tags
+  timeout: 5m
 
 deploy_service:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest

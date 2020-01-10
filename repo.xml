@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <meta xmlns="http://exist-db.org/xquery/repo">
-    <description>TextAPI for Ahikar Digital Editon</description>
+    <description>Dockerized TextAPI for Ahikar Digital Editon</description>
     <author>Mathias Göbel</author>
     <status>alpha</status>
     <license>GNU-LGPL</license>
@@ -11,11 +11,12 @@
     <finish/>
 
     <changelog>
-      <change version="0.0.1">
+      <change version="0.0.0">
         <ul xmlns="http://www.w3.org/1999/xhtml">
           <li class="feat">Features
             <ul>
               <li>Application setup</li>
+              <li>Docker implementation incl. httpd reverse proxy</li>
             </ul>
           </li>
           <li class="bugs">Bugfixes
@@ -25,6 +26,6 @@
           </li>
         </ul>
       </change>
-    </changelog>
-<deployed>2020-01-01T12:19:48.185+02:00</deployed>
+     </changelog>
+  <deployed>2020-01-01T12:19:48.185+02:00</deployed>
 </meta>
