@@ -14,7 +14,7 @@ build_exist_app:
       - build/*.xar
 
 build_docker:
-  image: tmaier/docker-compose:latest
+  image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker:latest
   services:
     - docker:dind
   stage: package
@@ -22,7 +22,7 @@ build_docker:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose build --pull
     - docker-compose up &
-    - while [ $(curl --silent --head http://localhost:8094/db/ | grep -c "200 OK") == 0 ]; do sleep 1s; done
+
     - docker-compose down
     - docker-compose push
   only:
