@@ -21,8 +21,8 @@ build_docker:
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose build --pull
-    - docker-compose up &
-    - while [ $(curl --silent --head http://localhost:8094/db/ | grep -c "200 OK") == 0 ]; do sleep 1s; done
+    - docker-compose up & sleep 60s;
+    - while [[ $(curl --silent --head http://localhost:8094/db/ | grep -c "200 OK") == 0 ]]; do sleep 1s; done; notify-send
     - docker-compose down
     - docker-compose push
   only:
