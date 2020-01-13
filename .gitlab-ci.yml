@@ -44,6 +44,8 @@ deploy_service:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    - echo $SECRETS >> docker/ahikar.env
+    - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/ahikar.env
     - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
