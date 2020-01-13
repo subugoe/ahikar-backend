@@ -12,6 +12,7 @@ build_exist_app:
   artifacts:
     paths:
       - build/*.xar
+      - docker/*.xar
 
 build_docker:
   image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker
