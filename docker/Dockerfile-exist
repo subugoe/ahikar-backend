@@ -1,3 +1,3 @@
 FROM existdb/existdb:release
 
-COPY ./*.xar /exist/autodeploy/
+COPY build/*.xar /exist/autodeploy/
