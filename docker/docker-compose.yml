@@ -4,10 +4,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-exist
-    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:develop
     expose:
       - "8080"
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:develop
+    ports:
+      - "9094:8080"
     restart: unless-stopped
+    env_file:
+      - ahikar.env
+      - tg.env
   httpd:
     build:
       context: .
