@@ -6,9 +6,6 @@ xquery version "3.1";
  :)
 
 module namespace tgconnect="https://sade.textgrid.de/ns/connect";
-
-import module namespace config="https://sade.textgrid.de/ns/config" at "../config.xqm";
-import module namespace templates="http://exist-db.org/xquery/templates";
 import module namespace tgclient="https://sade.textgrid.de/ns/tgclient" at "client.xqm";
 
 declare namespace http="http://expath.org/ns/http-client";
@@ -24,7 +21,7 @@ declare namespace xhtml="http://www.w3.org/1999/xhtml";
  : @param $uri – a textgrid uri
  : @param $sid – a valid sessionId for TextGrid
  :  :)
-declare function tgconnect:publish( $uri as xs:string, $sid as xs:string ) 
+declare function tgconnect:publish( $uri as xs:string, $sid as xs:string )
 {
     tgconnect:publish
     (
