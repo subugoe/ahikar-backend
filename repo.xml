@@ -8,7 +8,7 @@
     <type>application</type>
     <target>ahikar</target>
     <prepare/>
-    <finish/>
+    <finish>post-install.xq</finish>
 
     <changelog>
       <change version="0.0.0">
