@@ -1,4 +1,4 @@
 /build
 ahikar.env
 expath-pkg.xml
-/docker/*.xar
+**/*.xar
