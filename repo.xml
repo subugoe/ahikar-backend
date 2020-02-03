@@ -7,6 +7,7 @@
     <copyright>true</copyright>
     <type>application</type>
     <target>ahikar</target>
+    <permissions user="ahikar" group="ahikar" mode="rw-rw-r--"/>
     <prepare/>
     <finish>post-install.xq</finish>
 

@@ -8,11 +8,10 @@ build_exist_app:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
   script:
-    - ant
+    - ant prepare
   artifacts:
     paths:
       - build/*.xar
-      - docker/build/*.xar
 
 build_docker:
   image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker

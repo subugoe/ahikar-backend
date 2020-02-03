@@ -2,10 +2,8 @@ version: '3'
 services:
   existdb:
     build:
-      context: .
-      dockerfile: Dockerfile-exist
-    expose:
-      - "8080"
+      context: ..
+      dockerfile: docker/Dockerfile-exist
     image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:develop
     ports:
       - "9094:8080"
@@ -13,6 +11,9 @@ services:
     env_file:
       - ahikar.env
       - tg.env
+    volumes:
+      - /tmp:/tmp:z
+
   httpd:
     build:
       context: .
