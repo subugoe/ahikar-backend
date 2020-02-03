@@ -122,6 +122,7 @@ function tapi:manifest-rest($collection, $document) {
 
 declare function tapi:manifest($collection, $document) {
     let $aggNode := doc("/db/apps/sade/textgrid/agg/" || $document || ".xml")
+    let $metaNode := doc("/db/apps/sade/textgrid/meta/" || $document || ".xml")
     let $documentUri := $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
     let $documentNode := doc("/db/apps/sade/textgrid/data/" || $documentUri || ".xml")
     let $sequence :=
@@ -135,10 +136,7 @@ declare function tapi:manifest($collection, $document) {
     return
     <object>
         <textapi>{$tapi:version}</textapi>
-        <title>
-            <title>{($documentNode//tei:title)[1] => string()}</title>
-            <type>main</type>
-        </title>
+        <label>{string($metaNode//tgmd:title)}</label>
         <license>CC0-1.0</license>
         {$sequence}
     </object>
