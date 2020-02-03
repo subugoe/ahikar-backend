@@ -23,7 +23,7 @@
     </target>
 
     <target name="cleanup">
-      <delete>
+      <delete failonerror="false">
         <fileset dir="${build.dir}" includes="*.xar"/>
       </delete>
     </target>
