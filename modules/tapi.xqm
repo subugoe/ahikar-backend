@@ -186,7 +186,12 @@ declare function tapi:content($document, $page) {
         then
             let $node := doc($documentPath),
                 $start-node := $node//tei:pb[@n = $page],
-                $end-node := $node//tei:pb[@n = $page]/following::tei:pb[1],
+                $end-node :=
+                    let $followingPb := $node//tei:pb[@n = $page]/following::tei:pb[1]
+                    return
+                        if($followingPb)
+                        then $followingPb
+                        else $node//tei:pb[@n = $page]/following::tei:ab[last()],
                 $wrap-in-first-common-ancestor-only := false(),
                 $include-start-and-end-nodes := false(),
                 $empty-ancestor-elements-to-include := ("")
@@ -200,7 +205,7 @@ declare function tapi:content($document, $page) {
                     $empty-ancestor-elements-to-include)
         else doc($documentPath)/*
     let $stylesheet := doc( "/db/apps/sade_assets/TEI-Stylesheets/html5/html5.xsl")
-    let $transform := transform:transform($TEI, $stylesheet, ())/xhtml:body/node()
+    let $transform := transform:transform($TEI, $stylesheet, ())/xhtml:body//xhtml:div[@class="tei_body"]
     return
         <div>
             {$transform}
