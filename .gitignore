@@ -1,5 +1,5 @@
-/build
-ahikar.env
+build/**
+**/ahikar.env
 expath-pkg.xml
 **/*.xar
-/docker/exist
+docker/exist/**
