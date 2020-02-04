@@ -19,7 +19,11 @@
         </copy>
         <mkdir dir="${build.dir}"/>
         <zip basedir="." destfile="${destfile}"
-            excludes="${destfile},${build.dir}/*,${test.dir}/*,**/*.env,docker/exist/*"/>
+            includes="expath-pkg.xml, **"
+            excludesfile=".gitignore"/>
+        <zip basedir="." destfile="${destfile}"
+            includes="expath-pkg.xml"
+            update="yes"/>
     </target>
 
     <target name="cleanup">
