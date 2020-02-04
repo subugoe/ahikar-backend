@@ -2,3 +2,4 @@
 ahikar.env
 expath-pkg.xml
 **/*.xar
+/docker/exist

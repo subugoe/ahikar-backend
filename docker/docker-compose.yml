@@ -12,7 +12,8 @@ services:
       - ahikar.env
       - tg.env
     volumes:
-      - /tmp:/tmp:z
+      - ./exist/data:/exist/data:z
+      - ./exist/logs:/exist/logs:z
 
   httpd:
     build:
