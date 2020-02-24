@@ -17,9 +17,9 @@ load_frontend:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
   script:
-    - echo $CI_JOB_TOKEN
+    - echo $GITLAB_TOKEN
     - echo $CI_API_V4_URL/subugoe/ahiqar/frontend/-/jobs/artifacts/master/download?job=build
-    - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "$CI_API_V4_URL/subugoe/ahiqar/frontend/-/jobs/artifacts/master/download?job=build"'
+    - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/subugoe/ahiqar/frontend/-/jobs/artifacts/master/download?job=build"'
     - unzip frontend.zip
     - mkdir frontend
     - mv viewer/dist/* frontend/
