@@ -23,3 +23,5 @@ services:
     ports:
       - "8094:80"
     restart: unless-stopped
+    volumes:
+      - ./frontend:/usr/local/apache2/htdocs:z

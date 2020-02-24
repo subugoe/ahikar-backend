@@ -3,3 +3,4 @@ build/**
 expath-pkg.xml
 **/*.xar
 docker/exist/**
+docker/frontend
