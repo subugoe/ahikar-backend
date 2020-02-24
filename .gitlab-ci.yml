@@ -21,7 +21,7 @@ load_frontend:
   script:
     - echo $GITLAB_TOKEN
     - echo $CI_API_V4_URL/subugoe/ahiqar/frontend/-/jobs/artifacts/master/download?job=build
-    - 'curl --location --output artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=test"'
+    - 'curl --location --output artifacts.zip --header "JOB-TOKEN: $CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/subugoe/ahiqar/frontend/-/jobs/artifacts/master/download?job=build"'
     - unzip frontend.zip
     - mkdir frontend
