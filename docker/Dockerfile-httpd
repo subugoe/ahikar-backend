@@ -1,11 +1,14 @@
 FROM httpd
 
+ARG gitlabuser=gitlab+deploy-token-308
+ARG gitlabpass
+
 COPY ./httpd/httpd-reverse-proxy.conf /usr/local/apache2/conf/httpd.conf
 COPY ./httpd/vhosts/*.conf /usr/local/apache2/conf/sites/
 
 # install git
 RUN apt-get update && apt-get install git -yyy
-RUN git clone https://NAME:PASS@gitlab.gwdg.de/subugoe/ahikar/frontend
+RUN git clone https://$gitlabuser:$gitlabpass@gitlab.gwdg.de/subugoe/ahikar/frontend
 EXPOSE 80
 
 CMD ["httpd", "-D", "FOREGROUND"]

@@ -18,6 +18,10 @@ services:
   httpd:
     build:
       context: .
+      args:
+        # args are used to get static data from a non-public git repo.
+        - gitlabuser
+        - gitlabpass
       dockerfile: Dockerfile-httpd
     image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/httpd:develop
     ports:
