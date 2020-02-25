@@ -5,8 +5,11 @@ services:
       context: ..
       dockerfile: docker/Dockerfile-exist
     image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:develop
-    ports:
-      - "9094:8080"
+    entrypoint:
+      - java
+      - -javaagent:/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8079:/prometheus/jmx_prometheus_config.yaml
+      - org.exist.start.Main
+      - jetty
     restart: unless-stopped
     env_file:
       - ahikar.env
@@ -14,16 +17,22 @@ services:
     volumes:
       - ./exist/data:/exist/data:z
       - ./exist/logs:/exist/logs:z
+      - ./prometheus:/prometheus:z
 
   httpd:
     build:
       context: .
-      args:
-        # args are used to get static data from a non-public git repo.
-        - gitlabuser
-        - gitlabpass
       dockerfile: Dockerfile-httpd
     image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/httpd:develop
     ports:
       - "8094:80"
     restart: unless-stopped
+
+  httpd-prometheus:
+    # can be built with the submodule "apache_exporter" integrated here.
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/apache-prometheus:latest
+    entrypoint:
+      - /bin/apache_exporter
+      - --scrape_uri="http://httpd/server-status/?auto"
+    ports:
+      - "9117:9117"
