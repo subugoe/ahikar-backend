@@ -33,6 +33,6 @@ services:
     image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/apache-prometheus:latest
     entrypoint:
       - /bin/apache_exporter
-      - --scrape_uri="http://httpd/server-status/?auto"
+      - --scrape_uri=http://httpd/server-status/?auto
     ports:
       - "9117:9117"
