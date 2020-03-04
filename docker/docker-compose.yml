@@ -35,4 +35,4 @@ services:
       - /bin/apache_exporter
       - --scrape_uri=http://httpd/server-status/?auto
     ports:
-      - "9117:9117"
+      - "9117"
