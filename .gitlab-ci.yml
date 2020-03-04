@@ -12,6 +12,7 @@ stages:
 - mkdir -p ~/.ssh
 - chmod 700 ~/.ssh
 
+# used for develop and master, see test for all other cases!
 .deploy: &deploy
 - echo $SECRETS >> docker/ahikar.env
 - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/ahikar.env
@@ -78,7 +79,14 @@ deploy_service-test:
     name: ahikar-test
   script:
     - *ssh
-    - *deploy
+    - echo $SECRETS >> docker/ahikar.env
+    - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/ahikar.env
+    - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/tg.env
+    - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
+    - bash docker/set-env-for-docker-compose.sh
+    - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/.env
+    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
+    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
 
 deploy_service-dev:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -90,6 +98,7 @@ deploy_service-dev:
   script:
     - *ssh
     - *deploy
+
 .deploy_service:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy
