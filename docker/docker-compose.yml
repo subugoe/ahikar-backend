@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile-httpd
     image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/httpd:develop
     ports:
-      - "8094:80"
+      - "${PORT}:80"
     restart: unless-stopped
 
   httpd-prometheus:
