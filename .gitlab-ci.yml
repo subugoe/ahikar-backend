@@ -4,6 +4,22 @@ stages:
   - deploy
   - release
 
+# templates:
+.ssh-config: &ssh
+- which ssh-agent
+- eval $(ssh-agent -s)
+- echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+- mkdir -p ~/.ssh
+- chmod 700 ~/.ssh
+
+.deploy: &deploy
+- echo $SECRETS >> docker/ahikar.env
+- scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/ahikar.env
+- scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/tg.env
+- scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/docker-compose.yml
+- ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
+- ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
+
 build_exist_app:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
@@ -49,23 +65,41 @@ build_docker:
     - tags
   timeout: 5m
 
-deploy_service:
+deploy_service-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy
+  except:
+    - master
+    - develop
+    - tags
   environment:
-    name: test
+    name: ahikar-test
   script:
-    - which ssh-agent
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo $SECRETS >> docker/ahikar.env
-    - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/ahikar.env
-    - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/tg.env
-    - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
-    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
-    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
+    - *ssh
+    - *deploy
+
+deploy_service-dev:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  stage: deploy
+  only:
+    - develop
+  environment:
+    name: ahikar-dev
+  script:
+    - *ssh
+    - *deploy
+.deploy_service:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  stage: deploy
+  only:
+    - master
+  environment:
+    name: ahikar
+  script:
+    - *ssh
+    - *deploy
+
+
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
