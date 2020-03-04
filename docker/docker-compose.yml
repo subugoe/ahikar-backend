@@ -10,6 +10,8 @@ services:
       - -javaagent:/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8079:/prometheus/jmx_prometheus_config.yaml
       - org.exist.start.Main
       - jetty
+    ports:
+      - "8080"
     restart: unless-stopped
     env_file:
       - ahikar.env
