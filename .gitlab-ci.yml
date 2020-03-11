@@ -26,13 +26,9 @@ stages:
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
 
-build_exist_app-test:
+build_exist_app-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
-  except:
-    - develop
-    - master
-    - tags
   script:
     - ant -propertyfile ${CI_COMMIT_REF_NAME}.build.properties prepare
     - FILENAME=$(ls build/ahikar*.xar)
@@ -41,7 +37,7 @@ build_exist_app-test:
     paths:
       - build/*.xar
 
-load_frontend:
+load_frontend-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
   variables:
@@ -55,7 +51,7 @@ load_frontend:
     paths:
       - frontend/
 
-build_docker:
+build_docker-all:
   image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker
   services:
     - docker:dind
