@@ -117,7 +117,7 @@ deploy_docker-dev:
 
 deploy_app-test:
   image: curlimages/curl
-  stage: deploy-app
+  stage: deploy_app
   except:
     - master
     - develop
@@ -127,15 +127,15 @@ deploy_app-test:
 
 deploy_app-dev:
   image: curlimages/curl
-  stage: deploy-app
+  stage: deploy_app
   only:
     - develop
   script:
-    - --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
+    - curl --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
 
 deploy_app-master:
   image: curlimages/curl
-  stage: deploy-app
+  stage: deploy_app
   only:
     - master
     - tags
