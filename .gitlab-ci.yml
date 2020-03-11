@@ -1,8 +1,8 @@
 stages:
   - build
   - package
-  - deploy-docker
-  - deploy-app
+  - deploy_docker
+  - deploy_app
   - release
 
 # templates:
@@ -72,7 +72,7 @@ build_docker-all:
     - tags
   timeout: 5m
 
-deploy_testing:
+deploy_docker-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy-docker
   except:
@@ -91,7 +91,7 @@ deploy_testing:
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
 
-deploy-dev:
+deploy_docker-dev:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy-docker
   only:
@@ -103,7 +103,7 @@ deploy-dev:
     - *env
     - *deploy
 
-.deploy_release:
+.deploy_docker-master:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy-docker
   only:
@@ -116,16 +116,31 @@ deploy-dev:
     - *deploy
 
 deploy_app-test:
-  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  image: curlimages/curl
   stage: deploy-app
   except:
     - master
     - develop
     - tags
   script:
-#    - *ssh
-#    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy"
-    - curl --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
+    - --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
+
+deploy_app-dev:
+  image: curlimages/curl
+  stage: deploy-app
+  only:
+    - develop
+  script:
+    - --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
+
+deploy_app-master:
+  image: curlimages/curl
+  stage: deploy-app
+  only:
+    - master
+    - tags
+  script:
+    - --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
