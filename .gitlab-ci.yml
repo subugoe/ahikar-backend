@@ -74,7 +74,7 @@ build_docker-all:
 
 deploy_docker-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
-  stage: deploy-docker
+  stage: deploy_docker
   except:
     - master
     - develop
@@ -93,7 +93,7 @@ deploy_docker-test:
 
 deploy_docker-dev:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
-  stage: deploy-docker
+  stage: deploy_docker
   only:
     - develop
   environment:
@@ -105,7 +105,7 @@ deploy_docker-dev:
 
 .deploy_docker-master:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
-  stage: deploy-docker
+  stage: deploy_docker
   only:
     - master
   environment:
