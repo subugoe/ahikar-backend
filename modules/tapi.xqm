@@ -25,6 +25,7 @@ import module namespace rest="http://exquery.org/ns/restxq";
 
 declare variable $tapi:version := "0.1.0";
 declare variable $tapi:server := "http://localhost:8094/exist/restxq";
+declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 
 declare variable $tapi:responseHeader200 :=
     <rest:response>
@@ -210,6 +211,143 @@ declare function tapi:content($document, $page) {
         <div>
             {$transform}
         </div>
+};
+
+(:~
+ : Endpoint to deliver a single plain text.
+ : @param $document a vaild textgrid URI
+ :  :)
+declare
+    %rest:GET
+    %rest:path("/content/{$document}.txt")
+    %output:method("text")
+function tapi:text-rest($document) {
+    $tapi:responseHeader200,
+    tapi:text($document)
+};
+
+declare function tapi:text($document) {
+    let $documentPath := "/db/apps/sade/textgrid/data/" || $document || ".xml"
+    let $TEI := doc($documentPath)//tei:text[@type="transcription"]
+    let $text :=
+        ($TEI//text()
+            [not(parent::tei:sic)]
+        ) => string-join() => replace("\n+", "") => replace("\s+", " ")
+    return
+        $text
+};
+
+(:~
+ : Endpoint to deliver all plain texts in zip container.
+ :  :)
+declare
+    %rest:GET
+    %rest:path("/content/ahikar-plain-text.zip")
+    %output:method("binary")
+function tapi:text-rest($document) {
+    let $prepare := tapi:zip-text()
+    return
+        $tapi:responseHeader200,
+        compression:zip(xs:anyURI($tapi:baseCollection || "/txt/"), false())
+};
+
+declare function tapi:zip-text() {
+    let $txtCollection := $tapi:baseCollection || "/txt/"
+    let $collection := collection($tapi:baseCollection || "/data/")
+    let $check-text-collection :=
+        if( xmldb:collection-available($txtCollection) )
+        then true()
+        else xmldb:create-collection($tapi:baseCollection, "txt")
+    let $TEIs := $collection//tei:text[@type="transcription"]
+    return
+        for $TEI in $TEIs
+        let $baseUri := $TEI/base-uri()
+        let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
+        let $uri := $tgBaseUri => replace(".xml", "-transcription.txt")
+        let $text :=
+            ($TEI//text()
+                [not(parent::tei:sic)]
+                [not(parent::tei:surplus)]
+            ) => string-join() => replace("\n+", "") => replace("\s+", " ")
+              => replace("♰|:|.|܆", "")
+              => replace("܀", "")
+              => replace("܇", "")
+        let $metadata := doc($baseUri => replace("/data/", "/meta/"))
+        let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
+        return
+            xmldb:store($txtCollection, $metaTitle || "-" || $uri, $text, "text/plain")
+};
+
+(:~
+ : Endpoint to deliver all plain texts in zip container.
+ :  :)
+declare
+    %rest:GET
+    %rest:path("/content/debug/ahikar-plain-text.zip")
+    %output:method("binary")
+function tapi:text-debug($document) {
+    let $prepare := tapi:debug()
+    return
+        $tapi:responseHeader200,
+        compression:zip(xs:anyURI($tapi:baseCollection || "/txt/"), false())
+};
+
+declare function tapi:debug() {
+    let $txtCollection := $tapi:baseCollection || "/txt/"
+    let $collection := collection($tapi:baseCollection || "/data/")
+    let $check-text-collection :=
+        if( xmldb:collection-available($txtCollection) )
+        then true()
+        else xmldb:create-collection($tapi:baseCollection, "txt")
+    let $TEIs := $collection//tei:text[@type="transcription"]
+    return
+        for $TEI in $TEIs
+        let $baseUri := $TEI/base-uri()
+        let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
+        let $uri := $tgBaseUri => replace(".xml", "-transcription.txt")
+        let $text :=
+            (($TEI//text()
+                [not(parent::tei:sic)]
+                [not(parent::tei:surplus)])
+                [not(parent::tei:supplied)])
+                [not(parent::tei:*[@type="colophon"])]
+                [not(parent::tei:g)]
+                [not(parent::tei:unclear)]
+                [not(parent::tei:catchwords)]
+            => string-join()
+            => replace("\p{P}", "")
+            => replace("\n+", "")
+            => replace("\s+", " ")
+
+        let $metadata := doc($baseUri => replace("/data/", "/meta/"))
+        let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
+        return
+            xmldb:store($txtCollection, $metaTitle || "-" || $uri, $text, "text/plain")
+};
+
+(:~
+ : redeploy application to db
+ :  :)
+declare
+  %rest:GET
+  %rest:path("/deploy")
+  %rest:query-param("token", "{$token}")
+function tapi:redeploy($token) {
+  if( $token ne environment-variable("APP_DEPLOY_TOKEN" ))
+  then error(QName("error://1", "deploy"), "deploy token incorrect.")
+  else
+    let $pkgName := environment-variable("APP_NAME")
+    let $name := 'https://ci.de.dariah.eu/exist-repo/find.zip?name=' || encode-for-uri($pkgName)
+    let $request :=
+        <hc:request
+          method="GET"
+          href="{$name}" />
+    let $package := hc:send-request($request)
+    let $storeToDb := xmldb:store("/db", "ahikar-deployment.xar", $package[2], "application/zip")
+    let $remove := repo:remove($pkgName)
+    let $install := repo:install-and-deploy-from-db($storeToDb)
+    return
+        $install
 };
 
 declare %private function tapi:type($format as xs:string)

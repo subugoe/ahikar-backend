@@ -1,7 +1,8 @@
 stages:
   - build
   - package
-  - deploy
+  - deploy-docker
+  - deploy-app
   - release
 
 # templates:
@@ -12,22 +13,30 @@ stages:
 - mkdir -p ~/.ssh
 - chmod 700 ~/.ssh
 
+.env: &env
+- echo $SECRETS >> docker/ahikar.env
+- sh docker/set-env-for-docker-compose.sh
+
 # used for develop and master, see test for all other cases!
 .deploy: &deploy
-- echo $SECRETS >> docker/ahikar.env
 - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/ahikar.env
 - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/tg.env
 - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/docker-compose.yml
-- bash docker/set-env-for-docker-compose.sh
 - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/.env
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
 
-build_exist_app:
+build_exist_app-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
+  except:
+    - develop
+    - master
+    - tags
   script:
-    - ant prepare
+    - ant -propertyfile ${CI_COMMIT_REF_NAME}.build.properties prepare
+    - FILENAME=$(ls build/ahikar*.xar)
+    - curl -u ci:${EXIST_UPLOAD_PW} -X POST -F file=@${FILENAME} https://ci.de.dariah.eu/exist-upload
   artifacts:
     paths:
       - build/*.xar
@@ -52,65 +61,75 @@ build_docker:
     - docker:dind
   stage: package
   script:
+    - *ssh
+    - *env
     - mv frontend/ docker/frontend
     - cd docker
-    - echo $SECRETS >> ahikar.env
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose build --pull
-    - docker-compose up & sleep 30s &&
+    # - docker-compose up & sleep 30s &&
     # like to add a test here, but seems that within the runner specified port is not available.
     # - while ! curl --silent --head http://localhost:8094/db/ | grep "200 OK"; do sleep 2s; echo "test failed"; curl --head http://localhost:8094/db/; done
-    - docker-compose down
+    # - docker-compose down
     - docker-compose push
-  only:
-    - develop
   except:
     - tags
   timeout: 5m
 
-deploy_service-test:
+deploy_testing:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
-  stage: deploy
+  stage: deploy-docker
   except:
     - master
     - develop
     - tags
   environment:
-    name: ahikar-test
+    name: testing
   script:
     - *ssh
-    - echo $SECRETS >> docker/ahikar.env
+    - *env
     - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/ahikar.env
     - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/tg.env
     - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
-    - bash docker/set-env-for-docker-compose.sh
     - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/.env
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
 
-deploy_service-dev:
+deploy-dev:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
-  stage: deploy
+  stage: deploy-docker
   only:
     - develop
   environment:
     name: ahikar-dev
   script:
     - *ssh
+    - *env
     - *deploy
 
-.deploy_service:
+.deploy_release:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
-  stage: deploy
+  stage: deploy-docker
   only:
     - master
   environment:
     name: ahikar
   script:
     - *ssh
+    - *env
     - *deploy
 
-
+deploy_app-test:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  stage: deploy-app
+  except:
+    - master
+    - develop
+    - tags
+  script:
+#    - *ssh
+#    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy"
+    - curl --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
