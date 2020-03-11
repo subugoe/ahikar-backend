@@ -12,6 +12,23 @@
     <finish>post-install.xq</finish>
 
     <changelog>
+      <change version="0.1.0">
+        <ul xmlns="http://www.w3.org/1999/xhtml">
+          <li class="feat">Features
+            <ul>
+              <li>plain text generation</li>
+              <li>plain text download</li>
+              <li>deployment via API</li>
+              <li>renamed application to match development tracks (git flow)
+            </ul>
+          </li>
+          <li class="bugs">Bugfixes
+            <ul>
+              <li />
+            </ul>
+          </li>
+        </ul>
+      </change>
       <change version="0.0.0">
         <ul xmlns="http://www.w3.org/1999/xhtml">
           <li class="feat">Features

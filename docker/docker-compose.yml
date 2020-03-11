@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile-exist
-    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:develop
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:${TAG}
     entrypoint:
       - java
       - -javaagent:/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8079:/prometheus/jmx_prometheus_config.yaml
@@ -12,10 +12,13 @@ services:
       - jetty
     ports:
       - "8080"
+      - "8079"
     restart: unless-stopped
     env_file:
       - ahikar.env
       - tg.env
+    environment:
+      - APP_NAME=${APP_NAME}
     volumes:
       - ./exist/data:/exist/data:z
       - ./exist/logs:/exist/logs:z
@@ -25,7 +28,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-httpd
-    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/httpd:develop
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/httpd:${TAG}
     ports:
       - "${PORT}:80"
     restart: unless-stopped
