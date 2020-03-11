@@ -19,7 +19,7 @@
               <li>plain text generation</li>
               <li>plain text download</li>
               <li>deployment via API</li>
-              <li>renamed application to match development tracks (git flow)
+              <li>renamed application to match development tracks (git flow)</li>
             </ul>
           </li>
           <li class="bugs">Bugfixes
