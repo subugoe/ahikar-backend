@@ -279,53 +279,6 @@ declare function tapi:zip-text() {
 };
 
 (:~
- : Endpoint to deliver all plain texts in zip container.
- :  :)
-declare
-    %rest:GET
-    %rest:path("/content/debug/ahikar-plain-text.zip")
-    %output:method("binary")
-function tapi:text-debug($document) {
-    let $prepare := tapi:debug()
-    return
-        $tapi:responseHeader200,
-        compression:zip(xs:anyURI($tapi:baseCollection || "/txt/"), false())
-};
-
-declare function tapi:debug() {
-    let $txtCollection := $tapi:baseCollection || "/txt/"
-    let $collection := collection($tapi:baseCollection || "/data/")
-    let $check-text-collection :=
-        if( xmldb:collection-available($txtCollection) )
-        then true()
-        else xmldb:create-collection($tapi:baseCollection, "txt")
-    let $TEIs := $collection//tei:text[@type="transcription"]
-    return
-        for $TEI in $TEIs
-        let $baseUri := $TEI/base-uri()
-        let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
-        let $uri := $tgBaseUri => replace(".xml", "-transcription.txt")
-        let $text :=
-            (($TEI//text()
-                [not(parent::tei:sic)]
-                [not(parent::tei:surplus)])
-                [not(parent::tei:supplied)])
-                [not(parent::tei:*[@type="colophon"])]
-                [not(parent::tei:g)]
-                [not(parent::tei:unclear)]
-                [not(parent::tei:catchwords)]
-            => string-join()
-            => replace("\p{P}", "")
-            => replace("\n+", "")
-            => replace("\s+", " ")
-
-        let $metadata := doc($baseUri => replace("/data/", "/meta/"))
-        let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
-        return
-            xmldb:store($txtCollection, $metaTitle || "-" || $uri, $text, "text/plain")
-};
-
-(:~
  : redeploy application to db
  :  :)
 declare
