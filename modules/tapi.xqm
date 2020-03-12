@@ -265,13 +265,19 @@ declare function tapi:zip-text() {
         let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
         let $uri := $tgBaseUri => replace(".xml", "-transcription.txt")
         let $text :=
-            ($TEI//text()
+            (($TEI//text()
                 [not(parent::tei:sic)]
-                [not(parent::tei:surplus)]
-            ) => string-join() => replace("\n+", "") => replace("\s+", " ")
-              => replace("♰|:|.|܆", "")
-              => replace("܀", "")
-              => replace("܇", "")
+                [not(parent::tei:surplus)])
+                [not(parent::tei:supplied)])
+                [not(parent::tei:*[@type="colophon"])]
+                [not(parent::tei:g)]
+                [not(parent::tei:unclear)]
+                [not(parent::tei:catchwords)]
+            => string-join()
+            => replace("\p{P}", "")
+            => replace("\n+", "")
+            => replace("\s+", " ")
+
         let $metadata := doc($baseUri => replace("/data/", "/meta/"))
         let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
         return
