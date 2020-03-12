@@ -103,7 +103,7 @@ deploy_docker-dev:
     - *env
     - *deploy
 
-.deploy_docker-master:
+deploy_docker-master:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy_docker
   only:
@@ -122,6 +122,8 @@ deploy_app-test:
     - master
     - develop
     - tags
+  environment:
+    name: ahikar-test
   script:
     - --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
 
@@ -130,6 +132,8 @@ deploy_app-dev:
   stage: deploy_app
   only:
     - develop
+  environment:
+    name: ahikar-dev
   script:
     - curl --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
 
@@ -139,6 +143,8 @@ deploy_app-master:
   only:
     - master
     - tags
+  environment:
+    name: ahikar
   script:
     - --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
 
