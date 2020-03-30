@@ -1,6 +1,6 @@
-build/**
+exist-app/build/**
 **/ahikar.env
-expath-pkg.xml
-**/*.xar
+exist-app/expath-pkg.xml
+exist-app/**/*.xar
 docker/exist/**
 docker/frontend
