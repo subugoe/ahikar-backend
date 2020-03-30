@@ -12,6 +12,21 @@
     <finish>post-install.xq</finish>
 
     <changelog>
+      <change version="0.2.0">
+        <ul xmlns="http://www.w3.org/1999/xhtml">
+          <li class="feat">Features
+            <ul>
+              <li>add image endpoint</li>
+              <li>refine Text-API structure</li>
+            </ul>
+          </li>
+          <li class="bugs">Bugfixes
+            <ul>
+              <li />
+            </ul>
+          </li>
+        </ul>
+      </change>
       <change version="0.1.0">
         <ul xmlns="http://www.w3.org/1999/xhtml">
           <li class="feat">Features

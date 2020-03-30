@@ -12,7 +12,7 @@ module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi";
 
 declare namespace expkg="http://expath.org/ns/pkg";
 declare namespace ore="http://www.openarchives.org/ore/terms/";
-declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace test="http://exist-db.org/xquery/xqsuite";
@@ -20,7 +20,7 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
-import module namespace requestr = "http://exquery.org/ns/request";
+import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 
 declare variable $tapi:version := "0.1.0";
@@ -159,6 +159,7 @@ declare function tapi:item($collection, $document, $page) {
         if($aggNode)
         then $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
         else $document
+    let $image := doc("/db/apps/sade/textgrid/data/" || $teiUri || ".xml")//tei:pb[@n = $page]/@facs => substring-after("textgrid:")
     return
     <object>
         <textapi>{$tapi:version}</textapi>
@@ -168,6 +169,9 @@ declare function tapi:item($collection, $document, $page) {
         <content>{$tapi:server}/api/content/{$teiUri}-{$page}.html</content>
         <content-type>application/xhtml+xml</content-type>
         <language>syr</language>
+        <image>
+            <id>{$tapi:server}/api/images/{$image}</id>
+        </image>
     </object>
 };
 
@@ -213,6 +217,21 @@ declare function tapi:content($document, $page) {
             {$transform}
         </div>
 };
+
+declare
+    %rest:GET
+    %rest:path("/images/{$uri}")
+    %rest:produces("image/jpeg")
+    %output:method("binary")
+function tapi:content-rest($uri) {
+    $tapi:responseHeader200,
+    hc:send-request(
+        <hc:request method="GET"
+        href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$uri}/data?sessionId={environment-variable('TEXTGRID.SESSION')}"
+    />
+    )[2] => xs:base64Binary()
+};
+
 
 (:~
  : Endpoint to deliver a single plain text.
