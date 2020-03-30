@@ -24,7 +24,7 @@ import module namespace requestr = "http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 
 declare variable $tapi:version := "0.1.0";
-declare variable $tapi:server := "http://localhost:8094/exist/restxq";
+declare variable $tapi:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 
 declare variable $tapi:responseHeader200 :=
@@ -82,7 +82,7 @@ as item()+ {
         let $metaObject := //tgmd:textgridUri[starts-with(., $i)]/root()
         return
             <sequence>
-                <id>{$tapi:server}/textapi/ahikar/{$collection}/{substring-after($i, ":")}/manifest.json</id>
+                <id>{$tapi:server}/api/textapi/ahikar/{$collection}/{substring-after($i, ":")}/manifest.json</id>
                 <type>{
                 if($collection = "3r84g")
                 then
@@ -98,6 +98,7 @@ as item()+ {
             <title>The Story and Proverbs of Ahikar the Wise</title>
             <type>{$meta//tgmd:format => string() => tapi:type()}</type>
         </title>
+        <title/>
         <collector>
             <role>collector</role>
             <name>Prof. Dr. theol. Kratz, Reinhard Gregor</name>
@@ -128,7 +129,7 @@ declare function tapi:manifest($collection, $document) {
     let $documentNode := doc("/db/apps/sade/textgrid/data/" || $documentUri || ".xml")
     let $sequence :=
         for $page in $documentNode//tei:pb/string(@n)
-        let $uri := "/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
+        let $uri := "/api/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
         return
             <sequence>
                 <id>{$tapi:server}{$uri}</id>
@@ -164,7 +165,7 @@ declare function tapi:item($collection, $document, $page) {
         <title>The Story and Proverbs of Ahikar the Wise</title>
         <type>page</type>
         <n>{$page}</n>
-        <content>{$tapi:server}/content/{$teiUri}-{$page}.html</content>
+        <content>{$tapi:server}/api/content/{$teiUri}-{$page}.html</content>
         <content-type>application/xhtml+xml</content-type>
         <language>syr</language>
     </object>
@@ -313,6 +314,6 @@ declare %private function tapi:type($format as xs:string)
 as xs:string {
     switch ($format)
         case "text/tg.aggregation+xml" return "collection"
-        case "text/tg.edition+tg.aggregation+xml" return "collection"
+        case "text/tg.edition+tg.aggregation+xml" return "manifest"
         default return "manifest"
 };

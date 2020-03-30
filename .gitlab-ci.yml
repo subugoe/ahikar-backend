@@ -30,12 +30,13 @@ build_exist_app-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
   script:
+    - cd exist-app
     - ant -propertyfile ${CI_COMMIT_REF_NAME}.build.properties prepare
     - FILENAME=$(ls build/ahikar*.xar)
     - curl -u ci:${EXIST_UPLOAD_PW} -X POST -F file=@${FILENAME} https://ci.de.dariah.eu/exist-upload
   artifacts:
     paths:
-      - build/*.xar
+      - exist-app/build/*.xar
 
 load_frontend-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -125,7 +126,7 @@ deploy_app-test:
   environment:
     name: ahikar-test
   script:
-    - --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
+    - curl --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
 
 deploy_app-dev:
   image: curlimages/curl
@@ -146,7 +147,7 @@ deploy_app-master:
   environment:
     name: ahikar
   script:
-    - --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
+    - curl --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
