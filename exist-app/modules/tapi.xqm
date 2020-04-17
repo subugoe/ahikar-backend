@@ -227,8 +227,8 @@ function tapi:content-rest($uri) {
     $tapi:responseHeader200,
     hc:send-request(
         <hc:request method="GET"
-        href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$uri}/data?sessionId={environment-variable('TEXTGRID.SESSION')}"
-    />
+        href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri};sid={environment-variable('TEXTGRID.SESSION')}/full/,2000/0/native.jpg"
+        />
     )[2] => xs:base64Binary()
 };
 
