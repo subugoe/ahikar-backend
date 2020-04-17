@@ -223,7 +223,7 @@ declare
     %rest:path("/images/{$uri}")
     %rest:produces("image/jpeg")
     %output:method("binary")
-function tapi:content-rest($uri) {
+function tapi:images-rest($uri) {
     $tapi:responseHeader200,
     hc:send-request(
         <hc:request method="GET"
