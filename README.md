@@ -7,7 +7,7 @@ This aims to serve the complete backend for the Ahikar project.
 ## build
 ```bash
 # load eXist dependencies (mainly SADE)
-ant -f exist-app/build.xml dependenc
+ant -f exist-app/build.xml dependencies
 
 # build eXist package for Ahikar
 ant -f exist-app/build.xml xar
