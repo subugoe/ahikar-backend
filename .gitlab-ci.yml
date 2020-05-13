@@ -37,6 +37,7 @@ build_exist_app-all:
   artifacts:
     paths:
       - exist-app/build/*.xar
+      - exist-app/build/dependencies/*.xar
 
 load_frontend-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -47,10 +48,10 @@ load_frontend-all:
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
     - unzip frontend.zip
     - mkdir frontend
-    - mv Qviewer/dist/* frontend/
+    - mv Qviewer/dist/* docker/frontend/
   artifacts:
     paths:
-      - frontend/
+      - docker/frontend/
 
 build_docker-all:
   image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker
@@ -60,7 +61,6 @@ build_docker-all:
   script:
     - *ssh
     - *env
-    - mv frontend/ docker/frontend
     - cd docker
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose build --pull
