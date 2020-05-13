@@ -1,3 +1,4 @@
 FROM existdb/existdb:release
 
 COPY exist-app/build/*.xar /exist/autodeploy/
+COPY exist-app/build/dependencies/*.xar /exist/autodeploy/

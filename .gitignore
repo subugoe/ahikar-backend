@@ -1,6 +1,14 @@
+# eXist app related files
 exist-app/build/**
-**/ahikar.env
 exist-app/expath-pkg.xml
 exist-app/**/*.xar
+
+# env with secrets
+**/ahikar.env
+
+# docker container files (COPY statements) and volumes
 docker/exist/**
 docker/frontend
+
+# exclude all ZIP files
+**/*.zip
