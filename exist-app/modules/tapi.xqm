@@ -35,8 +35,10 @@ declare variable $tapi:responseHeader200 :=
     </rest:response>;
 
 (:~
- : Shows information on the currently installed application
- :   :)
+ : Shows information about the currently installed application.
+ :
+ :
+ :)
 declare
     %rest:GET
     %rest:path("/api/info")
@@ -75,7 +77,7 @@ function tapi:collection-rest($collection){
  :   :)
 declare function tapi:collection($collection)
 as item()+ {
-    let $aggregation := doc("/db/apps/sade/textgrid/agg/" || $collection || ".xml")
+    let $aggregation := doc($tapi:baseCollection || "/agg/" || $collection || ".xml")
     let $meta := //tgmd:textgridUri[starts-with(., "textgrid:" || $collection)]/root()
     let $sequence :=
         for $i in $aggregation//*:aggregates/string(@*:resource)
@@ -123,10 +125,10 @@ function tapi:manifest-rest($collection, $document) {
 };
 
 declare function tapi:manifest($collection, $document) {
-    let $aggNode := doc("/db/apps/sade/textgrid/agg/" || $document || ".xml")
-    let $metaNode := doc("/db/apps/sade/textgrid/meta/" || $document || ".xml")
+    let $aggNode := doc($tapi:baseCollection || "/agg/" || $document || ".xml")
+    let $metaNode := doc($tapi:baseCollection || "/meta/" || $document || ".xml")
     let $documentUri := $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
-    let $documentNode := doc("/db/apps/sade/textgrid/data/" || $documentUri || ".xml")
+    let $documentNode := doc($tapi:baseCollection || "/data/" || $documentUri || ".xml")
     let $sequence :=
         for $page in $documentNode//tei:pb/string(@n)
         let $uri := "/api/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
@@ -154,12 +156,12 @@ function tapi:item-rest($collection, $document, $page) {
 };
 
 declare function tapi:item($collection, $document, $page) {
-    let $aggNode := doc("/db/apps/sade/textgrid/agg/" || $document || ".xml")
+    let $aggNode := doc($tapi:baseCollection || "/agg/" || $document || ".xml")
     let $teiUri :=
         if($aggNode)
         then $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
         else $document
-    let $image := doc("/db/apps/sade/textgrid/data/" || $teiUri || ".xml")//tei:pb[@n = $page]/@facs => substring-after("textgrid:")
+    let $image := doc($tapi:baseCollection || "/data/" || $teiUri || ".xml")//tei:pb[@n = $page]/@facs => substring-after("textgrid:")
     return
     <object>
         <textapi>{$tapi:version}</textapi>
@@ -186,7 +188,7 @@ function tapi:content-rest($document, $page) {
 };
 
 declare function tapi:content($document, $page) {
-    let $documentPath := "/db/apps/sade/textgrid/data/" || $document || ".xml"
+    let $documentPath := $tapi:baseCollection || "/data/" || $document || ".xml"
     let $TEI :=
         if($page)
         then
@@ -247,7 +249,7 @@ function tapi:text-rest($document) {
 };
 
 declare function tapi:text($document) {
-    let $documentPath := "/db/apps/sade/textgrid/data/" || $document || ".xml"
+    let $documentPath := $tapi:baseCollection || "/data/" || $document || ".xml"
     let $TEI := doc($documentPath)//tei:text[@type="transcription"]
     let $text :=
         ($TEI//text()
