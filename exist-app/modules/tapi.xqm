@@ -37,7 +37,7 @@ declare variable $tapi:responseHeader200 :=
 (:~
  : Shows information about the currently installed application.
  :
- :
+ : @return The content of the app's expath-pkg.xml and repo.xml as JSON
  :)
 declare
     %rest:GET
@@ -49,8 +49,13 @@ as item()+ {
     tapi:info()
 };
 
+(:~
+ : Retrieves info about the Ahiqar app.
+ :
+ : @return element(descriptors)
+ :)
 declare function tapi:info()
-as item()+ {
+as element(descriptors) {
     <descriptors>
         <request>
             <scheme>{ requestr:scheme() }</scheme>
@@ -62,69 +67,104 @@ as item()+ {
     </descriptors>
 };
 
+
+(:~
+ : Returns information about a given collection.
+ :
+ : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection
+ : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
+ : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r132'
+ : @return A collection object as JSON
+ :)
 declare
     %rest:GET
     %rest:path("/textapi/ahikar/{$collection}/collection.json")
     %output:method("json")
-function tapi:collection-rest($collection){
+function tapi:collection-rest($collection as xs:string){
     $tapi:responseHeader200,
     tapi:collection($collection)
 };
 
+
 (:~
- : Main collection for the project.
- : should be textgrid:3r132
- :   :)
-declare function tapi:collection($collection)
+ : Returns information about the main collection for the project. This encompasses
+ : the key data described at https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object.
+ :
+ : This function should only be used for Ahiqar's edition object (textgrid:3r132).
+ : ### why?
+ :
+ : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
+ : @param $collection The unprefixed TextGrid URI of a collection. For Ahiqar's main collection this is '3r132'.
+ : @return An object element containing all necessary information
+ :)
+declare function tapi:collection($collection as xs:string)
 as item()+ {
     let $aggregation := doc($tapi:baseCollection || "/agg/" || $collection || ".xml")
     let $meta := //tgmd:textgridUri[starts-with(., "textgrid:" || $collection)]/root()
     let $sequence :=
         for $i in $aggregation//*:aggregates/string(@*:resource)
-        let $metaObject := //tgmd:textgridUri[starts-with(., $i)]/root()
-        return
-            <sequence>
-                <id>{$tapi:server}/api/textapi/ahikar/{$collection}/{substring-after($i, ":")}/manifest.json</id>
-                <type>{
-                if($collection = "3r84g")
-                then
-                    "manifest"
-                else
-                    ($metaObject//tgmd:format)[1] => string() => tapi:type()
-                }</type>
-            </sequence>
+            let $metaObject := //tgmd:textgridUri[starts-with(., $i)]/root()
+            return
+                <sequence>
+                    <id>{$tapi:server}/api/textapi/ahikar/{$collection}/{substring-after($i, ":")}/manifest.json</id>
+                    <type>{
+                        if($collection = "3r84g")
+                        then
+                            "manifest"
+                        else
+                            ($metaObject//tgmd:format)[1]
+                            => string()
+                            => tapi:type()
+                    }</type>
+                </sequence>
     return
-    <object>
-        <textapi>{$tapi:version}</textapi>
-        <title>
-            <title>The Story and Proverbs of Ahikar the Wise</title>
-            <type>{$meta//tgmd:format => string() => tapi:type()}</type>
-        </title>
-        <title/>
-        <collector>
-            <role>collector</role>
-            <name>Prof. Dr. theol. Kratz, Reinhard Gregor</name>
-            <idref>
-                <base>http://d-nb.info/gnd/</base>
-                <id>115412700</id>
-                <type>GND</type>
-            </idref>
-        </collector>
-        <description>Main collection for the Ahikar project. Funded by DFG, 2019-2020. University of Göttingen</description>
-        {$sequence}
-    </object>
+        <object>
+            <textapi>{$tapi:version}</textapi>
+            <title>
+                <title>The Story and Proverbs of Ahikar the Wise</title>
+                <type>{$meta//tgmd:format => string() => tapi:type()}</type>
+            </title>
+            <title/>
+            <collector>
+                <role>collector</role>
+                <name>Prof. Dr. theol. Kratz, Reinhard Gregor</name>
+                <idref>
+                    <base>http://d-nb.info/gnd/</base>
+                    <id>115412700</id>
+                    <type>GND</type>
+                </idref>
+            </collector>
+            <description>Main collection for the Ahikar project. Funded by DFG, 2019-2020. University of Göttingen</description>
+            {$sequence}
+        </object>
 };
 
+
+(:~
+ : Returns information about a given document as specified at
+ : https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest.
+ :
+ : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest
+ : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r84g'
+ : @param $document The unprefixed TextGrid URI of a document, e.g. '3r679'
+ :)
 declare
     %rest:GET
     %rest:path("/textapi/ahikar/{$collection}/{$document}/manifest.json")
     %output:method("json")
-function tapi:manifest-rest($collection, $document) {
+function tapi:manifest-rest($collection as xs:string, $document as xs:string)
+as item()+ {
     $tapi:responseHeader200,
     tapi:manifest($collection, $document)
 };
 
-declare function tapi:manifest($collection, $document) {
+
+(:~
+ : ###TODO: no ID delivered, cf. https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
+ : ### I don't understand this function. A document is an XML document, right? Why do we treat it as if it was an aggregation? Or what is $document supposed to mean?
+ :)
+declare function tapi:manifest($collection as xs:string, $document as xs:string)
+as element(object) {
     let $aggNode := doc($tapi:baseCollection || "/agg/" || $document || ".xml")
     let $metaNode := doc($tapi:baseCollection || "/meta/" || $document || ".xml")
     let $documentUri := $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
@@ -146,20 +186,47 @@ declare function tapi:manifest($collection, $document) {
     </object>
 };
 
+
+(:~
+ : Returns information about a given page in a document. This is mainly compliant
+ : with the SUB TextAPI, but has the following additions:
+ :  * the division number, 'n', is mandatory in order to ### why?
+ :  * 'language' instead of 'lang' ### why?
+ :  * 'image' is mandatory since every page has a facsimile
+ :
+ : Sample call to API: /textapi/ahikar/3r17c/3r1pq-147a/latest/item.json
+ :
+ : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#item
+ : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r17c'
+ : @param $document The unprefixed TextGrid URI of a document, e.g. '3r1pq'
+ : @param $page A page number as encoded in a tei:pb/@n, e.g. '147a'
+ : @return Information about a page
+ :)
 declare
     %rest:GET
     %rest:path("/textapi/ahikar/{$collection}/{$document}-{$page}/latest/item.json")
     %output:method("json")
-function tapi:item-rest($collection, $document, $page) {
+function tapi:item-rest($collection as xs:string, $document as xs:string,
+$page as xs:string) as item()+ {
     $tapi:responseHeader200,
     tapi:item($collection, $document, $page)
 };
 
-declare function tapi:item($collection, $document, $page) {
+
+(:~
+ : Returns information about a given page.
+ :
+ : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r17c'
+ : @param $document The unprefixed TextGrid URI of a document, e.g. '3r1pq'
+ : @param $page A page number as encoded in a tei:pb/@n, e.g. '147a'
+ : @return An object element containing all necessary information
+ :)
+declare function tapi:item($collection as xs:string, $document as xs:string,
+$page as xs:string) as element(object) {
     let $aggNode := doc($tapi:baseCollection || "/agg/" || $document || ".xml")
     let $teiUri :=
         if($aggNode)
-        then $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
+            then $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
         else $document
     let $image := doc($tapi:baseCollection || "/data/" || $teiUri || ".xml")//tei:pb[@n = $page]/@facs => substring-after("textgrid:")
     return
@@ -177,17 +244,39 @@ declare function tapi:item($collection, $document, $page) {
     </object>
 };
 
+
+(:~
+ : Returns an HTML rendering of a given page.
+ :
+ : Sample call to API: /content/3rbmb-1a.html
+ :
+ : ### TODO returns an error when two pagebreaks have the same @n, e.g. when a text has a transcription and a transliteration
+ : ### why %output:method("xml") instead of %output:method("html5")?
+ : @param $document The unprefixed TextGrid URI of a document, e.g. '3rbmb'
+ : @param $page The page to be rendered. This has to be the string value of a tei:pb/@n in the given document, e.g. '1a'
+ : @return A response header as well as the rendered HTML page
+ :)
 declare
     %rest:GET
     %rest:path("/content/{$document}-{$page}.html")
     %output:method("xml")
     %output:indent("no")
-function tapi:content-rest($document, $page) {
+function tapi:content-rest($document as xs:string, $page as xs:string)
+as item()+ {
     $tapi:responseHeader200,
     tapi:content($document, $page)
 };
 
-declare function tapi:content($document, $page) {
+
+(:~
+ : Initiates the HTML serialization of a given page.
+ :
+ : @param $document The unprefixed TextGrid URI of a document, e.g. '3rbmb'
+ : @param $page The page to be rendered. This has to be the string value of a tei:pb/@n in the given document, e.g. '1a'
+ : @return A div wrapper containing the rendered page
+ :)
+declare function tapi:content($document as xs:string, $page as xs:string)
+as element(div) {
     let $documentPath := $tapi:baseCollection || "/data/" || $document || ".xml"
     let $TEI :=
         if($page)
@@ -212,20 +301,28 @@ declare function tapi:content($document, $page) {
                     $include-start-and-end-nodes,
                     $empty-ancestor-elements-to-include)
         else doc($documentPath)/*
-    let $stylesheet := doc( "/db/apps/sade_assets/TEI-Stylesheets/html5/html5.xsl")
-    let $transform := transform:transform($TEI, $stylesheet, ())/xhtml:body//xhtml:div[@class="tei_body"]
+    let $stylesheet := doc("/db/apps/sade_assets/TEI-Stylesheets/html5/html5.xsl")
+    let $transform := transform:transform($TEI, $stylesheet, ())/xhtml:body//xhtml:div[@class = "tei_body"]
     return
         <div>
             {$transform}
         </div>
 };
 
+
+(:~
+ : Returns an image belonging to a given URI. This function doesn't work locally
+ : unless you have all necessary login information filled in at ahikar.env.
+ :
+ : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
+ : @return The image as binary
+ :)
 declare
     %rest:GET
     %rest:path("/images/{$uri}")
     %rest:produces("image/jpeg")
     %output:method("binary")
-function tapi:images-rest($uri) {
+function tapi:images-rest($uri as xs:string) as item()+ {
     $tapi:responseHeader200,
     hc:send-request(
         <hc:request method="GET"
@@ -236,21 +333,37 @@ function tapi:images-rest($uri) {
 
 
 (:~
- : Endpoint to deliver a single plain text.
- : @param $document a vaild textgrid URI
- :  :)
+ : Endpoint to deliver a single plain text version of the
+ : tei:text[@type = "transcription"] section a given document.
+ :
+ : ### throws HTTP ERROR 405 HTTP method GET is not supported by this URL. why?
+ :
+ : Sample call to API: /content/3r671.txt
+ :
+ : @param $document The unprefixed TextGrid URI of a document, e.g. '3r671'
+ : @return
+ :)
 declare
     %rest:GET
     %rest:path("/content/{$document}.txt")
     %output:method("text")
-function tapi:text-rest($document) {
+function tapi:text-rest($document as xs:string) as item()+ {
     $tapi:responseHeader200,
     tapi:text($document)
 };
 
-declare function tapi:text($document) {
+
+(:~
+ : Returns the text of a given document as xs:string. Text nodes in tei:sic are
+ : omitted since they are obviously typos or the like and are corrected in their
+ : sibling tei:corr.
+ :
+ : @param $document The unprefixed TextGrid URI of a document, e.g. '3r671'
+ : @return A string encompassing the whole text
+ :)
+declare function tapi:text($document as xs:string) as xs:string {
     let $documentPath := $tapi:baseCollection || "/data/" || $document || ".xml"
-    let $TEI := doc($documentPath)//tei:text[@type="transcription"]
+    let $TEI := doc($documentPath)//tei:text[@type = "transcription"]
     let $text :=
         ($TEI//text()
             [not(parent::tei:sic)]
@@ -259,55 +372,73 @@ declare function tapi:text($document) {
         $text
 };
 
+
+
 (:~
- : Endpoint to deliver all plain texts in zip container.
- :  :)
+ : Endpoint to deliver all plain texts in zip container. This comes in handy for
+ : applications doing text analysis.
+ :
+ : ### is the parameter $document really necessary?
+ : @return The response header as well as a xs:base64Binary (the ZIP file)
+ :)
 declare
     %rest:GET
     %rest:path("/content/ahikar-plain-text.zip")
     %output:method("binary")
-function tapi:text-rest($document) {
+function tapi:text-rest($document) as item()+ {
     let $prepare := tapi:zip-text()
     return
         $tapi:responseHeader200,
         compression:zip(xs:anyURI($tapi:baseCollection || "/txt/"), false())
 };
 
-declare function tapi:zip-text() {
+
+(:~
+ : Creates a plain text version of the transcription section of each Ahiqar XML.
+ : This is stored to /db/apps/sade/textgrid/txt/.
+ :
+ : ### why isn't tapi:text($document) used? why are there more TEI elements omitted for the plain text than in tapi:text?
+ : @return A string indicated the location where a plain text has been stored to
+ :)
+declare function tapi:zip-text() as xs:string+ {
     let $txtCollection := $tapi:baseCollection || "/txt/"
     let $collection := collection($tapi:baseCollection || "/data/")
     let $check-text-collection :=
         if( xmldb:collection-available($txtCollection) )
         then true()
         else xmldb:create-collection($tapi:baseCollection, "txt")
-    let $TEIs := $collection//tei:text[@type="transcription"]
+    let $TEIs := $collection//tei:text[@type = "transcription"]
     return
         for $TEI in $TEIs
-        let $baseUri := $TEI/base-uri()
-        let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
-        let $uri := $tgBaseUri => replace(".xml", "-transcription.txt")
-        let $text :=
-            (($TEI//text()
-                [not(parent::tei:sic)]
-                [not(parent::tei:surplus)])
-                [not(parent::tei:supplied)])
-                [not(parent::tei:*[@type="colophon"])]
-                [not(parent::tei:g)]
-                [not(parent::tei:unclear)]
-                [not(parent::tei:catchwords)]
-            => string-join()
-            => replace("\p{P}", "")
-            => replace("\n+", "")
-            => replace("\s+", " ")
+            let $baseUri := $TEI/base-uri()
+            let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
+            let $uri := $tgBaseUri => replace(".xml", "-transcription.txt")
+            let $text :=
+                (($TEI//text()
+                    [not(parent::tei:sic)]
+                    [not(parent::tei:surplus)])
+                    [not(parent::tei:supplied)])
+                    [not(parent::tei:*[@type = "colophon"])]
+                    [not(parent::tei:g)]
+                    [not(parent::tei:unclear)]
+                    [not(parent::tei:catchwords)]
+                => string-join()
+                => replace("\p{P}", "")
+                => replace("\n+", "")
+                => replace("\s+", " ")
 
-        let $metadata := doc($baseUri => replace("/data/", "/meta/"))
-        let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
-        return
-            xmldb:store($txtCollection, $metaTitle || "-" || $uri, $text, "text/plain")
+            let $metadata := doc($baseUri => replace("/data/", "/meta/"))
+            let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
+            return
+                xmldb:store($txtCollection, $metaTitle || "-" || $uri, $text, "text/plain")
 };
+
+
 
 (:~
  : redeploy application to db
+ :
+ : ### I'm not sure how to wrap my head around this
  :  :)
 declare
   %rest:GET
@@ -315,7 +446,7 @@ declare
   %rest:query-param("token", "{$token}")
 function tapi:redeploy($token) {
   if( $token ne environment-variable("APP_DEPLOY_TOKEN" ))
-  then error(QName("error://1", "deploy"), "deploy token incorrect.")
+    then error(QName("error://1", "deploy"), "deploy token incorrect.")
   else
     let $pkgName := environment-variable("APP_NAME")
     let $name := 'https://ci.de.dariah.eu/exist-repo/find.zip?name=' || encode-for-uri($pkgName)
@@ -331,6 +462,13 @@ function tapi:redeploy($token) {
         $install
 };
 
+
+(:~
+ : Returns the type of a resource in a SUB TextAPI compliant way.
+ :
+ : @param $format A string value of tgmd:format as used in the TextGrid metadata
+ : @return A string indicating the format in a way compliant to the SUB TextAPI
+ :)
 declare %private function tapi:type($format as xs:string)
 as xs:string {
     switch ($format)
