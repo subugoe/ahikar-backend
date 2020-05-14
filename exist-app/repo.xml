@@ -18,6 +18,7 @@
             <ul>
               <li>add image endpoint</li>
               <li>refine Text-API structure</li>
+              <li>add function documentation</li>
             </ul>
           </li>
           <li class="bugs">Bugfixes

@@ -4,7 +4,8 @@ xquery version "3.1";
  : This module provides the TextAPI for Ahikar.
  :
  : @author Mathias Göbel
- : @version 0.0.1
+ : @author Michelle Weidling
+ : @version 0.0.2
  : @since 0.0.0
  : :)
 
