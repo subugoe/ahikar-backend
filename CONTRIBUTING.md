@@ -27,8 +27,7 @@ This means that all development will be reviewed before they will be merged to t
 Please confer [Atlassian's git flow tutorial](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) for more information on how git flow works.
 
 Every branch should be to dedicated to an issue, i.e. there shouldn't be any branches without a corresponding ticket.
-Each branch should start with the dedicated issue number and a short description on what the ticket is about, e.g. `feature\#1-contributing`.
-
+Each branch should start with the dedicated issue number and a short description on what the ticket is about, e.g. `feature/#1-contributing`.
 All issues will be arranged in [milestones](https://gitlab.gwdg.de/groups/subugoe/ahiqar/-/milestones).
 Milestones are always group-wide, so we combine tickets from all repositories associated with Ahiqar to a single milestone.
 The milestone number is increased with each sprint.
