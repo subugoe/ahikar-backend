@@ -199,11 +199,12 @@ reassign_labels:
     # most recent merged MR.
     # ATTENTION: This assumes some kind of template in the MR description where
     # the last issue mentioned via #${iid} is the issue to be closed.
-    - issue_iid=$(curl --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/merge_requests?state=merged" | jq -r ".[0].description" | grep "#[0-9]\+" | tail -1 | grep -o "[0-9]\+")
+    - 'curl --output merges.json --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/merge_requests?state=merged"'
+    - issue_iid=$(jq -r ".[0].description" merges.json | grep "#[0-9]\+" | tail -1 | grep -o "[0-9]\+")
     # return the issue last mentioned, i.e. the one to be closed
-    - issue=$(curl --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/issues/${issue_iid}")
+    - 'curl --output issue_id.txt --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/issues/${issue_iid}"'
     # return all the issue's labels WITHOUT "Doing"
-    - former_labels=$(echo $issue | jq .labels[] | grep -v "Doing")
+    - former_labels=$(cat issue_id.txt | jq .labels[] | grep -v "Doing")
     # adds the label "In Review"
     - new_labels="${former_labels} \"In Review\""
     # encode the parameters with URL encoding (white spaces are replaced with %20)
