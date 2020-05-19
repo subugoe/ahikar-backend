@@ -35,9 +35,15 @@ The milestone number is increased with each sprint.
 ### Merge Requests (MR)
 
 Merge requests should be peer reviewed before merging them into `develop`.
-Please choose a person you see fit as assignee.
-Each MR should be associated with the current sprint's [milestone](https://gitlab.gwdg.de/groups/subugoe/ahiqar/-/milestones).
-Always squash commit your MR and make sure the source branch (hotfix/bugfix/feature) is deleted after the MR has been accepted.
-In case an assignee wants something to be changed in the MR, the MR is reassigned to the original reviser of the issue.
-After implementing (or declining) the desired suggestions, the MR is reassigned to the original assignee.
+A well-tried workflow is:
+
+1. A developer decides to work on a feature. She commits her changes to a separate feature branch. After some time she finishes the feature and wants it to be part of the development branch.
+2. The developer creates a merge request and assigns everybody she sees fit to properly review her code to it.
+3. To avoid diffusion of responsibility, she also assigns one of the chosen assignees as MUST. This means that this person has to approve the MR, otherwise the merge cannot be done. Although GitLab sends notifications to everybody who is newly assigned to a MR, she should notify the MUST assignee personally (in case he or she doesn't notice the mail sent by GitLab). The MR settings are:
+  * The MR is associated with the current sprint's [milestone](https://gitlab.gwdg.de/groups/subugoe/ahiqar/-/milestones).
+  * The boxes for "Squash Commit" and "Deleting branch after Merge" are ticked
+4. The MUST assignee reviews the changes according to style, variable naming, understandability, documentation provided, functionality, etc. If everything is to his or her liking, he or she approves the MR. The other assignees are free to review the code as well. **Note:** MRs without docs should not be accepted.
+5. After the MR has been (dis)approved, the assignee removes his- or herself from the list of assignees. The MUST assignee informs the developer over the review being done.
+6. The developer merges her changes into the development branch.
+
 If a merge conflict occurs the person who has proposed the MR is responsible for solving all conflicts.
