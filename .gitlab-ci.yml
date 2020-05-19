@@ -185,9 +185,11 @@ deploy_app-master:
 reassign_labels:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: reassign_labels
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_TITLE =~ /^Merge.+?into ''develop''/'
-      when: always
+  only:
+    - merge_requests
+  #rules:
+  #  - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_TITLE =~ /^Merge.+?into ''develop''/'
+  #    when: always
   script:
     # declare variables for general usability
     - project_id=$CI_PROJECT_ID
