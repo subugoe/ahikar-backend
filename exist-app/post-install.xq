@@ -17,8 +17,8 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: move the sample XML to sade/textgrid to be available in the viewer :)
 (
-    let $data-file-path := "/db/apps/ahikar/data/ahiqar_sample.xml"
+    let $data-file-path := "/db/apps/ahikar/data/"
     let $target-collection := "/db/apps/sade/textgrid/data/"
     return
-        xmldb:move($data-file-path, $target-collection)
+        xmldb:move($data-file-path, $target-collection, "ahiqar_sample.xml")
 )
