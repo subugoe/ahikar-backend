@@ -182,7 +182,11 @@ deploy_app-master:
     paths:
       - gitlab-release.json
 
-reassign_labels:
+
+# although relabelling issues works perfectly on a technical level, the GitLab
+# GUI displays them in the wrong list ("Open" instead of "In Review"). furhter
+# investigation has to be done before this works properly.
+.reassign_labels:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: reassign_labels
   only:
