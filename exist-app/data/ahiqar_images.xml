@@ -1,0 +1,7 @@
+<rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description xmlns:tei="http://www.tei-c.org/ns/1.0" rdf:about="textgrid:ahiqar_images.0">
+        <ore:aggregates rdf:resource="textgrid:3r1nz"/>
+        <ore:aggregates rdf:resource="textgrid:3r85q"/>
+        <ore:aggregates rdf:resource="textgrid:3r1p0"/>
+    </rdf:Description>
+</rdf:RDF>
