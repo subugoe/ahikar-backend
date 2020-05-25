@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
+	schematypens="http://purl.oclc.org/dsdl/schematron"?>
+
+<!-- Das folgende Dokument ist eine Beispieldatei für das Projekt Ahiqar, in dem versucht wird, alle vorkommenden 
+   Phänomene abzubilden. Sie dient damit als Grundlage für die weitere Frontententwicklung.
+
+   Grundlage für die Datei ist der Codex Mingana syr. 133, der um eine Google-Translate-Übersetzung sowie 
+   eigene Passus ergänzt wurde, um Auszeichnung zu ergänzen.
+   
+   Ab <pn n="83b"/> handelt es sich um eine Kollationierung von weiteren interessanten Phänomenen
+   komplett über das Korpus hinweg. Hierfür wurden die einzelnen Quellen systematisch durchgeschaut.
+   Quellen für die einzelnen Abschnitte sind im vorausgehenden Kommentar angegeben. -->
+
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title type="main">The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
+               king of Assyria and Nineveh</title>
+            <editor>Simon Birol</editor>
+            <editor>Aly Elrefaei</editor>
+         </titleStmt>
+         <publicationStmt>
+            <authority>Georg-August Universität Göttingen, Theologische Fakultät, Seminar für Altes
+               Testament</authority>
+         </publicationStmt>
+         <sourceDesc>
+            <msDesc>
+               <msIdentifier>
+                  <settlement>
+                     <country>Great Britain</country>
+                  </settlement>
+                  <institution>University of Cambridge - Cambridge University Library</institution>
+                  <idno>Add. 2020</idno>
+               </msIdentifier>
+               <msContents>
+                  <msItem>
+                     <textLang>Classical Syriac</textLang>
+                  </msItem>
+               </msContents>
+               <history>
+                  <origin>
+                     <objectType>codex</objectType>
+                     <country>Iraq</country>
+                     <placeName>Alqosh</placeName>
+                     <date precision="high">18.10.1697</date>
+                  </origin>
+               </history>
+            </msDesc>
+            <listBibl>
+               <bibl>Wright, William: A catalogue of the Syriac manuscripts preserved in the library
+                  of the University of Cambridge, vol. 2, Cambridge 1901, p. 583-9.</bibl>
+            </listBibl>
+         </sourceDesc>
+      </fileDesc>
+      <profileDesc>
+         <abstract>
+            <ab>East Syriac script</ab>
+         </abstract>
+         <textClass>
+            <keywords>
+               <term>proverbs</term>
+               <term>prose</term>
+            </keywords>
+         </textClass>
+      </profileDesc>
+      <encodingDesc>
+         <tagsDecl>
+            <rendition xml:id="red" scheme="css">color: red;</rendition>
+            <rendition xml:id="font" scheme="free">Serto Jerusalem</rendition>
+         </tagsDecl>
+      </encodingDesc>
+      <revisionDesc>
+         <listChange>
+            <change>
+               <ab>Conversion to specified TEI by SUB Göttingen</ab>
+            </change>
+         </listChange>
+      </revisionDesc>
+   </teiHeader>
+   <text>
+      <group>
+         <text xml:lang="eng" type="translation">
+            <body>
+               <pb n="82a"/>
+               <cb/>
+               <head><g>✓</g> Where the story <add place="margin">really</add> begins
+                     <supplied>.</supplied></head>
+               <ab>With the help of God Almighty, <add place="interlinear">test</add> we begin with
+                  His name</ab>
+               <ab><lb break="no"/>Almighty mentioned forever. And we write news</ab>
+               <ab>Wise, clever, <persName>Felius</persName> the boy</ab>
+               <ab>Minister of <persName>Sennacherib</persName>, son of
+                     <persName>Sarhaduma</persName>, king <placeName>Ator</placeName></ab>
+               <ab>And <placeName>Nineveh</placeName> And the conductor. And what on him and
+                  who</ab>
+               <ab>His nephew <persName>Nadan</persName>. It was in the days of the king Ibn
+                     <persName>Sarhadum</persName></ab>
+               <ab>King of the land of <unclear reason="illegible"
+                     ><placeName>Athor</placeName></unclear></ab>
+               <ab><placeName>Nineveh</placeName> and her country. A wise man said</ab>
+               <ab>It has spit. The Minister of King <persName>Sennacherib</persName> and his writer
+                  were</ab>
+               <ab>And it was</ab>
+               <ab>With a lot of money and a lot of livelihood. <persName>Maher Hakim</persName> was
+                  a philosopher</ab>
+               <ab>With knowledge, opinion and measure. He had married sixty women</ab>
+
+               <cb/>
+               <ab type="head">A cross <add place="header">test</add> heading</ab>
+               <ab>And he built for each one of them a cabin. And with all this</ab>
+               <ab>He had no son to inherit. It was a lot of worry for that</ab>
+               <ab>And on the same day, astrologers gathered and magicians</ab>
+               <ab>Are knowledgeable. He complained to them about his condition and order</ab>
+               <ab>His real estate</ab>
+               <ab>And they said to him, Go in and call to the gods, and hire them</ab>
+               <ab>Perhaps they will give you a son. And he did as they told him. He gave</ab>
+               <ab>The offerings of idols and their help. And pray to them</ab>
+               <ab>With students and prayers. They did not answer him with his word. So he went
+                  out</ab>
+               <ab>Sadness, disappointment and disappointment, leaving the heart. He came back</ab>
+               <ab>By invoking God Almighty. Believe and use it burned</ab>
+               <lg>
+                  <l>Shall <add place="below">test</add>I compare thee to a summer's day?</l>
+                  <l>Thou art more lovely and more temperate<surplus>:</surplus></l>
+               </lg>
+               <ab>and she died. <seg type="colophon">end <add place="footer">test</add>of the
+                     text</seg></ab>
+
+
+               <pb n="82b"/>
+               <pb n="83a"/>
+               <ab>Turn up. <quote>It was, so it is not.</quote> Oh God, heaven and earth. My
+                  Creator</ab>
+               <ab><del rend="strikethrough">The whole creature. I ask you to give me</del></ab>
+               <ab>A boy until I cherish him, inherit me, and attend my death</ab>
+               <ab/>
+               <ab>And close my eyes and bury me. Then a voice came to him</ab>
+               <ab>From the sky above. So I relied on idols first</ab>
+               <ab>Carved. They were made offerings. So</ab>
+               <ab rend="margin-top">Stay without a boy. Even <persName>Nadan</persName>, your
+                  nephew, take it</ab>
+               <ab>Make it a boy. And teach him your knowledge, manners and wisdom</ab>
+               <ab>He inherits you. Then <persName>Nadan</persName> took his nephew and he was</ab>
+               <ab>Small suckling. He handed him over to <persName>Tammania</persName>, a nursing
+                  woman</ab>
+               <ab>To nurse and nurture him. They raised him with good food and clothing</ab>
+               <ab>Silk, purple, and scarlet were seated on</ab>
+               <ab>Silk pricks. When <persName>Nadan</persName> grew up, walked and slept</ab>
+               <ab>Like high rice, his knowledge of writing and reading</ab>
+               <ab>Discipline and philosophy. When it was some days</ab>
+               <ab><persName>Sennacherib</persName> looked at the king, and he saw the haggard of
+                  his minister</ab>
+               <ab>And his writer has remained a great old man</ab>
+               <ab>He said to him, O honorable loving companion</ab>
+               <ab>Clever mastermind <persName>Hakim</persName> writer and minister and
+                     <persName>Khatem</persName></ab>
+               <ab>My country secret and housekeeper. You have grown and stabbed in</ab>
+               <ab>Age<add place="above">test</add> and older. And near the time of your death and
+                  death. So he said</ab>
+               <ab>For me who will serve you after you. he said to him A-</ab>
+               <ab>hikar</ab>
+               <ab type="colophon">This is where text ends.</ab>
+            </body>
+         </text>
+
+         <text xml:lang="ara" type="transliteration">
+            <body>
+               <pb n="82a"/>
+               <cb/>
+               <head><supplied>.</supplied><add place="margin">حقًا</add>حيث تبدأ القصة
+                  <g>✓</g></head>
+               <ab>نبتدي بعون الباري<add place="interlinear">اختبار</add> تعالى جل اسمه</ab>
+               <ab><lb break="no"/>وتعالى ذكره الى الابد. ونكتب خبر</ab>
+               <ab>الحكيم الماهر الفليوس الشاطر</ab>
+               <ab>وزير <persName>سنحاريب</persName> ابن <persName>سرحادوم</persName> ملك <unclear
+                     reason="illegible"><placeName>اتور</placeName></unclear>
+               </ab>
+               <ab>
+                  <placeName>ونينوى</placeName>
+                  <placeName>والموصل</placeName> . وما جرا منه ومن</ab>
+               <ab>ابن اخته <persName>نادان</persName> . كان في ايام الملك ابن
+                     <persName>سرحادوم</persName>
+               </ab>
+               <ab>ملك ارض <placeName>اتور</placeName>
+                  <placeName>ونينوى</placeName> وبلادها. رجل حكيم يقال</ab>
+               <ab>له <persName>حيقار</persName> . وكان وزير الملك <persName>سنحاريب</persName>
+                  وكاتبه وكان</ab>
+               <ab>ذو مال جزيل ورزق كثير. وكان ماهر حكيم فيلسوف</ab>
+               <ab>ذو معرفه وراي وتدبير. وكان قد تزوج ستين امراه</ab>
+
+               <cb/>
+               <ab type="head">رأس <add place="header">اختبار</add>متقاطع</ab>
+               <ab>وبنى لكل واحده منهن مقصوره. ومع هذا كله</ab>
+               <ab>لم يكن له ولد يرثه. وكان كثير الهم لاجل ذلك</ab>
+               <ab>وانه في ذات يوم جمع المنجمين والسحره</ab>
+               <ab>والعارفين. واشكا لهم حاله وامر <choice>
+                     <sic>بعقوريته</sic>
+                     <corr>عقوريته</corr>
+                  </choice>
+                  <choice>
+                     <sic>بعقوريته</sic>
+                     <corr resp="#sb">عقوريته</corr>
+                  </choice>
+               </ab>
+               <ab>فقالوا له ادخل ادبح للالهه واستجير بهم</ab>
+               <ab>لعلهم يرزقوك ولدًا. ففعل كما قالوا له. وقدم</ab>
+               <ab>القرابين للاصنام واستغاث بهم. وتضرّع اليهم</ab>
+               <ab>بالطلبه والدعا. فلم يجيبوه بكلمه. فخرج</ab>
+               <ab>يحزان ندمان خايب وانصرف متالم القلب. ورجع</ab>
+               <ab>بالتضرع الى الله تعالى. وامن واستعان به بحرقة</ab>
+               <ab>قلب قايلًا. يا الاه السما والارض. يا خالق</ab>
+               <lg>
+                  <l>هل <add place="below">اختبار</add> أقارنك بيوم صيفي؟</l>
+                  <l>انت أكثر جميلة وأكثر اعتدالا<surplus>:</surplus></l>
+               </lg>
+               <ab><seg type="colophon">. نهاية<add place="footer">اختبار</add>
+                  النص</seg>وماتت.</ab>
+
+               <pb n="82b"/>
+               <pb n="83a"/>
+               <ab>الخلايق كلها.<quote>كان كذلك ، لذا لم يكن كذلك.</quote> انا اطلب اليك ان
+                  توهبني</ab>
+               <ab><del rend="strikethrough">ولدًا حتى اتعزا به ويرثني ويحضر بموتي</del></ab>
+               <ab>ويغمض عيناي ويدفنني. فعند ذلك اتاه صوت</ab>
+               <ab/>
+               <ab>من السما قايلا. بحيث اتكلت اولًا على الاصنام</ab>
+               <ab>المنحوته. وقدمت لهم القرابين. لذلك</ab>
+               <ab>تبقا بلا ولد. بل ان <persName>نادان</persName> ابن اختك خذه</ab>
+               <ab rend="margin-top">واجعله لك ولدًا. وعلمه علمك وادبك وحكمتك</ab>
+               <ab>وهو يرثك. عند ذلك اخذ <persName>نادان</persName> ابن اخته وكان</ab>
+               <ab>صغير يرضع. فسلمه الى تمانية نسا مرضعات</ab>
+               <ab>ليرضعوه ويربوه. فربوه بالاكل الطيب والبسوه</ab>
+               <ab>الحرير والارجوان والقرمز وكان جلوسه على</ab>
+               <ab>الطنافس الحرير. فلما كبر <persName>نادان</persName> ومشى ونمى</ab>
+               <ab>مثل الارز العالي فعلمه الكتابه والقرااه</ab>
+               <ab>والتاديب والفلسفه. فلما كان بعض الايام</ab>
+               <ab>نظر <persName>سنحاريب</persName> الملك فراى <persName>حيقار</persName> وزيره</ab>
+               <ab>وكاتبه وهو قد بقى رجل شيخ كبير</ab>
+               <ab>فقال له ايها الصاحب المحب المكرم</ab>
+               <ab>الماهر المدبر الحكيم كاتبي ووزيري وكاتم</ab>
+               <ab>سري ومدبر دولتي. ها قد كبرت وطعنت في</ab>
+               <ab>السن<add place="interlinear">اختبار</add> وشخت. وقرب وقت موتك ووفاتك. فقول</ab>
+               <ab><persName next="#ms1">أ</persName>لي من يقوم في خدمتي بعدك. فقال له </ab>
+               <ab><persName xml:id="ms1">حقر</persName></ab>
+               <ab type="colophon">هذا حيث ينتهي النص.</ab>
+
+
+               <!-- #### The following encoding has been taken directly from the source
+                  material. In case there are Karshuni passages, tei:seg has been added 
+                  in order to comply with tei:text/@xml:lang #### -->
+               <pb n="83b"/>
+
+
+               <!-- ### Brit.Mus._cod._Add._7209_Transcrip.karsh.3r14z.1.xml -->
+               <!-- persName spanning over two lines -->
+               <ab>وقال للسياف كان اسمه <persName next="#Brit.Mus_7209_2">يبوس</persName></ab>
+               <ab><persName xml:id="Brit.Mus_7209_2">ميكمسكينكنتي</persName> قوم خد
+                     <persName>حيقر</persName> وامضي</ab>
+
+               <!-- rubricated place and person names -->
+               <ab><hi rendition="#red"><placeName>مصر</placeName> الى عند
+                        <persName>فرعون</persName> الملك </hi> ولما</ab>
+
+               <!-- colophon -->
+               <ab type="colophon">والان كملت قصت <persName>حيقر</persName> الحكيم الفارسي</ab>
+
+
+
+               <!-- ### Brit._Libr._Or._2326.3r9pr.0.xml -->
+               <!-- illegible text -->
+               <ab>فتركهم وحزن وتالم <unclear reason="illegible">ܘܟܓܪܒ</unclear> بقوله</ab>
+
+
+
+               <!-- ### Cod._Add._2886._Transcript._karsh.3r1dp.1.xml -->
+               <!-- word spanning over two lines -->
+               <ab>وختمهم بختم خاله <persName>حيقار</persName> . واما</ab>
+               <ab><lb break="no"/> هم في دار الملك ثم مضا ايضا وكتب</ab>
+
+               <!-- deletion, marginal gloss with entities -->
+               <ab>
+                  <del rend="strikethrough">صوته فيطرحون</del>
+                  <add place="margin">صهل في بلاد <placeName>اتور</placeName>
+                     <placeName>ونينوا</placeName> فسمعوا خيلنا صوته فطرحوا</add> فلما سمع
+                     <persName>حيقار</persName>
+               </ab>
+
+               <!-- gloss: above -->
+               <ab>قيل بالامثال من <add place="above">لا</add> يسمع من اذنيه</ab>
+
+
+
+               <!-- ### MS_orient_2652.Transcrip._karsh.3r1r2.1.xml -->
+               <!-- a colophon in verse. tei:lg is missing. -->
+               <l type="colophon">فيا سادتي رقّوا لعبدًا</l>
+               <l type="colophon">في ذنوبا لا يعدوا</l>
+               <l type="colophon">جا بالتقصير يسال</l>
+               <l type="colophon">ان تروا عيبا فسدّوا</l>
+
+
+
+               <!-- ### Mingana_Syriac_258.Transcrip._karsh.3r1pq.1.xml -->
+               <!-- gloss: inline -->
+               <ab>الرعيَّه. يا <add place="inline">ابني</add> اربعةً اخر العاقل والاحمق</ab>
+
+               <!-- untyped unclear, untyped damage -->
+               <ab>
+                  <add place="margin">هذا</add>
+                  <unclear>سطين</unclear> الحجر قدَّ حتى اخيط لكم هذا الحجر <damage>...</damage>
+               </ab>
+
+
+
+               <!-- ### Vat._sir._159._ff.293rb-299va._Transcrip.Karsh.3r1sv.1.xml -->
+               <!-- a page (shortened) with two columns (incl. numbering)-->
+               <pb n="297v"/>
+               <cb n="1"/>
+               <ab>بالعطاي وكبره وبعد يوم انا</ab>
+               <ab>
+                  <persName>حيقار</persName> بعثت الى <persName>اشفغني</persName> زوجتي</ab>
+               <ab>وقلت لها حال وصول اليكي</ab>
+               <ab>امري قولي للصيادين ان يصيدوا</ab>
+               <ab>لنا فرخين نسورا وقولي لصناع</ab>
+               <ab>القطن ان يفتلوا لنا شريطين</ab>
+               <ab>يكونوا غليظ صبع وطول الفين</ab>
+               <ab>ذراع والنجارين حتى ينجرون صناديق</ab>
+               <ab>كبار واعطي <persName>نبوحال</persName>
+                  <persName>وطبوليم</persName>
+               </ab>
+               <ab>لسبعة نسا مرضعة حتى يربوهم</ab>
+               <ab>واذبحي كليوم خاروف للنسورا</ab>
+               <ab>...</ab>
+
+               <cb n="2"/>
+               <ab>
+                  <persName>فرعون</persName> اكابره ان يلبسون ثياب</ab>
+               <ab>البرفير الاحمار والملك لبس</ab>
+               <ab>ثوب ارجاونى وجلس على كرسيه</ab>
+               <ab>وكل عظاماه قيام قدامه وامر</ab>
+               <ab>ادخلوني اليه قال لى يا <persName>ابيشام</persName>
+               </ab>
+               <ab>لمن اشبه انا واكابرى لمن</ab>
+               <ab>يشبهون قلت له تشبه انت</ab>
+               <ab>لبيل الصنم واكابرك يشبهون</ab>
+               <ab>لخدامه فقال لى امضي الى</ab>
+               <ab>منزلك وايضا قال اكابره بالغد</ab>
+               <ab>البسوا كلكم ثياب احمر وتجوا</ab>
+               <ab>...</ab>
+            </body>
+         </text>
+
+         <text xml:lang="karshuni" type="transcription">
+            <body>
+               <pb facs="textgrid:3r1nz" n="82a"/>
+               <cb/>
+               <head><seg xml:lang="ara"><supplied>.</supplied><add place="margin"
+                     >حقًا</add></seg><g>✓</g>
+                  <!-- this rubrication can be found in BnF_434_rev.3r676.4.xml -->
+                  <hi rend="color(red)"> ܀ ܬܘܒ ܒܚܹܝܠ <choice>
+                        <abbr>ܝܗ̈ܿ</abbr>
+                        <expan>ܝܗ</expan>
+                     </choice> ܟܿܬܒܢܐ ܩܲܠܝܼܠ ܡܼܢ ܡ̈ܬܼܠܐ <persName>ܕܐܚܝܼܩܲܪ܆</persName>
+                  </hi></head>
+               <ab>ܢܒܬܕܝ ܒܥܘܢ ܐܠܒܐܪܝ<add place="interlinear">اختبار</add> ܬܥܐܠܝ ܓܠ ܐܣܡܗ</ab>
+               <ab><lb break="no"/>ܘܬܥܐܠܝ ܕܟܪܗ ܐܠܝ ܐܠܐܒܕ. ܘܢܟܬܒ ܟܒܪ</ab>
+               <ab>ܐܠܚܟܝܡ ܐܠܡܐܗܪ <choice>
+                     <sic>ܐܠܦܠܝܘܣ</sic>
+                     <corr>ܐܠܦܠܝܣܘܦ</corr>
+                  </choice> ܐܠܫܐܛܪ</ab>
+               <ab>ܘܙܝܪ <persName>ܣܢܚܐܪܝܒ</persName> ܐܒܢ <persName>ܣܪܚܐܘܕܡ</persName> ܡܠܟ
+                     <placeName>ܐܬܘܪ</placeName>
+               </ab>
+               <ab>
+                  <placeName>ܘܢܝܢܘܝ</placeName>
+                  <placeName>ܘܐܠܡܘܨܠ</placeName> ܘܡܐ ܓܪܐ ܡܥܗ ܘܡܢ</ab>
+               <ab>ܐܒܢ ܐܟܬܗ <persName>ܢܐܕܐܢ</persName> . ܟܐܢ ܦܝ ܐܝܐܡ ܐܠܡܠܟ ܐܒܢ ܣܪܚܐܕܘܡ</ab>
+               <ab>ܡܠܟ ܐܪܜ <unclear reason="illegible"><placeName>ܐܬܘܪ</placeName></unclear>
+                  <placeName>ܘܢܝܢܘܝ</placeName> ܘܒܠܐܕܗܐ. ܪܓܠ ܚܟܝܡ ܝܩܐܠ </ab>
+               <ab>ܠܗ <persName>ܚܝܩܐܪ</persName> ܘܟܐܢ ܘܙܝܪ ܐܠܡܠܟ <persName>ܣܢܚܐܪܝܒ</persName> ܘܟܐܬܒܗ
+                  ܘܟܐܢ</ab>
+               <ab>ܕܘ ܡܐܠ ܓܙܝܠ ܘܪܙܩ ܟܬܝܪ. ܘܟܐܢ ܡܐܗܪ ܚܟܝܡ ܦܝܠܣܘܦ</ab>
+
+               <cb/>
+               <ab type="head"><seg xml:lang="ara">رأس <add place="header"
+                  >اختبار</add>متقاطع</seg></ab>
+               <ab>ܕܘ ܡܥܪܦܗ ܘܪܐܝ ܘܬܕܒܝܪ. ܘܟܐܢ ܩܕ ܬܙܘܓ ܣܬܝܢ ܐܡܪܐܗ</ab>
+               <ab>ܘܒܢܝ ܠܟܠ ܘܐܚܕܗ ܡܢܗܢ ܡܩܨܘܪܗ. ܘܡܥ ܗܕܐ ܟܠܗ</ab>
+               <ab>ܠܡ ܝܟܢ ܠܗ ܘܠܕ ܝܪܬܗ. ܘܟܐܢ ܟܬܝܪ ܐܠܗܡ ܠܐܓܠ ܕܠܟ</ab>
+               <ab>ܘܐܢܗ ܦܝ ܕܐܬ ܝܘܡ ܓܡܥ ܐܠܡܢܓܡܝܢ ܘܐܠܣܚܪܗ</ab>
+               <ab>ܘܐܠܥܐܪܦܝܢ. ܘܐܫܟܐ ܠܗܡ ܚܐܠܗ ܘܐܡܪ <choice>
+                     <sic>ܒܥܩܘܪܝܬܗ</sic>
+                     <corr>ܥܩܘܪܝܬܗ</corr>
+                  </choice>
+                  <choice>
+                     <sic>ܒܥܩܘܪܝܬܗ</sic>
+                     <corr resp="#sb">ܥܩܘܪܝܬܗ</corr>
+                  </choice>
+               </ab>
+               <ab>ܦܩܐܠܘܐ ܠܗ ܐܕܟܠ ܐܕܒܚ ܠܠܐܠܗܗ ܘܐܣܬܓܝܪ ܒܗܡ</ab>
+               <ab>ܠܥܠܗܡ ܝܪܙܩܘܟ ܘܠܕܐ. ܦܦܥܠ ܟܡܐ ܩܐܠܘܐ ܠܗ. ܘܩܕܡ</ab>
+               <ab>ܐܠܩܪܐܒܝܢ ܠܠܐܨܢܐܡ ܘܐܣܬܓܐܬ ܒܗܡ. ܘܬܜܪܥ ܐܠܝܗܡ</ab>
+               <ab>ܒܐܠܛܠܒܗ ܘܐܠܕܥܐ. ܦܠܡ ܝܓܝܒܘܗ ܒܟܠܡܗ. ܦܟܪܓ</ab>
+               <ab>ܝܚܙܐܢ ܢܕܡܐܢ ܟܐܝܒ ܘܐܢܨܪܦ ܡܬܐܠܡ ܐܠܩܠܒ. ܘܪܓܥ</ab>
+               <ab>ܒܐܠܬܜܪܥ ܐܠܝ ܐܠܠܗ ܬܥܐܠܝ. ܘܐܡܢ ܘܐܣܬܥܐܢ ܒܗ ܒܚܪܩܗ̈</ab>
+               <ab>ܩܠܒ ܩܐܝܠܐ. ܝܐ ܐܠܐܗ ܐܠܣܡܐ ܘܐܠܐܪܜ. ܝܐ ܟܐܠܩ</ab>
+               <lg>
+                  <l>ܩܠܒ <add place="interlinear">اختبار</add> ܩܐܝܠܐ</l>
+                  <l>ܩܠܒ ܩܐܝܠܐ <surplus>:</surplus></l>
+               </lg>
+               <ab xml:lang="ara"><seg type="colophon">. نهاية<add place="footer">اختبار</add>
+                     النص</seg>وماتت.</ab>
+               <ab><catchwords>الخلايق كلها</catchwords></ab>
+
+
+               <!-- random facsimile for invented empty page -->
+               <pb facs="textgrid:3r1p0" n="82b"/>
+               <pb facs="textgrid:3r1nz" n="83a"/>
+               <ab>ܐܠܟܠܐܝܩ ܟܠܗܐ.<quote><seg xml:lang="ara">كان كذلك ، لذا لم يكن كذلك.</seg></quote>
+                  ܐܢܐ ܐܛܠܒ ܐܠܝܟ ܐܢ ܬܘܗܒܢܝ</ab>
+               <ab><del rend="strikethrough">ܘܠܕܐ ܚܬܝ ܐܬܥܙܐ ܒܗ ܘܝܪܬܢܝ ܘܝܚܜܪ ܒܡܘܬܝ</del></ab>
+               <ab>ܘܝܓܡܜ ܥܝܢܐܝ ܘܝܕܦܢܢܝ. ܦܥܢܕ ܕܠܟ ܐܬܐܗ ܨܘܬ</ab>
+               <ab/>
+               <ab>ܡܢ ܐܠܣܡܐ ܩܐܝܠܐ. ܒܚܝܬ ܐܬܟܠܬ ܐܘܠܐ ܥܠܝ ܐܠܐܨܢܐܡ</ab>
+               <ab>ܐܠܡܢܚܘܬܗ. ܘܩܕܡܬ ܠܗܡ ܐܠܩܪܐܒܝܢ. ܠܕܠܟ </ab>
+               <ab>ܬܒܩܐ ܒܠܐ ܘܠܕ. ܒܠ ܐܢ <persName>ܢܐܕܐܢ</persName> ܐܒܢ ܐܟܬܟ ܟܕܗ</ab>
+               <ab rend="margin-top">ܘܐܓܥܠܗ ܠܟ ܘܠܕܐ. ܘܥܠܡܗ ܥܠܡܟ ܘܐܕܒܟ ܘܚܟܡܬܟ</ab>
+               <ab>ܘܗܘ ܝܪܬܟ. ܥܢܕ ܕܠܟ ܐܟܕ <persName>ܢܐܕܐܢ</persName> ܐܒܢ ܐܟܬܗ ܘܟܐܢ </ab>
+               <ab>ܨܓܝܪ ܝܪܜܥ. ܦܣܠܡܗ ܐܠܝ ܬܡܐܢܝܗ̈ ܢܣܐ ܡܪܜܥܐܬ</ab>
+               <ab>ܠܝܪܜܥܘܗ ܘܝܪܒܘܗ. ܦܪܒܘܗ ܒܐܠܐܟܠ ܐܠܛܝܒ ܘܐܠܒܣܘܗ</ab>
+               <ab>ܐܠܚܪܝܪ ܘܐܠܐܪܓܘܐܢ ܘܐܠܩܪܡܙ ܘܟܐܢ ܓܠܘܣܗ ܥܠܝ</ab>
+               <ab>ܐܠܛܢܐܦܣ ܐܠܚܪܝܪ. ܦܠܡܐ ܟܒܪ <persName>ܢܐܕܐܢ</persName> ܘܡܫܝ ܘܢܡܝ</ab>
+               <ab>ܡܬܠ ܐܠܐܪܙ ܐܠܥܐܠܝ ܦܥܠܡܗ ܐܠܟܬܐܒܗ ܘܐܠܩܪܐܐܗ</ab>
+               <ab>ܘܐܠܬܐܕܝܒ ܘܐܠܦܠܣܦܗ. ܦܠܡܐ ܟܐܢ ܒܥܜ ܐܠܐܝܐܡ</ab>
+               <ab>ܢܜܪ <persName>ܣܢܚܐܪܝܒ</persName> ܐܠܡܠܟ ܦܪܐܝ <persName>ܚܝܩܐܪ</persName> ܘܙܝܪܗ </ab>
+               <ab>ܘܟܐܬܒܗ ܘܗܘ ܩܕ ܒܩܝ ܪܓܠ ܫܝܟ ܟܒܝܪ</ab>
+               <ab>ܦܩܐܠ ܠܗ ܐܝܗܐ ܐܠܨܐܚܒ ܐܠܡܚܒ ܐܠܡܟܪܡ</ab>
+               <ab>ܐܠܡܐܗܪ ܐܠܡܕܒܪ ܐܠܚܟܝܡ ܟܐܬܒܝ ܘܘܙܝܪܝ ܘܟܐܬܡ</ab>
+               <ab>ܣܪܝ ܘܡܕܒܪ ܕܘܠܬܝ. ܗܐ ܩܕ ܟܒܪܬ ܘܛܥܢܬ ܦܝ </ab>
+               <ab>ܐܠܣܢ ܘܫܟܬ.<add place="interlinear">اختبار</add> ܘܩܪܒ ܘܩܬ ܡܘܬܟ ܘܘܦܐܬܟ. ܦܩܘܠ</ab>
+               <ab>ܠܝ ܡܢ ܝܩܘܡ ܦܝ ܟܕܡܬܝ ܒܥܕܟ. ܦܩܐܠ ܠܗ</ab>
+               <ab type="colophon"><seg xml:lang="ara">هذا حيث ينتهي النص.</seg></ab>
+
+
+               <!-- #### The following encoding has been taken directly from the source
+                  material. In case there are Arabic passages, tei:seg with/or @xml:id has been added 
+                  in order to comply with tei:text/@xml:lang #### -->
+               <!-- inserted random facsimile just to provide one -->
+               <pb facs="textgrid:3r85q" n="83b"/>
+
+               <!-- ### BnF_434_rev.3r676.4.xml -->
+               <!-- different type of rubrication -->
+               <ab>♰ <hi rend="color(red)">ܬܘܼܒ</hi>♰</ab>
+
+
+
+               <!-- ### Borg._Arab._201.3r7vv.0.xml -->
+               <!-- correction of a word -->
+               <ab xml:lang="ara">خدمتني وخدمت ابي <persName>سرحادوم</persName> كذلك يكون هذا ولدك
+                     <del rend="strikethrough">يكرمني</del>
+                  <add place="above">يخدمني</add>
+               </ab>
+
+
+
+               <!-- ### Brit._Lib._Add._7200.3r131.1.xml -->
+               <!-- damaged text with supplied -->
+               <ab><damage>
+                     <orig>[܂]ܢܬ [܂܂܂]ܡܪ</orig>
+                     <supplied>ܫܢܬ ܐܬܐܡܪ</supplied> ܗܼܘܐ ܠܝܼ܂ </damage>
+               </ab>
+
+               <!-- several damaged words in a line -->
+               <ab>
+                  <damage>
+                     <orig>unclear</orig>
+                     <supplied>ܘܬܚܙܐ ܐܢܬܬܐ ܕܣܩܝܠܐ</supplied>
+                  </damage> ܘܡܨܒܬܐ܇ <damage>
+                     <orig>ܠ[܂] ܬܪܓܝ[܂]</orig>
+                     <supplied>ܠܐ ܬܪܓܝܗܿ</supplied>
+                  </damage>
+               </ab>
+
+
+
+               <!-- ### Brit._Libr._Or._2326.3r9pr.0.xml -->
+               <!-- rubrication with switiching language -->
+               <ab>
+                  <hi rendition="#red">
+                     <seg xml:lang="ara"> نبتدي بعون الله </seg> ܘܢܟܬܒ ܩܨܗ̈</hi>
+               </ab>
+
+
+               <!-- ### Cambridge_Add._2020.3r82k.1.xml -->
+               <!-- omitted text -->
+               <ab> ܥܲܝܢܹܗ ܢܕܲܒܲܪ ܒܲܝܬܹܿܗ܀ ܒܹܪܝ ܛܵܒܼ ܥܘܝܼܪ <supplied rend="omission"
+                     >ܒܥܲܝܢ̈ܘܗܝ</supplied> ܡܼܢ ܗܵܘܿ ܕܲܥܘܝܼܪ </ab>
+
+               <!-- gloss: below -->
+               <ab> ܠܲܝܬܿ ܠܹܗ܂ ܘܛܵܒܼܘܼ ܩܵܠܐ ܕܐܘܼܠ̈ܝܬܼܵܐ ܒܐܹܕ̈ܢܲܝ ܣܲܟܼܠܵܐ܉ <add place="below"
+                     >ܡܢ</add> ܙܡܵܪܵܐ </ab>
+
+               <!-- damaged text with entity and illegible text -->
+               <ab>
+                  <damage>
+                     <persName>ܣܿܢܚܹܪܝܼܒܼ</persName> ܡܵܪܝ <unclear reason="illegible">ܠ܂܂܂</unclear>
+                     <unclear reason="illegible">܂܂܂܂</unclear> ܘܪܵܘܪ̈ܒܼܵܢܵܘܗܝ ܠܒܲܪ̈ܩܹܐ </damage>
+               </ab>
+
+
+
+               <!-- ### Cambrigde_Add_3497.3rb41.0.xml -->
+               <!-- place name spanning over two lines -->
+               <ab xml:lang="ara">والعساكر وانطلقوا الى الصحره الى <placeName next="#Cambrigde_Add_3497_1"
+                     >بقعة</placeName>
+               </ab>
+               <ab xml:lang="ara">
+                  <placeName xml:id="Cambrigde_Add_3497_1">نسرين</placeName> فلما وصلوا فنظر الملك
+                  الى <persName>حيقار</persName>
+               </ab>
+
+
+
+               <!-- ### Cod._Add._2886._Transcript._karsh.3r1dp.1.xml -->
+               <!-- head-like line -->
+               <ab type="head">ܟܪܐܣ ܥܐܫܪ</ab>
+
+
+
+               <!-- ### DFM_00614.3rbm8.0.xml -->
+               <!-- several corrections in a line -->
+               <ab xml:lang="ara">والأن <del rend="strikethrough">فبقي</del>
+                  <add place="below">بقى</add>
+                  <del rend="strikethrough">أمرادني</del>
+                  <add place="below">اريد</add> منك <del rend="strikethrough">حتى</del>
+                  <add place="below">ان</add> تبني <del rend="strikethrough">لك</del>
+                  <add place="below">لي</add>
+               </ab>
+
+
+
+               <!-- ### GCAA_00486.3rbmb.0.xml -->
+               <!-- rubricated supplied -->
+               <ab xml:lang="ara">
+                  <supplied>
+                     <hi rendition="#red">يا بني</hi>
+                  </supplied> لا تكون مثل شجرة اللوز لانها</ab>
+
+               <!-- usage of tei:gap -->
+               <ab xml:lang="ara">ولا تبادر برد الجواب <gap reason="invisible"/> لا</ab>
+
+               <!-- usage of tei:gap -->
+               <ab>
+                  <gap reason="lost"/>
+               </ab>
+
+
+
+               <!-- ### MS_orient_2652.Transcrip._karsh.3r1r2.1.xml -->
+               <!-- addition within rubrication -->
+               <ab>
+                  <hi rendition="#red">ܦܩܐܠ ܠܗ ܣܝܕܝ <add place="margin">ܝܫܒܗ</add> ܐܠܐܗ ܐܠܣܡܐ
+                     ܘܐܟܐܒܪܗ</hi>
+               </ab>
+
+
+
+               <!-- ### Mingana_Arabic_Christian_93_(84).3r7tv.1.xml -->
+               <!-- choice within colophon -->
+               <ab type="colophon" xml:lang="ara">فيها هكذا وجدنا وكتبنا والله <choice>
+                     <sic>لهو</sic>
+                     <corr>له</corr>
+                  </choice> المجد والشكر الي الابد امين</ab>
+
+
+
+               <!-- ### Mingana_Syriac_258.Transcrip._karsh.3r1pq.1.xml -->
+               <!-- choice within marginal gloss -->
+               <ab>
+                  <add place="margin">
+                     <choice>
+                        <sic>ܦܫܐܚܬܗ</sic>
+                        <corr>ܦܚܐܫܬܗ</corr>
+                     </choice>
+                  </add> ܐܠܪܕܝܗ ܝܐ ܐܒܢܝ ܐܩܬܢܝ ܠܟ ܬܘܪ</ab>
+
+
+
+               <!-- ### Mingana_Syriac_433.3r8m5.0.xml -->
+               <!-- unclear with @reason -->
+               <ab>ܘܟܼܠܡܿܢ ܕܢܹܥܒܲܪ ܥܠܸܝܗܿ <unclear reason="eccentric_ductus">ܘܕܵܐܹܫ</unclear> ܠܵܗܿ
+                  ܐܵܟܹܿܠ ܡܼܢ </ab>
+
+               <!-- choice within entity -->
+               <ab>ܠܙܿܠܝܼܩܵܘ̈ܗܝ܂ ܘܬܼܘܼܒܼ ܐܡܼܪ ܠܝܼ܂ ܙܸܠ <persName>
+                     <choice>
+                        <sic>ܐܲܒܼܝܼܩܵܡ܂</sic>
+                        <corr resp="#sb">ܐܲܒܼܝܼܩܲܡ܂</corr>
+                     </choice>
+                  </persName>
+               </ab>
+
+
+
+               <!-- ### Nau.3r9f0.0.xml -->
+               <!-- damage with orig/supplied -->
+               <ab>ܫܬܿܝܼܢ܂ ܘܲܒܼܢܝܹܬ ܠܗܹܝܢ ܒܝܼܪ̈ܬܼܵܐ <damage>
+                     <orig>[܂܂܂]ܢ܂</orig>
+                     <supplied>ܫܬܝܢ܂</supplied>
+                  </damage>
+               </ab>
+
+               <!-- gloss: footer -->
+               <ab>ܗܘܹ̇ܝܬܿ ܠܝܼ <add rend="footer">ܐܲܝܟܼ</add> ܐܲܪܝܵܐ ܕܲܚܙܵܐ ܚܡܵܪܵܐ ܒܥܸܕܵܢ ܨܲܦ </ab>
+
+               <!-- damaged catchwords -->
+               <ab>ܨܠܘܿܬܼܵܟܼ܂ ܘܠܵܐ ܢܫܲܠܸܡ ܥܲܡܵܟ ܒܛܲܒܼܬܼܵܐ܂ ܐܘܿ ܒܹܪܝ <catchwords>
+                     <damage extent="two words">
+                        <supplied>ܗܘܿܝܬ ܠܝ</supplied>
+                     </damage>
+                  </catchwords>
+               </ab>
+
+
+
+               <!-- ### Paris._ar._3656.3r9wg.1.xml -->
+               <!-- usage of tei:space -->
+               <l type="colophon" xml:lang="ara">ساداتي رقوا لعبدٍ<space> </space>في ذنوب لا يعدوا</l>
+
+
+
+               <!-- ### Paris_BnF_422.3r8qp.0.xml -->
+               <!-- colophon with catchwords following -->
+               <ab>ܘܡܹܚܑܼܓܲܪ ܒܗܵܘܬܼܵܐ ܫܝܘܿܠܵܝܬܿܐ܇ <seg type="colophon">ܗܵܪܟܿܐ</seg>
+                  <catchwords>ܫܸܠܡܲܬܸ</catchwords>
+               </ab>
+
+
+
+               <!-- ### SCAA_7229.3r677.1.xml -->
+               <!-- tei:add with @xml:lang. this actually appears within a heading which
+               has been altered to tei:ab to be compliant with the schema. -->
+               <ab> ܦܘܩܕ̈ܢܐ <persName>ܕܚܝܩܪ</persName> ܚܟܝܡܐ ܕܠܘܬ <persName>ܢܵܕܵܢ</persName> ܒܪ ܚܬܗ
+                     <add xml:lang="ara">النقط مكان تفويت</add>
+               </ab>
+
+
+
+               <!-- ### Sado_9_Ahiqar_Transkr.3r670.2.xml -->
+               <!-- damage with sic/supplied -->
+               <ab> ܒܼܪܵܐ ܠܵܐ܇ ܒܢܲܝܢܲܫ̈ܐܵ܇ ܕܗܵܐ ܠܵܡ <persName>ܐܲܚܝܼܩܲܪ</persName> ܟܐܹܢܵܐ ܘܛܵܒܼܵܐ
+                  ܘܲܦܠܲܚ <damage>
+                     <sic>ܠܐܲܠܗܵ</sic>
+                     <supplied>ܠܐܲܠܗܵܐ</supplied>
+                  </damage>
+               </ab>
+
+               <!-- addition with @cause -->
+               <ab>
+                  <damage> ܒܝܼܪܬܵܐ ܚܕܵܐ ܐܝܼܬ ܠܝܼ <add cause="handshift" place="below"> ܒܝܪܬܐ ܚܕܐ
+                     </add>
+                  </damage> ܕܐܸܒܢܸܐ ܒܲܫܡܲܝܵܐ ܠܐܲܪܥܵܐ ܚܙܝܼ ܫܲܕܲܪ ܠܝܼ ܓܲܒܼܪܵܐ </ab>
+
+               <!-- complex damage -->
+               <ab> ܡܼܢ <damage>
+                     <choice>
+                        <sic>unclear</sic>
+                        <corr>
+                           <add cause="handshift" place="below">ܕܘܼܟܝܿܬܗ̈ܝܢ </add>
+                        </corr>
+                     </choice>
+                  </damage> ܘܫܛܘܝܬ <choice>
+                     <sic>ܓܓܠܐ</sic>
+                     <corr>ܓܝܓܠܐ</corr>
+                  </choice> ܒܪܹ̈ܓܠܝܼܗܘܢ ܒܡܫܘܚܬܐ ܐܪܟܐܼ </ab>
+
+
+
+               <!-- ### Sbath_25_ff._1v-46r.3r7sj.0.xml -->
+               <!-- usage of @reason = 'faded' -->
+               <ab xml:lang="ara">الذي رفع السماء <unclear reason="faded">ما</unclear> يقدر يبني</ab>
+
+               <!-- surplus with @reason -->
+               <ab xml:lang="ara">عنَّا <surplus reason="repeated">اعجلوا الينا في الحجاره</surplus>
+               </ab>
+
+
+
+               <!-- ### Transcr_BL_Or_2313.3r688.0.xml -->
+               <!-- complex damage -->
+               <ab>
+                  <damage>
+                     <orig>[܂܂]ܛܿܪܬ</orig>
+                     <supplied>unknown</supplied> ܓܪ̈ܓܐ <choice>
+                        <sic>ܒܪܓܠܝܗܘܢ܂</sic>
+                        <corr resp="#sb">ܒܪ̈ܓܠܝܗܘܢ܂</corr>
+                     </choice>
+                  </damage>
+               </ab>
+
+               <!-- complex damage -->
+               <ab>
+                  <damage>
+                     <orig>ܐܙ[܂܂]</orig>
+                     <supplied>unknown</supplied>
+                     <add place="above">ܗܘ</add> ܕܝܢ ܗܼܒ ܠܝ ܡܠܟܐ </damage>
+               </ab>
+
+
+
+               <!-- ### Transcription_Harv_80_complete.3r674.2.xml -->
+               <!-- note added as margin gloss -->
+               <ab> ܘܪܒܼܐ ܒܪܝ ܘܫܘܼܚ ܐܝܟ ܐܪܢܐ܂ <add place="margin">
+                     <note>ܟܬܘܒܼܐ ܡܬܼܚܫܒ ܠܗܿ ܐܪܢܐ ܐܘ ܐܪܙܐ</note>
+                  </add> ܘܟܼܕ ܪܒܼܐ ܐܠܦܬܿܗ </ab>
+
+               <!-- two notes by different writers in margin gloss -->
+               <ab>
+                  <persName>ܣܪܚܕܘܡ</persName>
+                  <add place="below">
+                     <note>ܒܐܨܚܬܐ ܐܚܪܝܬܐ ܣܲܪܚܵܠܝܼܡ܂</note>
+                     <note hand="S5">ܣܒ ܚܠܝܡ</note>
+                  </add> ܐܒܼܝ܆ ܘܩܕܡܝ ܐܬܼܦܪܥ܂ ܘܐܩܝܡ </ab>
+
+               <!-- three notes by different writers in gloss below -->
+               <ab> ܠܐ ܬܣܪܘܚ܆ ܘܥܡ ܣܪܘܚܐ ܬܬܼܚܟܡ܂ <add place="below">
+                     <note>ܒܐܨ܆ ܐܚܪ܆ ܠܐ ܬܬܼܚܟܡܼ</note>
+                     <!-- I think this has to be encoded with tei:seg@xml:lang = 'la' -->
+                     <note hand="S4">om.</note>
+                     <note hand="S6">habet</note>
+                  </add> ܒܪܝ </ab>
+
+               <!-- marginal gloss with note and some more text -->
+               <ab> ܘܪܘܪ̈ܒܼܢܝܟ <add place="margin">
+                     <note>ܡܢܗܿ܂ ܥܠ ܗܕܐ ܟܬܼܒܬܼ ܠܗ ܡܼܢ ܐܨܚܬܐ ܐܚܪܬܐ܂</note>
+                  </add> ܠܟܼܘܟܒܼ̈ܐ܀ ܘܐܡܼܪ ܠܝ ܙܠ <persName>ܐܒܿܝܩܡ</persName> ܘܠܨܦܪܐ </ab>
+
+
+
+               <!-- ### Transkription_Sachau_162_neu.3r672.1.xml -->
+               <!-- supplying an entity -->
+               <ab> ܒܫ̈ܢܝ <persName>ܣܢܚܪܝܒ</persName> ܡܠܟܐ <placeName>ܕܐܬܘܪ</placeName>
+                  <damage>
+                     <orig>ܘܕܢ</orig>
+                     <supplied>
+                        <placeName>ܘܕܢܝܢܘܐ</placeName>
+                     </supplied>
+                  </damage>
+               </ab>
+
+               <!-- usage of tei:g -->
+               <ab> ܡܢ ܕܠܡܠܦܘ ܠܒܪܝ <persName>ܢܕܢ܂</persName> ܥܕܡܐ <g type="quotation-mark"/>
+               </ab>
+
+               <!-- usage of tei:g in damaged area-->
+               <ab>ܠܘܙܐ ܕܠܘܩܕܡ ܡܦܪܥ ܘܠܚܪܬܐ <damage>
+                     <g type="quotation-mark"/>
+                  </damage></ab>
+
+               <!-- addition with unknown type -->
+               <ab> ܘܗܦܟܬ ܛܥܢܬ ܐܰܒܵܪܐ ܘܠܐ ܐܝܼܩܰܪ ܥܠܝ <add place="sidelong">ܐܝܟ</add>
+               </ab>
+            </body>
+         </text>
+      </group>
+   </text>
+</TEI>
