@@ -12,6 +12,15 @@
     <finish>post-install.xq</finish>
 
     <changelog>
+      <change version="0.4.0">
+        <ul xmlns="http://www.w3.org/1999/xhtml">
+          <li class="feat">Features
+            <ul>
+              <li>add sample text for the viewer</li>
+            </ul>
+          </li>
+        </ul>
+      </change>
       <change version="0.2.0">
         <ul xmlns="http://www.w3.org/1999/xhtml">
           <li class="feat">Features
