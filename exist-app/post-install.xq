@@ -13,4 +13,23 @@ return
 
 (: set owner and mode for RestXq module :)
 (let $path := "/db/apps/ahikar/modules/tapi.xqm"
-return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x")))
+return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
+
+(: move the sample XML to sade/textgrid to be available in the viewer :)
+(
+    let $data-file-path := "/db/apps/ahikar/data/"
+    let $target-data-collection := "/db/apps/sade/textgrid/data/"
+    let $target-meta-collection := "/db/apps/sade/textgrid/meta/"
+    let $target-agg-collection := "/db/apps/sade/textgrid/agg/"
+    return
+        (
+            xmldb:move($data-file-path, $target-data-collection, "ahiqar_sample.xml"),
+            xmldb:move($data-file-path, $target-agg-collection, "ahiqar_agg.xml"),
+            xmldb:move($data-file-path, $target-agg-collection, "ahiqar_collection.xml"),
+            xmldb:move($data-file-path, $target-agg-collection, "ahiqar_images.xml"),
+            xmldb:move($data-file-path, $target-meta-collection, "ahiqar_agg_meta.xml"),
+            xmldb:move($data-file-path, $target-meta-collection, "ahiqar_sample_meta.xml"),
+            xmldb:move($data-file-path, $target-meta-collection, "ahiqar_collection_meta.xml"),
+            xmldb:move($data-file-path, $target-meta-collection, "ahiqar_images_meta.xml")
+        )
+)

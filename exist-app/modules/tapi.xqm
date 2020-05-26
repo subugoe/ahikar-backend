@@ -128,7 +128,7 @@ declare function tapi:manifest($collection, $document) {
     let $documentUri := $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
     let $documentNode := doc("/db/apps/sade/textgrid/data/" || $documentUri || ".xml")
     let $sequence :=
-        for $page in $documentNode//tei:pb/string(@n)
+        for $page in $documentNode//tei:pb[@facs]/string(@n)
         let $uri := "/api/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
         return
             <sequence>
@@ -191,13 +191,13 @@ declare function tapi:content($document, $page) {
         if($page)
         then
             let $node := doc($documentPath),
-                $start-node := $node//tei:pb[@n = $page],
+                $start-node := $node//tei:pb[@n = $page and @facs],
                 $end-node :=
-                    let $followingPb := $node//tei:pb[@n = $page]/following::tei:pb[1]
+                    let $followingPb := $node//tei:pb[@n = $page and @facs]/following::tei:pb[1][@facs]
                     return
                         if($followingPb)
                         then $followingPb
-                        else $node//tei:pb[@n = $page]/following::tei:ab[last()],
+                        else $node//tei:pb[@n = $page and @facs]/following::tei:ab[last()],
                 $wrap-in-first-common-ancestor-only := false(),
                 $include-start-and-end-nodes := false(),
                 $empty-ancestor-elements-to-include := ("")
