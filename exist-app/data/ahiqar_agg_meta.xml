@@ -6,7 +6,9 @@
                 <format>text/tg.edition+tg.aggregation+xml</format>
                 <notes/>
             </provided>
-            <generated/>
+            <generated>
+              <textgridUri extRef="">textgrid:ahiqar_agg.0</textgridUri>
+            </generated>
         </generic>
         <edition>
             <isEditionOf/>

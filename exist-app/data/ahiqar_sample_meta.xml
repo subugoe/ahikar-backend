@@ -6,7 +6,9 @@
                 <format>text/xml</format>
                 <notes/>
             </provided>
-            <generated/>
+            <generated>
+              <textgridUri extRef="">textgrid:ahiqar_sample.0</textgridUri>
+            </generated>
         </generic>
         <item/>
         <custom>
