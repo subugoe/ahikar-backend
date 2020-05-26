@@ -17,6 +17,7 @@
           <li class="feat">Features
             <ul>
               <li>add sample text for the viewer</li>
+              <li>only consider pagebreaks with a facsimile in serialization</li>
             </ul>
           </li>
         </ul>
