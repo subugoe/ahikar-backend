@@ -3,13 +3,11 @@
 The following is a set of guidelines for contributing to the Ahiqar project's back end.
 Feel free to propose changes whenever the workflow could be improved!
 
-
 ## Issue Tracker
 
 Issues are created and assigned by the project's Product Owner during a sprint planning in the [issue tracker](https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues).
 As soon as you start working on a assigned issue, switch its label to `Doing`.
 This will cause the issue to be moved into the right list of the repository's [board](https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/boards).
-
 
 ## Internal Workflow
 
@@ -18,7 +16,6 @@ This will cause the issue to be moved into the right list of the repository's [b
 Bugs and change requests are managed by the project's Product Owner.
 Please report any problems that aren't related to to bugfix/feature you're working on right now to her/him.
 She/he will create an issue in the correct repository and ask for assignees in the course of the next sprint planning.
-
 
 ### Git Flow
 
@@ -40,8 +37,10 @@ A well-tried workflow is:
 1. A developer decides to work on a feature. She commits her changes to a separate feature branch. After some time she finishes the feature and wants it to be part of the development branch.
 2. The developer creates a merge request and assigns everybody she sees fit to properly review her code to it.
 3. To avoid diffusion of responsibility, she also assigns one of the chosen assignees as MUST. This means that this person has to approve the MR, otherwise the merge cannot be done. Although GitLab sends notifications to everybody who is newly assigned to a MR, she should notify the MUST assignee personally (in case he or she doesn't notice the mail sent by GitLab). The MR settings are:
-  * The MR is associated with the current sprint's [milestone](https://gitlab.gwdg.de/groups/subugoe/ahiqar/-/milestones).
-  * The boxes for "Squash Commit" and "Deleting branch after Merge" are ticked
+
+* The MR is associated with the current sprint's [milestone](https://gitlab.gwdg.de/groups/subugoe/ahiqar/-/milestones).
+* The boxes for "Squash Commit" and "Deleting branch after Merge" are ticked
+
 4. The MUST assignee reviews the changes according to style, variable naming, understandability, documentation provided, functionality, etc. If everything is to his or her liking, he or she approves the MR. The other assignees are free to review the code as well. **Note:** MRs without docs should not be accepted.
 5. After the MR has been (dis)approved, the assignee removes his- or herself from the list of assignees. The MUST assignee informs the developer over the review being done.
 6. The developer merges her changes into the development branch.
