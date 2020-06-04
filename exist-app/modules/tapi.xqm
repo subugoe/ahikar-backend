@@ -5,7 +5,7 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 0.2.0
+ : @version 1.0.0
  : @since 0.0.0
  : :)
 
@@ -27,6 +27,8 @@ import module namespace rest="http://exquery.org/ns/restxq";
 declare variable $tapi:version := "0.2.0";
 declare variable $tapi:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
+declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
+declare variable $tapi:aggCollection := $tapi:baseCollection || "/agg/";
 
 declare variable $tapi:responseHeader200 :=
     <rest:response>
@@ -63,11 +65,25 @@ as element(descriptors) {
             <hostname>{ requestr:hostname() }</hostname>
             <uri>{ requestr:uri() }</uri>
         </request>
-        {doc("../expath-pkg.xml"),
-        doc("../repo.xml")}
+        {
+            tapi:remove-whitespaces(doc("../expath-pkg.xml")),
+            tapi:remove-whitespaces(doc("../repo.xml"))
+        }
     </descriptors>
 };
 
+(:~ 
+ : Removes all line breaks and surplus white spaces from XML files.
+ : This way we avoid producing a littered JSON with fields that only contain
+ : white space text.
+ : 
+ : @author Michelle Weidling
+ : @param $doc The XML document to be transformed
+ : @return $doc but without indentation
+ :)
+declare function tapi:remove-whitespaces($doc as document-node()) as document-node() {
+    $doc => serialize() => replace("[\s]{2,}", "") => replace("[\n]", "") => parse-xml()
+};
 
 (:~
  : Returns information about a given collection.
@@ -102,7 +118,7 @@ as item()+ {
  :)
 declare function tapi:collection($collection as xs:string)
 as item()+ {
-    let $aggregation := doc($tapi:baseCollection || "/agg/" || $collection || ".xml")
+    let $aggregation := doc($tapi:aggCollection || $collection || ".xml")
     let $meta := //tgmd:textgridUri[starts-with(., "textgrid:" || $collection)]/root()
     let $sequence :=
         for $i in $aggregation//*:aggregates/string(@*:resource)
@@ -121,25 +137,25 @@ as item()+ {
                     }</type>
                 </sequence>
     return
-        <object>
-            <textapi>{$tapi:version}</textapi>
-            <title>
-                <title>The Story and Proverbs of Ahikar the Wise</title>
-                <type>{$meta//tgmd:format => string() => tapi:type()}</type>
-            </title>
-            <title/>
-            <collector>
-                <role>collector</role>
-                <name>Prof. Dr. theol. Kratz, Reinhard Gregor</name>
-                <idref>
-                    <base>http://d-nb.info/gnd/</base>
-                    <id>115412700</id>
-                    <type>GND</type>
-                </idref>
-            </collector>
-            <description>Main collection for the Ahikar project. Funded by DFG, 2019-2020. University of Göttingen</description>
-            {$sequence}
-        </object>
+    <object>
+        <textapi>{$tapi:version}</textapi>
+        <title>
+            <title>The Story and Proverbs of Ahikar the Wise</title>
+            <type>{$meta//tgmd:format => string() => tapi:type()}</type>
+        </title>
+        <title/>
+        <collector>
+            <role>collector</role>
+            <name>Prof. Dr. theol. Kratz, Reinhard Gregor</name>
+            <idref>
+                <base>http://d-nb.info/gnd/</base>
+                <id>115412700</id>
+                <type>GND</type>
+            </idref>
+        </collector>
+        <description>Main collection for the Ahikar project. Funded by DFG, 2019–2020. University of Göttingen</description>
+        {$sequence}
+    </object>
 };
 
 
@@ -174,10 +190,10 @@ as item()+ {
  :)
 declare function tapi:manifest($collection as xs:string, $document as xs:string)
 as element(object) {
-    let $aggNode := doc($tapi:baseCollection || "/agg/" || $document || ".xml")
+    let $aggNode := doc($tapi:aggCollection || $document || ".xml")
     let $metaNode := doc($tapi:baseCollection || "/meta/" || $document || ".xml")
     let $documentUri := $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
-    let $documentNode := doc($tapi:baseCollection || "/data/" || $documentUri || ".xml")
+    let $documentNode := doc($tapi:dataCollection || $documentUri || ".xml")
     let $sequence :=
         for $page in $documentNode//tei:pb[@facs]/string(@n)
         let $uri := "/api/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
@@ -202,7 +218,7 @@ as element(object) {
  :  * the division number, 'n', is mandatory
  :  * 'image' is mandatory since every page has a facsimile
  :
- : Sample call to API: /textapi/ahikar/3r17c/3r1pq-147a/latest/item.json
+ : Sample call to API: /api/textapi/ahikar/3r17c/3r1pq-147a/latest/item.json
  :
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#item
  : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r17c'
@@ -231,21 +247,30 @@ $page as xs:string) as item()+ {
  :)
 declare function tapi:item($collection as xs:string, $document as xs:string,
 $page as xs:string) as element(object) {
-    let $aggNode := doc($tapi:baseCollection || "/agg/" || $document || ".xml")
+    let $aggNode := doc($tapi:aggCollection || $document || ".xml")
     let $teiUri :=
         if($aggNode)
             then $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
         else $document
-    let $image := doc($tapi:baseCollection || "/data/" || $teiUri || ".xml")//tei:pb[@n = $page]/@facs => substring-after("textgrid:")
+    let $image := doc($tapi:dataCollection || $teiUri || ".xml")//tei:pb[@n = $page]/@facs => substring-after("textgrid:")
+    
+    let $xml := doc($tapi:dataCollection || $teiUri || ".xml")
+    let $title := $xml//tei:title[@type = "main"]/string()
+    let $languages := 
+        $xml//tei:language/text()
+    
     return
     <object>
         <textapi>{$tapi:version}</textapi>
-        <title>The Story and Proverbs of Ahikar the Wise</title>
+        <title>{$title}</title>
         <type>page</type>
         <n>{$page}</n>
         <content>{$tapi:server}/api/content/{$teiUri}-{$page}.html</content>
         <content-type>application/xhtml+xml</content-type>
-        <lang>syr</lang>
+        {
+            for $lang in $languages return
+                element lang {$lang}
+        }
         <image>
             <id>{$tapi:server}/api/images/{$image}</id>
         </image>
@@ -287,7 +312,7 @@ as item()+ {
  :)
 declare function tapi:content($document as xs:string, $page as xs:string)
 as element(div) {
-    let $documentPath := $tapi:baseCollection || "/data/" || $document || ".xml"
+    let $documentPath := $tapi:dataCollection || $document || ".xml"
     let $TEI :=
         if($page)
         then
@@ -332,7 +357,8 @@ declare
     %rest:path("/images/{$uri}")
     %rest:produces("image/jpeg")
     %output:method("binary")
-function tapi:images-rest($uri as xs:string) as item()+ {
+function tapi:images-rest($uri as xs:string)
+as item()+ {
     $tapi:responseHeader200,
     hc:send-request(
         <hc:request method="GET"
@@ -371,7 +397,7 @@ function tapi:text-rest($document as xs:string) as item()+ {
  : @deprecated As of being buggy this function has been replaced by tapi:create-plain-text.
  :)
 declare function tapi:text($document as xs:string) as xs:string {
-    let $documentPath := $tapi:baseCollection || "/data/" || $document || ".xml"
+    let $documentPath := $tapi:dataCollection || $document || ".xml"
     let $TEI := doc($documentPath)//tei:text[@type = "transcription"]
     let $text :=
         ($TEI//text()
@@ -409,7 +435,7 @@ function tapi:text-rest() as item()+ {
  :)
 declare function tapi:zip-text() as xs:string+ {
     let $txtCollection := $tapi:baseCollection || "/txt/"
-    let $collection := collection($tapi:baseCollection || "/data/")
+    let $collection := collection($tapi:dataCollection)
     let $check-text-collection :=
         if( xmldb:collection-available($txtCollection) )
         then true()

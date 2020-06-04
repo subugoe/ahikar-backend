@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2020-06-04
+
+### Added
+
+- add document specific retrieval of metadata.
+this mainly refers to the document's name as well as the languages it comprises.
+
+### Changed
+
+- the language of a text isn't served as a simple string anymore but as an array of strings.
+the reason for this is that a TEI resource can have text in different languages.
+this s breaking change, updates in the front end MAY be necessary.
+- the `language` keyword has been changed to `lang` in order to comply to the generic text API.
+
 ## [0.4.1] - 2020-06-04
 
 ### Added
