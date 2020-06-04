@@ -5,7 +5,7 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 0.0.2
+ : @version 0.2.0
  : @since 0.0.0
  : :)
 
@@ -24,7 +24,7 @@ import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milesto
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 
-declare variable $tapi:version := "0.1.0";
+declare variable $tapi:version := "0.2.0";
 declare variable $tapi:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 
@@ -81,7 +81,8 @@ declare
     %rest:GET
     %rest:path("/textapi/ahikar/{$collection}/collection.json")
     %output:method("json")
-function tapi:collection-rest($collection as xs:string){
+function tapi:collection-rest($collection as xs:string)
+as item()+ {
     $tapi:responseHeader200,
     tapi:collection($collection)
 };
@@ -92,7 +93,8 @@ function tapi:collection-rest($collection as xs:string){
  : the key data described at https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object.
  :
  : This function should only be used for Ahiqar's edition object (textgrid:3r132).
- : ### why?
+ : It serves as an entry point to the edition and contains all child aggregations with
+ : the XMLs and images in them.
  :
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @param $collection The unprefixed TextGrid URI of a collection. For Ahiqar's main collection this is '3r132'.
@@ -161,8 +163,14 @@ as item()+ {
 
 
 (:~
- : ###TODO: no ID delivered, cf. https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
- : ### I don't understand this function. A document is an XML document, right? Why do we treat it as if it was an aggregation? Or what is $document supposed to mean?
+ : Returns information about an edition object (i.e. an aggregation) which holds
+ : an XML document as well as the facsimiles.
+ : 
+ : In contrast to the generic TextAPI specs on manifest objects we do not provide an
+ : ID at this point. One reason is the TextGrid metadata model, the other is FRBR.
+ : 
+ : @param $collection The URI of the document's parent collection, e.g. '3r9ps'
+ : @param $document The URI of an edition object, e.g. '3r177'
  :)
 declare function tapi:manifest($collection as xs:string, $document as xs:string)
 as element(object) {
@@ -191,8 +199,7 @@ as element(object) {
 (:~
  : Returns information about a given page in a document. This is mainly compliant
  : with the SUB TextAPI, but has the following additions:
- :  * the division number, 'n', is mandatory in order to ### why?
- :  * 'language' instead of 'lang' ### why?
+ :  * the division number, 'n', is mandatory
  :  * 'image' is mandatory since every page has a facsimile
  :
  : Sample call to API: /textapi/ahikar/3r17c/3r1pq-147a/latest/item.json
@@ -238,7 +245,7 @@ $page as xs:string) as element(object) {
         <n>{$page}</n>
         <content>{$tapi:server}/api/content/{$teiUri}-{$page}.html</content>
         <content-type>application/xhtml+xml</content-type>
-        <language>syr</language>
+        <lang>syr</lang>
         <image>
             <id>{$tapi:server}/api/images/{$image}</id>
         </image>
@@ -248,11 +255,13 @@ $page as xs:string) as element(object) {
 
 (:~
  : Returns an HTML rendering of a given page.
+ : 
+ : Since we only return a fragment of an HTML page which can be integrated in a
+ : viewer or the like, we chose XML as output method in order to avoid setting
+ : a DOCTYPE on a fragment.
  :
  : Sample call to API: /content/3rbmb-1a.html
  :
- : ### TODO returns an error when two pagebreaks have the same @n, e.g. when a text has a transcription and a transliteration
- : ### why %output:method("xml") instead of %output:method("html5")?
  : @param $document The unprefixed TextGrid URI of a document, e.g. '3rbmb'
  : @param $page The page to be rendered. This has to be the string value of a tei:pb/@n in the given document, e.g. '1a'
  : @return A response header as well as the rendered HTML page
@@ -337,12 +346,10 @@ function tapi:images-rest($uri as xs:string) as item()+ {
  : Endpoint to deliver a single plain text version of the
  : tei:text[@type = "transcription"] section a given document.
  :
- : ### throws HTTP ERROR 405 HTTP method GET is not supported by this URL. why?
- :
  : Sample call to API: /content/3r671.txt
  :
- : @param $document The unprefixed TextGrid URI of a document, e.g. '3r671'
- : @return
+ : @deprecated This function doesn't work properly and has been replaced with 
+ : tapi:zip-text.
  :)
 declare
     %rest:GET
@@ -361,6 +368,7 @@ function tapi:text-rest($document as xs:string) as item()+ {
  :
  : @param $document The unprefixed TextGrid URI of a document, e.g. '3r671'
  : @return A string encompassing the whole text
+ : @deprecated As of being buggy this function has been replaced by tapi:create-plain-text.
  :)
 declare function tapi:text($document as xs:string) as xs:string {
     let $documentPath := $tapi:baseCollection || "/data/" || $document || ".xml"
@@ -379,14 +387,13 @@ declare function tapi:text($document as xs:string) as xs:string {
  : Endpoint to deliver all plain texts in zip container. This comes in handy for
  : applications doing text analysis.
  :
- : ### is the parameter $document really necessary?
  : @return The response header as well as a xs:base64Binary (the ZIP file)
  :)
 declare
     %rest:GET
     %rest:path("/content/ahikar-plain-text.zip")
     %output:method("binary")
-function tapi:text-rest($document) as item()+ {
+function tapi:text-rest() as item()+ {
     let $prepare := tapi:zip-text()
     return
         $tapi:responseHeader200,
@@ -398,7 +405,6 @@ function tapi:text-rest($document) as item()+ {
  : Creates a plain text version of the transcription section of each Ahiqar XML.
  : This is stored to /db/apps/sade/textgrid/txt/.
  :
- : ### why isn't tapi:text($document) used? why are there more TEI elements omitted for the plain text than in tapi:text?
  : @return A string indicated the location where a plain text has been stored to
  :)
 declare function tapi:zip-text() as xs:string+ {
@@ -414,19 +420,7 @@ declare function tapi:zip-text() as xs:string+ {
             let $baseUri := $TEI/base-uri()
             let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
             let $uri := $tgBaseUri => replace(".xml", "-transcription.txt")
-            let $text :=
-                (($TEI//text()
-                    [not(parent::tei:sic)]
-                    [not(parent::tei:surplus)])
-                    [not(parent::tei:supplied)])
-                    [not(parent::tei:*[@type = "colophon"])]
-                    [not(parent::tei:g)]
-                    [not(parent::tei:unclear)]
-                    [not(parent::tei:catchwords)]
-                => string-join()
-                => replace("\p{P}", "")
-                => replace("\n+", "")
-                => replace("\s+", " ")
+            let $text := tapi:create-plain-text($TEI)
 
             let $metadata := doc($baseUri => replace("/data/", "/meta/"))
             let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
@@ -435,17 +429,61 @@ declare function tapi:zip-text() as xs:string+ {
 };
 
 
+(:~ 
+ : Takes all relevant text nodes of a given TEI and transforms them in a 
+ : normalized plain text.
+ : 
+ : The following nodes shouldn't be considered for the plain text creation:
+ : * sic (wrong text)
+ : * surplus (surplus text)
+ : * supplied (supplied by modern editors)
+ : * colophons
+ : * glyphs
+ : * unclear (text unclear)
+ : * catchwords (they simply serve to bind the books correctly and reduplicate text)
+ : 
+ : @param $TEI A TEI document
+ : @return A string with all relevant text nodes.
+ : 
+ :)
+declare function tapi:create-plain-text($TEI as node()) as xs:string {
+    (($TEI//text()
+        [not(parent::tei:sic)]
+        [not(parent::tei:surplus)])
+        [not(parent::tei:supplied)])
+        [not(parent::tei:*[@type = "colophon"])]
+        [not(parent::tei:g)]
+        [not(parent::tei:unclear)]
+        [not(parent::tei:catchwords)]
+    => string-join()
+    => replace("\p{P}", "")
+    => replace("\n+", "")
+    => replace("\s+", " ")
+};
+
+
 
 (:~
- : redeploy application to db
- :
- : ### I'm not sure how to wrap my head around this
+ : Redeploy the Ahikar application to the DB.
+ : 
+ : This function is needed to deploy a newer version of the app to the running 
+ : docker environment we use for deployment. It is called by the CI.
+ : 
+ : It
+ : * downloads the newest package from the repo
+ : * stores it to the db
+ : * installs and deploys from a db resource (this will internally uninstall the
+ : application at first and install the new version afterwards)
+ : 
+ : @param $token A CI token
+ : @return element() <status result="ok"/> if deployment was ok
  :  :)
 declare
   %rest:GET
   %rest:path("/deploy")
   %rest:query-param("token", "{$token}")
-function tapi:redeploy($token) {
+function tapi:redeploy($token as xs:string) 
+as element()? {
   if( $token ne environment-variable("APP_DEPLOY_TOKEN" ))
     then error(QName("error://1", "deploy"), "deploy token incorrect.")
   else
