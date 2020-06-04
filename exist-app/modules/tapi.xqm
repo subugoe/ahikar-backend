@@ -482,7 +482,7 @@ declare
   %rest:GET
   %rest:path("/deploy")
   %rest:query-param("token", "{$token}")
-function tapi:redeploy($token as xs:string) 
+function tapi:redeploy($token) 
 as element()? {
   if( $token ne environment-variable("APP_DEPLOY_TOKEN" ))
     then error(QName("error://1", "deploy"), "deploy token incorrect.")
