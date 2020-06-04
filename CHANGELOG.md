@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.4.1] - 2020-05-29
+## [0.4.1] - 2020-06-04
 
 ### Added
 
 - this CHANGELOG which keeps track of this repo's changes instead of exist-app/repo.xml
+- added more detailed documentation for the text API
+- added Michelle Weidling as additional author for the Ahiqar application
+
+### Changed
+
+- refactored the text API where necessary
