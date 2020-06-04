@@ -1,5 +1,14 @@
 xquery version "3.1";
 
+(:~
+ : This module is an implementation of David Sewell's recommendation on how to
+ : get TEI chunks from an XML.
+ :
+ : See https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery for more
+ : information and the original suggestion.
+ :
+ :)
+
 module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -73,6 +82,7 @@ declare function local:get-fragment(
         then $node
         else ()
 };
+
 
 declare function fragment:get-fragment-from-doc(
     $node as node()*,

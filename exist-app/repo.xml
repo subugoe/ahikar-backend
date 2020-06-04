@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <meta xmlns="http://exist-db.org/xquery/repo">
     <description>Dockerized TextAPI for Ahikar Digital Editon</description>
     <author>Mathias Göbel</author>
+    <author>Michelle Weidling</author>
     <status>alpha</status>
     <license>GNU-LGPL</license>
     <copyright>true</copyright>
@@ -28,11 +28,12 @@
             <ul>
               <li>add image endpoint</li>
               <li>refine Text-API structure</li>
+              <li>add function documentation</li>
             </ul>
           </li>
           <li class="bugs">Bugfixes
             <ul>
-              <li />
+              <li/>
             </ul>
           </li>
         </ul>
@@ -49,7 +50,7 @@
           </li>
           <li class="bugs">Bugfixes
             <ul>
-              <li />
+              <li/>
             </ul>
           </li>
         </ul>
@@ -64,11 +65,12 @@
           </li>
           <li class="bugs">Bugfixes
             <ul>
-              <li />
+              <li/>
             </ul>
           </li>
         </ul>
       </change>
      </changelog>
-  <deployed>2020-01-01T12:19:48.185+02:00</deployed>
+  
+<deployed>2020-06-04T05:35:59.135Z</deployed>
 </meta>
