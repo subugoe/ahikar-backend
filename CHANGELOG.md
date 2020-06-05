@@ -5,11 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.2] - 2020-06-04
+## [1.0.1] - 2020-06-05
+
+### Added
+
+- a CI stage that checks the API status after each deployment.
+
+### Changed
+
+- moved the redeployment functionality to a separate module to make the API more robust.
 
 ### Fixed
 
-- removed the parameter type of the CI token since it caused the API to crash due to unknown reasons.
+- removed faulty parameter type for the redeploment token.
 
 ## [1.0.0] - 2020-06-04
 
@@ -24,6 +32,12 @@ this mainly refers to the document's name as well as the languages it comprises.
 the reason for this is that a TEI resource can have text in different languages.
 this s breaking change, updates in the front end MAY be necessary.
 - the `language` keyword has been changed to `lang` in order to comply to the generic text API.
+
+## [0.4.2] - 2020-06-04
+
+### Fixed
+
+- removed the parameter type of the CI token since it caused the API to crash due to unknown reasons.
 
 ## [0.4.1] - 2020-06-04
 

@@ -37,6 +37,10 @@ return
 (let $path := "/db/apps/ahikar/modules/tapi.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
+(: set owner and mode for deployment module :)
+(let $path := "/db/apps/ahikar/modules/deploy.xqm"
+return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
+
 (: move the sample XMLs to sade/textgrid to be available in the viewer :)
 (
     let $files :=

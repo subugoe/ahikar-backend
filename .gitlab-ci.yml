@@ -3,6 +3,7 @@ stages:
   - package
   - deploy_docker
   - deploy_app
+  - test
   - release
   - reassign_labels
 
@@ -149,6 +150,16 @@ deploy_app-master:
     name: ahikar
   script:
     - curl --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
+
+#
+test_api_status:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  script: 
+    - status=$(curl -i --silent https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
+
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
