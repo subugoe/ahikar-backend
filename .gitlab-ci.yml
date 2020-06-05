@@ -156,7 +156,7 @@ test_api_status:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: test
   script: 
-    - status=$(curl -i -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json | head -n 1 | cut -d" " -f 2)
+    - status=$(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
 
