@@ -2,7 +2,12 @@ xquery version "3.1";
 
 (:~
  : This module is responsible for (re)deploying the application while the database 
- : is running. 
+ : is running.
+ :
+ : @author Michelle Weidling
+ : @author Mathias Göbel
+ : @version 0.1.0
+ : @since 0.4.0
  :)
 
 module namespace deploy="http://ahikar.sub.uni-goettingen.de/ns/deploy";
