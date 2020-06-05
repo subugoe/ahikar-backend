@@ -3,15 +3,24 @@
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
 	schematypens="http://purl.oclc.org/dsdl/schematron"?>
 
-<!-- Das folgende Dokument ist eine Beispieldatei für das Projekt Ahiqar, in dem versucht wird, alle vorkommenden 
-   Phänomene abzubilden. Sie dient damit als Grundlage für die weitere Frontententwicklung.
-
-   Grundlage für die Datei ist der Codex Mingana syr. 133, der um eine Google-Translate-Übersetzung sowie 
-   eigene Passus ergänzt wurde, um Auszeichnung zu ergänzen.
+<!-- 
+# INTRODUCTION TO AND PURPOSE OF THIS FILE
    
-   Ab <pn n="83b"/> handelt es sich um eine Kollationierung von weiteren interessanten Phänomenen
-   komplett über das Korpus hinweg. Hierfür wurden die einzelnen Quellen systematisch durchgeschaut.
-   Quellen für die einzelnen Abschnitte sind im vorausgehenden Kommentar angegeben. -->
+The following document is a sample for the Ahiqar project.
+It should display all encoding phenomena that can occur in the project.
+Thus it may serve as a basis for further developing the front end, especially the content of the text panel.
+
+Codex Mingana syr. 133 (textgrid:3r8m5) serves as a basis for this file.
+It has been enhanced by a dummy text in order to add encoding.
+
+From <pn n="83b"/> on the file presents a collation of interesting phenomena that stem from the original data.
+To achieve this the sources have been analyzed systematically.
+A source for the respective encoding is provided in a commentary directly before the encoding.
+
+All suggestions regarding the rendering of certain encoding are marked with ###.
+The proposed ideas aren't normative and can be altered completely.
+Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conventions (https://en.wikipedia.org/wiki/Leiden_Conventions) which are common for critical editions
+-->
 
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
    <teiHeader>
@@ -65,6 +74,13 @@
                <term>prose</term>
             </keywords>
          </textClass>
+         <langUsage>
+           <language ident="ara" xml:base="https://iso639-3.sil.org/code/" xml:id="ara">Arabic</language>
+           <language ident="syc" xml:base="https://iso639-3.sil.org/code/" xml:id="syr">Classical Syriac</language>
+           <language ident="karshuni">Karshuni</language>          
+           <language ident="syc-syrj" xml:base="https://glottolog.org/resource/languoid/id/" xml:id="west2764">Western Syriac</language>
+           <language ident="syc-syrn" xml:base="https://glottolog.org/resource/languoid/id/" xml:id="east2681">Eastern Syriac</language>
+        </langUsage>
       </profileDesc>
       <encodingDesc>
          <tagsDecl>
@@ -82,99 +98,34 @@
    </teiHeader>
    <text>
       <group>
-         <text xml:lang="eng" type="translation">
-            <body>
-               <pb n="82a"/>
-               <cb/>
-               <head><g>✓</g> Where the story <add place="margin">really</add> begins
-                     <supplied>.</supplied></head>
-               <ab>With the help of God Almighty, <add place="interlinear">test</add> we begin with
-                  His name</ab>
-               <ab><lb break="no"/>Almighty mentioned forever. And we write news</ab>
-               <ab>Wise, clever, <persName>Felius</persName> the boy</ab>
-               <ab>Minister of <persName>Sennacherib</persName>, son of
-                     <persName>Sarhaduma</persName>, king <placeName>Ator</placeName></ab>
-               <ab>And <placeName>Nineveh</placeName> And the conductor. And what on him and
-                  who</ab>
-               <ab>His nephew <persName>Nadan</persName>. It was in the days of the king Ibn
-                     <persName>Sarhadum</persName></ab>
-               <ab>King of the land of <unclear reason="illegible"
-                     ><placeName>Athor</placeName></unclear></ab>
-               <ab><placeName>Nineveh</placeName> and her country. A wise man said</ab>
-               <ab>It has spit. The Minister of King <persName>Sennacherib</persName> and his writer
-                  were</ab>
-               <ab>And it was</ab>
-               <ab>With a lot of money and a lot of livelihood. <persName>Maher Hakim</persName> was
-                  a philosopher</ab>
-               <ab>With knowledge, opinion and measure. He had married sixty women</ab>
-
-               <cb/>
-               <ab type="head">A cross <add place="header">test</add> heading</ab>
-               <ab>And he built for each one of them a cabin. And with all this</ab>
-               <ab>He had no son to inherit. It was a lot of worry for that</ab>
-               <ab>And on the same day, astrologers gathered and magicians</ab>
-               <ab>Are knowledgeable. He complained to them about his condition and order</ab>
-               <ab>His real estate</ab>
-               <ab>And they said to him, Go in and call to the gods, and hire them</ab>
-               <ab>Perhaps they will give you a son. And he did as they told him. He gave</ab>
-               <ab>The offerings of idols and their help. And pray to them</ab>
-               <ab>With students and prayers. They did not answer him with his word. So he went
-                  out</ab>
-               <ab>Sadness, disappointment and disappointment, leaving the heart. He came back</ab>
-               <ab>By invoking God Almighty. Believe and use it burned</ab>
-               <lg>
-                  <l>Shall <add place="below">test</add>I compare thee to a summer's day?</l>
-                  <l>Thou art more lovely and more temperate<surplus>:</surplus></l>
-               </lg>
-               <ab>and she died. <seg type="colophon">end <add place="footer">test</add>of the
-                     text</seg></ab>
-
-
-               <pb n="82b"/>
-               <pb n="83a"/>
-               <ab>Turn up. <quote>It was, so it is not.</quote> Oh God, heaven and earth. My
-                  Creator</ab>
-               <ab><del rend="strikethrough">The whole creature. I ask you to give me</del></ab>
-               <ab>A boy until I cherish him, inherit me, and attend my death</ab>
-               <ab/>
-               <ab>And close my eyes and bury me. Then a voice came to him</ab>
-               <ab>From the sky above. So I relied on idols first</ab>
-               <ab>Carved. They were made offerings. So</ab>
-               <ab rend="margin-top">Stay without a boy. Even <persName>Nadan</persName>, your
-                  nephew, take it</ab>
-               <ab>Make it a boy. And teach him your knowledge, manners and wisdom</ab>
-               <ab>He inherits you. Then <persName>Nadan</persName> took his nephew and he was</ab>
-               <ab>Small suckling. He handed him over to <persName>Tammania</persName>, a nursing
-                  woman</ab>
-               <ab>To nurse and nurture him. They raised him with good food and clothing</ab>
-               <ab>Silk, purple, and scarlet were seated on</ab>
-               <ab>Silk pricks. When <persName>Nadan</persName> grew up, walked and slept</ab>
-               <ab>Like high rice, his knowledge of writing and reading</ab>
-               <ab>Discipline and philosophy. When it was some days</ab>
-               <ab><persName>Sennacherib</persName> looked at the king, and he saw the haggard of
-                  his minister</ab>
-               <ab>And his writer has remained a great old man</ab>
-               <ab>He said to him, O honorable loving companion</ab>
-               <ab>Clever mastermind <persName>Hakim</persName> writer and minister and
-                     <persName>Khatem</persName></ab>
-               <ab>My country secret and housekeeper. You have grown and stabbed in</ab>
-               <ab>Age<add place="above">test</add> and older. And near the time of your death and
-                  death. So he said</ab>
-               <ab>For me who will serve you after you. he said to him A-</ab>
-               <ab>hikar</ab>
-               <ab type="colophon">This is where text ends.</ab>
-            </body>
-         </text>
-
          <text xml:lang="ara" type="transliteration">
             <body>
                <pb n="82a"/>
+               <!-- ### tei:cb marks the beginning of a column.
+               most manuscripts have 2 columns.
+               the serialization should imitate this layout.
+               the actual encoding has a column number. -->
                <cb/>
+               <!-- ### tei:head marks a heading.
+               this should be visually emphasized.
+               ideas: larger font size -->
+               <!-- ### glosses (tei:add in different places) are mostly additions to the running text.
+               NOTE: these suggestions hold for all type of additions, regardless of their place.
+               it should be visually set apart from the rest of the text to indicate that it's an addition.
+               ideas: text framed by \.../ (LC) in lighter color, maybe a panel could display more information about the gloss?-->
                <head><supplied>.</supplied><add place="margin">حقًا</add>حيث تبدأ القصة
                   <g>✓</g></head>
                <ab>نبتدي بعون الباري<add place="interlinear">اختبار</add> تعالى جل اسمه</ab>
+               <!-- ### tei:lb[@break = 'no'] describes that a word has begun in the line before and is continued in the current line.
+               this mostly lacks hyphenation.
+               users should understand by a visual clue that these parts belong together. 
+               ideas: bracket at the bottom that opens in line 1 and closes in line 2 -->
                <ab><lb break="no"/>وتعالى ذكره الى الابد. ونكتب خبر</ab>
                <ab>الحكيم الماهر الفليوس الشاطر</ab>
+               <!-- ### users should have the opportunity to highlight all persons and/or places on a page.
+               since we're currently working on annotations which will influence this serialization, this isn't a high priority task. -->
+               <!-- ### unclear passages should be marked in some way
+               idea: dotted underlining (LC) -->
                <ab>وزير <persName>سنحاريب</persName> ابن <persName>سرحادوم</persName> ملك <unclear
                      reason="illegible"><placeName>اتور</placeName></unclear>
                </ab>
@@ -192,11 +143,21 @@
                <ab>ذو معرفه وراي وتدبير. وكان قد تزوج ستين امراه</ab>
 
                <cb/>
+               <!-- ### tei:ab[@type = 'head'] marks head-like structures.
+               users should understand that this is something LIKE a heading, but it's not a regular heading. 
+               idea: larger font size, but not as large as a regular heading; centered? -->
                <ab type="head">رأس <add place="header">اختبار</add>متقاطع</ab>
                <ab>وبنى لكل واحده منهن مقصوره. ومع هذا كله</ab>
                <ab>لم يكن له ولد يرثه. وكان كثير الهم لاجل ذلك</ab>
                <ab>وانه في ذات يوم جمع المنجمين والسحره</ab>
-               <ab>والعارفين. واشكا لهم حاله وامر <choice>
+               <ab>والعارفين. واشكا لهم حاله وامر 
+               <!-- ### tei:choice with tei:sic and tei:corr marks faulty text and its correction.
+               the text in tei:sic is wrong in some way and corrected by tei:corr.
+               corrections without @resp should be distinguished from the ones that have it (it marks corrections by modern editors).
+               both the text of tei:sic and tei:corr should be provided, while it should be clear that the one of tei:sic is invalid.
+               idea: striked through text of tei:sic and corrected text in regular styling
+               -->
+               <choice>
                      <sic>بعقوريته</sic>
                      <corr>عقوريته</corr>
                   </choice>
@@ -212,23 +173,40 @@
                <ab>يحزان ندمان خايب وانصرف متالم القلب. ورجع</ab>
                <ab>بالتضرع الى الله تعالى. وامن واستعان به بحرقة</ab>
                <ab>قلب قايلًا. يا الاه السما والارض. يا خالق</ab>
+               <!-- ### lines of verse should be distinguished from the running text.
+               a common way to mark this some kind of margin on the top and bottom as well as on the side. 
+               idea: a blank line before and after the line groups with padding on the side (side depends on reading direction?) -->
                <lg>
                   <l>هل <add place="below">اختبار</add> أقارنك بيوم صيفي؟</l>
                   <l>انت أكثر جميلة وأكثر اعتدالا<surplus>:</surplus></l>
                </lg>
+               <!-- ### colophons should be set apart and emphasized visually from the regular text.
+               idea: different colour. -->
                <ab><seg type="colophon">. نهاية<add place="footer">اختبار</add>
                   النص</seg>وماتت.</ab>
 
+               <!-- ### it should be somehow clear for users that they're viewing a vacant page (i.e. a page without content).
+               otherwise they'll assume that something went wrong.
+               in printed editions a common way of indicating that a text (such as "vacant page") isn't part of the edition is to make it italic or the like.
+               of course other styling is possible.
+               however, it should be clear that this is editorial text, not text of the manuscript. 
+               idea: text "[vacat]"" in italics -->
                <pb n="82b"/>
                <pb n="83a"/>
+               <!-- ### quotes should marked by a visual cue.
+               however, simply inserting glyphs like quotation marks isn't possible since it could indicate that these are part of the text.
+               this doesn't hold if (by some means) it is clear to the user that these glyphs aren't part of the running text.
+               idea: quotation marks in lighter color -->
                <ab>الخلايق كلها.<quote>كان كذلك ، لذا لم يكن كذلك.</quote> انا اطلب اليك ان
                   توهبني</ab>
+               <!-- ### @rend says it all. -->
                <ab><del rend="strikethrough">ولدًا حتى اتعزا به ويرثني ويحضر بموتي</del></ab>
                <ab>ويغمض عيناي ويدفنني. فعند ذلك اتاه صوت</ab>
                <ab/>
                <ab>من السما قايلا. بحيث اتكلت اولًا على الاصنام</ab>
                <ab>المنحوته. وقدمت لهم القرابين. لذلك</ab>
                <ab>تبقا بلا ولد. بل ان <persName>نادان</persName> ابن اختك خذه</ab>
+               <!-- ### @rend says it all. -->
                <ab rend="margin-top">واجعله لك ولدًا. وعلمه علمك وادبك وحكمتك</ab>
                <ab>وهو يرثك. عند ذلك اخذ <persName>نادان</persName> ابن اخته وكان</ab>
                <ab>صغير يرضع. فسلمه الى تمانية نسا مرضعات</ab>
@@ -243,24 +221,27 @@
                <ab>الماهر المدبر الحكيم كاتبي ووزيري وكاتم</ab>
                <ab>سري ومدبر دولتي. ها قد كبرت وطعنت في</ab>
                <ab>السن<add place="interlinear">اختبار</add> وشخت. وقرب وقت موتك ووفاتك. فقول</ab>
+               <!-- ### tei:persName[@next] describes that a name begins at the end of a line and is continued at the beginning of the next line.
+               same holds for place names.
+               when highlighting entities these should be treated as one entity. -->
                <ab><persName next="#ms1">أ</persName>لي من يقوم في خدمتي بعدك. فقال له </ab>
                <ab><persName xml:id="ms1">حقر</persName></ab>
                <ab type="colophon">هذا حيث ينتهي النص.</ab>
 
 
-               <!-- #### The following encoding has been taken directly from the source
-                  material. In case there are Karshuni passages, tei:seg has been added 
-                  in order to comply with tei:text/@xml:lang #### -->
+               <!-- @@@@ The following encoding has been taken directly from the source material. 
+               In case there are Karshuni passages, tei:seg has been added in order to comply with tei:text/@xml:lang @@@@ -->
                <pb n="83b"/>
 
 
-               <!-- ### Brit.Mus._cod._Add._7209_Transcrip.karsh.3r14z.1.xml -->
+               <!-- @@@ Brit.Mus._cod._Add._7209_Transcrip.karsh.3r14z.1.xml -->
                <!-- persName spanning over two lines -->
                <ab>وقال للسياف كان اسمه <persName next="#Brit.Mus_7209_2">يبوس</persName></ab>
                <ab><persName xml:id="Brit.Mus_7209_2">ميكمسكينكنتي</persName> قوم خد
                      <persName>حيقر</persName> وامضي</ab>
 
                <!-- rubricated place and person names -->
+               <!-- ### CSS for renditions is stated in the TEI header -->
                <ab><hi rendition="#red"><placeName>مصر</placeName> الى عند
                         <persName>فرعون</persName> الملك </hi> ولما</ab>
 
@@ -269,13 +250,13 @@
 
 
 
-               <!-- ### Brit._Libr._Or._2326.3r9pr.0.xml -->
+               <!-- @@@ Brit._Libr._Or._2326.3r9pr.0.xml -->
                <!-- illegible text -->
                <ab>فتركهم وحزن وتالم <unclear reason="illegible">ܘܟܓܪܒ</unclear> بقوله</ab>
 
 
 
-               <!-- ### Cod._Add._2886._Transcript._karsh.3r1dp.1.xml -->
+               <!-- @@@ Cod._Add._2886._Transcript._karsh.3r1dp.1.xml -->
                <!-- word spanning over two lines -->
                <ab>وختمهم بختم خاله <persName>حيقار</persName> . واما</ab>
                <ab><lb break="no"/> هم في دار الملك ثم مضا ايضا وكتب</ab>
@@ -293,7 +274,7 @@
 
 
 
-               <!-- ### MS_orient_2652.Transcrip._karsh.3r1r2.1.xml -->
+               <!-- @@@ MS_orient_2652.Transcrip._karsh.3r1r2.1.xml -->
                <!-- a colophon in verse. tei:lg is missing. -->
                <l type="colophon">فيا سادتي رقّوا لعبدًا</l>
                <l type="colophon">في ذنوبا لا يعدوا</l>
@@ -302,11 +283,14 @@
 
 
 
-               <!-- ### Mingana_Syriac_258.Transcrip._karsh.3r1pq.1.xml -->
+               <!-- @@@ Mingana_Syriac_258.Transcrip._karsh.3r1pq.1.xml -->
                <!-- gloss: inline -->
                <ab>الرعيَّه. يا <add place="inline">ابني</add> اربعةً اخر العاقل والاحمق</ab>
 
                <!-- untyped unclear, untyped damage -->
+               <!-- ### damaged passages can sometimes contain (reconstructed) text, other times the text is complete lost.
+               damages should be visible by the user as a part that is missing.
+               idea: background color, lighter text, ... -->
                <ab>
                   <add place="margin">هذا</add>
                   <unclear>سطين</unclear> الحجر قدَّ حتى اخيط لكم هذا الحجر <damage>...</damage>
@@ -314,7 +298,7 @@
 
 
 
-               <!-- ### Vat._sir._159._ff.293rb-299va._Transcrip.Karsh.3r1sv.1.xml -->
+               <!-- @@@ Vat._sir._159._ff.293rb-299va._Transcrip.Karsh.3r1sv.1.xml -->
                <!-- a page (shortened) with two columns (incl. numbering)-->
                <pb n="297v"/>
                <cb n="1"/>
@@ -356,10 +340,17 @@
             <body>
                <pb facs="textgrid:3r1nz" n="82a"/>
                <cb/>
+               <!-- ### supplied text is text that modern editors have inserted.
+               it is usually marked with square brackets (LC).
+               idea: square brackets + lighter color -->
                <head><seg xml:lang="ara"><supplied>.</supplied><add place="margin"
                      >حقًا</add></seg><g>✓</g>
                   <!-- this rubrication can be found in BnF_434_rev.3r676.4.xml -->
-                  <hi rend="color(red)"> ܀ ܬܘܒ ܒܚܹܝܠ <choice>
+                  <hi rend="color(red)"> ܀ ܬܘܒ ܒܚܹܝܠ 
+                  <!-- ### since the abbreviated text is the running text, this should be rendered.
+                  the expansion should be accessible to users too, though.
+                  idea: insert icon after tei:abbr to indicate it's clickable + display expansion in another panel / modal -->
+                  <choice>
                         <abbr>ܝܗ̈ܿ</abbr>
                         <expan>ܝܗ</expan>
                      </choice> ܟܿܬܒܢܐ ܩܲܠܝܼܠ ܡܼܢ ܡ̈ܬܼܠܐ <persName>ܕܐܚܝܼܩܲܪ܆</persName>
@@ -408,10 +399,16 @@
                <ab>ܩܠܒ ܩܐܝܠܐ. ܝܐ ܐܠܐܗ ܐܠܣܡܐ ܘܐܠܐܪܜ. ܝܐ ܟܐܠܩ</ab>
                <lg>
                   <l>ܩܠܒ <add place="interlinear">اختبار</add> ܩܐܝܠܐ</l>
+                  <!-- ### surplus text should be set apart visually.
+                  a common way is setting the text in curly braces, but in addition to that other cues are possible (another color, different contrast?)
+                  idea: curly braces (LC) + lighter color, e.g. {some text} -->
                   <l>ܩܠܒ ܩܐܝܠܐ <surplus>:</surplus></l>
                </lg>
                <ab xml:lang="ara"><seg type="colophon">. نهاية<add place="footer">اختبار</add>
                      النص</seg>وماتت.</ab>
+
+               <!-- ### catchwords should be set apart from the running text and de-emphasized. 
+               idea: lighter/other color-->
                <ab><catchwords>الخلايق كلها</catchwords></ab>
 
 
@@ -444,19 +441,18 @@
                <ab type="colophon"><seg xml:lang="ara">هذا حيث ينتهي النص.</seg></ab>
 
 
-               <!-- #### The following encoding has been taken directly from the source
+               <!-- @@@@ The following encoding has been taken directly from the source
                   material. In case there are Arabic passages, tei:seg with/or @xml:id has been added 
-                  in order to comply with tei:text/@xml:lang #### -->
+                  in order to comply with tei:text/@xml:lang @@@@ -->
                <!-- inserted random facsimile just to provide one -->
                <pb facs="textgrid:3r85q" n="83b"/>
 
-               <!-- ### BnF_434_rev.3r676.4.xml -->
+               <!-- @@@ BnF_434_rev.3r676.4.xml -->
                <!-- different type of rubrication -->
                <ab>♰ <hi rend="color(red)">ܬܘܼܒ</hi>♰</ab>
 
 
-
-               <!-- ### Borg._Arab._201.3r7vv.0.xml -->
+               <!-- @@@ Borg._Arab._201.3r7vv.0.xml -->
                <!-- correction of a word -->
                <ab xml:lang="ara">خدمتني وخدمت ابي <persName>سرحادوم</persName> كذلك يكون هذا ولدك
                      <del rend="strikethrough">يكرمني</del>
@@ -465,8 +461,11 @@
 
 
 
-               <!-- ### Brit._Lib._Add._7200.3r131.1.xml -->
+               <!-- @@@ Brit._Lib._Add._7200.3r131.1.xml -->
                <!-- damaged text with supplied -->
+               <!--- ### since the text in tei:orig is the running text, it should be displayed.
+               the text of supplied should, however, be available, too.
+               idea: cf. tei:abbr/tei:expan? -->
                <ab><damage>
                      <orig>[܂]ܢܬ [܂܂܂]ܡܪ</orig>
                      <supplied>ܫܢܬ ܐܬܐܡܪ</supplied> ܗܼܘܐ ܠܝܼ܂ </damage>
@@ -485,7 +484,7 @@
 
 
 
-               <!-- ### Brit._Libr._Or._2326.3r9pr.0.xml -->
+               <!-- @@@ Brit._Libr._Or._2326.3r9pr.0.xml -->
                <!-- rubrication with switiching language -->
                <ab>
                   <hi rendition="#red">
@@ -493,8 +492,10 @@
                </ab>
 
 
-               <!-- ### Cambridge_Add._2020.3r82k.1.xml -->
+               <!-- @@@ Cambridge_Add._2020.3r82k.1.xml -->
                <!-- omitted text -->
+               <!-- ### there is probably no need to indicate the reason for the supplied text.
+               it could be serialized as tei:supplied without an attribute -->
                <ab> ܥܲܝܢܹܗ ܢܕܲܒܲܪ ܒܲܝܬܹܿܗ܀ ܒܹܪܝ ܛܵܒܼ ܥܘܝܼܪ <supplied rend="omission"
                      >ܒܥܲܝܢ̈ܘܗܝ</supplied> ܡܼܢ ܗܵܘܿ ܕܲܥܘܝܼܪ </ab>
 
@@ -511,7 +512,7 @@
 
 
 
-               <!-- ### Cambrigde_Add_3497.3rb41.0.xml -->
+               <!-- @@@ Cambrigde_Add_3497.3rb41.0.xml -->
                <!-- place name spanning over two lines -->
                <ab xml:lang="ara">والعساكر وانطلقوا الى الصحره الى <placeName next="#Cambrigde_Add_3497_1"
                      >بقعة</placeName>
@@ -523,13 +524,13 @@
 
 
 
-               <!-- ### Cod._Add._2886._Transcript._karsh.3r1dp.1.xml -->
+               <!-- @@@ Cod._Add._2886._Transcript._karsh.3r1dp.1.xml -->
                <!-- head-like line -->
                <ab type="head">ܟܪܐܣ ܥܐܫܪ</ab>
 
 
 
-               <!-- ### DFM_00614.3rbm8.0.xml -->
+               <!-- @@@ DFM_00614.3rbm8.0.xml -->
                <!-- several corrections in a line -->
                <ab xml:lang="ara">والأن <del rend="strikethrough">فبقي</del>
                   <add place="below">بقى</add>
@@ -541,14 +542,17 @@
 
 
 
-               <!-- ### GCAA_00486.3rbmb.0.xml -->
+               <!-- @@@ GCAA_00486.3rbmb.0.xml -->
                <!-- rubricated supplied -->
+               <!-- ### while the text within tei:hi should be rubricated, the potential sigla ([...]) should not. -->
                <ab xml:lang="ara">
                   <supplied>
                      <hi rendition="#red">يا بني</hi>
                   </supplied> لا تكون مثل شجرة اللوز لانها</ab>
 
                <!-- usage of tei:gap -->
+               <!-- ### tei:gap indicates some white space on a page.
+               idea: add standardized white space (15px?) when rendering this element-->
                <ab xml:lang="ara">ولا تبادر برد الجواب <gap reason="invisible"/> لا</ab>
 
                <!-- usage of tei:gap -->
@@ -558,8 +562,9 @@
 
 
 
-               <!-- ### MS_orient_2652.Transcrip._karsh.3r1r2.1.xml -->
+               <!-- @@@ MS_orient_2652.Transcrip._karsh.3r1r2.1.xml -->
                <!-- addition within rubrication -->
+               <!-- ### as in GCAA_00486.3rbmb.0.xml, potential sigla that created while serializing tei:add shouldn't be rubricated -->
                <ab>
                   <hi rendition="#red">ܦܩܐܠ ܠܗ ܣܝܕܝ <add place="margin">ܝܫܒܗ</add> ܐܠܐܗ ܐܠܣܡܐ
                      ܘܐܟܐܒܪܗ</hi>
@@ -567,7 +572,7 @@
 
 
 
-               <!-- ### Mingana_Arabic_Christian_93_(84).3r7tv.1.xml -->
+               <!-- @@@ Mingana_Arabic_Christian_93_(84).3r7tv.1.xml -->
                <!-- choice within colophon -->
                <ab type="colophon" xml:lang="ara">فيها هكذا وجدنا وكتبنا والله <choice>
                      <sic>لهو</sic>
@@ -576,7 +581,7 @@
 
 
 
-               <!-- ### Mingana_Syriac_258.Transcrip._karsh.3r1pq.1.xml -->
+               <!-- @@@ Mingana_Syriac_258.Transcrip._karsh.3r1pq.1.xml -->
                <!-- choice within marginal gloss -->
                <ab>
                   <add place="margin">
@@ -588,8 +593,11 @@
 
 
 
-               <!-- ### Mingana_Syriac_433.3r8m5.0.xml -->
+               <!-- @@@ Mingana_Syriac_433.3r8m5.0.xml -->
                <!-- unclear with @reason -->
+               <!-- ### the reason for an unclear passage could be part of the annotations.
+               if not, it shouldn't be rendered in a special way.
+               idea: cf. regular tei:unclear -->
                <ab>ܘܟܼܠܡܿܢ ܕܢܹܥܒܲܪ ܥܠܸܝܗܿ <unclear reason="eccentric_ductus">ܘܕܵܐܹܫ</unclear> ܠܵܗܿ
                   ܐܵܟܹܿܠ ܡܼܢ </ab>
 
@@ -604,7 +612,7 @@
 
 
 
-               <!-- ### Nau.3r9f0.0.xml -->
+               <!-- @@@ Nau.3r9f0.0.xml -->
                <!-- damage with orig/supplied -->
                <ab>ܫܬܿܝܼܢ܂ ܘܲܒܼܢܝܹܬ ܠܗܹܝܢ ܒܝܼܪ̈ܬܼܵܐ <damage>
                      <orig>[܂܂܂]ܢ܂</orig>
@@ -625,13 +633,14 @@
 
 
 
-               <!-- ### Paris._ar._3656.3r9wg.1.xml -->
+               <!-- @@@ Paris._ar._3656.3r9wg.1.xml -->
                <!-- usage of tei:space -->
+               <!-- ### idea_ cf. tei:gap -->
                <l type="colophon" xml:lang="ara">ساداتي رقوا لعبدٍ<space> </space>في ذنوب لا يعدوا</l>
 
 
 
-               <!-- ### Paris_BnF_422.3r8qp.0.xml -->
+               <!-- @@@ Paris_BnF_422.3r8qp.0.xml -->
                <!-- colophon with catchwords following -->
                <ab>ܘܡܹܚܑܼܓܲܪ ܒܗܵܘܬܼܵܐ ܫܝܘܿܠܵܝܬܿܐ܇ <seg type="colophon">ܗܵܪܟܿܐ</seg>
                   <catchwords>ܫܸܠܡܲܬܸ</catchwords>
@@ -639,7 +648,7 @@
 
 
 
-               <!-- ### SCAA_7229.3r677.1.xml -->
+               <!-- @@@ SCAA_7229.3r677.1.xml -->
                <!-- tei:add with @xml:lang. this actually appears within a heading which
                has been altered to tei:ab to be compliant with the schema. -->
                <ab> ܦܘܩܕ̈ܢܐ <persName>ܕܚܝܩܪ</persName> ܚܟܝܡܐ ܕܠܘܬ <persName>ܢܵܕܵܢ</persName> ܒܪ ܚܬܗ
@@ -648,7 +657,7 @@
 
 
 
-               <!-- ### Sado_9_Ahiqar_Transkr.3r670.2.xml -->
+               <!-- @@@ Sado_9_Ahiqar_Transkr.3r670.2.xml -->
                <!-- damage with sic/supplied -->
                <ab> ܒܼܪܵܐ ܠܵܐ܇ ܒܢܲܝܢܲܫ̈ܐܵ܇ ܕܗܵܐ ܠܵܡ <persName>ܐܲܚܝܼܩܲܪ</persName> ܟܐܹܢܵܐ ܘܛܵܒܼܵܐ
                   ܘܲܦܠܲܚ <damage>
@@ -658,6 +667,9 @@
                </ab>
 
                <!-- addition with @cause -->
+               <!-- ### reasons or causes that are (in)directly stated as XML attributes shouldn't be rendered in a special way.
+               they are potential material for annotations but too specific to be rendered.
+               this also holds for the following elements. -->
                <ab>
                   <damage> ܒܝܼܪܬܵܐ ܚܕܵܐ ܐܝܼܬ ܠܝܼ <add cause="handshift" place="below"> ܒܝܪܬܐ ܚܕܐ
                      </add>
@@ -678,7 +690,7 @@
 
 
 
-               <!-- ### Sbath_25_ff._1v-46r.3r7sj.0.xml -->
+               <!-- @@@ Sbath_25_ff._1v-46r.3r7sj.0.xml -->
                <!-- usage of @reason = 'faded' -->
                <ab xml:lang="ara">الذي رفع السماء <unclear reason="faded">ما</unclear> يقدر يبني</ab>
 
@@ -688,7 +700,7 @@
 
 
 
-               <!-- ### Transcr_BL_Or_2313.3r688.0.xml -->
+               <!-- @@@ Transcr_BL_Or_2313.3r688.0.xml -->
                <!-- complex damage -->
                <ab>
                   <damage>
@@ -710,8 +722,12 @@
 
 
 
-               <!-- ### Transcription_Harv_80_complete.3r674.2.xml -->
+               <!-- @@@ Transcription_Harv_80_complete.3r674.2.xml -->
                <!-- note added as margin gloss -->
+               <!-- ### notes should be marked in some way since they have been added to the text later.
+               sometimes different scribes can be distinguished.
+               this is indicated by the @hand attribute.
+               idea: different color per hand -->
                <ab> ܘܪܒܼܐ ܒܪܝ ܘܫܘܼܚ ܐܝܟ ܐܪܢܐ܂ <add place="margin">
                      <note>ܟܬܘܒܼܐ ܡܬܼܚܫܒ ܠܗܿ ܐܪܢܐ ܐܘ ܐܪܙܐ</note>
                   </add> ܘܟܼܕ ܪܒܼܐ ܐܠܦܬܿܗ </ab>
@@ -739,7 +755,7 @@
 
 
 
-               <!-- ### Transkription_Sachau_162_neu.3r672.1.xml -->
+               <!-- @@@ Transkription_Sachau_162_neu.3r672.1.xml -->
                <!-- supplying an entity -->
                <ab> ܒܫ̈ܢܝ <persName>ܣܢܚܪܝܒ</persName> ܡܠܟܐ <placeName>ܕܐܬܘܪ</placeName>
                   <damage>
@@ -751,6 +767,7 @@
                </ab>
 
                <!-- usage of tei:g -->
+               <!-- ### for tei:g[@type = 'quotation-mark'] said glyph should be provided -->
                <ab> ܡܢ ܕܠܡܠܦܘ ܠܒܪܝ <persName>ܢܕܢ܂</persName> ܥܕܡܐ <g type="quotation-mark"/>
                </ab>
 
