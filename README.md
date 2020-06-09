@@ -2,6 +2,25 @@
 
 This aims to serve the complete backend for the Ahikar project.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Build](#build)
+    - [eXist-db App and Dependencies](#exist-db-app-and-dependencies)
+    - [Get the Frontend](#get-the-frontend)
+  - [Environment variables](#environment-variables)
+  - [Building All Docker Container Images](#building-all-docker-container-images)
+  - [Start the Backend](#start-the-backend)
+- [Connecting the Backend with the Frontend](#connecting-the-backend-with-the-frontend)
+- [Contributing](#contributing)
+- [Versioning](#versioning)
+- [Authors](#authors)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Architecture
 
 ## Getting Started
