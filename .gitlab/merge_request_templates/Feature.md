@@ -1,34 +1,45 @@
+# Feature
+
 We welcome every new feature to the upstream branch!
 
 Please fill in the following information about your feature.
 Feel free to delete sections that doesn't suit the case you're dealing with.
 
-# Summary
+## Summary
 
 This MR provides…
 
-# Use Cases
+## Does the result of the MR comply to our "definition of done"?
+
+* [ ] Unit tests passed
+* [ ] Code reviewed
+* [ ] Acceptance criteria met
+* [ ] Functional tests passed
+* [ ] Non-Functional requirements met
+* [ ] Product Owner accepts the User Story
+
+## Use Cases
 
 If you can, please provide use cases for this feature.
 
-# Documentation
+## Documentation
 
 Shall we add your feature to the documentation?
 
 * [ ] I've already did it!
 * [ ] At least I added a headline to the documentation.
 
-## Function Documentation
+### Function Documentation
 
 * [ ] Of course I provided all my functions with an appropriate documentation.
 
-## Are there parts of the documentation we have to adjust
+### Are there parts of the documentation we have to adjust
 
 * [ ] No.
 * [ ] Yes, but I'd like someone else to do it.
 * [ ] Yes, and I already did!
 
-# Tests
+## Tests
 
 Are we able to test this new feature?
 
@@ -36,18 +47,18 @@ Are we able to test this new feature?
 * [ ] Yes, you can test by following these steps: …
 * [ ] No, it is not possible.
 
-# Changelog
+## Changelog
 
 * [ ] I added a statement to the CHANGELOG.
 
-# Related Tickets
+## Related Tickets
 
 Add all related issues and especially those to be closed.
 
-## Related
+### Related
 
-## Closes
+### Closes
 
-# Logs and Screenshots
+## Logs and Screenshots
 
 /cc [Mathias Göbel](https://gitlab.gwdg.de/mgoebel), [Frank Schneider](https://gitlab.gwdg.de/schneider210), [Michelle Weidling](https://gitlab.gwdg.de/mrodzis)
