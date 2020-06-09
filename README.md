@@ -79,8 +79,29 @@ In addition we use a `.env` file for passing parameters to docker-compose and se
 docker-compose --env-file docker/.env --file docker/docker-compose.yml build
 ```
 
-## Start the Backend
+### Start the Backend
 
 ```bash
 docker-compose --env-file docker/.env --file docker/docker-compose.yml up --detach
 ```
+
+## Connecting the Backend with the Frontend
+
+The corresponding frontend for the Ahiwar backend is the [EMo viewer](https://gitlab.gwdg.de/subugoe/emo/Qviewer).
+In order to connect it with the simply has to expose a REST API that complies to the specification of the [SUB's generic TextAPI](https://subugoe.pages.gwdg.de/emo/text-api/).
+The frontend takes care of the data transfer as described in the [frontend's README](https://gitlab.gwdg.de/subugoe/emo/Qviewer/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+We use [SemVer](https://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/tags).
+
+## Authors
+
+* [Mathias Göbel](https://gitlab.gwdg.de/mgoebel)
+* [Michelle Weidling](https://gitlab.gwdg.de/mrodzis)
+
+See also the list of contributors who participated in this project.
