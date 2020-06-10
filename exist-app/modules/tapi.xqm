@@ -467,6 +467,7 @@ declare function tapi:zip-text() as xs:string+ {
  : * glyphs
  : * unclear (text unclear)
  : * catchwords (they simply serve to bind the books correctly and reduplicate text)
+ : * note (they have been added later by another scribe)
  : 
  : @param $TEI A TEI document
  : @return A string with all relevant text nodes.
@@ -481,6 +482,7 @@ declare function tapi:create-plain-text($TEI as node()) as xs:string {
         [not(parent::tei:g)]
         [not(parent::tei:unclear)]
         [not(parent::tei:catchwords)]
+        [not(parent::tei:note)]
     => string-join()
     => replace("\p{P}", "")
     => replace("\n+", "")

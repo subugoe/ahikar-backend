@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2020-06-10
+
+### Changed
+
+- exclude notes from the creation of plain text.
+notes are text passages that have been added at a later stage by one or more scribes.
+thus, they do not belong to the running text in a stricter sense.
+
 ## [1.2.0] - 2020-06-09
 
 ### Added
