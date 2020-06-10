@@ -1,19 +1,21 @@
-# Description
+# Feature Requests
+
+## Description
 
 Just leave a short summary what the feature is about.
 
-# Use Cases
+## User Stories
 
-If you can, please provide use cases for this feature.
+As (role of the user) I need (what has to be done) in order to (what I want to achieve with this feature).
 
-# Classification
+## Classification
 
 Is this feature an enhancement of existing code or a completely new feature?
 
 * [ ] enhancement
 * [ ] new feature
 
-# Related Tickets
+## Related Tickets
 
 Add all related issues.
 
