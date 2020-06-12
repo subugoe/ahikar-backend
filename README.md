@@ -4,8 +4,8 @@ This aims to serve the complete backend for the Ahikar project.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Contents:**
 
-- [Architecture](#architecture)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Build](#build)
@@ -13,15 +13,15 @@ This aims to serve the complete backend for the Ahikar project.
     - [Get the Frontend](#get-the-frontend)
   - [Environment variables](#environment-variables)
   - [Building All Docker Container Images](#building-all-docker-container-images)
-  - [Start the Backend](#start-the-backend)
-- [Connecting the Backend with the Frontend](#connecting-the-backend-with-the-frontend)
+- [Start the Backend](#start-the-backend)
+- [Architecture](#architecture)
+  - [Internal Workings of the Backend](#internal-workings-of-the-backend)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
 - [Authors](#authors)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-## Architecture
 
 ## Getting Started
 
@@ -30,19 +30,19 @@ This aims to serve the complete backend for the Ahikar project.
 Please make sure you have the following software installed before building the
 backend:
 
-* ant
-* Docker
-* docker-compose
+- ant
+- Docker
+- docker-compose
 
 The following programs/commands are used, but usually preinstalled with your Linux distribution and corresponding shell:
 
-* bash
-* curl
-* echo
-* mv
-* rm
-* touch
-* unzip
+- bash
+- curl
+- echo
+- mv
+- rm
+- touch
+- unzip
 
 ### Build
 
@@ -75,8 +75,8 @@ mv docker/frontend/Qviewer/dist/spa/* docker/frontend && rm -rf docker/frontend/
 
 To pass credentials to the container, we use the file `ahikar.env` which is not part of this repository. For loading data from TextGrid, this file should contain the following parameters:
 
-* TGUSER
-* TGPASS
+- TGUSER
+- TGPASS
 
 For local development this file MUST be present but can be left empty. In this case, the SADE Publish Tool may be used to import data from TextGrid.
 
@@ -104,10 +104,16 @@ docker-compose --env-file docker/.env --file docker/docker-compose.yml build
 docker-compose --env-file docker/.env --file docker/docker-compose.yml up --detach
 ```
 
+## Architecture
+
+### Internal Workings of the Backend
+
+![Diagram of the backend's architecture](exist-app/data/ahiqar_backend_architecture.png)
+
 ## Connecting the Backend with the Frontend
 
 The corresponding frontend for the Ahiwar backend is the [EMo viewer](https://gitlab.gwdg.de/subugoe/emo/Qviewer).
-In order to connect it with the simply has to expose a REST API that complies to the specification of the [SUB's generic TextAPI](https://subugoe.pages.gwdg.de/emo/text-api/).
+In order to connect it with the simply has to expose a REST API that complies to the specification of the [SUB's generic TextAPI](https://subugoe.pages.gwdg.de/emo/text-api/)
 The frontend takes care of the data transfer as described in the [frontend's README](https://gitlab.gwdg.de/subugoe/emo/Qviewer/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
 
 ## License
@@ -124,7 +130,7 @@ We use [SemVer](https://semver.org/) for versioning. For the versions available,
 
 ## Authors
 
-* [Mathias Göbel](https://gitlab.gwdg.de/mgoebel)
-* [Michelle Weidling](https://gitlab.gwdg.de/mrodzis)
+- [Mathias Göbel](https://gitlab.gwdg.de/mgoebel)
+- [Michelle Weidling](https://gitlab.gwdg.de/mrodzis)
 
 See also the list of contributors who participated in this project.
