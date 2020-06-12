@@ -151,12 +151,13 @@ deploy_app-master:
   script:
     - curl --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
 
-#
+# this serves for checking if a commit has accidentally broken the API
 test_api_status:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: test
   script: 
-    - status=$(curl -i --silent https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json | head -n 1 | cut -d" " -f 2)
+    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
 
