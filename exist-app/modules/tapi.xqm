@@ -44,6 +44,7 @@ declare variable $tapi:responseHeader200 :=
  :)
 declare
     %rest:GET
+    %rest:HEAD
     %rest:path("/api/info")
     %output:method("json")
 function tapi:info-rest()
@@ -95,6 +96,7 @@ declare function tapi:remove-whitespaces($doc as document-node()) as document-no
  :)
 declare
     %rest:GET
+    %rest:HEAD
     %rest:path("/textapi/ahikar/{$collection}/collection.json")
     %output:method("json")
 function tapi:collection-rest($collection as xs:string)
@@ -169,6 +171,7 @@ as item()+ {
  :)
 declare
     %rest:GET
+    %rest:HEAD
     %rest:path("/textapi/ahikar/{$collection}/{$document}/manifest.json")
     %output:method("json")
 function tapi:manifest-rest($collection as xs:string, $document as xs:string)
@@ -228,6 +231,7 @@ as element(object) {
  :)
 declare
     %rest:GET
+    %rest:HEAD
     %rest:path("/textapi/ahikar/{$collection}/{$document}-{$page}/latest/item.json")
     %output:method("json")
 function tapi:item-rest($collection as xs:string, $document as xs:string,
@@ -293,6 +297,7 @@ $page as xs:string) as element(object) {
  :)
 declare
     %rest:GET
+    %rest:HEAD
     %rest:path("/content/{$document}-{$page}.html")
     %output:method("xml")
     %output:indent("no")
@@ -354,6 +359,7 @@ as element(div) {
  :)
 declare
     %rest:GET
+    %rest:HEAD
     %rest:path("/images/{$uri}")
     %rest:produces("image/jpeg")
     %output:method("binary")
@@ -379,6 +385,7 @@ as item()+ {
  :)
 declare
     %rest:GET
+    %rest:HEAD
     %rest:path("/content/{$document}.txt")
     %output:method("text")
 function tapi:text-rest($document as xs:string) as item()+ {
@@ -417,6 +424,7 @@ declare function tapi:text($document as xs:string) as xs:string {
  :)
 declare
     %rest:GET
+    %rest:HEAD
     %rest:path("/content/ahikar-plain-text.zip")
     %output:method("binary")
 function tapi:text-rest() as item()+ {

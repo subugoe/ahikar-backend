@@ -30,19 +30,19 @@ This aims to serve the complete backend for the Ahikar project.
 Please make sure you have the following software installed before building the
 backend:
 
-* ant
-* Docker
-* docker-compose
+- ant
+- Docker
+- docker-compose
 
 The following programs/commands are used, but usually preinstalled with your Linux distribution and corresponding shell:
 
-* bash
-* curl
-* echo
-* mv
-* rm
-* touch
-* unzip
+- bash
+- curl
+- echo
+- mv
+- rm
+- touch
+- unzip
 
 ### Build
 
@@ -75,8 +75,8 @@ mv docker/frontend/Qviewer/dist/spa/* docker/frontend && rm -rf docker/frontend/
 
 To pass credentials to the container, we use the file `ahikar.env` which is not part of this repository. For loading data from TextGrid, this file should contain the following parameters:
 
-* TGUSER
-* TGPASS
+- TGUSER
+- TGPASS
 
 For local development this file MUST be present but can be left empty. In this case, the SADE Publish Tool may be used to import data from TextGrid.
 
@@ -124,7 +124,7 @@ We use [SemVer](https://semver.org/) for versioning. For the versions available,
 
 ## Authors
 
-* [Mathias Göbel](https://gitlab.gwdg.de/mgoebel)
-* [Michelle Weidling](https://gitlab.gwdg.de/mrodzis)
+- [Mathias Göbel](https://gitlab.gwdg.de/mgoebel)
+- [Michelle Weidling](https://gitlab.gwdg.de/mrodzis)
 
 See also the list of contributors who participated in this project.

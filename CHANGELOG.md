@@ -26,6 +26,17 @@ thus, they do not belong to the running text in a stricter sense.
 - the Readme now offers a section on the interplay of front- and backend.
 It has also been supplemented with missing categories according to [this gist](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2).
 
+## [1.2.0] - 2020-06-10
+
+### Added
+
+- HTTP HEAD added to the API.
+This way the status of all the API's parts can be requested with e.g. `curl --head` for testing purposes.
+
+### Fixed
+
+- failing pipeline due to buffering problems of cURL
+
 ## [1.1.0] - 2020-06-05
 
 ### Added
