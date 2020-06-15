@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.1] - 2020-06-15
 
+### Changed
+
+- merge request templates now explicitly mention the version number in the eXist app's build properties.
+this should help to remember increasing it.
+
 ### Fixed
 
 - make API more specific in where it looks up data. When people fork SADE, a new SADE application is created
