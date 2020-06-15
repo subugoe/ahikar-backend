@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - merge request templates now explicitly mention the version number in the eXist app's build properties.
 this should help to remember increasing it.
+- instead of just checking the API status for the staging server, the health of an endpoint is now checked after a merge as well
 
 ### Fixed
 
