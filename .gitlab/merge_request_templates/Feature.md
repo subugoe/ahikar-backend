@@ -51,6 +51,10 @@ Are we able to test this new feature?
 
 * [ ] I added a statement to the CHANGELOG.
 
+## Version number
+
+* [ ] I bumped the version number in `build.properties`.
+
 ## Related Tickets
 
 Add all related issues and especially those to be closed.

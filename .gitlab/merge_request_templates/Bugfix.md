@@ -34,4 +34,8 @@ MR, tell us what you have done to achieve this goal.
 
 * [ ] I added a statement to the CHANGELOG.
 
+## Version number
+
+* [ ] I bumped the version number in `build.properties`.
+
 /cc [Mathias Göbel](https://gitlab.gwdg.de/mgoebel), [Frank Schneider](https://gitlab.gwdg.de/schneider210), [Michelle Weidling](https://gitlab.gwdg.de/mrodzis)
