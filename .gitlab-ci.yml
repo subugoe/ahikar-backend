@@ -152,11 +152,37 @@ deploy_app-master:
     - curl --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
 
 # this serves for checking if a commit has accidentally broken the API
-test_api_status:
+test_api_status-test:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: test
+  except:
+    - master
+    - tags
+    - develop
   script: 
     - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
+
+test_api_status-develop:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  only:
+    - develop
+  script: 
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
+
+test_api_status-master:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  only:
+    - master
+  script: 
+    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
