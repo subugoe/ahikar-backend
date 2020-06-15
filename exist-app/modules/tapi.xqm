@@ -28,6 +28,7 @@ declare variable $tapi:version := "0.2.0";
 declare variable $tapi:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
+declare variable $tapi:metaCollection := $tapi:baseCollection || "/meta/";
 declare variable $tapi:aggCollection := $tapi:baseCollection || "/agg/";
 
 declare variable $tapi:responseHeader200 :=
@@ -121,10 +122,10 @@ as item()+ {
 declare function tapi:collection($collection as xs:string)
 as item()+ {
     let $aggregation := doc($tapi:aggCollection || $collection || ".xml")
-    let $meta := //tgmd:textgridUri[starts-with(., "textgrid:" || $collection)]/root()
+    let $meta := collection($tapi:metaCollection)//tgmd:textgridUri[starts-with(., "textgrid:" || $collection)]/root()
     let $sequence :=
         for $i in $aggregation//*:aggregates/string(@*:resource)
-            let $metaObject := //tgmd:textgridUri[starts-with(., $i)]/root()
+            let $metaObject := collection($tapi:metaCollection)//tgmd:textgridUri[starts-with(., $i)]/root()
             return
                 <sequence>
                     <id>{$tapi:server}/api/textapi/ahikar/{$collection}/{substring-after($i, ":")}/manifest.json</id>
