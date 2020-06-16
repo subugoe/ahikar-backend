@@ -5,11 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] - 2020-06-12
+## [1.4.0] - 2020-06-15
 
 ### Added
 
+- a function that returns the plain text of Sado 9, Harvard 80 and Strasbourg S4122.
+This is necessary in order to evaluate CollateX.
 - OpenAPI as a means to get human readable API documentation.
+
+### Changed
+
+- the plain text is not only created for the transcriptions but also for the transliteration.
+- removed unused function parameter from signature of tapi:item.
 
 ## [1.3.1] - 2020-06-15
 
