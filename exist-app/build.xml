@@ -59,6 +59,7 @@
       <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=${sade.abbrev}&amp;processor=${project.processorversion}" dest="${dependencies.dir}/sade-develop-latest.xar" ignoreerrors="true"/>
       <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=${assets.abbrev}&amp;processor=${project.processorversion}" dest="${dependencies.dir}/sade_assets-latest.xar" ignoreerrors="true"/>
       <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=${code-viewer.abbrev}&amp;processor=${project.processorversion}" dest="${dependencies.dir}/codeview-latest.xar" ignoreerrors="true"/>
+      <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=openapi&amp;processor=${project.processorversion}" dest="${dependencies.dir}/openapi-latest.xar" ignoreerrors="true"/>
     </target>
 
 </project>
