@@ -1,12 +1,14 @@
 xquery version "3.1";
 (: the target collection into which the app is deployed :)
 declare variable $target external;
+declare variable $ahikar-base := "/db/apps/ahikar";
+declare variable $tg-base := "/db/apps/sade/textgrid";
 
 declare function local:move-and-rename($filename as xs:string) {
-    let $data-file-path := "/db/apps/ahikar/data/"
-    let $target-data-collection := "/db/apps/sade/textgrid/data/"
-    let $target-meta-collection := "/db/apps/sade/textgrid/meta/"
-    let $target-agg-collection := "/db/apps/sade/textgrid/agg/"
+    let $data-file-path := $ahikar-base || "/data/"
+    let $target-data-collection := $tg-base || "/data/"
+    let $target-meta-collection := $tg-base || "/meta/"
+    let $target-agg-collection := $tg-base || "/agg/"
     return
         if(matches($filename, "meta")) then
             let $new-filename := substring-before($filename, "_meta") || ".xml"
@@ -34,11 +36,11 @@ return
 ),
 
 (: set owner and mode for RestXq module :)
-(let $path := "/db/apps/ahikar/modules/tapi.xqm"
+(let $path := $ahikar-base || "/modules/tapi.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: set owner and mode for deployment module :)
-(let $path := "/db/apps/ahikar/modules/deploy.xqm"
+(let $path := $ahikar-base || "/modules/deploy.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: move the sample XMLs to sade/textgrid to be available in the viewer :)
@@ -58,4 +60,10 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
             for $file in $files return
                 local:move-and-rename($file)
         )
+),
+
+(: make Ahikar specific OpenAPI config available to the OpenAPI app :)
+(
+    xmldb:remove("/db/apps/openapi", "openapi-config.xml"),
+    xmldb:move($ahikar-base, "/db/apps/openapi", "openapi-config.xml")
 )

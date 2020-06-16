@@ -116,6 +116,11 @@ The corresponding frontend for the Ahiwar backend is the [EMo viewer](https://gi
 In order to connect it with the simply has to expose a REST API that complies to the specification of the [SUB's generic TextAPI](https://subugoe.pages.gwdg.de/emo/text-api/)
 The frontend takes care of the data transfer as described in the [frontend's README](https://gitlab.gwdg.de/subugoe/emo/Qviewer/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
 
+## API documentation
+
+The backend comes shipped with an OpenAPI documentation of its API.
+The docs are available at <https://ahikar-dev.uni-goettingen.de/openapi>.
+
 ## License
 
 See the [LICENSE file](LICENSE.md) for more information on how to re-use this software.
