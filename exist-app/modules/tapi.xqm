@@ -30,6 +30,7 @@ declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
 declare variable $tapi:metaCollection := $tapi:baseCollection || "/meta/";
 declare variable $tapi:aggCollection := $tapi:baseCollection || "/agg/";
+declare variable $tapi:minimalSet := ("3r670", "3r674", "3r67k");
 
 declare variable $tapi:responseHeader200 :=
     <rest:response>
@@ -221,6 +222,9 @@ as element(object) {
  : with the SUB TextAPI, but has the following additions:
  :  * the division number, 'n', is mandatory
  :  * 'image' is mandatory since every page has a facsimile
+ : 
+ : The parameter $collection is actually not necessary but introduced to keep
+ : the structure of the API clear.
  :
  : Sample call to API: /api/textapi/ahikar/3r17c/3r1pq-147a/latest/item.json
  :
@@ -238,7 +242,7 @@ declare
 function tapi:item-rest($collection as xs:string, $document as xs:string,
 $page as xs:string) as item()+ {
     $tapi:responseHeader200,
-    tapi:item($collection, $document, $page)
+    tapi:item($document, $page)
 };
 
 
@@ -250,8 +254,8 @@ $page as xs:string) as item()+ {
  : @param $page A page number as encoded in a tei:pb/@n, e.g. '147a'
  : @return An object element containing all necessary information
  :)
-declare function tapi:item($collection as xs:string, $document as xs:string,
-$page as xs:string) as element(object) {
+declare function tapi:item($document as xs:string, $page as xs:string) 
+as element(object) {
     let $aggNode := doc($tapi:aggCollection || $document || ".xml")
     let $teiUri :=
         if($aggNode)
@@ -420,6 +424,9 @@ declare function tapi:text($document as xs:string) as xs:string {
 (:~
  : Endpoint to deliver all plain texts in zip container. This comes in handy for
  : applications doing text analysis.
+ : 
+ : The query param lets a user choose between getting all files (default) or 
+ : just a minimal set covering Sado 9, Harvard 80 and Strasbourg S4122.
  :
  : @return The response header as well as a xs:base64Binary (the ZIP file)
  :)
@@ -427,12 +434,67 @@ declare
     %rest:GET
     %rest:HEAD
     %rest:path("/content/ahikar-plain-text.zip")
+    %rest:query-param("minimal", "{$minimal}", "no")
     %output:method("binary")
-function tapi:text-rest() as item()+ {
-    let $prepare := tapi:zip-text()
+function tapi:text-rest($minimal) as item()+ {
+    let $prepare := 
+        if ($minimal = "yes") then
+            tapi:zip-text-minimal()
+        else
+            tapi:zip-text()
     return
         $tapi:responseHeader200,
+        tapi:compress-to-zip($minimal)
+};
+
+
+(:~
+ : Compressing all or just the minimal manuscript set to ZIP.
+ : 
+ : @param $minimal yes if only the minimal set should be zipped
+ : @return the zipped files as xs:base64Binary
+ :)
+declare function tapi:compress-to-zip($minimal as xs:string)
+as xs:base64Binary* {
+    if ($minimal = "yes") then
+        let $uriSet :=
+            for $item in $tapi:minimalSet return
+                let $matches := collection($tapi:baseCollection || "/txt/")[matches(base-uri(.), $item)]/base-uri(.)
+                for $uri in $matches return
+                    xs:anyURI($uri)
+        return
+            compression:zip($uriSet, false())
+    else
         compression:zip(xs:anyURI($tapi:baseCollection || "/txt/"), false())
+};
+
+(:~
+ : Creates a plain text version of the transcription section of Sado 9, Harvard 80 and Strasbourg S4122 
+ : This is stored to /db/apps/sade/textgrid/txt/.
+ :
+ : @return A string indicating the location where a plain text has been stored to
+ :)
+declare function tapi:zip-text-minimal() as xs:string+ {
+    let $txtCollection := $tapi:baseCollection || "/txt/"
+    let $check-text-collection :=
+        if( xmldb:collection-available($txtCollection) )
+        then true()
+        else xmldb:create-collection($tapi:baseCollection, "txt")
+    let $TEIs := 
+        for $item in $tapi:minimalSet return
+            collection($tapi:baseCollection || "/data/")[matches(base-uri(.), $item)]//tei:text[@type = ("transcription", "transliteration")]
+    return
+        for $TEI in $TEIs
+            let $baseUri := $TEI/base-uri()
+            let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
+            let $type := $TEI/@type
+            let $uri := $tgBaseUri => replace(".xml", concat("-", $type, ".txt"))
+            let $text := tapi:create-plain-text($TEI)
+
+            let $metadata := doc($baseUri => replace("/data/", "/meta/"))
+            let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
+            return
+                xmldb:store($txtCollection, $metaTitle || "-" || $uri, $text, "text/plain")
 };
 
 
@@ -440,7 +502,7 @@ function tapi:text-rest() as item()+ {
  : Creates a plain text version of the transcription section of each Ahiqar XML.
  : This is stored to /db/apps/sade/textgrid/txt/.
  :
- : @return A string indicated the location where a plain text has been stored to
+ : @return A string indicating the location where a plain text has been stored to
  :)
 declare function tapi:zip-text() as xs:string+ {
     let $txtCollection := $tapi:baseCollection || "/txt/"
@@ -449,12 +511,13 @@ declare function tapi:zip-text() as xs:string+ {
         if( xmldb:collection-available($txtCollection) )
         then true()
         else xmldb:create-collection($tapi:baseCollection, "txt")
-    let $TEIs := $collection//tei:text[@type = "transcription"]
+    let $TEIs := $collection//tei:text[@type = ("transcription", "transliteration")]
     return
         for $TEI in $TEIs
             let $baseUri := $TEI/base-uri()
             let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
-            let $uri := $tgBaseUri => replace(".xml", "-transcription.txt")
+            let $type := $TEI/@type
+            let $uri := $tgBaseUri => replace(".xml", concat("-", $type, ".txt"))
             let $text := tapi:create-plain-text($TEI)
 
             let $metadata := doc($baseUri => replace("/data/", "/meta/"))
