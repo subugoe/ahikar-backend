@@ -186,6 +186,7 @@ test_api_status-master:
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
+  retry: 2
 
 full_plain_text_api_status-test:
   image: docker.gitlab.gwdg.de/mrodzis/test
