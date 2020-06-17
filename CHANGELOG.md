@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2020-06-17
+
+### Added
+
+- an endpoint for getting the plain text of a resource.
+this encompasses edition objects as well as XML resources.
+the endpoint is available at textapi/ahikar/{$collection}/{$document}.txt and distinguishes between the different text types that exists in the Ahikar project
+
+### Removed
+
+- the function that returns the plain text of Sado 9, Harvard 80 and Strasbourg S4122.
+instead, we now focus on an approach to meet this requirement by using the API.
+
 ## [1.4.0] - 2020-06-15
 
 ### Added

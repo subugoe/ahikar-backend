@@ -214,33 +214,6 @@ full_plain_text_api_status-master:
   script:
     - header=$(curl --head --silent https://ahikar.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
 
-minimal_plain_text_api_status-test:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  except:
-    - master
-    - tags
-    - develop
-  script: 
-    - header=$(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip?minimal=yes)
-
-minimal_plain_text_api_status-develop:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  only:
-    - develop
-  script: 
-    - header=$(curl --head --silent https://ahikar-dev.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip?minimal=yes)
-
-minimal_plain_text_api_status-master:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  only:
-    - master
-  script: 
-    - header=$(curl --head --silent https://ahikar.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip?minimal=yes)
-
-
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
 # Gitlab release at the repo. therefore the merge message starting at the release
