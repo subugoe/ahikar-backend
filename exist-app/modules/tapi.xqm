@@ -5,7 +5,7 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 1.0.0
+ : @version 1.5.0
  : @since 0.0.0
  : :)
 
@@ -30,7 +30,6 @@ declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
 declare variable $tapi:metaCollection := $tapi:baseCollection || "/meta/";
 declare variable $tapi:aggCollection := $tapi:baseCollection || "/agg/";
-declare variable $tapi:minimalSet := ("3r670", "3r674", "3r67k");
 
 declare variable $tapi:responseHeader200 :=
     <rest:response>
@@ -434,67 +433,23 @@ declare
     %rest:GET
     %rest:HEAD
     %rest:path("/content/ahikar-plain-text.zip")
-    %rest:query-param("minimal", "{$minimal}", "no")
     %output:method("binary")
-function tapi:text-rest($minimal) as item()+ {
-    let $prepare := 
-        if ($minimal = "yes") then
-            tapi:zip-text-minimal()
-        else
-            tapi:zip-text()
+function tapi:text-rest() as item()+ {
+    let $prepare := tapi:zip-text()
     return
         $tapi:responseHeader200,
-        tapi:compress-to-zip($minimal)
+        tapi:compress-to-zip()
 };
 
 
 (:~
- : Compressing all or just the minimal manuscript set to ZIP.
+ : Compressing all manuscript set to ZIP.
  : 
- : @param $minimal yes if only the minimal set should be zipped
  : @return the zipped files as xs:base64Binary
  :)
-declare function tapi:compress-to-zip($minimal as xs:string)
+declare function tapi:compress-to-zip()
 as xs:base64Binary* {
-    if ($minimal = "yes") then
-        let $uriSet :=
-            for $item in $tapi:minimalSet return
-                let $matches := collection($tapi:baseCollection || "/txt/")[matches(base-uri(.), $item)]/base-uri(.)
-                for $uri in $matches return
-                    xs:anyURI($uri)
-        return
-            compression:zip($uriSet, false())
-    else
-        compression:zip(xs:anyURI($tapi:baseCollection || "/txt/"), false())
-};
-
-(:~
- : Creates a plain text version of the transcription section of Sado 9, Harvard 80 and Strasbourg S4122 
- : This is stored to /db/apps/sade/textgrid/txt/.
- :
- : @return A string indicating the location where a plain text has been stored to
- :)
-declare function tapi:zip-text-minimal() as xs:string+ {
-    let $txtCollection := $tapi:baseCollection || "/txt/"
-    let $check-text-collection :=
-        if( xmldb:collection-available($txtCollection) )
-        then true()
-        else xmldb:create-collection($tapi:baseCollection, "txt")
-    let $TEIs := 
-        for $item in $tapi:minimalSet return
-            collection($tapi:baseCollection || "/data/")[matches(base-uri(.), $item)]//tei:text[@type = ("transcription", "transliteration")]
-    return
-        for $TEI in $TEIs
-            let $baseUri := $TEI/base-uri()
-            let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
-            let $type := $TEI/@type
-            let $uri := $tgBaseUri => replace(".xml", concat("-", $type, ".txt"))
-            let $text := tapi:create-plain-text($TEI)
-
-            let $metadata := doc($baseUri => replace("/data/", "/meta/"))
-            let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
-            return
-                xmldb:store($txtCollection, $metaTitle || "-" || $uri, $text, "text/plain")
+    compression:zip(xs:anyURI($tapi:baseCollection || "/txt/"), false())
 };
 
 
@@ -559,6 +514,89 @@ declare function tapi:create-plain-text($TEI as node()) as xs:string {
     => replace("\p{P}", "")
     => replace("\n+", "")
     => replace("\s+", " ")
+};
+
+
+(:~ 
+ : An API endpoint to get the plain text version of the complete texts nodes of
+ : a resource.
+ : 
+ : It is possible to have either an edition or an XML file as input;
+ : The function
+ : always selects the underlying XML file for txt creation.
+ : 
+ : Since we have different types of texts in Ahikar (depending on the manuscript's
+ : language), we also introduced a query parameter to distinguish which text type
+ : should serve as a base for creating the plain text.
+ : The parameter defaults to 'transcription' which is the prevailing type.
+ : 
+ : Sample API calls:
+ : 
+ : * /textapi/ahikar/3r84h/3r176.txt
+ : * /textapi/ahikar/3r84h/3r176.txt?type=transliteration
+ : 
+ : @param $collection The URI of the collection a resource is part of
+ : @param $document The URI of an edition object or XML file that is to be serialized as plain text
+ : @param $type A query parameter indicating which type of text should be serialized. Defaults to 'transcription'
+ : @return The plain text of a given resource excluding the TEI header
+ :)
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/textapi/ahikar/{$collection}/{$document}.txt")
+    %rest:query-param("type", "{$type}", "transcription")
+    %output:method("text")
+function tapi:txt($collection as xs:string, $document as xs:string,
+$type) as item()+ {
+    let $TEI := local:get-TEI-text($document, $type)
+    return
+        (
+            $tapi:responseHeader200,
+            tapi:create-plain-text($TEI)
+        )
+};
+
+
+(:~
+ : Returns the tei:text of a document as indicated by the @type parameter.
+ : 
+ : Due to the structure of the Ahikar project we can pass either an edition or
+ : an XML file to the API endpoint for plain text creation.
+ : This function determines the correct file which serves as a basis for the plain text.
+ : 
+ : @param $document The URI of a resource
+ : @param $type Indicates the @type of tei:text to be processed
+ : @return The tei:text element to be serialized as plain text
+ :)
+declare function local:get-TEI-text($document as xs:string, $type as xs:string)
+as element(tei:text) {
+    let $format := local:get-format($document)
+    return
+        if ($format = "text/xml") then
+            doc($tapi:dataCollection || $document || ".xml")//tei:text[@type = $type]
+        (: in this case the document is an edition which forces us to pick the
+        text/xml file belonging to it:)
+        else
+            let $edition := doc($tapi:aggCollection || $document || ".xml")
+            let $aggregated := for $agg in $edition//ore:aggregates/@rdf:resource return replace($agg, "textgrid:", "")
+            let $xml :=
+                for $agg in $aggregated return
+                    if (local:get-format($agg) = "text/xml") then
+                        $agg
+                    else
+                        ()
+            return
+                 doc($tapi:dataCollection || $xml || ".xml")//tei:text[@type = $type]
+};
+
+(:~
+ : Returns the TextGrid metadata type of a resource.
+ : 
+ : @param $uri The URI of the resource
+ : @return The resource's format as tgmd:format
+ :)
+declare function local:get-format($uri as xs:string) as xs:string {
+    doc($tapi:metaCollection || $uri || ".xml")//tgmd:format
 };
 
 
