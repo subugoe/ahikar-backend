@@ -1,4 +1,5 @@
 stages:
+  - unit_tests
   - build
   - package
   - deploy_docker
@@ -7,7 +8,7 @@ stages:
   - release
   - reassign_labels
 
-# templates:
+## TEMPLATES:
 .ssh-config: &ssh
 - which ssh-agent
 - eval $(ssh-agent -s)
@@ -28,6 +29,31 @@ stages:
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
 
+## JOBS
+
+test_exist_app:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  stage: unit_tests
+  before_script:
+    - apt install libxml2-utils
+  script:
+    - ant -f exist-app/build.xml test
+    - bash exist-app/test/bin/startup.sh | tee output.log &
+    - while [ $(curl --head --silent http://localhost:8080 | grep -c "200 OK") == 0 ]; do sleep 1s; done
+    - curl http://localhost:8080/exist/restxq/trigger-tests
+    - sleep 60
+    - bash exist-app/test/bin/shutdown.sh
+    - failures=$(xmllint --xpath '/tests/testsuites/testsuite/@failures' exist-app/test/test-results.xml | egrep -o "[0-9]+")
+    - echo "There is/are currently $failures failures."
+    # one test fails on purpose to ensure the test suite is running correctly.
+    # thus we always have 1 failing test which indicates that everything is fine.
+    - if [[ "$failures" -gt 1 ]]; then exit 1; else exit 0; fi
+  artifacts:
+    paths:
+      - exist-app/test/test-results.xml
+    reports:
+      junit: exist-app/test/test-results.xml
+
 build_exist_app-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
@@ -40,7 +66,7 @@ build_exist_app-all:
     paths:
       - exist-app/build/*.xar
       - exist-app/build/dependencies/*.xar
-
+  
 load_frontend-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build

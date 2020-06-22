@@ -5,7 +5,7 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 1.5.0
+ : @version 1.5.1
  : @since 0.0.0
  : :)
 
@@ -30,6 +30,7 @@ declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
 declare variable $tapi:metaCollection := $tapi:baseCollection || "/meta/";
 declare variable $tapi:aggCollection := $tapi:baseCollection || "/agg/";
+declare variable $tapi:appHome := "/db/apps/ahikar";
 
 declare variable $tapi:responseHeader200 :=
     <rest:response>
@@ -68,8 +69,8 @@ as element(descriptors) {
             <uri>{ requestr:uri() }</uri>
         </request>
         {
-            tapi:remove-whitespaces(doc("../expath-pkg.xml")),
-            tapi:remove-whitespaces(doc("../repo.xml"))
+            tapi:remove-whitespaces(doc($tapi:appHome || "/expath-pkg.xml")),
+            tapi:remove-whitespaces(doc($tapi:appHome || "/repo.xml"))
         }
     </descriptors>
 };
@@ -103,7 +104,7 @@ declare
 function tapi:collection-rest($collection as xs:string)
 as item()+ {
     $tapi:responseHeader200,
-    tapi:collection($collection)
+    tapi:collection($collection, $tapi:server)
 };
 
 
@@ -117,9 +118,10 @@ as item()+ {
  :
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @param $collection The unprefixed TextGrid URI of a collection. For Ahiqar's main collection this is '3r132'.
+ : @param $server A string indicating the server. This parameter has been introduced to make this function testable.
  : @return An object element containing all necessary information
  :)
-declare function tapi:collection($collection as xs:string)
+declare function tapi:collection($collection as xs:string, $server as xs:string)
 as item()+ {
     let $aggregation := doc($tapi:aggCollection || $collection || ".xml")
     let $meta := collection($tapi:metaCollection)//tgmd:textgridUri[starts-with(., "textgrid:" || $collection)]/root()
@@ -128,7 +130,7 @@ as item()+ {
             let $metaObject := collection($tapi:metaCollection)//tgmd:textgridUri[starts-with(., $i)]/root()
             return
                 <sequence>
-                    <id>{$tapi:server}/api/textapi/ahikar/{$collection}/{substring-after($i, ":")}/manifest.json</id>
+                    <id>{$server}/api/textapi/ahikar/{$collection}/{substring-after($i, ":")}/manifest.json</id>
                     <type>{
                         if($collection = "3r84g")
                         then
@@ -169,6 +171,7 @@ as item()+ {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest
  : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r84g'
  : @param $document The unprefixed TextGrid URI of a document, e.g. '3r679'
+ : @return An object element containing all necessary information about a manifest object
  :)
 declare
     %rest:GET
@@ -178,7 +181,7 @@ declare
 function tapi:manifest-rest($collection as xs:string, $document as xs:string)
 as item()+ {
     $tapi:responseHeader200,
-    tapi:manifest($collection, $document)
+    tapi:manifest($collection, $document, $tapi:server)
 };
 
 
@@ -191,8 +194,11 @@ as item()+ {
  : 
  : @param $collection The URI of the document's parent collection, e.g. '3r9ps'
  : @param $document The URI of an edition object, e.g. '3r177'
+ : @param $server A string indicating the server. This parameter has been introduced to make this function testable and defaults to $tapi:server.
+ : @return An object element containing all necessary information about a manifest object
  :)
-declare function tapi:manifest($collection as xs:string, $document as xs:string)
+declare function tapi:manifest($collection as xs:string, $document as xs:string,
+$server as xs:string)
 as element(object) {
     let $aggNode := doc($tapi:aggCollection || $document || ".xml")
     let $metaNode := doc($tapi:baseCollection || "/meta/" || $document || ".xml")
@@ -203,7 +209,7 @@ as element(object) {
         let $uri := "/api/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
         return
             <sequence>
-                <id>{$tapi:server}{$uri}</id>
+                <id>{$server}{$uri}</id>
                 <type>item</type>
             </sequence>
     return
@@ -241,19 +247,20 @@ declare
 function tapi:item-rest($collection as xs:string, $document as xs:string,
 $page as xs:string) as item()+ {
     $tapi:responseHeader200,
-    tapi:item($document, $page)
+    tapi:item($document, $page, $tapi:server)
 };
 
 
 (:~
  : Returns information about a given page.
  :
- : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r17c'
  : @param $document The unprefixed TextGrid URI of a document, e.g. '3r1pq'
  : @param $page A page number as encoded in a tei:pb/@n, e.g. '147a'
- : @return An object element containing all necessary information
+ : @param $server A string indicating the server. This parameter has been introduced to make this function testable and defaults to $tapi:server.
+ : @return An object element containing all necessary information about an item
  :)
-declare function tapi:item($document as xs:string, $page as xs:string) 
+declare function tapi:item($document as xs:string, $page as xs:string,
+$server as xs:string) 
 as element(object) {
     let $aggNode := doc($tapi:aggCollection || $document || ".xml")
     let $teiUri :=
@@ -273,14 +280,14 @@ as element(object) {
         <title>{$title}</title>
         <type>page</type>
         <n>{$page}</n>
-        <content>{$tapi:server}/api/content/{$teiUri}-{$page}.html</content>
+        <content>{$server}/api/content/{$teiUri}-{$page}.html</content>
         <content-type>application/xhtml+xml</content-type>
         {
             for $lang in $languages return
                 element lang {$lang}
         }
         <image>
-            <id>{$tapi:server}/api/images/{$image}</id>
+            <id>{$server}/api/images/{$image}</id>
         </image>
     </object>
 };
@@ -357,6 +364,9 @@ as element(div) {
 (:~
  : Returns an image belonging to a given URI. This function doesn't work locally
  : unless you have all necessary login information filled in at ahikar.env.
+ : 
+ : Since the images of the Ahikar project aren't publicly available, this
+ : function cannot be tested by unit tests.
  :
  : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
  : @return The image as binary
@@ -421,11 +431,8 @@ declare function tapi:text($document as xs:string) as xs:string {
 
 
 (:~
- : Endpoint to deliver all plain texts in zip container. This comes in handy for
- : applications doing text analysis.
- : 
- : The query param lets a user choose between getting all files (default) or 
- : just a minimal set covering Sado 9, Harvard 80 and Strasbourg S4122.
+ : Endpoint to deliver all plain texts in a zip container. This comes in handy
+ : e.g. for applications doing text analysis.
  :
  : @return The response header as well as a xs:base64Binary (the ZIP file)
  :)
@@ -443,7 +450,7 @@ function tapi:text-rest() as item()+ {
 
 
 (:~
- : Compressing all manuscript set to ZIP.
+ : Compressing all manuscripts available to ZIP.
  : 
  : @return the zipped files as xs:base64Binary
  :)
@@ -518,12 +525,10 @@ declare function tapi:create-plain-text($TEI as node()) as xs:string {
 
 
 (:~ 
- : An API endpoint to get the plain text version of the complete texts nodes of
- : a resource.
+ : An API endpoint to get the plain text version of a resource.
  : 
  : It is possible to have either an edition or an XML file as input;
- : The function
- : always selects the underlying XML file for txt creation.
+ : The function always selects the underlying XML file for txt creation.
  : 
  : Since we have different types of texts in Ahikar (depending on the manuscript's
  : language), we also introduced a query parameter to distinguish which text type
@@ -548,7 +553,7 @@ declare
     %output:method("text")
 function tapi:txt($collection as xs:string, $document as xs:string,
 $type) as item()+ {
-    let $TEI := local:get-TEI-text($document, $type)
+    let $TEI := tapi:get-TEI-text($document, $type)
     return
         (
             $tapi:responseHeader200,
@@ -568,20 +573,20 @@ $type) as item()+ {
  : @param $type Indicates the @type of tei:text to be processed
  : @return The tei:text element to be serialized as plain text
  :)
-declare function local:get-TEI-text($document as xs:string, $type as xs:string)
+declare function tapi:get-TEI-text($document as xs:string, $type as xs:string)
 as element(tei:text) {
-    let $format := local:get-format($document)
+    let $format := tapi:get-format($document)
     return
         if ($format = "text/xml") then
             doc($tapi:dataCollection || $document || ".xml")//tei:text[@type = $type]
         (: in this case the document is an edition which forces us to pick the
-        text/xml file belonging to it:)
+        text/xml file belonging to it :)
         else
             let $edition := doc($tapi:aggCollection || $document || ".xml")
             let $aggregated := for $agg in $edition//ore:aggregates/@rdf:resource return replace($agg, "textgrid:", "")
             let $xml :=
                 for $agg in $aggregated return
-                    if (local:get-format($agg) = "text/xml") then
+                    if (tapi:get-format($agg) = "text/xml") then
                         $agg
                     else
                         ()
@@ -595,7 +600,7 @@ as element(tei:text) {
  : @param $uri The URI of the resource
  : @return The resource's format as tgmd:format
  :)
-declare function local:get-format($uri as xs:string) as xs:string {
+declare function tapi:get-format($uri as xs:string) as xs:string {
     doc($tapi:metaCollection || $uri || ".xml")//tgmd:format
 };
 
