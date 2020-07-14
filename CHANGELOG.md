@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2020-07-10
+
+### Fixed
+
+- consider processing instruction when serializing HTML.
+We didn't before and that caused an error while assigning IDs to elements.
+
+## [1.7.0] - 2020-06-30
+
+### Added
+
+- the AnnotationAPI which is compliant to the W3C Annotation Model.
+With this API, we can expose annotations to the QViewer which can then be serialized in different ways.
+
+### Changed
+
+- added a field 'annotationCollection' to Collection, Manifest and Item Objects.
+This connects the TextAPI with the AnnotationAPI.
+
 ## [1.6.0] - 2020-06-19
 
 ### Added

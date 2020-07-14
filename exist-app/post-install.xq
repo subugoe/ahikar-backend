@@ -65,6 +65,21 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
         )
 ),
 
+(: move modified TEI stylesheets in right collection :)
+(
+    let $data-collection := "/db/apps/ahikar/data/"
+    let $target-collection := "/db/apps/sade_assets/TEI-Stylesheets/"
+    let $html-xsl := "html.xsl"
+    let $common-core-xsl := "common_core.xsl"
+    return
+        (
+            xmldb:remove($target-collection || "common/", $common-core-xsl),
+            xmldb:remove($target-collection || "html/", $html-xsl),
+            xmldb:move($data-collection, $target-collection || "common/", $common-core-xsl),
+            xmldb:move($data-collection, $target-collection || "html/", $html-xsl)
+        )
+),
+
 (: make Ahikar specific OpenAPI config available to the OpenAPI app :)
 ( 
     if (xmldb:collection-available("/db/apps/openapi")) then

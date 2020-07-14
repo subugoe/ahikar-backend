@@ -12,6 +12,7 @@ module namespace tests="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests";
 declare namespace http = "http://expath.org/ns/http-client";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "modules/annotations.xqm";
 import module namespace map="http://www.w3.org/2005/xpath-functions/map";
 import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "modules/tapi.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
@@ -40,6 +41,7 @@ function tests:_test-setup() as xs:string+ {
         <note>test2</note>
         test3
         <sic>text4</sic>
+        <placeName>Berlin</placeName>
     </text>),
     tapi:zip-text()
 };
@@ -52,9 +54,9 @@ function tests:_test-teardown() as item() {
     xmldb:remove("/db/test-records")
 };
 
-(: *****************
- : * API ENDPOINTS * 
- : *****************
+(: *********************
+ : * TEXTAPI ENDPOINTS * 
+ : *********************
  :)
 
 (: API information :)
@@ -202,7 +204,7 @@ $server as xs:string) as element(object) {
 
 
 declare
-    %test:args("ahiqar_agg", "82a", "http://localhost:8080/exist/restxq")
+    %test:args("ahiqar_collection", "ahiqar_agg", "82a", "http://localhost:8080/exist/restxq")
     (: checks if the correct file has been opened :)
     %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
                king of Assyria and Nineveh' ")
@@ -212,9 +214,9 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://localhost:8080/exist/restxq/api/content/ahiqar_sample-82a.html' ")
     (: checks if images connected to underlying pages are identified :)
     %test:assertXPath("$result//*[local-name(.) = 'id'] = 'http://localhost:8080/exist/restxq/api/images/3r1nz' ")
-function tests:item($document as xs:string, $page as xs:string, $server as xs:string) 
+function tests:item($collection as xs:string, $document as xs:string, $page as xs:string, $server as xs:string) 
 as element(object){
-    tapi:item($document, $page, $server)
+    tapi:item($collection, $document, $page, $server)
 };
 
 
@@ -250,7 +252,7 @@ function tests:compress-text() as xs:base64Binary {
 
 
 declare
-    %test:assertEquals("test test3 ")
+    %test:assertEquals("test test3 Berlin")
 function tests:plain-text() as xs:string {
     let $tei := doc("/db/test-records/sample-tei.xml")/*
     return
@@ -281,3 +283,132 @@ function tests:remove-whitespaces() as document-node() {
     return
         tapi:remove-whitespaces($doc)
 };
+
+
+(:  
+ : *****************
+ : * AnnotationAPI * 
+ : *****************
+ :)
+
+declare
+    %test:args("ahiqar_sample", "data")
+    %test:assertXPath("$result//*[local-name(.) = 'TEI']")
+function tests:anno-get-document($uri as xs:string, $type as xs:string) as document-node() {
+    anno:get-document($uri, $type)
+};
+
+
+(:declare:)
+(:    %test:args("3r679", "114r"):)
+(:    %test:assertEquals("0"):)
+(:function tests:anno-determine-start-index-for-page($uri as xs:string, $page as xs:string) {:)
+(:    anno:determine-start-index-for-page($uri, $page):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertEquals("16"):)
+(:function tests:anno-determine-start-index($uri as xs:string) {:)
+(:    anno:determine-start-index($uri):)
+(:};:)
+(::)
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertEquals("3r679"):)
+(:function tests:anno-get-parent-aggregation($uri as xs:string) {:)
+(:    anno:get-parent-aggregation($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertEquals("114r", "114v"):)
+(:function tests:anno-get-pages-in-TEI($uri as xs:string) {:)
+(:    anno:get-pages-in-TEI($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r679"):)
+(:    %test:assertTrue:)
+(:function tests:anno-is-resource-edition($uri as xs:string) {:)
+(:    anno:is-resource-edition($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertTrue:)
+(:function tests:anno-is-resource-xml($uri as xs:string) {:)
+(:    anno:is-resource-xml($uri):)
+(:};:)
+
+
+declare
+    %test:assertEquals("A place's name.")
+function tests:anno-get-bodyValue() {
+    let $annotation := doc("/db/test-records/sample-tei.xml")//tei:placeName
+    return
+        anno:get-bodyValue($annotation)
+};
+
+
+declare
+    %test:args("asdf")
+    %test:assertFalse
+(:    %test:args("3r131"):)
+(:    %test:assertTrue:)
+function tests:anno-are-resources-available($resources as xs:string+) {
+    anno:are-resources-available($resources)
+};
+
+
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertEquals("Simon Birol, Aly Elrefaei"):)
+(:function tests:anno-get-creator($uri as xs:string) {:)
+(:    anno:get-creator($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertEquals("Brit. Lib. Add. 7200"):)
+(:function tests:anno-get-metadata-title($uri as xs:string) {:)
+(:    anno:get-metadata-title($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r679"):)
+(:    %test:assertEquals("3r676", "3r672"):)
+(:function tests:anno-get-prev-xml-uris($uri as xs:string) {:)
+(:    anno:get-prev-xml-uris($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r679"):)
+(:    %test:assertEquals("3r676", "3r672"):)
+(:function tests:anno-get-xmls-prev-in-collection($uri as xs:string) {:)
+(:    anno:get-xmls-prev-in-collection($uri):)
+(:};:)
+
+
+(:declare:)
+(:    %test:args("3r679", "114r", "next"):)
+(:    %test:assertEquals("114v"):)
+(:function tests:anno-get-prev-or-next-page($documentURI as xs:string,:)
+(:$page as xs:string, $type as xs:string) {:)
+(:    anno:get-prev-or-next-page($documentURI, $page, $type):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r9ps"):)
+(:    %test:assertEquals("3r177", "3r178", "3r7vw", "3r7p1", "3r7p9", "3r7sk", "3r7tp", "3r7vd", "3r179", "3r7n0", "3r9vn", "3r9wf", "3rb3z", "3rbm9", "3rbmc", "3rx14", "3vp38"):)
+(:function tests:anno-get-uris($documentURI) {:)
+(:    anno:get-uris($documentURI):)
+(:};:)

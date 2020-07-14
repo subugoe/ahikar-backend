@@ -12,3 +12,6 @@ docker/frontend
 
 # exclude all ZIP files
 **/*.zip
+
+# exclude local scripts
+*.sh
