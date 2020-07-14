@@ -5,7 +5,7 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 1.5.2
+ : @version 1.7.2
  : @since 0.0.0
  : :)
 
@@ -477,19 +477,39 @@ declare function tapi:zip-text() as xs:string+ {
         if( xmldb:collection-available($txtCollection) )
         then true()
         else xmldb:create-collection($tapi:baseCollection, "txt")
-    let $TEIs := $collection//tei:text[@type = ("transcription", "transliteration")]
+    let $TEIs := $collection//tei:text[@type = ("transcription", "transliteration")][matches(descendant::text(), "[\w]")]
     return
         for $TEI in $TEIs
             let $baseUri := $TEI/base-uri()
             let $tgBaseUri := ($baseUri => tokenize("/"))[last()]
             let $type := $TEI/@type
+            let $prefix :=
+            switch ($type)
+                case "transcription" return
+                    switch ($TEI/@xml:lang)
+                        case "karshuni" return "karshuni"
+                        case "ara" return "arabic"
+                        case "syc" return "syriac"
+                        default return ()
+                        
+                (: although the transliteration may have another language than
+                the transcription, the latter remains decisive for the prefix :)
+                case "transliteration" return
+                    (: transliterations are always encoded before transcriptions :)
+                    switch ($TEI/following-sibling::tei:text[@type = "transcription"]/@xml:lang)
+                        case "ara" return "arabic"
+                        case "karshuni" return "karshuni"
+                        case "syc" return "syc"
+                        default return ()
+                default return ()
+                
             let $uri := $tgBaseUri => replace(".xml", concat("-", $type, ".txt"))
             let $text := tapi:create-plain-text($TEI)
 
             let $metadata := doc($baseUri => replace("/data/", "/meta/"))
             let $metaTitle := $metadata//tgmd:title => replace("[^a-zA-Z]", "_")
             return
-                xmldb:store($txtCollection, $metaTitle || "-" || $uri, $text, "text/plain")
+                xmldb:store($txtCollection, $prefix || "-" || $metaTitle || "-" || $uri, $text, "text/plain")
 };
 
 
