@@ -4,7 +4,7 @@ This aims to serve the complete backend for the Ahikar project.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Contents:**
+
 
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
@@ -13,13 +13,16 @@ This aims to serve the complete backend for the Ahikar project.
     - [Get the Frontend](#get-the-frontend)
   - [Environment variables](#environment-variables)
   - [Building All Docker Container Images](#building-all-docker-container-images)
-- [Start the Backend](#start-the-backend)
+  - [Start the Backend](#start-the-backend)
 - [Architecture](#architecture)
   - [Internal Workings of the Backend](#internal-workings-of-the-backend)
+- [Connecting the Backend with the Frontend](#connecting-the-backend-with-the-frontend)
+- [API documentation](#api-documentation)
+  - [Interplay of TextAPI and AnnotationAPI](#interplay-of-textapi-and-annotationapi)
+- [License](#license)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
 - [Authors](#authors)
-- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -120,6 +123,10 @@ The frontend takes care of the data transfer as described in the [frontend's REA
 
 The backend comes shipped with an OpenAPI documentation of its API.
 The docs are available at <https://ahikar-dev.uni-goettingen.de/openapi>.
+
+### Interplay of TextAPI and AnnotationAPI
+
+![Diagram of the interplay of TextAPI and AnnotationAPI](exist-app/data/annotationAPI.png)
 
 ## License
 

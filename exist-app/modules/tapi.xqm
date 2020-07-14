@@ -5,7 +5,7 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 1.5.1
+ : @version 1.5.2
  : @since 0.0.0
  : :)
 
@@ -159,6 +159,7 @@ as item()+ {
             </idref>
         </collector>
         <description>Main collection for the Ahikar project. Funded by DFG, 2019–2020. University of Göttingen</description>
+        <annotationCollection>{$server}/api/textapi/ahikar/{$collection}/annotationCollection.json</annotationCollection>
         {$sequence}
     </object>
 };
@@ -217,6 +218,7 @@ as element(object) {
         <textapi>{$tapi:version}</textapi>
         <label>{string($metaNode//tgmd:title)}</label>
         <license>CC0-1.0</license>
+        <annotationCollection>{$server}/api/textapi/ahikar/{$collection}/{$document}/annotationCollection.json</annotationCollection>
         {$sequence}
     </object>
 };
@@ -247,20 +249,21 @@ declare
 function tapi:item-rest($collection as xs:string, $document as xs:string,
 $page as xs:string) as item()+ {
     $tapi:responseHeader200,
-    tapi:item($document, $page, $tapi:server)
+    tapi:item($collection, $document, $page, $tapi:server)
 };
 
 
 (:~
  : Returns information about a given page.
  :
+ : @param $document The unprefixed TextGrid URI of a collection, e.g. '3r9ps'
  : @param $document The unprefixed TextGrid URI of a document, e.g. '3r1pq'
  : @param $page A page number as encoded in a tei:pb/@n, e.g. '147a'
  : @param $server A string indicating the server. This parameter has been introduced to make this function testable and defaults to $tapi:server.
  : @return An object element containing all necessary information about an item
  :)
-declare function tapi:item($document as xs:string, $page as xs:string,
-$server as xs:string) 
+declare function tapi:item($collection as xs:string, $document as xs:string,
+$page as xs:string, $server as xs:string) 
 as element(object) {
     let $aggNode := doc($tapi:aggCollection || $document || ".xml")
     let $teiUri :=
@@ -289,6 +292,7 @@ as element(object) {
         <image>
             <id>{$server}/api/images/{$image}</id>
         </image>
+        <annotationCollection>{$server}/api/textapi/ahikar/{$collection}/{$document}-{$page}/annotationCollection.json</annotationCollection>
     </object>
 };
 
@@ -332,7 +336,7 @@ as element(div) {
     let $TEI :=
         if($page)
         then
-            let $node := doc($documentPath),
+            let $node := doc($documentPath)/* => tapi:add-IDs(),
                 $start-node := $node//tei:pb[@n = $page and @facs],
                 $end-node :=
                     let $followingPb := $node//tei:pb[@n = $page and @facs]/following::tei:pb[1][@facs]
@@ -617,4 +621,30 @@ as xs:string {
         case "text/tg.aggregation+xml" return "collection"
         case "text/tg.edition+tg.aggregation+xml" return "manifest"
         default return "manifest"
+};
+
+declare function tapi:add-IDs($tei as element(tei:TEI)) as element(tei:TEI) {
+    tapi:add-IDs-recursion($tei)
+};
+
+declare function tapi:add-IDs-recursion($nodes as node()*) as node()* {
+    util:log-system-out($nodes),
+    for $node in $nodes return
+        typeswitch ($node)
+        
+        case text() return
+            $node
+            
+        case comment() return
+            ()
+            
+        case processing-instruction() return
+            $node
+            
+        default return
+            element {QName("http://www.tei-c.org/ns/1.0", local-name($node))} {
+                attribute id {generate-id($node)},
+                $node/@*,
+                tapi:add-IDs-recursion($node/node())
+            }
 };
