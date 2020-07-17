@@ -15,3 +15,8 @@ docker/frontend
 
 # exclude local scripts
 *.sh
+
+# exlude data for commitizen
+node_modules
+package.json
+package-lock.json
