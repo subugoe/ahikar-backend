@@ -1,5 +1,15 @@
 xquery version "3.1";
 
+(:~
+ : This module provides the TextAPI for Ahikar.
+ :
+ : @author Michelle Weidling
+ : @version 1.8.0
+ : @since 1.7.0
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/
+ : :)
+
 module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -14,7 +24,7 @@ import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "tapi.xqm";
 
-declare variable $anno:version := "0.1.0";
+declare variable $anno:version := "1.8.0";
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 declare variable $anno:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 
@@ -165,10 +175,11 @@ declare function anno:make-annotationCollection-map($uri as xs:string, $title as
     map {
         "annotationCollection":
             map {
+                "@context": "http://www.w3.org/ns/anno.jsonld",
                 "id":       $anno:ns || "/annotationCollection/" || $uri,
                 "type":     "AnnotationCollection",
                 "label":    "Ahikar annotations for textgrid:" || $uri || ": " || $title,
-                "creator":  anno:get-creator($uri),
+                "x-creator":  anno:get-creator($uri),
                 "total":    anno:get-total-no-of-annotations($uri),
                 "first":    $first-entry,
                 "last":     $last-entry
@@ -361,10 +372,11 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
         map {
             "annotationCollection":
                 map {
+                    "@context": "http://www.w3.org/ns/anno.jsonld",
                     "id":       $anno:ns || "/annotationCollection/" || $document || "-" || $page,
                     "type":     "AnnotationCollection",
                     "label":    "Ahikar annotations for textgrid:" || $document || ": " || $title || ", page " || $page,
-                    "creator":  anno:get-creator($document),
+                    "x-creator":  anno:get-creator($document),
                     "total":    anno:get-total-no-of-annotations($page),
                     "first":    $server || "/textapi/ahikar/" || $collection || "/" || $document || "-" || $page || "/annotationPage.json"
                 }
@@ -442,6 +454,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
                 map {
                     "@context":     "http://www.w3.org/ns/anno.jsonld",
                     "id":           $anno:ns || "/annotationPage/" || $collection || "/" || $document || "-" || $page,
+                    "type":         "AnnotationPage",
                     "partOf":       map {
                                         "id": $anno:ns || "/annotationCollection/" || $document,
                                         "label": "Ahikar annotations for textgrid:" || $document || ": " || $docTitle,
@@ -475,7 +488,6 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
         let $id := generate-id($annotation)
         return
         map {
-            "@context": "http://www.w3.org/ns/anno.jsonld",
             "id": $anno:ns || "/" || $documentURI || "/annotation-" || $id,
             "type": "Annotation",
             "bodyValue": anno:get-bodyValue($annotation),

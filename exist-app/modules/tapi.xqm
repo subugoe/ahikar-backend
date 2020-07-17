@@ -5,8 +5,10 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 1.7.2
+ : @version 1.8.0
  : @since 0.0.0
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/
  : :)
 
 module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi";
@@ -24,7 +26,7 @@ import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milesto
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 
-declare variable $tapi:version := "0.2.0";
+declare variable $tapi:version := "1.8.0";
 declare variable $tapi:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
@@ -216,6 +218,7 @@ as element(object) {
     return
     <object>
         <textapi>{$tapi:version}</textapi>
+        <id>{$server}/api/textapi/ahikar/{$collection}/{$document}/manifest.json</id>
         <label>{string($metaNode//tgmd:title)}</label>
         <license>CC0-1.0</license>
         <annotationCollection>{$server}/api/textapi/ahikar/{$collection}/{$document}/annotationCollection.json</annotationCollection>
@@ -274,8 +277,15 @@ as element(object) {
     
     let $xml := doc($tapi:dataCollection || $teiUri || ".xml")
     let $title := $xml//tei:title[@type = "main"]/string()
-    let $languages := 
-        $xml//tei:language/text()
+    let $iso-languages := 
+        $xml//tei:language[@xml:base = "https://iso639-3.sil.org/code/"]/@ident/string()
+    let $alt-languages :=
+        $xml//tei:language[not(@xml:base = "https://iso639-3.sil.org/code/")]/@ident/string()
+    let $langString :=
+        for $lang in $xml//tei:language/text()
+        order by $lang
+        return $lang
+    let $langString := string-join($langString, ", ")
     
     return
     <object>
@@ -286,9 +296,14 @@ as element(object) {
         <content>{$server}/api/content/{$teiUri}-{$page}.html</content>
         <content-type>application/xhtml+xml</content-type>
         {
-            for $lang in $languages return
+            for $lang in $iso-languages return
                 element lang {$lang}
         }
+        {
+            for $lang in $alt-languages return
+                element langAlt {$lang}
+        }
+        <x-langString>{$langString}</x-langString>
         <image>
             <id>{$server}/api/images/{$image}</id>
         </image>

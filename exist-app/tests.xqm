@@ -37,7 +37,7 @@ function tests:_test-setup() as xs:string+ {
     xmldb:create-collection("/db", "test-records"),
     xmldb:store("/db/test-records", "white-spaces.xml", <record><id>12     34 56
     78</id></record>),
-    xmldb:store("/db/test-records", "sample-tei.xml", <text xmlns="http://www.tei-c.org/ns/1.0" type="transcription">test      
+    xmldb:store("/db/test-records", "sample-tei.xml", <text xmlns="http://www.tei-c.org/ns/1.0" type="transcription" xml:lang="karshuni">test      
         <note>test2</note>
         test3
         <sic>text4</sic>
@@ -209,7 +209,9 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
                king of Assyria and Nineveh' ")
     (: checks if language assembling works correctly :)
-    %test:assertXPath("$result//*[local-name(.) = 'lang'] = 'Classical Syriac' ")
+    %test:assertXPath("$result//*[local-name(.) = 'lang']/ = 'ara' ")
+    %test:assertXPath("$result//*[local-name(.) = 'langAlt']/ = 'karshuni' ")
+    %test:assertXPath("$result//*[local-name(.) = 'x-langString'] = 'Arabic, Classical Syriac, Eastern Syriac, Karshuni, Western Syriac' ")
     (: checks if underlying pages are identified :)
     %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://localhost:8080/exist/restxq/api/content/ahiqar_sample-82a.html' ")
     (: checks if images connected to underlying pages are identified :)
