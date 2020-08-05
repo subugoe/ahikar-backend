@@ -4,7 +4,7 @@ xquery version "3.1";
  : This module provides the TextAPI for Ahikar.
  :
  : @author Michelle Weidling
- : @version 1.8.0
+ : @version 1.8.1
  : @since 1.7.0
  : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/
  : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/

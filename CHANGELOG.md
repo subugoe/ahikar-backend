@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] - 2020-08-05
+
+### Fixed
+
+- The endpoint design of all AnnotationAPI endpoints requires a leading `/api` on the servers due to the Apache configuration (this doesn't hold for the entrypoint).
+This hasn't been the case so far and has been fixed in this version.
+- The file `ahiqar_collection.xml` listed a dummy file and several original files in its aggregation.
+This caused the AnnotationAPI function that determines to which collection a file belongs to crash since the original files listed in said XML had two possible collections they could belong to.
+
 ## [1.8.0] - 2020-07-17
 
 ### Fixed
