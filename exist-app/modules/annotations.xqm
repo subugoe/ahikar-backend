@@ -227,7 +227,7 @@ declare function anno:get-creator($uri as xs:string) as xs:string {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection}/{$document}/annotationPage.json")
+    %rest:path("/api/textapi/ahikar/{$collection}/{$document}/annotationPage.json")
     %output:method("json")
 function anno:annotationPage-for-collection-rest($collection as xs:string, 
 $document as xs:string) {
@@ -304,7 +304,7 @@ $document as xs:string, $server as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection}/{$document}/annotationCollection.json")
+    %rest:path("/api/textapi/ahikar/{$collection}/{$document}/annotationCollection.json")
     %output:method("json")
 function anno:manifest-rest($collection as xs:string, 
 $document as xs:string) {
@@ -335,7 +335,7 @@ $document as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection}/{$document}-{$page}/annotationCollection.json")
+    %rest:path("/api/textapi/ahikar/{$collection}/{$document}-{$page}/annotationCollection.json")
     %output:method("json")
 function anno:annotationCollection-for-manifest-rest($collection as xs:string, 
 $document as xs:string, $page as xs:string) {
@@ -403,7 +403,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection}/{$document}-{$page}/annotationPage.json")
+    %rest:path("/api/textapi/ahikar/{$collection}/{$document}-{$page}/annotationPage.json")
     %output:method("json")
 function anno:annotationPage-for-manifest-rest($collection as xs:string, 
 $document as xs:string, $page as xs:string) {
