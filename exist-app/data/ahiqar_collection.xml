@@ -1,20 +1,5 @@
 <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <rdf:Description xmlns:tei="http://www.tei-c.org/ns/1.0" rdf:about="textgrid:ahiqar_collection.0">
         <ore:aggregates rdf:resource="textgrid:ahiqar_agg"/>
-        <ore:aggregates rdf:resource="textgrid:3r177"/>
-        <ore:aggregates rdf:resource="textgrid:3r178"/>
-        <ore:aggregates rdf:resource="textgrid:3r7vw"/>
-        <ore:aggregates rdf:resource="textgrid:3r7p1"/>
-        <ore:aggregates rdf:resource="textgrid:3r7p9"/>
-        <ore:aggregates rdf:resource="textgrid:3r7sk"/>
-        <ore:aggregates rdf:resource="textgrid:3r7tp"/>
-        <ore:aggregates rdf:resource="textgrid:3r7vd"/>
-        <ore:aggregates rdf:resource="textgrid:3r179"/>
-        <ore:aggregates rdf:resource="textgrid:3r7n0"/>
-        <ore:aggregates rdf:resource="textgrid:3r9vn"/>
-        <ore:aggregates rdf:resource="textgrid:3r9wf"/>
-        <ore:aggregates rdf:resource="textgrid:3rb3z"/>
-        <ore:aggregates rdf:resource="textgrid:3rbm9"/>
-        <ore:aggregates rdf:resource="textgrid:3rbmc"/>
     </rdf:Description>
 </rdf:RDF>
