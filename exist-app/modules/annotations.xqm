@@ -144,8 +144,8 @@ declare function anno:get-information-for-collection-object($collectionURI as xs
     let $first := $child-keys[1]
     let $last := $child-keys[last()]
     let $title := anno:get-metadata-title($collectionURI)
-    let $first-entry := $server || "/textapi/ahikar/" || $collectionURI || "/" || $first || "/annotationPage.json"
-    let $last-entry := $server || "/textapi/ahikar/" || $collectionURI || "/" || $last || "/annotationPage.json"
+    let $first-entry := $server || "/api/textapi/ahikar/" || $collectionURI || "/" || $first || "/annotationPage.json"
+    let $last-entry := $server || "/api/textapi/ahikar/" || $collectionURI || "/" || $last || "/annotationPage.json"
 
     return
         anno:make-annotationCollection-map($collectionURI, $title, $first-entry, $last-entry)
@@ -378,7 +378,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
                     "label":    "Ahikar annotations for textgrid:" || $document || ": " || $title || ", page " || $page,
                     "x-creator":  anno:get-creator($document),
                     "total":    anno:get-total-no-of-annotations($page),
-                    "first":    $server || "/textapi/ahikar/" || $collection || "/" || $document || "-" || $page || "/annotationPage.json"
+                    "first":    $server || "/api/textapi/ahikar/" || $collection || "/" || $document || "-" || $page || "/annotationPage.json"
                 }
         }
 };
@@ -720,7 +720,7 @@ $document as xs:string?, $page as xs:string?, $server as xs:string) {
             ()
     return
         if ($document) then
-            $server || "/textapi/ahikar/" || $collection|| "/" || $document || $pageSuffix || "/annotationPage.json"
+            $server || "/api/textapi/ahikar/" || $collection|| "/" || $document || $pageSuffix || "/annotationPage.json"
         else
             ()
 };
