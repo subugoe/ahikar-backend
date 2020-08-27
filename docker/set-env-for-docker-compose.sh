@@ -9,15 +9,18 @@ case ${CI_COMMIT_REF_NAME} in
   echo "PORT=8092" >> docker/.env
   echo "TAG=release" >> docker/.env
   echo "APP_NAME=https://ahikar.sub.uni-goettingen.de/" >> docker/.env
+  echo "EXIST_HOST_DIR=./exist/data" >> docker/.env
   ;;
 "develop")
   echo "PORT=8093" > docker/.env
   echo "TAG=develop" >> docker/.env
   echo "APP_NAME=https://ahikar-dev.sub.uni-goettingen.de/" >> docker/.env
+  echo "EXIST_HOST_DIR=./exist/data" >> docker/.env
   ;;
 *)
   echo "PORT=8094" > docker/.env
   echo "TAG=testing" >> docker/.env
   echo "APP_NAME=https://ahikar-test.sub.uni-goettingen.de/" >> docker/.env
+  echo "EXIST_HOST_DIR=./exist_2/data" >> docker/.env
   ;;
 esac
