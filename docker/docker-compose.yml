@@ -20,8 +20,12 @@ services:
     environment:
       - APP_NAME=${APP_NAME}
     volumes:
-      - ./exist/data:/exist/data:z
-      - ./exist/logs:/exist/logs:z
+      # TODO: The index of the database at ./exist/data is corrupt on
+      # the test instance but cannot be deleted.
+      # Until October 1, 2020 we temporarily create a new bind mount,
+      # exist_2, to get a running database on the test server.
+      - ${EXIST_HOST_DIR}:/exist/data:z
+      - ${EXIST_HOST_DIR}/logs:/exist/logs:z
       - ./prometheus:/prometheus:z
 
   httpd:
