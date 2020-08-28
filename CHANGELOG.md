@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The build process with `docker-compose` has been slightly adapted.
 Instead of hard-coding the bind mounts' sources on the host these are now specified in `.env`.
 For this, `set-env-for-docker-compose.sh` has been updated.
+- The API endpoint `/api/info` changed to `/info` since the prefix `/api` is added automatically by Apache.
+
+### Fixed
+
+- The pipeline for deploying the app to the database now fails if the deployment API isn't available.
 
 ## [1.8.1] - 2020-08-05
 
