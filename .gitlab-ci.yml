@@ -190,7 +190,9 @@ test_api_status-test:
     - tags
     - develop
   script: 
-    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    # temporarily switch to dev as long as test isn't running properly
+    #- header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
@@ -226,7 +228,9 @@ full_plain_text_api_status-test:
     - tags
     - develop
   script:
-    - header=$(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
+    # temporarily switch to dev as long as test isn't running properly
+    #- header=$(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
+    - header=$(curl --head --silent https://ahikar-dev.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
 
 full_plain_text_api_status-develop:
   image: docker.gitlab.gwdg.de/mrodzis/test

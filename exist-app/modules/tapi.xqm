@@ -1,13 +1,14 @@
 xquery version "3.1";
 
 (:~
- : This module provides the TextAPI for Ahikar.
+ : This module provides the TextAPI for Ahiqar. For an extensive explanation of
+ : the whole Ahiqar specific implementation of the generic TextAPI see the link
+ : to the API docs.
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 1.8.0
+ : @version 1.9.0
  : @since 0.0.0
- : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/
  : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/
  : :)
 
@@ -26,7 +27,7 @@ import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milesto
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 
-declare variable $tapi:version := "1.8.0";
+declare variable $tapi:version := "1.9.0";
 declare variable $tapi:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
@@ -150,6 +151,8 @@ as item()+ {
             <title>The Story and Proverbs of Ahikar the Wise</title>
             <type>{$meta//tgmd:format => string() => tapi:type()}</type>
         </title>
+        <!-- this empty title element is necessary to force JSON to
+        generate an array instead of a simple object. -->
         <title/>
         <collector>
             <role>collector</role>
@@ -215,17 +218,135 @@ as element(object) {
                 <id>{$server}{$uri}</id>
                 <type>item</type>
             </sequence>
+    let $id := $server || "/api/textapi/ahikar/" || $collection || "/" || $document || "/manifest.json"
+            
     return
     <object>
         <textapi>{$tapi:version}</textapi>
-        <id>{$server}/api/textapi/ahikar/{$collection}/{$document}/manifest.json</id>
+        <id>{$id}</id>
         <label>{string($metaNode//tgmd:title)}</label>
+        {
+            tapi:make-editors($documentNode),
+            tapi:make-date($documentNode),
+            tapi:make-origin($documentNode),
+            tapi:make-location($documentNode)
+        }
         <license>CC0-1.0</license>
         <annotationCollection>{$server}/api/textapi/ahikar/{$collection}/{$document}/annotationCollection.json</annotationCollection>
         {$sequence}
     </object>
 };
 
+
+(:~ 
+ : Creates the necessary information about editors.
+ : 
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/#actor-object
+ : @param $documentNode The opened TEI file of the current manifest
+ : @return An x-editor element with all information necessary for an Actor Object.
+ :)
+declare function tapi:make-editors($documentNode as document-node()) as element(x-editor)* {
+    let $role := "editor"
+    for $editor in $documentNode//tei:titleStmt//tei:editor
+    return
+        <x-editor>
+            <role>{$role}</role>
+            <name>{$editor/string()}</name>
+        </x-editor>
+};
+
+(:~
+ : Creates the necessary information about a manuscript's origin from the TEI
+ : header.
+ : 
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/#manifest-object
+ : @param $documentNode The opened TEI file of the current manifest
+ : @return An x-origin element containing a descriptive string
+ :)
+declare function tapi:make-origin($documentNode as document-node()) as 
+element(x-origin)? {
+    let $country := $documentNode//tei:history//tei:country
+    let $place := $documentNode//tei:history//tei:placeName
+    let $string :=
+        if ($country and $place) then
+            $place/string() || ", " || $country/string()
+        else if ($country) then
+            $country/string()
+        else if($place) then
+            $place/string()
+        else
+            "unknown"
+    return
+        <x-origin>{$string}</x-origin>
+};
+
+
+(:~
+ : Creates the necessary information about a manuscript's creation date from the
+ : TEI header.
+ : 
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/#manifest-object
+ : @param $documentNode The opened TEI file of the current manifest
+ : @return An x-date element containing a descriptive string
+ :)
+declare function tapi:make-date($documentNode as document-node()) as
+element(x-date)? {
+    let $date := $documentNode//tei:history//tei:date
+    let $string :=
+        if ($date) then
+            $date/string()
+        else
+            "unknown"
+    return
+        <x-date>{$string}</x-date>
+};
+
+
+(:~
+ : Creates the necessary information about a manuscript's current location from
+ : the TEI header.
+ : 
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/#manifest-object
+ : @param $documentNode The opened TEI file of the current manifest
+ : @return An x-location element containing a descriptive string
+ :)
+declare function tapi:make-location($documentNode as document-node()) as
+element(x-location) {
+    let $institution := $documentNode//tei:msIdentifier//tei:institution
+    let $country := $documentNode//tei:msIdentifier//tei:country
+    let $string :=
+        if ($country and $institution) then
+            $institution || ", " || $country
+        else if ($country) then
+            $country/string()
+        else if($institution) then
+            $institution/string()
+        else
+            "unknown"
+    return
+        <x-location>{$string}</x-location>
+
+};
+
+
+(:~ 
+ : Returns the API endpoints of all pages of the manuscript.
+ : Since we also have transliterations, only "original" pages (i.e. the ones
+ : with a facsimile) are considered for the endpoints.
+ : 
+ : @param $documentNode The opened TEI file of the current manifest
+ : @retun A sequence of sequence elements
+ :)
+declare function tapi:make-sequence($documentNode as document-node()) as
+element(sequence)+ {
+    for $page in $documentNode//tei:pb[@facs]/string(@n)
+        let $uri := "/api/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
+        return
+            <sequence>
+                <id>{$server}{$uri}</id>
+                <type>item</type>
+            </sequence>
+};
 
 (:~
  : Returns information about a given page in a document. This is mainly compliant

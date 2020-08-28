@@ -20,46 +20,57 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 declare variable $tests:restxq := "http://0.0.0.0:8080/exist/restxq/";
 
 
-(:~
- : One test to fail just to check for the test engine to recognize failing tests.
- :)
-declare
-    %test:assertTrue
-function tests:fail() as xs:boolean {
-    false()
-};
-
-
-(: creating sample data for testing ... :)
 declare
     %test:setUp
 function tests:_test-setup() as xs:string+ {
     xmldb:create-collection("/db", "test-records"),
     xmldb:store("/db/test-records", "white-spaces.xml", <record><id>12     34 56
     78</id></record>),
-    xmldb:store("/db/test-records", "sample-tei.xml", <text xmlns="http://www.tei-c.org/ns/1.0" type="transcription" xml:lang="karshuni">test      
+    xmldb:store("/db/test-records", "sample-tei.xml", <text xmlns="http://www.tei-c.org/ns/1.0" type="transcription">test      
         <note>test2</note>
         test3
         <sic>text4</sic>
         <placeName>Berlin</placeName>
     </text>),
+    xmldb:store("/db/test-records", "origin-country-only.xml", <teiHeader xmlns="http://www.tei-c.org/ns/1.0">      
+        <history>
+            <origin>
+                <country>Iraq</country>
+            </origin>
+        </history>
+    </teiHeader>),
+    xmldb:store("/db/test-records", "origin-place-only.xml", <teiHeader xmlns="http://www.tei-c.org/ns/1.0">      
+        <history>
+            <origin>
+                <placeName>Alqosh</placeName>
+            </origin>
+        </history>
+    </teiHeader>),
+    xmldb:store("/db/test-records", "header-empty-history-msIdentifier.xml", <teiHeader xmlns="http://www.tei-c.org/ns/1.0">
+        <msIdentifier/>
+        <history/>
+    </teiHeader>),
+    xmldb:store("/db/test-records", "location-country-only.xml", <teiHeader xmlns="http://www.tei-c.org/ns/1.0">      
+        <msIdentifier>
+            <settlement>
+                <country>Great Britain</country>
+            </settlement>
+        </msIdentifier>
+    </teiHeader>),
+    xmldb:store("/db/test-records", "location-institution-only.xml", <teiHeader xmlns="http://www.tei-c.org/ns/1.0">  
+        <msIdentifier>
+            <institution>University of Cambridge - Cambridge University Library</institution>
+        </msIdentifier>
+    </teiHeader>),
     tapi:zip-text()
 };
 
-
-(: ... and removing it after all tests have been executed. :)
 declare
     %test:tearDown
 function tests:_test-teardown() as item() {
     xmldb:remove("/db/test-records")
 };
 
-(: *********************
- : * TEXTAPI ENDPOINTS * 
- : *********************
- :)
-
-(: API information :)
 declare
     (: check if requests work :)
     %test:assertXPath("map:get($result, 'request') => map:get('scheme') = 'http'")
@@ -95,14 +106,19 @@ function tests:collection-rest()  as item() {
 
 declare
     (: check if all parts are present.
-     : no further tests are needed since the content has been tested while testing
+     : no further tests are needed since the content has been tested by testing
      : the underlying function. :)
     %test:assertXPath("map:contains($result, 'textapi')")
+    %test:assertXPath("map:contains($result, 'id')")
     %test:assertXPath("map:contains($result, 'label')")
+    %test:assertXPath("map:contains($result, 'x-editor')")
+    %test:assertXPath("map:contains($result, 'x-date')")
+    %test:assertXPath("map:contains($result, 'x-origin')")
+    %test:assertXPath("map:contains($result, 'x-location')")
     %test:assertXPath("map:contains($result, 'license')")
     %test:assertXPath("map:contains($result, 'sequence')")
 function tests:manifest-rest() as item() {
-    let $url := $tests:restxq || "/textapi/ahikar/ahiqar_collection/ahiqar_sample/manifest.json"
+    let $url := $tests:restxq || "/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -209,9 +225,9 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
                king of Assyria and Nineveh' ")
     (: checks if language assembling works correctly :)
-    %test:assertXPath("$result//*[local-name(.) = 'lang']/ = 'ara' ")
-    %test:assertXPath("$result//*[local-name(.) = 'langAlt']/ = 'karshuni' ")
-    %test:assertXPath("$result//*[local-name(.) = 'x-langString'] = 'Arabic, Classical Syriac, Eastern Syriac, Karshuni, Western Syriac' ")
+    %test:assertXPath("$result//*[local-name(.) = 'lang'] = 'syc' ")
+    %test:assertXPath("$result//*[local-name(.) = 'langAlt'] = 'karshuni' ")
+    %test:assertXPath("$result//*[local-name(.) = 'x-langString'][matches(., 'Classical Syriac')]")
     (: checks if underlying pages are identified :)
     %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://localhost:8080/exist/restxq/api/content/ahiqar_sample-82a.html' ")
     (: checks if images connected to underlying pages are identified :)
@@ -275,6 +291,98 @@ declare
     %test:assertXPath("$result[local-name(.) = 'text' and @type = 'transcription']")
 function tests:get-tei($document as xs:string, $type as xs:string) as element() {
     tapi:get-TEI-text($document, $type)
+};
+
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-editor' and name/text() = 'Aly Elrefaei']")
+function tests:make-editors() as element()+ {
+    let $documentNode := doc("/db/apps/sade/textgrid/data/ahiqar_sample.xml")
+    return
+        tapi:make-editors($documentNode)
+};
+
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-date'][text() = '18.10.1697']")
+function tests:make-date() as element() {
+    let $documentNode := doc("/db/apps/sade/textgrid/data/ahiqar_sample.xml")
+    return
+        tapi:make-date($documentNode)
+};
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-date'][text() = 'unknown']")
+function tests:make-date-none() as element() {
+    let $documentNode := doc("/db/test-records/header-empty-history-msIdentifier.xml")
+    return
+        tapi:make-date($documentNode)
+};
+
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-origin'][text() = 'Alqosh, Iraq']")
+function tests:make-origin() as element() {
+    let $documentNode := doc("/db/apps/sade/textgrid/data/ahiqar_sample.xml")
+    return
+        tapi:make-origin($documentNode)
+};
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-origin'][text() = 'Iraq']")
+function tests:make-origin-country-only() as element() {
+    let $documentNode := doc("/db/test-records/origin-country-only.xml")
+    return
+        tapi:make-origin($documentNode)
+};
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-origin'][text() = 'Alqosh']")
+function tests:make-origin-place-only() as element() {
+    let $documentNode := doc("/db/test-records/origin-place-only.xml")
+    return
+        tapi:make-origin($documentNode)
+};
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-origin'][text() = 'unknown']")
+function tests:make-origin-none() as element() {
+    let $documentNode := doc("/db/test-records/header-empty-history-msIdentifier.xml")
+    return
+        tapi:make-origin($documentNode)
+};
+
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-location'][text() = 'University of Cambridge - Cambridge University Library, Great Britain']")
+function tests:make-location() as element() {
+    let $documentNode := doc("/db/apps/sade/textgrid/data/ahiqar_sample.xml")
+    return
+        tapi:make-location($documentNode)
+};
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-location'][text() = 'Great Britain']")
+function tests:make-location-country-only() as element() {
+    let $documentNode := doc("/db/test-records/location-country-only.xml")
+    return
+        tapi:make-location($documentNode)
+};
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-location'][text() = 'University of Cambridge - Cambridge University Library']")
+function tests:make-location-institution-only() as element() {
+    let $documentNode := doc("/db/test-records/location-institution-only.xml")
+    return
+        tapi:make-location($documentNode)
+};
+
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-location'][text() = 'unknown']")
+function tests:make-location-none() as element() {
+    let $documentNode := doc("/db/test-records/header-empty-history-msIdentifier.xml")
+    return
+        tapi:make-location($documentNode)
 };
 
 
