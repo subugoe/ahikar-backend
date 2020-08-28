@@ -49,7 +49,7 @@ declare variable $tapi:responseHeader200 :=
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/info")
+    %rest:path("/info")
     %output:method("json")
 function tapi:info-rest()
 as item()+ {

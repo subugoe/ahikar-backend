@@ -154,6 +154,10 @@ deploy_app-test:
   environment:
     name: ahikar-test
   script:
+    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
 
 deploy_app-dev:

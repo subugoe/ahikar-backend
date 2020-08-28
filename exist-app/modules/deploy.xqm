@@ -31,6 +31,7 @@ import module namespace rest="http://exquery.org/ns/restxq";
  :  :)
 declare
   %rest:GET
+  %rest:HEAD
   %rest:path("/deploy")
   %rest:query-param("token", "{$token}")
 function deploy:redeploy($token)
