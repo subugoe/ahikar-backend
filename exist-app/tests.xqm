@@ -79,7 +79,7 @@ declare
     (: check if repo.xml works :)
     %test:assertXPath("map:get($result, 'meta') => map:get('target') = 'ahikar'")
 function tests:api-info()  as item() {
-    let $url := $tests:restxq || "api/info"
+    let $url := $tests:restxq || "info"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
