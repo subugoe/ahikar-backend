@@ -302,6 +302,14 @@ function tests:make-editors() as element()+ {
         tapi:make-editors($documentNode)
 };
 
+declare
+    %test:assertXPath("$result[local-name(.) = 'x-editor' and name/text() = 'none']")
+function tests:make-editors-fail-gracefully() as element()+ {
+    let $documentNode := doc("/db/test-records/sample-tei.xml")
+    return
+        tapi:make-editors($documentNode)
+};
+
 
 declare
     %test:assertXPath("$result[local-name(.) = 'x-date'][text() = '18.10.1697']")

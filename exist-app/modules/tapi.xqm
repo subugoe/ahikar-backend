@@ -247,12 +247,19 @@ as element(object) {
  :)
 declare function tapi:make-editors($documentNode as document-node()) as element(x-editor)* {
     let $role := "editor"
-    for $editor in $documentNode//tei:titleStmt//tei:editor
+    let $has-editor := exists($documentNode//tei:titleStmt//tei:editor)
     return
-        <x-editor>
-            <role>{$role}</role>
-            <name>{$editor/string()}</name>
-        </x-editor>
+        if ($has-editor) then
+            for $editor in $documentNode//tei:titleStmt//tei:editor
+            return
+                <x-editor>
+                    <role>{$role}</role>
+                    <name>{$editor/string()}</name>
+                </x-editor>
+        else
+            <x-editor>
+                <name>none</name>
+            </x-editor>
 };
 
 (:~
