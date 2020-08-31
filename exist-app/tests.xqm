@@ -254,13 +254,10 @@ function tests:html-creation($document as xs:string, $page as xs:string) as elem
     tapi:content($document, $page)
 };
 
-
-(: this test has to be executed before tapi:compress-to-zip because it creates
- : the /txt/ collection and its contents for the zipping. :)
 declare
-    %test:assertExists
+    %test:assertTrue
 function tests:zip-text() as item()+ {
-    tapi:zip-text()
+    xmldb:collection-available("/db/apps/sade/textgrid/txt")
 };
 
 
