@@ -7,7 +7,7 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 1.9.0
+ : @version 1.9.1
  : @since 0.0.0
  : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/
  : :)
@@ -28,7 +28,7 @@ import module namespace functx="http://www.functx.com";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 
-declare variable $tapi:version := "1.9.0";
+declare variable $tapi:version := "1.9.1";
 declare variable $tapi:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
