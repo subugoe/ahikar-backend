@@ -10,6 +10,8 @@ xquery version "3.1";
 module namespace tests="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests";
 
 declare namespace http = "http://expath.org/ns/http-client";
+declare namespace ore="http://www.openarchives.org/ore/terms/";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "modules/annotations.xqm";
@@ -403,84 +405,102 @@ function tests:remove-whitespaces() as document-node() {
 };
 
 
+declare
+    %test:assertXPath("not($result//@rdf:resource[. = 'textgrid:3vp38'])")
+    %test:assertXPath("$result//@rdf:resource[. = 'textgrid:3rx14']")
+function tests:exclude-aggregated-manifests() {
+    let $collection-metadata :=
+        <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+            <rdf:Description xmlns:tei="http://www.tei-c.org/ns/1.0" rdf:about="textgrid:3r9ps.0">
+                <ore:aggregates rdf:resource="textgrid:3rbm9"/>
+                <ore:aggregates rdf:resource="textgrid:3rbmc"/>
+                <ore:aggregates rdf:resource="textgrid:3rx14"/>
+                <ore:aggregates rdf:resource="textgrid:3vp38"/>
+            </rdf:Description>
+        </rdf:RDF>
+    return
+        tapi:exclude-unwanted-manifests($collection-metadata)
+};
+
+
 (:  
  : *****************
  : * AnnotationAPI * 
  : *****************
  :)
-
-declare
-    %test:args("ahiqar_sample", "data")
-    %test:assertXPath("$result//*[local-name(.) = 'TEI']")
-function tests:anno-get-document($uri as xs:string, $type as xs:string) as document-node() {
-    anno:get-document($uri, $type)
-};
-
-
+(::)
 (:declare:)
-(:    %test:args("3r679", "114r"):)
-(:    %test:assertEquals("0"):)
-(:function tests:anno-determine-start-index-for-page($uri as xs:string, $page as xs:string) {:)
-(:    anno:determine-start-index-for-page($uri, $page):)
+(:    %test:args("ahiqar_sample", "data"):)
+(:    %test:assertXPath("$result//*[local-name(.) = 'TEI']"):)
+(:function tests:anno-get-document($uri as xs:string, $type as xs:string) as document-node() {:)
+(:    anno:get-document($uri, $type):)
+(:};:)
+(::)
+(::)
+(:(:declare:):)
+(:(:    %test:args("3r679", "114r"):):)
+(:(:    %test:assertEquals("0"):):)
+(:(:function tests:anno-determine-start-index-for-page($uri as xs:string, $page as xs:string) {:):)
+(:(:    anno:determine-start-index-for-page($uri, $page):):)
+(:(:};:):)
+(:(::):)
+(:(::):)
+(:(:declare:):)
+(:(:    %test:args("3r131"):):)
+(:(:    %test:assertEquals("16"):):)
+(:(:function tests:anno-determine-start-index($uri as xs:string) {:):)
+(:(:    anno:determine-start-index($uri):):)
+(:(:};:):)
+(:(::):)
+(:(:declare:):)
+(:(:    %test:args("3r131"):):)
+(:(:    %test:assertEquals("3r679"):):)
+(:(:function tests:anno-get-parent-aggregation($uri as xs:string) {:):)
+(:(:    anno:get-parent-aggregation($uri):):)
+(:(:};:):)
+(:(::):)
+(:(::):)
+(:(:declare:):)
+(:(:    %test:args("3r131"):):)
+(:(:    %test:assertEquals("114r", "114v"):):)
+(:(:function tests:anno-get-pages-in-TEI($uri as xs:string) {:):)
+(:(:    anno:get-pages-in-TEI($uri):):)
+(:(:};:):)
+(:(::):)
+(:(::):)
+(:(:declare:):)
+(:(:    %test:args("3r679"):):)
+(:(:    %test:assertTrue:):)
+(:(:function tests:anno-is-resource-edition($uri as xs:string) {:):)
+(:(:    anno:is-resource-edition($uri):):)
+(:(:};:):)
+(:(::):)
+(:(::):)
+(:(:declare:):)
+(:(:    %test:args("3r131"):):)
+(:(:    %test:assertTrue:):)
+(:(:function tests:anno-is-resource-xml($uri as xs:string) {:):)
+(:(:    anno:is-resource-xml($uri):):)
+(:(:};:):)
+(::)
+(::)
+(:declare:)
+(:    %test:assertEquals("A place's name."):)
+(:function tests:anno-get-bodyValue() {:)
+(:    let $annotation := doc("/db/test-records/sample-tei.xml")//tei:placeName:)
+(:    return:)
+(:        anno:get-bodyValue($annotation):)
 (:};:)
 (::)
 (::)
 (:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertEquals("16"):)
-(:function tests:anno-determine-start-index($uri as xs:string) {:)
-(:    anno:determine-start-index($uri):)
+(:    %test:args("asdf"):)
+(:    %test:assertFalse:)
+(:(:    %test:args("3r131"):):)
+(:(:    %test:assertTrue:):)
+(:function tests:anno-are-resources-available($resources as xs:string+) {:)
+(:    anno:are-resources-available($resources):)
 (:};:)
-(::)
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertEquals("3r679"):)
-(:function tests:anno-get-parent-aggregation($uri as xs:string) {:)
-(:    anno:get-parent-aggregation($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertEquals("114r", "114v"):)
-(:function tests:anno-get-pages-in-TEI($uri as xs:string) {:)
-(:    anno:get-pages-in-TEI($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r679"):)
-(:    %test:assertTrue:)
-(:function tests:anno-is-resource-edition($uri as xs:string) {:)
-(:    anno:is-resource-edition($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertTrue:)
-(:function tests:anno-is-resource-xml($uri as xs:string) {:)
-(:    anno:is-resource-xml($uri):)
-(:};:)
-
-
-declare
-    %test:assertEquals("A place's name.")
-function tests:anno-get-bodyValue() {
-    let $annotation := doc("/db/test-records/sample-tei.xml")//tei:placeName
-    return
-        anno:get-bodyValue($annotation)
-};
-
-
-declare
-    %test:args("asdf")
-    %test:assertFalse
-(:    %test:args("3r131"):)
-(:    %test:assertTrue:)
-function tests:anno-are-resources-available($resources as xs:string+) {
-    anno:are-resources-available($resources)
-};
 
 
 (:declare:)

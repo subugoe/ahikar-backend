@@ -24,6 +24,7 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
+import module namespace functx="http://www.functx.com";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 
@@ -127,9 +128,10 @@ as item()+ {
 declare function tapi:collection($collection as xs:string, $server as xs:string)
 as item()+ {
     let $aggregation := doc($tapi:aggCollection || $collection || ".xml")
+    let $allowed-manifests := tapi:exclude-unwanted-manifests($aggregation/*)
     let $meta := collection($tapi:metaCollection)//tgmd:textgridUri[starts-with(., "textgrid:" || $collection)]/root()
     let $sequence :=
-        for $i in $aggregation//*:aggregates/string(@*:resource)
+        for $i in $allowed-manifests/string(@*:resource)
             let $metaObject := collection($tapi:metaCollection)//tgmd:textgridUri[starts-with(., $i)]/root()
             return
                 <sequence>
@@ -810,4 +812,25 @@ declare function tapi:add-IDs-recursion($nodes as node()*) as node()* {
                 $node/@*,
                 tapi:add-IDs-recursion($node/node())
             }
+};
+
+
+(:~
+ : Some "editions" that appear in the ore:aggregates list of a collection are
+ : actually no editions; They lack an XML file.
+ : 
+ : In order to not have them included in the list of "actual" editions, they
+ : have to be explicitly excluded.
+ : 
+ : @param $doc The root element of an aggregation object
+ : @return A list of ore:aggregates without the manifests to be excluded
+ : 
+ :)
+declare function tapi:exclude-unwanted-manifests($doc as node()) as node()* {
+    let $not-allowed :=
+        (
+            "textgrid:3vp38"
+        )
+    for $aggregate in $doc//ore:aggregates return
+        $aggregate[@rdf:resource != $not-allowed]
 };
