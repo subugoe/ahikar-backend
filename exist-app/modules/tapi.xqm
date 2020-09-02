@@ -7,7 +7,7 @@ xquery version "3.1";
  :
  : @author Mathias Göbel
  : @author Michelle Weidling
- : @version 1.9.0
+ : @version 1.9.1
  : @since 0.0.0
  : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/
  : :)
@@ -24,10 +24,11 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
+import module namespace functx="http://www.functx.com";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 
-declare variable $tapi:version := "1.9.0";
+declare variable $tapi:version := "1.9.1";
 declare variable $tapi:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 declare variable $tapi:baseCollection := "/db/apps/sade/textgrid";
 declare variable $tapi:dataCollection := $tapi:baseCollection || "/data/";
@@ -127,9 +128,10 @@ as item()+ {
 declare function tapi:collection($collection as xs:string, $server as xs:string)
 as item()+ {
     let $aggregation := doc($tapi:aggCollection || $collection || ".xml")
+    let $allowed-manifests := tapi:exclude-unwanted-manifests($aggregation/*)
     let $meta := collection($tapi:metaCollection)//tgmd:textgridUri[starts-with(., "textgrid:" || $collection)]/root()
     let $sequence :=
-        for $i in $aggregation//*:aggregates/string(@*:resource)
+        for $i in $allowed-manifests/string(@*:resource)
             let $metaObject := collection($tapi:metaCollection)//tgmd:textgridUri[starts-with(., $i)]/root()
             return
                 <sequence>
@@ -247,12 +249,19 @@ as element(object) {
  :)
 declare function tapi:make-editors($documentNode as document-node()) as element(x-editor)* {
     let $role := "editor"
-    for $editor in $documentNode//tei:titleStmt//tei:editor
+    let $has-editor := exists($documentNode//tei:titleStmt//tei:editor)
     return
-        <x-editor>
-            <role>{$role}</role>
-            <name>{$editor/string()}</name>
-        </x-editor>
+        if ($has-editor) then
+            for $editor in $documentNode//tei:titleStmt//tei:editor
+            return
+                <x-editor>
+                    <role>{$role}</role>
+                    <name>{$editor/string()}</name>
+                </x-editor>
+        else
+            <x-editor>
+                <name>none</name>
+            </x-editor>
 };
 
 (:~
@@ -803,4 +812,25 @@ declare function tapi:add-IDs-recursion($nodes as node()*) as node()* {
                 $node/@*,
                 tapi:add-IDs-recursion($node/node())
             }
+};
+
+
+(:~
+ : Some "editions" that appear in the ore:aggregates list of a collection are
+ : actually no editions; They lack an XML file.
+ : 
+ : In order to not have them included in the list of "actual" editions, they
+ : have to be explicitly excluded.
+ : 
+ : @param $doc The root element of an aggregation object
+ : @return A list of ore:aggregates without the manifests to be excluded
+ : 
+ :)
+declare function tapi:exclude-unwanted-manifests($doc as node()) as node()* {
+    let $not-allowed :=
+        (
+            "textgrid:3vp38"
+        )
+    for $aggregate in $doc//ore:aggregates return
+        $aggregate[@rdf:resource != $not-allowed]
 };
