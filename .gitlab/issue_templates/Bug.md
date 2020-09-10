@@ -32,18 +32,6 @@ How much impact does this bug have on the product or further development?
 * [ ] Critical
 * [ ] Blocker
 
-## Platform
-
-* [ ] Unix
-* [ ] Windows
-* [ ] MacOS
-
-## Browser
-
-* [ ] Safari
-* [ ] Chrome/Chromium
-* [ ] Firefox
-* [ ] Other: ?
 
 ## Program and – if applicable – dependency version
 
