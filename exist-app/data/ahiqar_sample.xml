@@ -1,9 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
-	schematypens="http://purl.oclc.org/dsdl/schematron"?>
-
-<!-- 
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
+	schematypens="http://purl.oclc.org/dsdl/schematron"?><!-- 
 # INTRODUCTION TO AND PURPOSE OF THIS FILE
    
 The following document is a sample for the Ahiqar project.
@@ -21,7 +17,6 @@ All suggestions regarding the rendering of certain encoding are marked with ###.
 The proposed ideas aren't normative and can be altered completely.
 Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conventions (https://en.wikipedia.org/wiki/Leiden_Conventions) which are common for critical editions
 -->
-
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
    <teiHeader>
       <fileDesc>
@@ -113,22 +108,28 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                NOTE: these suggestions hold for all type of additions, regardless of their place.
                it should be visually set apart from the rest of the text to indicate that it's an addition.
                ideas: text framed by \.../ (LC) in lighter color, maybe a panel could display more information about the gloss?-->
-               <head><supplied>.</supplied><add place="margin">حقًا</add>حيث تبدأ القصة
-                  <g>✓</g></head>
+               <head>
+                        <supplied>.</supplied>
+                        <add place="margin">حقًا</add>حيث تبدأ القصة
+                  <g>✓</g>
+                    </head>
                <ab>نبتدي بعون الباري<add place="interlinear">اختبار</add> تعالى جل اسمه</ab>
                <!-- ### tei:lb[@break = 'no'] describes that a word has begun in the line before and is continued in the current line.
                this mostly lacks hyphenation.
                users should understand by a visual clue that these parts belong together. 
                ideas: bracket at the bottom that opens in line 1 and closes in line 2 -->
-               <ab><lb break="no"/>وتعالى ذكره الى الابد. ونكتب خبر</ab>
+               <ab>
+                        <lb break="no"/>وتعالى ذكره الى الابد. ونكتب خبر</ab>
                <ab>الحكيم الماهر الفليوس الشاطر</ab>
                <!-- ### users should have the opportunity to highlight all persons and/or places on a page.
                since we're currently working on annotations which will influence this serialization, this isn't a high priority task. -->
                <!-- ### unclear passages should be marked in some way
                idea: dotted underlining (LC) -->
-               <ab>وزير <persName>سنحاريب</persName> ابن <persName>سرحادوم</persName> ملك <unclear
-                     reason="illegible"><placeName>اتور</placeName></unclear>
+               <ab>وزير <persName>سنحاريب</persName> ابن <persName>سرحادوم</persName> ملك <unclear reason="illegible">
+                            <placeName>اتور</placeName>
+                        </unclear>
                </ab>
+               <milestone unit="first_narrative_section"/>
                <ab>
                   <placeName>ونينوى</placeName>
                   <placeName>والموصل</placeName> . وما جرا منه ومن</ab>
@@ -141,7 +142,7 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                   وكاتبه وكان</ab>
                <ab>ذو مال جزيل ورزق كثير. وكان ماهر حكيم فيلسوف</ab>
                <ab>ذو معرفه وراي وتدبير. وكان قد تزوج ستين امراه</ab>
-
+                <milestone unit="second_narrative_section"/>
                <cb/>
                <!-- ### tei:ab[@type = 'head'] marks head-like structures.
                users should understand that this is something LIKE a heading, but it's not a regular heading. 
@@ -178,11 +179,13 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                idea: a blank line before and after the line groups with padding on the side (side depends on reading direction?) -->
                <lg>
                   <l>هل <add place="below">اختبار</add> أقارنك بيوم صيفي؟</l>
-                  <l>انت أكثر جميلة وأكثر اعتدالا<surplus>:</surplus></l>
+                  <l>انت أكثر جميلة وأكثر اعتدالا<surplus>:</surplus>
+                        </l>
                </lg>
                <!-- ### colophons should be set apart and emphasized visually from the regular text.
                idea: different colour. -->
-               <ab><seg type="colophon">. نهاية<add place="footer">اختبار</add>
+               <ab>
+                        <seg type="colophon">. نهاية<add place="footer">اختبار</add>
                   النص</seg>وماتت.</ab>
 
                <!-- ### it should be somehow clear for users that they're viewing a vacant page (i.e. a page without content).
@@ -200,7 +203,9 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <ab>الخلايق كلها.<quote>كان كذلك ، لذا لم يكن كذلك.</quote> انا اطلب اليك ان
                   توهبني</ab>
                <!-- ### @rend says it all. -->
-               <ab><del rend="strikethrough">ولدًا حتى اتعزا به ويرثني ويحضر بموتي</del></ab>
+               <ab>
+                        <del rend="strikethrough">ولدًا حتى اتعزا به ويرثني ويحضر بموتي</del>
+                    </ab>
                <ab>ويغمض عيناي ويدفنني. فعند ذلك اتاه صوت</ab>
                <ab/>
                <ab>من السما قايلا. بحيث اتكلت اولًا على الاصنام</ab>
@@ -224,8 +229,11 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <!-- ### tei:persName[@next] describes that a name begins at the end of a line and is continued at the beginning of the next line.
                same holds for place names.
                when highlighting entities these should be treated as one entity. -->
-               <ab><persName next="#ms1">أ</persName>لي من يقوم في خدمتي بعدك. فقال له </ab>
-               <ab><persName xml:id="ms1">حقر</persName></ab>
+               <ab>
+                        <persName next="#ms1">أ</persName>لي من يقوم في خدمتي بعدك. فقال له </ab>
+               <ab>
+                        <persName xml:id="ms1">حقر</persName>
+                    </ab>
                <ab type="colophon">هذا حيث ينتهي النص.</ab>
 
 
@@ -236,13 +244,17 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
 
                <!-- @@@ Brit.Mus._cod._Add._7209_Transcrip.karsh.3r14z.1.xml -->
                <!-- persName spanning over two lines -->
-               <ab>وقال للسياف كان اسمه <persName next="#Brit.Mus_7209_2">يبوس</persName></ab>
-               <ab><persName xml:id="Brit.Mus_7209_2">ميكمسكينكنتي</persName> قوم خد
+               <ab>وقال للسياف كان اسمه <persName next="#Brit.Mus_7209_2">يبوس</persName>
+                    </ab>
+               <ab>
+                        <persName xml:id="Brit.Mus_7209_2">ميكمسكينكنتي</persName> قوم خد
                      <persName>حيقر</persName> وامضي</ab>
 
                <!-- rubricated place and person names -->
                <!-- ### CSS for renditions is stated in the TEI header -->
-               <ab><hi rendition="#red"><placeName>مصر</placeName> الى عند
+               <ab>
+                        <hi rendition="#red">
+                            <placeName>مصر</placeName> الى عند
                         <persName>فرعون</persName> الملك </hi> ولما</ab>
 
                <!-- colophon -->
@@ -259,7 +271,8 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <!-- @@@ Cod._Add._2886._Transcript._karsh.3r1dp.1.xml -->
                <!-- word spanning over two lines -->
                <ab>وختمهم بختم خاله <persName>حيقار</persName> . واما</ab>
-               <ab><lb break="no"/> هم في دار الملك ثم مضا ايضا وكتب</ab>
+               <ab>
+                        <lb break="no"/> هم في دار الملك ثم مضا ايضا وكتب</ab>
 
                <!-- deletion, marginal gloss with entities -->
                <ab>
@@ -343,8 +356,12 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <!-- ### supplied text is text that modern editors have inserted.
                it is usually marked with square brackets (LC).
                idea: square brackets + lighter color -->
-               <head><seg xml:lang="ara"><supplied>.</supplied><add place="margin"
-                     >حقًا</add></seg><g>✓</g>
+               <head>
+                        <seg xml:lang="ara">
+                            <supplied>.</supplied>
+                            <add place="margin">حقًا</add>
+                        </seg>
+                        <g>✓</g>
                   <!-- this rubrication can be found in BnF_434_rev.3r676.4.xml -->
                   <hi rend="color(red)"> ܀ ܬܘܒ ܒܚܹܝܠ 
                   <!-- ### since the abbreviated text is the running text, this should be rendered.
@@ -354,9 +371,11 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                         <abbr>ܝܗ̈ܿ</abbr>
                         <expan>ܝܗ</expan>
                      </choice> ܟܿܬܒܢܐ ܩܲܠܝܼܠ ܡܼܢ ܡ̈ܬܼܠܐ <persName>ܕܐܚܝܼܩܲܪ܆</persName>
-                  </hi></head>
+                  </hi>
+                    </head>
                <ab>ܢܒܬܕܝ ܒܥܘܢ ܐܠܒܐܪܝ<add place="interlinear">اختبار</add> ܬܥܐܠܝ ܓܠ ܐܣܡܗ</ab>
-               <ab><lb break="no"/>ܘܬܥܐܠܝ ܕܟܪܗ ܐܠܝ ܐܠܐܒܕ. ܘܢܟܬܒ ܟܒܪ</ab>
+               <ab>
+                        <lb break="no"/>ܘܬܥܐܠܝ ܕܟܪܗ ܐܠܝ ܐܠܐܒܕ. ܘܢܟܬܒ ܟܒܪ</ab>
                <ab>ܐܠܚܟܝܡ ܐܠܡܐܗܪ <choice>
                      <sic>ܐܠܦܠܝܘܣ</sic>
                      <corr>ܐܠܦܠܝܣܘܦ</corr>
@@ -368,15 +387,18 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                   <placeName>ܘܢܝܢܘܝ</placeName>
                   <placeName>ܘܐܠܡܘܨܠ</placeName> ܘܡܐ ܓܪܐ ܡܥܗ ܘܡܢ</ab>
                <ab>ܐܒܢ ܐܟܬܗ <persName>ܢܐܕܐܢ</persName> . ܟܐܢ ܦܝ ܐܝܐܡ ܐܠܡܠܟ ܐܒܢ ܣܪܚܐܕܘܡ</ab>
-               <ab>ܡܠܟ ܐܪܜ <unclear reason="illegible"><placeName>ܐܬܘܪ</placeName></unclear>
+               <ab>ܡܠܟ ܐܪܜ <unclear reason="illegible">
+                            <placeName>ܐܬܘܪ</placeName>
+                        </unclear>
                   <placeName>ܘܢܝܢܘܝ</placeName> ܘܒܠܐܕܗܐ. ܪܓܠ ܚܟܝܡ ܝܩܐܠ </ab>
                <ab>ܠܗ <persName>ܚܝܩܐܪ</persName> ܘܟܐܢ ܘܙܝܪ ܐܠܡܠܟ <persName>ܣܢܚܐܪܝܒ</persName> ܘܟܐܬܒܗ
                   ܘܟܐܢ</ab>
                <ab>ܕܘ ܡܐܠ ܓܙܝܠ ܘܪܙܩ ܟܬܝܪ. ܘܟܐܢ ܡܐܗܪ ܚܟܝܡ ܦܝܠܣܘܦ</ab>
 
                <cb/>
-               <ab type="head"><seg xml:lang="ara">رأس <add place="header"
-                  >اختبار</add>متقاطع</seg></ab>
+               <ab type="head">
+                        <seg xml:lang="ara">رأس <add place="header">اختبار</add>متقاطع</seg>
+                    </ab>
                <ab>ܕܘ ܡܥܪܦܗ ܘܪܐܝ ܘܬܕܒܝܪ. ܘܟܐܢ ܩܕ ܬܙܘܓ ܣܬܝܢ ܐܡܪܐܗ</ab>
                <ab>ܘܒܢܝ ܠܟܠ ܘܐܚܕܗ ܡܢܗܢ ܡܩܨܘܪܗ. ܘܡܥ ܗܕܐ ܟܠܗ</ab>
                <ab>ܠܡ ܝܟܢ ܠܗ ܘܠܕ ܝܪܬܗ. ܘܟܐܢ ܟܬܝܪ ܐܠܗܡ ܠܐܓܠ ܕܠܟ</ab>
@@ -402,22 +424,30 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                   <!-- ### surplus text should be set apart visually.
                   a common way is setting the text in curly braces, but in addition to that other cues are possible (another color, different contrast?)
                   idea: curly braces (LC) + lighter color, e.g. {some text} -->
-                  <l>ܩܠܒ ܩܐܝܠܐ <surplus>:</surplus></l>
+                  <l>ܩܠܒ ܩܐܝܠܐ <surplus>:</surplus>
+                        </l>
                </lg>
-               <ab xml:lang="ara"><seg type="colophon">. نهاية<add place="footer">اختبار</add>
+               <ab xml:lang="ara">
+                        <seg type="colophon">. نهاية<add place="footer">اختبار</add>
                      النص</seg>وماتت.</ab>
 
                <!-- ### catchwords should be set apart from the running text and de-emphasized. 
                idea: lighter/other color-->
-               <ab><catchwords>الخلايق كلها</catchwords></ab>
+               <ab>
+                        <catchwords>الخلايق كلها</catchwords>
+                    </ab>
 
 
                <!-- random facsimile for invented empty page -->
                <pb facs="textgrid:3r1p0" n="82b"/>
                <pb facs="textgrid:3r1nz" n="83a"/>
-               <ab>ܐܠܟܠܐܝܩ ܟܠܗܐ.<quote><seg xml:lang="ara">كان كذلك ، لذا لم يكن كذلك.</seg></quote>
+               <ab>ܐܠܟܠܐܝܩ ܟܠܗܐ.<quote>
+                            <seg xml:lang="ara">كان كذلك ، لذا لم يكن كذلك.</seg>
+                        </quote>
                   ܐܢܐ ܐܛܠܒ ܐܠܝܟ ܐܢ ܬܘܗܒܢܝ</ab>
-               <ab><del rend="strikethrough">ܘܠܕܐ ܚܬܝ ܐܬܥܙܐ ܒܗ ܘܝܪܬܢܝ ܘܝܚܜܪ ܒܡܘܬܝ</del></ab>
+               <ab>
+                        <del rend="strikethrough">ܘܠܕܐ ܚܬܝ ܐܬܥܙܐ ܒܗ ܘܝܪܬܢܝ ܘܝܚܜܪ ܒܡܘܬܝ</del>
+                    </ab>
                <ab>ܘܝܓܡܜ ܥܝܢܐܝ ܘܝܕܦܢܢܝ. ܦܥܢܕ ܕܠܟ ܐܬܐܗ ܨܘܬ</ab>
                <ab/>
                <ab>ܡܢ ܐܠܣܡܐ ܩܐܝܠܐ. ܒܚܝܬ ܐܬܟܠܬ ܐܘܠܐ ܥܠܝ ܐܠܐܨܢܐܡ</ab>
@@ -438,8 +468,10 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <ab>ܣܪܝ ܘܡܕܒܪ ܕܘܠܬܝ. ܗܐ ܩܕ ܟܒܪܬ ܘܛܥܢܬ ܦܝ </ab>
                <ab>ܐܠܣܢ ܘܫܟܬ.<add place="interlinear">اختبار</add> ܘܩܪܒ ܘܩܬ ܡܘܬܟ ܘܘܦܐܬܟ. ܦܩܘܠ</ab>
                <ab>ܠܝ ܡܢ ܝܩܘܡ ܦܝ ܟܕܡܬܝ ܒܥܕܟ. ܦܩܐܠ ܠܗ</ab>
-               <ab type="colophon"><seg xml:lang="ara">هذا حيث ينتهي النص.</seg></ab>
-
+               <ab type="colophon">
+                        <seg xml:lang="ara">هذا حيث ينتهي النص.</seg>
+                    </ab>
+                <milestone unit="examples"/>
 
                <!-- @@@@ The following encoding has been taken directly from the source
                   material. In case there are Arabic passages, tei:seg with/or @xml:id has been added 
@@ -466,7 +498,8 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <!--- ### since the text in tei:orig is the running text, it should be displayed.
                the text of supplied should, however, be available, too.
                idea: cf. tei:abbr/tei:expan? -->
-               <ab><damage>
+               <ab>
+                        <damage>
                      <orig>[܂]ܢܬ [܂܂܂]ܡܪ</orig>
                      <supplied>ܫܢܬ ܐܬܐܡܪ</supplied> ܗܼܘܐ ܠܝܼ܂ </damage>
                </ab>
@@ -496,12 +529,10 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <!-- omitted text -->
                <!-- ### there is probably no need to indicate the reason for the supplied text.
                it could be serialized as tei:supplied without an attribute -->
-               <ab> ܥܲܝܢܹܗ ܢܕܲܒܲܪ ܒܲܝܬܹܿܗ܀ ܒܹܪܝ ܛܵܒܼ ܥܘܝܼܪ <supplied rend="omission"
-                     >ܒܥܲܝܢ̈ܘܗܝ</supplied> ܡܼܢ ܗܵܘܿ ܕܲܥܘܝܼܪ </ab>
+               <ab> ܥܲܝܢܹܗ ܢܕܲܒܲܪ ܒܲܝܬܹܿܗ܀ ܒܹܪܝ ܛܵܒܼ ܥܘܝܼܪ <supplied rend="omission">ܒܥܲܝܢ̈ܘܗܝ</supplied> ܡܼܢ ܗܵܘܿ ܕܲܥܘܝܼܪ </ab>
 
                <!-- gloss: below -->
-               <ab> ܠܲܝܬܿ ܠܹܗ܂ ܘܛܵܒܼܘܼ ܩܵܠܐ ܕܐܘܼܠ̈ܝܬܼܵܐ ܒܐܹܕ̈ܢܲܝ ܣܲܟܼܠܵܐ܉ <add place="below"
-                     >ܡܢ</add> ܙܡܵܪܵܐ </ab>
+               <ab> ܠܲܝܬܿ ܠܹܗ܂ ܘܛܵܒܼܘܼ ܩܵܠܐ ܕܐܘܼܠ̈ܝܬܼܵܐ ܒܐܹܕ̈ܢܲܝ ܣܲܟܼܠܵܐ܉ <add place="below">ܡܢ</add> ܙܡܵܪܵܐ </ab>
 
                <!-- damaged text with entity and illegible text -->
                <ab>
@@ -514,8 +545,7 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
 
                <!-- @@@ Cambrigde_Add_3497.3rb41.0.xml -->
                <!-- place name spanning over two lines -->
-               <ab xml:lang="ara">والعساكر وانطلقوا الى الصحره الى <placeName next="#Cambrigde_Add_3497_1"
-                     >بقعة</placeName>
+               <ab xml:lang="ara">والعساكر وانطلقوا الى الصحره الى <placeName next="#Cambrigde_Add_3497_1">بقعة</placeName>
                </ab>
                <ab xml:lang="ara">
                   <placeName xml:id="Cambrigde_Add_3497_1">نسرين</placeName> فلما وصلوا فنظر الملك
@@ -774,7 +804,8 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <!-- usage of tei:g in damaged area-->
                <ab>ܠܘܙܐ ܕܠܘܩܕܡ ܡܦܪܥ ܘܠܚܪܬܐ <damage>
                      <g type="quotation-mark"/>
-                  </damage></ab>
+                  </damage>
+                    </ab>
 
                <!-- addition with unknown type -->
                <ab> ܘܗܦܟܬ ܛܥܢܬ ܐܰܒܵܪܐ ܘܠܐ ܐܝܼܩܰܪ ܥܠܝ <add place="sidelong">ܐܝܟ</add>

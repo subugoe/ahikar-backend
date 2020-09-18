@@ -18,13 +18,13 @@ declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
+import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
 import module namespace functx = "http://www.functx.com";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "tapi.xqm";
 
-declare variable $anno:version := "1.8.0";
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 declare variable $anno:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
 
@@ -83,7 +83,7 @@ declare
     %output:method("json")
 function anno:collection-rest($collection as xs:string) {
     if (anno:are-resources-available($collection)) then
-        ($tapi:responseHeader200,
+        ($commons:responseHeader200,
         anno:make-annotationCollection($collection, (), $anno:server))
     else
         anno:get-404-header($collection)
@@ -232,7 +232,7 @@ declare
 function anno:annotationPage-for-collection-rest($collection as xs:string, 
 $document as xs:string) {
     if (anno:are-resources-available(($collection, $document))) then
-        ($tapi:responseHeader200,
+        ($commons:responseHeader200,
         anno:make-annotationPage($collection, $document, $anno:server))
         
     else
@@ -309,7 +309,7 @@ declare
 function anno:manifest-rest($collection as xs:string, 
 $document as xs:string) {
     if (anno:are-resources-available(($collection, $document))) then
-        ($tapi:responseHeader200,
+        ($commons:responseHeader200,
         anno:make-annotationCollection($collection, $document, $anno:server))
         
     else
@@ -340,7 +340,7 @@ declare
 function anno:annotationCollection-for-manifest-rest($collection as xs:string, 
 $document as xs:string, $page as xs:string) {
     if (anno:are-resources-available(($collection, $document))) then
-        ($tapi:responseHeader200,
+        ($commons:responseHeader200,
         anno:make-annotationCollection-for-manifest($collection, $document, $page, $anno:server))
         
     else
@@ -408,7 +408,7 @@ declare
 function anno:annotationPage-for-manifest-rest($collection as xs:string, 
 $document as xs:string, $page as xs:string) {
     if (anno:are-resources-available(($collection, $document))) then
-        ($tapi:responseHeader200,
+        ($commons:responseHeader200,
         anno:make-annotationPage-for-manifest($collection, $document, $page, $anno:server))
         
     else
@@ -619,7 +619,7 @@ declare function anno:are-resources-available($resources as xs:string+)
 as xs:boolean {
     let $availability :=
         for $resource in $resources return
-            doc-available($tapi:metaCollection || $resource || ".xml")
+            doc-available($commons:meta || $resource || ".xml")
     return
         not(functx:is-value-in-sequence(false(), $availability))
 };
@@ -872,7 +872,7 @@ declare function anno:get-prev-xml-uris($uri as xs:string) as xs:string* {
  : @return The URI of the given resource's parent aggregation
  :)
 declare function anno:get-parent-aggregation($uri as xs:string) as xs:string {
-  for $doc in collection($tapi:aggCollection) return
+  for $doc in collection($commons:agg) return
     if ($doc//@rdf:resource[matches(., $uri)]) then
         base-uri($doc) => substring-after("agg/") => substring-before(".xml")
     else
@@ -948,9 +948,9 @@ $page as xs:string) as xs:integer {
 declare function anno:get-document($uri as xs:string, $type as xs:string) {
     let $collection :=
         switch ($type)
-            case "agg" return $tapi:aggCollection
-            case "data" return $tapi:baseCollection || "/data/"
-            case "meta" return $tapi:metaCollection
+            case "agg" return $commons:agg
+            case "data" return $commons:tg-collection || "/data/"
+            case "meta" return $commons:meta
             default return error(QName($anno:ns, "ANNO02"), "Unknown type " || $type)
     return
         doc($collection || $uri || ".xml")
