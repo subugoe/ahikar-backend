@@ -1,4 +1,9 @@
-version: '3'
+version: '3.4'
+
+volumes:
+  existdb_data:
+    name: ahikar-existdb_Data-${TAG}
+
 services:
   existdb:
     build:
@@ -8,6 +13,7 @@ services:
     entrypoint:
       - java
       - -javaagent:/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8079:/prometheus/jmx_prometheus_config.yaml
+      - -Xmx1g
       - org.exist.start.Main
       - jetty
     ports:
@@ -20,13 +26,18 @@ services:
     environment:
       - APP_NAME=${APP_NAME}
     volumes:
-      # TODO: The index of the database at ./exist/data is corrupt on
-      # the test instance but cannot be deleted.
-      # Until October 1, 2020 we temporarily create a new bind mount,
-      # exist_2, to get a running database on the test server.
-      - ${EXIST_HOST_DIR}:/exist/data:z
-      - ${EXIST_HOST_DIR}/logs:/exist/logs:z
-      - ./prometheus:/prometheus:z
+      # eXist's data should be persistent but easily removable if the
+      # database's index is broken for some reason. Therefore we put
+      # it in a volume instead of a bind mount.
+      - type: volume
+        source: existdb_data
+        target: /exist/data
+      - type: bind
+        source: ./exist/logs
+        target: /exist/logs
+      - type: bind
+        source: ./prometheus
+        target: /prometheus
 
   httpd:
     build:
