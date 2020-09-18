@@ -10,8 +10,6 @@ xquery version "3.1";
 module namespace tests="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests";
 
 declare namespace http = "http://expath.org/ns/http-client";
-declare namespace ore="http://www.openarchives.org/ore/terms/";
-declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "modules/annotations.xqm";
@@ -63,8 +61,7 @@ function tests:_test-setup() as xs:string+ {
         <msIdentifier>
             <institution>University of Cambridge - Cambridge University Library</institution>
         </msIdentifier>
-    </teiHeader>),
-    tapi:zip-text()
+    </teiHeader>)
 };
 
 declare
@@ -82,23 +79,6 @@ declare
     %test:assertXPath("map:get($result, 'meta') => map:get('target') = 'ahikar'")
 function tests:api-info()  as item() {
     let $url := $tests:restxq || "info"
-    let $req := <http:request href="{$url}" method="get">
-                        <http:header name="Connection" value="close"/>
-                   </http:request>
-    return http:send-request($req)[2] => util:base64-decode() => parse-json()
-};
-
-
-declare
-    (: check if all parts are present.
-     : no further tests are needed since the content has been tested while testing
-     : the underlying function. :)
-    %test:assertXPath("map:contains($result, 'title')")
-    %test:assertXPath("map:contains($result, 'collector')")
-    %test:assertXPath("map:contains($result, 'description')")
-    %test:assertXPath("map:contains($result, 'sequence')")
-function tests:collection-rest()  as item() {
-    let $url := $tests:restxq || "/textapi/ahikar/ahiqar_collection/collection.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -168,6 +148,7 @@ declare
      : no further tests are needed since the content has been tested while testing
      : the underlying function. :)
     %test:assertExists
+    %test:pending
 function tests:content-zip() as xs:base64Binary {
     let $url := $tests:restxq || "/content/ahikar-plain-text.zip"
     let $req := <http:request href="{$url}" method="get">
@@ -196,16 +177,6 @@ function tests:content-txt() as xs:string {
  : ************************
  : all the functions that contribute to but do not define RESTXQ endpoints
  :)
-
-declare
-    %test:args("ahiqar_collection", "http://localhost:8080/exist/restxq")
-    (: tests if the object is created at all :)
-    %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Story and Proverbs of Ahikar the Wise' ")
-    (: tests if the sequence construction works properly :)
-    %test:assertXPath("$result//*/string() = 'http://localhost:8080/exist/restxq/api/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json' ")
-function tests:collection($collection as xs:string, $server as xs:string) as item()+ {
-    tapi:collection($collection, $server)
-};
 
 
 declare
@@ -254,26 +225,11 @@ function tests:html-creation($document as xs:string, $page as xs:string) as elem
     tapi:content($document, $page)
 };
 
-declare
-    %test:assertTrue
-function tests:zip-text() as item()+ {
-    xmldb:collection-available("/db/apps/sade/textgrid/txt")
-};
-
 
 declare
     %test:assertExists
 function tests:compress-text() as xs:base64Binary {
     tapi:compress-to-zip()
-};
-
-
-declare
-    %test:assertEquals("test test3 Berlin")
-function tests:plain-text() as xs:string {
-    let $tei := doc("/db/test-records/sample-tei.xml")/*
-    return
-        tapi:create-plain-text($tei)
 };
 
 
@@ -401,22 +357,44 @@ function tests:remove-whitespaces() as document-node() {
         tapi:remove-whitespaces($doc)
 };
 
+declare
+    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
+function tests:get-tei-file-name-of-edition($document as xs:string) {
+    tapi:get-tei-file-name-of-edition($document)
+};
 
 declare
-    %test:assertXPath("not($result//@rdf:resource[. = 'textgrid:3vp38'])")
-    %test:assertXPath("$result//@rdf:resource[. = 'textgrid:3rx14']")
-function tests:exclude-aggregated-manifests() {
-    let $collection-metadata :=
-        <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <rdf:Description xmlns:tei="http://www.tei-c.org/ns/1.0" rdf:about="textgrid:3r9ps.0">
-                <ore:aggregates rdf:resource="textgrid:3rbm9"/>
-                <ore:aggregates rdf:resource="textgrid:3rbmc"/>
-                <ore:aggregates rdf:resource="textgrid:3rx14"/>
-                <ore:aggregates rdf:resource="textgrid:3vp38"/>
-            </rdf:Description>
-        </rdf:RDF>
+    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
+function tests:get-edition-aggregates-without-uri-namespace($document as xs:string) {
+    tapi:get-edition-aggregates-without-uri-namespace($document)
+};
+
+declare
+    %test:args("ahiqar_sample") %test:assertEquals("ahiqar_sample")
+function tests:find-xml-in-aggregates($aggregates as xs:string+) {
+    tapi:find-xml-in-aggregates($aggregates)
+};
+
+declare 
+    %test:args("ahiqar_sample", "transliteration") %test:assertXPath("$result[@type = 'transliteration']")
+function tests:get-text-of-type($uri as xs:string, $type as xs:string) {
+    tapi:get-text-of-type($uri, $type)
+};
+
+declare
+    %test:assertTrue
+function tests:is-txt-api-available() {
+    let $url := $tests:restxq || "content/ahiqar_sample.txt"
     return
-        tapi:exclude-unwanted-manifests($collection-metadata)
+        local:is-endpoint-http200($url)
+};
+
+declare function tests:txt() {
+    let $url := $tests:restxq || "textapi/ahiqar/ahiqar_collection/ahiqar_sample.txt"
+    let $req := <http:request href="{$url}" method="get">
+                        <http:header name="Connection" value="close"/>
+                   </http:request>
+    return http:send-request($req)[2] => util:base64-decode()
 };
 
 
@@ -425,79 +403,79 @@ function tests:exclude-aggregated-manifests() {
  : * AnnotationAPI * 
  : *****************
  :)
-(::)
+
+declare
+    %test:args("ahiqar_sample", "data")
+    %test:assertXPath("$result//*[local-name(.) = 'TEI']")
+function tests:anno-get-document($uri as xs:string, $type as xs:string) as document-node() {
+    anno:get-document($uri, $type)
+};
+
+
 (:declare:)
-(:    %test:args("ahiqar_sample", "data"):)
-(:    %test:assertXPath("$result//*[local-name(.) = 'TEI']"):)
-(:function tests:anno-get-document($uri as xs:string, $type as xs:string) as document-node() {:)
-(:    anno:get-document($uri, $type):)
-(:};:)
-(::)
-(::)
-(:(:declare:):)
-(:(:    %test:args("3r679", "114r"):):)
-(:(:    %test:assertEquals("0"):):)
-(:(:function tests:anno-determine-start-index-for-page($uri as xs:string, $page as xs:string) {:):)
-(:(:    anno:determine-start-index-for-page($uri, $page):):)
-(:(:};:):)
-(:(::):)
-(:(::):)
-(:(:declare:):)
-(:(:    %test:args("3r131"):):)
-(:(:    %test:assertEquals("16"):):)
-(:(:function tests:anno-determine-start-index($uri as xs:string) {:):)
-(:(:    anno:determine-start-index($uri):):)
-(:(:};:):)
-(:(::):)
-(:(:declare:):)
-(:(:    %test:args("3r131"):):)
-(:(:    %test:assertEquals("3r679"):):)
-(:(:function tests:anno-get-parent-aggregation($uri as xs:string) {:):)
-(:(:    anno:get-parent-aggregation($uri):):)
-(:(:};:):)
-(:(::):)
-(:(::):)
-(:(:declare:):)
-(:(:    %test:args("3r131"):):)
-(:(:    %test:assertEquals("114r", "114v"):):)
-(:(:function tests:anno-get-pages-in-TEI($uri as xs:string) {:):)
-(:(:    anno:get-pages-in-TEI($uri):):)
-(:(:};:):)
-(:(::):)
-(:(::):)
-(:(:declare:):)
-(:(:    %test:args("3r679"):):)
-(:(:    %test:assertTrue:):)
-(:(:function tests:anno-is-resource-edition($uri as xs:string) {:):)
-(:(:    anno:is-resource-edition($uri):):)
-(:(:};:):)
-(:(::):)
-(:(::):)
-(:(:declare:):)
-(:(:    %test:args("3r131"):):)
-(:(:    %test:assertTrue:):)
-(:(:function tests:anno-is-resource-xml($uri as xs:string) {:):)
-(:(:    anno:is-resource-xml($uri):):)
-(:(:};:):)
-(::)
-(::)
-(:declare:)
-(:    %test:assertEquals("A place's name."):)
-(:function tests:anno-get-bodyValue() {:)
-(:    let $annotation := doc("/db/test-records/sample-tei.xml")//tei:placeName:)
-(:    return:)
-(:        anno:get-bodyValue($annotation):)
+(:    %test:args("3r679", "114r"):)
+(:    %test:assertEquals("0"):)
+(:function tests:anno-determine-start-index-for-page($uri as xs:string, $page as xs:string) {:)
+(:    anno:determine-start-index-for-page($uri, $page):)
 (:};:)
 (::)
 (::)
 (:declare:)
-(:    %test:args("asdf"):)
-(:    %test:assertFalse:)
-(:(:    %test:args("3r131"):):)
-(:(:    %test:assertTrue:):)
-(:function tests:anno-are-resources-available($resources as xs:string+) {:)
-(:    anno:are-resources-available($resources):)
+(:    %test:args("3r131"):)
+(:    %test:assertEquals("16"):)
+(:function tests:anno-determine-start-index($uri as xs:string) {:)
+(:    anno:determine-start-index($uri):)
 (:};:)
+(::)
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertEquals("3r679"):)
+(:function tests:anno-get-parent-aggregation($uri as xs:string) {:)
+(:    anno:get-parent-aggregation($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertEquals("114r", "114v"):)
+(:function tests:anno-get-pages-in-TEI($uri as xs:string) {:)
+(:    anno:get-pages-in-TEI($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r679"):)
+(:    %test:assertTrue:)
+(:function tests:anno-is-resource-edition($uri as xs:string) {:)
+(:    anno:is-resource-edition($uri):)
+(:};:)
+(::)
+(::)
+(:declare:)
+(:    %test:args("3r131"):)
+(:    %test:assertTrue:)
+(:function tests:anno-is-resource-xml($uri as xs:string) {:)
+(:    anno:is-resource-xml($uri):)
+(:};:)
+
+
+declare
+    %test:assertEquals("A place's name.")
+function tests:anno-get-bodyValue() {
+    let $annotation := doc("/db/test-records/sample-tei.xml")//tei:placeName
+    return
+        anno:get-bodyValue($annotation)
+};
+
+
+declare
+    %test:args("asdf")
+    %test:assertFalse
+(:    %test:args("3r131"):)
+(:    %test:assertTrue:)
+function tests:anno-are-resources-available($resources as xs:string+) {
+    anno:are-resources-available($resources)
+};
 
 
 (:declare:)
@@ -547,3 +525,21 @@ function tests:exclude-aggregated-manifests() {
 (:function tests:anno-get-uris($documentURI) {:)
 (:    anno:get-uris($documentURI):)
 (:};:)
+
+declare function local:is-endpoint-http200($url as xs:string) as xs:boolean {
+    let $http-status := local:get-http-status($url)
+    return
+        $http-status = "200"
+};
+
+declare function local:get-http-status($url as xs:string) as xs:string {
+    let $req := local:make-request($url)
+    return
+        http:send-request($req)[1]/@status
+};
+
+declare function local:make-request($url as xs:string) {
+    <http:request href="{$url}" method="get">
+        <http:header name="Connection" value="close"/>
+   </http:request>
+};

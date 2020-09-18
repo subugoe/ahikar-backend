@@ -7,7 +7,7 @@ exist-app/**/*.xar
 **/ahikar.env
 
 # docker container files (COPY statements) and volumes
-docker/exist/**
+docker/exist*/**
 docker/frontend
 
 # exclude all ZIP files

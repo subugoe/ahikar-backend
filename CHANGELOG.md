@@ -5,19 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2020-09-18
+
+### Added
+
+- `collate.xqm` has been introduced.
+It provides plain text versions of XMLs files while only considering text passages that follow tei:milestone.
+- `commons.xqm` has been introduced.
+It provides variables and functions used in several other modules.
+
+### Changed
+
+- All functionality that deals with creating a plain text version of a given XML file has been moved to `collate.xqm`.
+- `tapi.xqm` and `annotations.xqm` outsourced some variable to `commons.xqm`.
+
+### Fixed
+
+- The RESTAPI endpoint returning txt-files has been fixed and is available again.
+
 ## [1.9.3] - 2020-09-18
 
-## Changed
+### Changed
 
 - The data directory of eXist-db is mounted to a volume instead of a bind mount.
 
-## Fixed
+### Fixed
 
 - The maximum amount of memory usable by eXist-db's Docker container has been reduced to 1GB.
 
 ## [1.9.2] - 2020-09-10
 
-## Changed
+### Changed
 
 - The GitLab templates have been tidied up according to their actual usage.
 Also, a passage about updating the README as been added.
