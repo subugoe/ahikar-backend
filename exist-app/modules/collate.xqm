@@ -13,6 +13,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
+import module namespace norm="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization" at "tapi-txt-normalization.xqm";
 
 declare variable $coll:textgrid := "/db/apps/sade/textgrid";
 declare variable $coll:data := $coll:textgrid || "/data";
@@ -24,9 +25,10 @@ as xs:string+ {
     coll:create-txt-collection-if-not-available(),
     for $text in coll:get-transcriptions-and-transliterations() return
         let $relevant-text := coll:get-relevant-text($text)
+        let $normalized-text := norm:get-txt-without-diacritics($relevant-text)
         let $file-name := coll:make-file-name($text)
         return
-            xmldb:store($coll:txt, $file-name, $relevant-text, "text/plain")
+            xmldb:store($coll:txt, $file-name, $normalized-text, "text/plain")
 };
 
 declare function coll:create-txt-collection-if-not-available()
