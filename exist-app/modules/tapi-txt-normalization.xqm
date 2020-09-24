@@ -35,43 +35,8 @@ declare variable $norm:syriac-vowels :=
         1849,
         1850,
         1851,
-        1852,
         1853,
-        1854,
-        1855
-    );
-    
-declare variable $norm:syriac-marks :=
-    (
-        1856,
-        1857,
-        1858,
-        1859,
-        1860,
-        1861,
-        1862,
-        1863,
-        1864,
-        1865,
-        1866
-    );
-    
-declare variable $norm:syriac-punctuation :=
-    (
-        1792,
-        1793,
-        1794,
-        1795,
-        1796,
-        1797,
-        1798,
-        1799,
-        1800,
-        1801,
-        1802,
-        1803,
-        1804,
-        1805
+        1854
     );
     
 declare variable $norm:arabic-tashkil-and-combining-marks :=
@@ -111,8 +76,6 @@ declare function norm:remove-codepoints($codepoints as xs:integer+)
 as xs:integer+ {
     let $diacritics := 
     (
-        $norm:syriac-marks,
-        $norm:syriac-punctuation,
         $norm:syriac-vowels,
         $norm:arabic-tashkil-and-combining-marks
     )
