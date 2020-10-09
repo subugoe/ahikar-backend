@@ -7,11 +7,11 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
 import module namespace map="http://www.w3.org/2005/xpath-functions/map";
+import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "test-commons.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
-import module namespace t-coll="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection" at "../modules/tapi-collection.xqm";
+import module namespace tapi-coll="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection" at "../modules/tapi-collection.xqm";
 
-declare variable $tct:restxq := "http://0.0.0.0:8080/exist/restxq";
-declare variable $tct:collection-uri := "test-collection.xml";
+declare variable $tct:collection-uri := "testapi-collection.xml";
 declare variable $tct:agg1-uri := "test-aggregation-1.xml";
 declare variable $tct:agg2-uri := "test-aggregation-2.xml";
 
@@ -21,7 +21,7 @@ function tct:_test-setup(){
     let $collection :=
         <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" 
             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <rdf:Description rdf:about="textgrid:test-collection">
+            <rdf:Description rdf:about="textgrid:testapi-collection">
                 <ore:aggregates rdf:resource="textgrid:test-aggregation-1"/>
                 <ore:aggregates rdf:resource="textgrid:test-aggregation-2"/>
             </rdf:Description>
@@ -103,17 +103,9 @@ function tct:_test-teardown() {
 };
 
 declare
-    %test:assertTrue
-function tct:is-endpoint-available() {
-    let $url := $tct:restxq || "/textapi/ahikar/ahiqar_collection/collection.json"
-    return
-        local:is-endpoint-http200($url)
-};
-
-declare
     %test:args("ahiqar_collection") %test:assertXPath("$result//*[local-name(.) = 'aggregates']")
 function tct:get-aggregation($uri as xs:string) {
-    t-coll:get-aggregation($uri)
+    tapi-coll:get-aggregation($uri)
 };
 
 declare
@@ -129,7 +121,7 @@ function tct:get-allowed-manifest-uris-mock-up-input-included() {
             </rdf:Description>
         </rdf:RDF>
     return
-        t-coll:get-allowed-manifest-uris($collection-metadata) = "3rx14"
+        tapi-coll:get-allowed-manifest-uris($collection-metadata) = "3rx14"
 };
 
 declare
@@ -145,7 +137,7 @@ function tct:get-allowed-manifest-uris-mock-up-input-excluded() {
             </rdf:Description>
         </rdf:RDF>
     return
-        t-coll:get-allowed-manifest-uris($collection-metadata) = "3vp38"
+        tapi-coll:get-allowed-manifest-uris($collection-metadata) = "3vp38"
 };
 
 
@@ -153,22 +145,22 @@ declare
     %test:args("ahiqar_collection", "ahiqar_agg") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json")
 function tct:make-id($colletion-uri as xs:string, $manifest-uri as xs:string)
 as xs:string {
-    t-coll:make-id($tct:restxq, $colletion-uri, $manifest-uri)
+    tapi-coll:make-id($tc:server, $colletion-uri, $manifest-uri)
 };
 
 
 declare
     %test:assertEquals("ahiqar_agg")
 function tct:get-allowed-manifest-uris-sample-input() {
-    let $collection-metadata := t-coll:get-aggregation("ahiqar_collection")
+    let $collection-metadata := tapi-coll:get-aggregation("ahiqar_collection")
     return
-        t-coll:get-allowed-manifest-uris($collection-metadata)
+        tapi-coll:get-allowed-manifest-uris($collection-metadata)
 };
 
 declare
     %test:args("ahiqar_collection") %test:assertXPath("$result[self::document-node()]")
 function tct:get-metadata-file($uri as xs:string) {
-    t-coll:get-metadata-file($uri)
+    tapi-coll:get-metadata-file($uri)
 };
 
 
@@ -176,7 +168,7 @@ declare
     %test:args("textgrid:1234") %test:assertEquals("1234")
     %test:args("1234") %test:assertEquals("1234")
 function tct:remove-textgrid-prefix($uri as xs:string) {
-    t-coll:remove-textgrid-prefix($uri)
+    tapi-coll:remove-textgrid-prefix($uri)
 };
 
 declare
@@ -184,32 +176,32 @@ declare
     %test:args("text/tg.edition+tg.aggregation+xml") %test:assertEquals("manifest")
     %test:args("test") %test:assertEquals("manifest")
 function tct:make-format-type($tgmd-format as xs:string) {
-    t-coll:make-format-type($tgmd-format)
+    tapi-coll:make-format-type($tgmd-format)
 };
 
 declare
     %test:assertEquals("manifest")
 function tct:get-format-type() {
-    let $metadata := t-coll:get-metadata-file("ahiqar_agg")
+    let $metadata := tapi-coll:get-metadata-file("ahiqar_agg")
     return
-        t-coll:get-format-type($metadata)
+        tapi-coll:get-format-type($metadata)
 };
 
 
 declare
     %test:args("ahiqar_collection") %test:assertXPath("$result//type[. = 'manifest']")
     %test:args("ahiqar_collection") %test:assertXPath("$result//id[matches(., 'ahiqar_agg/manifest.json')]")
-    %test:args("test-collection") %test:assertXPath("$result//id[matches(., 'test-aggregation-1/manifest.json')]")
-    %test:args("test-collection") %test:assertXPath("$result//id[matches(., 'test-aggregation-2/manifest.json')]")
+    %test:args("testapi-collection") %test:assertXPath("$result//id[matches(., 'test-aggregation-1/manifest.json')]")
+    %test:args("testapi-collection") %test:assertXPath("$result//id[matches(., 'test-aggregation-2/manifest.json')]")
 function tct:make-sequence($collection-uri as xs:string) {
-    t-coll:make-sequence($collection-uri, $tct:restxq)
+    tapi-coll:make-sequence($collection-uri, $tc:server)
 };
 
 declare
     %test:args("ahiqar_collection") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/ahiqar_collection/annotationCollection.json")
 function tct:make-annotationCollection-uri($collection-uri as xs:string)
 as xs:string {
-    t-coll:make-annotationCollection-uri($tct:restxq, $collection-uri)
+    tapi-coll:make-annotationCollection-uri($tc:server, $collection-uri)
 };
 
 
@@ -217,44 +209,5 @@ declare
     %test:args("ahiqar_collection") %test:assertXPath("$result//title = 'The Story and Proverbs of Ahikar the Wise'")
     %test:args("ahiqar_collection") %test:assertXPath("$result//*/string() = 'http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json' ")
 function tct:get-json($collection-uri as xs:string) {
-    t-coll:get-json($collection-uri, $tct:restxq)
-};
-
-
-declare
-    (: check if all parts are present.
-     : no further tests are needed since the content has been tested while testing
-     : the underlying function. :)
-    %test:assertXPath("map:contains($result, 'title')")
-    %test:assertXPath("map:contains($result, 'collector')")
-    %test:assertXPath("map:contains($result, 'description')")
-    %test:assertXPath("map:contains($result, 'sequence')")
-function tct:endpoint()
-as item() {
-    let $url := $tct:restxq || "/textapi/ahikar/ahiqar_collection/collection.json"
-    let $req := <http:request href="{$url}" method="get">
-                        <http:header name="Connection" value="close"/>
-                   </http:request>
-    return http:send-request($req)[2] => util:base64-decode() => parse-json()
-};
-
-
-
-
-declare function local:is-endpoint-http200($url as xs:string) as xs:boolean {
-    let $http-status := local:get-http-status($url)
-    return
-        $http-status = "200"
-};
-
-declare function local:get-http-status($url as xs:string) as xs:string {
-    let $req := local:make-request($url)
-    return
-        http:send-request($req)[1]/@status
-};
-
-declare function local:make-request($url as xs:string) {
-    <http:request href="{$url}" method="get">
-        <http:header name="Connection" value="close"/>
-   </http:request>
+    tapi-coll:get-json($collection-uri, $tc:server)
 };

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2020-09-22
+
+### Changed
+
+- In order to improve the clearity of the application, `tapi.xqm` now only holds the RESTXQ endpoints of the TextAPI.
+All further functionality has been moved to separate module and furnished with tests.
+- The test runner has been designed to be self-reporting, i.e. only faulty results are displayed fully.
+
 ## [1.10.1] - 2020-09-24
 
 ### Fixed

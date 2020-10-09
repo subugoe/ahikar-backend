@@ -43,11 +43,9 @@ test_exist_app:
     - curl http://localhost:8080/exist/restxq/trigger-tests
     - sleep 60
     - bash exist-app/test/bin/shutdown.sh
-    - failures=$(xmllint --xpath '/tests/testsuites/testsuite/@failures' exist-app/test/test-results.xml | egrep -o "[0-9]+")
-    - echo "There is/are currently $failures failures."
-    # one test fails on purpose to ensure the test suite is running correctly.
-    # thus we always have 1 failing test which indicates that everything is fine.
-    - if [[ "$failures" -gt 1 ]]; then exit 1; else exit 0; fi
+    - failures=$(./get-unit-test-failures-and-errors.sh)
+    - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
+    - if [[ "$failures" -gt 0 ]]; then exit 1; else exit 0; fi
   artifacts:
     paths:
       - exist-app/test/test-results.xml
