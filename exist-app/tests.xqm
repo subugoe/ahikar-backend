@@ -227,13 +227,6 @@ function tests:html-creation($document as xs:string, $page as xs:string) as elem
 
 
 declare
-    %test:assertExists
-function tests:compress-text() as xs:base64Binary {
-    tapi:compress-to-zip()
-};
-
-
-declare
     %test:args("ahiqar_sample")
     %test:assertEquals("text/xml")
 function tests:tgmd-format($uri as xs:string) as xs:string {
