@@ -13,23 +13,25 @@ xquery version "3.1";
 
 module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi";
 
-declare namespace expkg="http://expath.org/ns/pkg";
-declare namespace ore="http://www.openarchives.org/ore/terms/";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
-declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace test="http://exist-db.org/xquery/xqsuite";
-declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
-import module namespace coll="http://ahikar.sub.uni-goettingen.de/ns/collate" at "collate.xqm";
+import module namespace tapi-coll="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection" at "tapi-collection.xqm";
+import module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item" at "tapi-item.xqm";
+import module namespace tapi-mani="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest" at "tapi-manifest.xqm";
+import module namespace tapi-txt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt" at "tapi-txt.xqm";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
-import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
-import module namespace functx="http://www.functx.com";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
+import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
 
-declare variable $tapi:server := if(requestr:hostname() = "existdb") then $commons:expath-pkg/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
+declare variable $tapi:server :=
+    if(requestr:hostname() = "existdb") then
+        $commons:expath-pkg/*/@name => replace("/$", "")
+    else
+        "http://localhost:8094/exist/restxq";
 
 (:~
  : Shows information about the currently installed application.
@@ -41,7 +43,7 @@ declare
     %rest:HEAD
     %rest:path("/info")
     %output:method("json")
-function tapi:info-rest()
+function tapi:endpoint-info()
 as item()+ {
     $commons:responseHeader200,
     tapi:info()
@@ -82,274 +84,65 @@ declare function tapi:remove-whitespaces($doc as document-node()) as document-no
 
 
 (:~
- : Returns information about a given document as specified at
- : https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest.
- :
- : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest
- : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r84g'
- : @param $document The unprefixed TextGrid URI of a document, e.g. '3r679'
- : @return An object element containing all necessary information about a manifest object
+ : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection
+ : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
+ : @param $collection-uri The unprefixed TextGrid URI of a collection, e.g. '3r132'
+ : @return A collection object as JSON
  :)
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection}/{$document}/manifest.json")
+    %rest:path("/textapi/ahikar/{$collection-uri}/collection.json")
     %output:method("json")
-function tapi:manifest-rest($collection as xs:string, $document as xs:string)
+function tapi:endpoint-collection($collection-uri as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi:manifest($collection, $document, $tapi:server)
+    tapi-coll:get-json($collection-uri, $tapi:server)
 };
 
 
 (:~
- : Returns information about an edition object (i.e. an aggregation) which holds
- : an XML document as well as the facsimiles.
- : 
- : In contrast to the generic TextAPI specs on manifest objects we do not provide an
- : ID at this point. One reason is the TextGrid metadata model, the other is FRBR.
- : 
- : @param $collection The URI of the document's parent collection, e.g. '3r9ps'
- : @param $document The URI of an edition object, e.g. '3r177'
- : @param $server A string indicating the server. This parameter has been introduced to make this function testable and defaults to $tapi:server.
- : @return An object element containing all necessary information about a manifest object
+ : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest
  :)
-declare function tapi:manifest($collection as xs:string, $document as xs:string,
-$server as xs:string)
-as element(object) {
-    let $aggNode := doc($commons:agg || $document || ".xml")
-    let $metaNode := doc($commons:tg-collection || "/meta/" || $document || ".xml")
-    let $documentUri := $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
-    let $documentNode := doc($commons:data || $documentUri || ".xml")
-    let $sequence :=
-        for $page in $documentNode//tei:pb[@facs]/string(@n)
-        let $uri := "/api/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
-        return
-            <sequence>
-                <id>{$server}{$uri}</id>
-                <type>item</type>
-            </sequence>
-    let $id := $server || "/api/textapi/ahikar/" || $collection || "/" || $document || "/manifest.json"
-            
-    return
-    <object>
-        <textapi>{$commons:version}</textapi>
-        <id>{$id}</id>
-        <label>{string($metaNode//tgmd:title)}</label>
-        {
-            tapi:make-editors($documentNode),
-            tapi:make-date($documentNode),
-            tapi:make-origin($documentNode),
-            tapi:make-location($documentNode)
-        }
-        <license>CC0-1.0</license>
-        <annotationCollection>{$server}/api/textapi/ahikar/{$collection}/{$document}/annotationCollection.json</annotationCollection>
-        {$sequence}
-    </object>
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/textapi/ahikar/{$collection-uri}/{$manifest-uri}/manifest.json")
+    %output:method("json")
+function tapi:endpoint-manifest($collection-uri as xs:string,
+    $manifest-uri as xs:string)
+as item()+ {
+    $commons:responseHeader200,
+    tapi-mani:get-json($collection-uri, $manifest-uri, $tapi:server)
 };
 
-
-(:~ 
- : Creates the necessary information about editors.
- : 
- : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/#actor-object
- : @param $documentNode The opened TEI file of the current manifest
- : @return An x-editor element with all information necessary for an Actor Object.
- :)
-declare function tapi:make-editors($documentNode as document-node()) as element(x-editor)* {
-    let $role := "editor"
-    let $has-editor := exists($documentNode//tei:titleStmt//tei:editor)
-    return
-        if ($has-editor) then
-            for $editor in $documentNode//tei:titleStmt//tei:editor
-            return
-                <x-editor>
-                    <role>{$role}</role>
-                    <name>{$editor/string()}</name>
-                </x-editor>
-        else
-            <x-editor>
-                <name>none</name>
-            </x-editor>
-};
-
-(:~
- : Creates the necessary information about a manuscript's origin from the TEI
- : header.
- : 
- : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/#manifest-object
- : @param $documentNode The opened TEI file of the current manifest
- : @return An x-origin element containing a descriptive string
- :)
-declare function tapi:make-origin($documentNode as document-node()) as 
-element(x-origin)? {
-    let $country := $documentNode//tei:history//tei:country
-    let $place := $documentNode//tei:history//tei:placeName
-    let $string :=
-        if ($country and $place) then
-            $place/string() || ", " || $country/string()
-        else if ($country) then
-            $country/string()
-        else if($place) then
-            $place/string()
-        else
-            "unknown"
-    return
-        <x-origin>{$string}</x-origin>
-};
-
-
-(:~
- : Creates the necessary information about a manuscript's creation date from the
- : TEI header.
- : 
- : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/#manifest-object
- : @param $documentNode The opened TEI file of the current manifest
- : @return An x-date element containing a descriptive string
- :)
-declare function tapi:make-date($documentNode as document-node()) as
-element(x-date)? {
-    let $date := $documentNode//tei:history//tei:date
-    let $string :=
-        if ($date) then
-            $date/string()
-        else
-            "unknown"
-    return
-        <x-date>{$string}</x-date>
-};
-
-
-(:~
- : Creates the necessary information about a manuscript's current location from
- : the TEI header.
- : 
- : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/text-api-specs/#manifest-object
- : @param $documentNode The opened TEI file of the current manifest
- : @return An x-location element containing a descriptive string
- :)
-declare function tapi:make-location($documentNode as document-node()) as
-element(x-location) {
-    let $institution := $documentNode//tei:msIdentifier//tei:institution
-    let $country := $documentNode//tei:msIdentifier//tei:country
-    let $string :=
-        if ($country and $institution) then
-            $institution || ", " || $country
-        else if ($country) then
-            $country/string()
-        else if($institution) then
-            $institution/string()
-        else
-            "unknown"
-    return
-        <x-location>{$string}</x-location>
-
-};
-
-
-(:~ 
- : Returns the API endpoints of all pages of the manuscript.
- : Since we also have transliterations, only "original" pages (i.e. the ones
- : with a facsimile) are considered for the endpoints.
- : 
- : @param $documentNode The opened TEI file of the current manifest
- : @retun A sequence of sequence elements
- :)
-declare function tapi:make-sequence($documentNode as document-node()) as
-element(sequence)+ {
-    for $page in $documentNode//tei:pb[@facs]/string(@n)
-        let $uri := "/api/textapi/ahikar/" || $collection || "/" || $document || "-" ||  $page || "/latest/item.json"
-        return
-            <sequence>
-                <id>{$server}{$uri}</id>
-                <type>item</type>
-            </sequence>
-};
 
 (:~
  : Returns information about a given page in a document. This is mainly compliant
  : with the SUB TextAPI, but has the following additions:
  :  * the division number, 'n', is mandatory
  :  * 'image' is mandatory since every page has a facsimile
- : 
- : The parameter $collection is actually not necessary but introduced to keep
- : the structure of the API clear.
  :
  : Sample call to API: /api/textapi/ahikar/3r17c/3r1pq-147a/latest/item.json
  :
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#item
- : @param $collection The unprefixed TextGrid URI of a collection, e.g. '3r17c'
- : @param $document The unprefixed TextGrid URI of a document, e.g. '3r1pq'
+ : @param $collection-uri The unprefixed TextGrid URI of a collection, e.g. '3r17c'
+ : @param $manifest-uri The unprefixed TextGrid URI of a document, e.g. '3r1pq'
  : @param $page A page number as encoded in a tei:pb/@n, e.g. '147a'
  : @return Information about a page
  :)
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection}/{$document}-{$page}/latest/item.json")
+    %rest:path("/textapi/ahikar/{$collection-uri}/{$manifest-uri}-{$page}/latest/item.json")
     %output:method("json")
-function tapi:item-rest($collection as xs:string, $document as xs:string,
-$page as xs:string) as item()+ {
+function tapi:endpoint-item($collection-uri as xs:string,
+    $manifest-uri as xs:string,
+    $page as xs:string)
+as item()+ {
     $commons:responseHeader200,
-    tapi:item($collection, $document, $page, $tapi:server)
+    tapi-item:get-json($collection-uri, $manifest-uri, $page, $tapi:server)
 };
-
-
-(:~
- : Returns information about a given page.
- :
- : @param $document The unprefixed TextGrid URI of a collection, e.g. '3r9ps'
- : @param $document The unprefixed TextGrid URI of a document, e.g. '3r1pq'
- : @param $page A page number as encoded in a tei:pb/@n, e.g. '147a'
- : @param $server A string indicating the server. This parameter has been introduced to make this function testable and defaults to $tapi:server.
- : @return An object element containing all necessary information about an item
- :)
-declare function tapi:item($collection as xs:string, $document as xs:string,
-$page as xs:string, $server as xs:string) 
-as element(object) {
-    let $aggNode := doc($commons:agg || $document || ".xml")
-    let $teiUri :=
-        if($aggNode)
-            then $aggNode//ore:aggregates[1]/@rdf:resource => substring-after(":")
-        else $document
-    let $image := doc($commons:data || $teiUri || ".xml")//tei:pb[@n = $page]/@facs => substring-after("textgrid:")
-    
-    let $xml := doc($commons:data || $teiUri || ".xml")
-    let $title := $xml//tei:title[@type = "main"]/string()
-    let $iso-languages := 
-        $xml//tei:language[@xml:base = "https://iso639-3.sil.org/code/"]/@ident/string()
-    let $alt-languages :=
-        $xml//tei:language[not(@xml:base = "https://iso639-3.sil.org/code/")]/@ident/string()
-    let $langString :=
-        for $lang in $xml//tei:language/text()
-        order by $lang
-        return $lang
-    let $langString := string-join($langString, ", ")
-    
-    return
-    <object>
-        <textapi>{$commons:version}</textapi>
-        <title>{$title}</title>
-        <type>page</type>
-        <n>{$page}</n>
-        <content>{$server}/api/content/{$teiUri}-{$page}.html</content>
-        <content-type>application/xhtml+xml</content-type>
-        {
-            for $lang in $iso-languages return
-                element lang {$lang}
-        }
-        {
-            for $lang in $alt-languages return
-                element langAlt {$lang}
-        }
-        <x-langString>{$langString}</x-langString>
-        <image>
-            <id>{$server}/api/images/{$image}</id>
-        </image>
-        <annotationCollection>{$server}/api/textapi/ahikar/{$collection}/{$document}-{$page}/annotationCollection.json</annotationCollection>
-    </object>
-};
-
 
 (:~
  : Returns an HTML rendering of a given page.
@@ -360,62 +153,21 @@ as element(object) {
  :
  : Sample call to API: /content/3rbmb-1a.html
  :
- : @param $document The unprefixed TextGrid URI of a document, e.g. '3rbmb'
+ : @param $document The unprefixed TextGrid URI of a TEI/XML, e.g. '3rbmb'
  : @param $page The page to be rendered. This has to be the string value of a tei:pb/@n in the given document, e.g. '1a'
  : @return A response header as well as the rendered HTML page
  :)
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/content/{$document}-{$page}.html")
+    %rest:path("/content/{$tei-xml-uri}-{$page}.html")
     %output:method("xml")
     %output:indent("no")
-function tapi:content-rest($document as xs:string, $page as xs:string)
+function tapi:endpoint-html($tei-xml-uri as xs:string,
+    $page as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi:content($document, $page)
-};
-
-
-(:~
- : Initiates the HTML serialization of a given page.
- :
- : @param $document The unprefixed TextGrid URI of a document, e.g. '3rbmb'
- : @param $page The page to be rendered. This has to be the string value of a tei:pb/@n in the given document, e.g. '1a'
- : @return A div wrapper containing the rendered page
- :)
-declare function tapi:content($document as xs:string, $page as xs:string)
-as element(div) {
-    let $documentPath := $commons:data || $document || ".xml"
-    let $TEI :=
-        if($page)
-        then
-            let $node := doc($documentPath)/* => tapi:add-IDs(),
-                $start-node := $node//tei:pb[@n = $page and @facs],
-                $end-node :=
-                    let $followingPb := $node//tei:pb[@n = $page and @facs]/following::tei:pb[1][@facs]
-                    return
-                        if($followingPb)
-                        then $followingPb
-                        else $node//tei:pb[@n = $page and @facs]/following::tei:ab[last()],
-                $wrap-in-first-common-ancestor-only := false(),
-                $include-start-and-end-nodes := false(),
-                $empty-ancestor-elements-to-include := ("")
-            return
-                fragment:get-fragment-from-doc(
-                    $node,
-                    $start-node,
-                    $end-node,
-                    $wrap-in-first-common-ancestor-only,
-                    $include-start-and-end-nodes,
-                    $empty-ancestor-elements-to-include)
-        else doc($documentPath)/*
-    let $stylesheet := doc("/db/apps/sade_assets/TEI-Stylesheets/html5/html5.xsl")
-    let $transform := transform:transform($TEI, $stylesheet, ())/xhtml:body//xhtml:div[@class = "tei_body"]
-    return
-        <div>
-            {$transform}
-        </div>
+    tapi-html:get-html($tei-xml-uri, $page)
 };
 
 
@@ -435,7 +187,7 @@ declare
     %rest:path("/images/{$uri}")
     %rest:produces("image/jpeg")
     %output:method("binary")
-function tapi:images-rest($uri as xs:string)
+function tapi:endpoint-image($uri as xs:string)
 as item()+ {
     $commons:responseHeader200,
     hc:send-request(
@@ -458,20 +210,20 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/content/{$document}.txt")
+    %rest:path("/content/{$document-uri}.txt")
     %rest:query-param("type", "{$type}", "transcription")
     %output:method("text")
-function tapi:text-rest($document as xs:string, $type)
+function tapi:endpoint-txt($document-uri as xs:string,
+    $type)
 as item()+ {
-    let $text := tapi:get-TEI-text($document, $type)
-    let $TEI :=
+    let $pseudo-chunk :=
         element tei:TEI {
-            $text
+            tapi-txt:get-TEI-text($document-uri, $type)
         }
     return
         ( 
             $commons:responseHeader200,
-            coll:make-plain-text-from-chunk($TEI)
+            tapi-txt:make-plain-text-from-chunk($pseudo-chunk)
         )
 };
 
@@ -486,111 +238,9 @@ declare
     %rest:HEAD
     %rest:path("/content/ahikar-plain-text.zip")
     %output:method("binary")
-function tapi:text-rest() as item()+ {
-    let $prepare := coll:main()
+function tapi:endpoint-zip() as item()+ {
+    let $prepare := tapi-txt:main()
     return
         $commons:responseHeader200,
-        tapi:compress-to-zip()
-};
-
-
-(:~
- : Compressing all manuscripts available to ZIP.
- : 
- : @return the zipped files as xs:base64Binary
- :)
-declare function tapi:compress-to-zip()
-as xs:base64Binary* {
-    compression:zip(xs:anyURI($commons:tg-collection || "/txt/"), false())
-};
-
-
-(:~
- : Returns the tei:text of a document as indicated by the @type parameter.
- : 
- : Due to the structure of the Ahikar project we can pass either an edition or
- : an XML file to the API endpoint for plain text creation.
- : This function determines the correct file which serves as a basis for the plain text.
- : 
- : @param $document The URI of a resource
- : @param $type Indicates the @type of tei:text to be processed
- : @return The tei:text element to be serialized as plain text
- :)
-declare function tapi:get-TEI-text($document as xs:string, $type as xs:string)
-as element(tei:text) {
-    let $format := tapi:get-format($document)
-    return
-        if ($format = "text/xml") then
-            doc($commons:data || $document || ".xml")//tei:text[@type = $type]
-        (: in this case the document is an edition which forces us to pick the
-        text/xml file belonging to it :)
-        else
-            let $xml := tapi:get-tei-file-name-of-edition($document)
-            return
-                 tapi:get-text-of-type($xml, $type)
-};
-
-declare function tapi:get-tei-file-name-of-edition($document as xs:string)
-as xs:string {
-    let $aggregates := tapi:get-edition-aggregates-without-uri-namespace($document)
-    return
-        tapi:find-xml-in-aggregates($aggregates)
-};
-
-declare function tapi:get-edition-aggregates-without-uri-namespace($document as xs:string)
-as xs:string+ {
-    let $edition := doc($commons:agg || $document || ".xml")
-    for $agg in $edition//ore:aggregates/@rdf:resource return
-        replace($agg, "textgrid:", "")
-};
-
-declare function tapi:find-xml-in-aggregates($aggregates as xs:string+)
-as xs:string {
-    for $agg in $aggregates return
-        if (tapi:get-format($agg) = "text/xml") then
-            $agg
-        else
-            ()
-};
-
-declare function tapi:get-text-of-type($uri as xs:string, $type as xs:string)
-as element(tei:text) {
-    doc($commons:data || $uri || ".xml")//tei:text[@type = $type]
-};
-
-(:~
- : Returns the TextGrid metadata type of a resource.
- : 
- : @param $uri The URI of the resource
- : @return The resource's format as tgmd:format
- :)
-declare function tapi:get-format($uri as xs:string) as xs:string {
-    doc($commons:meta || $uri || ".xml")//tgmd:format
-};
-
-
-declare function tapi:add-IDs($tei as element(tei:TEI)) as element(tei:TEI) {
-    tapi:add-IDs-recursion($tei)
-};
-
-declare function tapi:add-IDs-recursion($nodes as node()*) as node()* {
-    util:log-system-out($nodes),
-    for $node in $nodes return
-        typeswitch ($node)
-        
-        case text() return
-            $node
-            
-        case comment() return
-            ()
-            
-        case processing-instruction() return
-            $node
-            
-        default return
-            element {QName("http://www.tei-c.org/ns/1.0", local-name($node))} {
-                attribute id {generate-id($node)},
-                $node/@*,
-                tapi:add-IDs-recursion($node/node())
-            }
+        tapi-txt:compress-to-zip()
 };

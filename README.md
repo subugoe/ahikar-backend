@@ -121,7 +121,7 @@ The frontend takes care of the data transfer as described in the [frontend's REA
 ## API documentation
 
 The backend comes shipped with an OpenAPI documentation of its API.
-The docs are available at <https://ahikar-dev.uni-goettingen.de/openapi>.
+The docs are available at <https://ahikar-dev.sub.uni-goettingen.de/openapi>.
 
 ### Interplay of TextAPI and AnnotationAPI
 
