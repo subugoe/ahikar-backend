@@ -6,39 +6,13 @@ xquery version "3.1";
  : /textapi/ahikar/3r9ps/collection.json
  :)
 
-module namespace t-coll="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection";
+module namespace tapi-coll="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection";
 
 declare namespace ore="http://www.openarchives.org/ore/terms/";
-declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
-import module namespace requestr="http://exquery.org/ns/request";
-import module namespace rest="http://exquery.org/ns/restxq";
-
-declare variable $t-coll:server := 
-    if(requestr:hostname() = "existdb") then
-        $commons:expath-pkg/*/@name => replace("/$", "")
-    else
-        "http://localhost:8094/exist/restxq";
-
-(:~
- : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection
- : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
- : @param $collection-uri The unprefixed TextGrid URI of a collection, e.g. '3r132'
- : @return A collection object as JSON
- :)
-declare
-    %rest:GET
-    %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection-uri}/collection.json")
-    %output:method("json")
-function t-coll:endpoint($collection-uri as xs:string)
-as item()+ {
-    $commons:responseHeader200,
-    t-coll:get-json($collection-uri, $t-coll:server)
-};
 
 (:~
  : Returns information about the main collection for the project. This encompasses
@@ -53,13 +27,13 @@ as item()+ {
  : @param $server A string indicating the server. This parameter has been introduced to make this function testable.
  : @return An object element containing all necessary information
  :)
-declare function t-coll:get-json($collection-uri as xs:string,
+declare function tapi-coll:get-json($collection-uri as xs:string,
     $server as xs:string)
 as item()+ {
-    let $metadata-file := t-coll:get-metadata-file($collection-uri)
-    let $format-type := t-coll:get-format-type($metadata-file)
-    let $sequence := t-coll:make-sequence($collection-uri, $server)
-    let $annotationCollection-uri := t-coll:make-annotationCollection-uri($server, $collection-uri)
+    let $metadata-file := tapi-coll:get-metadata-file($collection-uri)
+    let $format-type := tapi-coll:get-format-type($metadata-file)
+    let $sequence := tapi-coll:make-sequence($collection-uri, $server)
+    let $annotationCollection-uri := tapi-coll:make-annotationCollection-uri($server, $collection-uri)
 
     return
     <object>
@@ -86,7 +60,7 @@ as item()+ {
     </object>
 };
 
-declare function t-coll:get-aggregation($collection-uri as xs:string)
+declare function tapi-coll:get-aggregation($collection-uri as xs:string)
 as document-node() {
     doc($commons:agg || $collection-uri || ".xml")
 };
@@ -102,7 +76,7 @@ as document-node() {
  : @return A list of ore:aggregates without the manifests to be excluded
  : 
  :)
-declare function t-coll:get-allowed-manifest-uris($aggregation-file as node())
+declare function tapi-coll:get-allowed-manifest-uris($aggregation-file as node())
 as xs:string+ {
     let $not-allowed :=
         (
@@ -113,29 +87,29 @@ as xs:string+ {
             $aggregate[@rdf:resource != $not-allowed]/@rdf:resource
     return
         for $uri in $allowed return
-            t-coll:remove-textgrid-prefix($uri)
+            tapi-coll:remove-textgrid-prefix($uri)
 };
 
-declare function t-coll:remove-textgrid-prefix($uri as xs:string)
+declare function tapi-coll:remove-textgrid-prefix($uri as xs:string)
 as xs:string {
     replace($uri, "textgrid:", "")
 };
 
-declare function t-coll:get-metadata-file($uri as xs:string)
+declare function tapi-coll:get-metadata-file($uri as xs:string)
 as document-node() {
     doc($commons:meta || $uri || ".xml")
 };
 
-declare function t-coll:make-sequence($collection-uri as xs:string,
+declare function tapi-coll:make-sequence($collection-uri as xs:string,
     $server as xs:string)
 as element(sequence)+ {
-    let $aggregation := t-coll:get-aggregation($collection-uri)
-    let $allowed-manifest-uris := t-coll:get-allowed-manifest-uris($aggregation/*)
+    let $aggregation := tapi-coll:get-aggregation($collection-uri)
+    let $allowed-manifest-uris := tapi-coll:get-allowed-manifest-uris($aggregation/*)
     
     for $manifest-uri in $allowed-manifest-uris return
-        let $manifest-metadata :=  t-coll:get-metadata-file($manifest-uri)
-        let $id := t-coll:make-id($server, $collection-uri, $manifest-uri)
-        let $type := t-coll:make-format-type($manifest-metadata)
+        let $manifest-metadata :=  tapi-coll:get-metadata-file($manifest-uri)
+        let $id := tapi-coll:make-id($server, $collection-uri, $manifest-uri)
+        let $type := tapi-coll:make-format-type($manifest-metadata)
         return
             <sequence>
                 <id>{$id}</id>
@@ -143,20 +117,20 @@ as element(sequence)+ {
             </sequence>
 };
 
-declare function t-coll:make-id($server as xs:string,
+declare function tapi-coll:make-id($server as xs:string,
     $collection-uri as xs:string,
     $manifest-uri as xs:string)
 as xs:string {
     $server || "/api/textapi/ahikar/" || $collection-uri || "/" || $manifest-uri || "/manifest.json"
 };
 
-declare function t-coll:get-format-type($metadata as document-node())
+declare function tapi-coll:get-format-type($metadata as document-node())
 as xs:string {
     $metadata//tgmd:format[1]/string()
-    => t-coll:make-format-type()
+    => tapi-coll:make-format-type()
 };
 
-declare function t-coll:make-format-type($tgmd-format as xs:string)
+declare function tapi-coll:make-format-type($tgmd-format as xs:string)
 as xs:string {
     switch ($tgmd-format)
         case "text/tg.aggregation+xml" return "collection"
@@ -164,7 +138,7 @@ as xs:string {
         default return "manifest"
 };
 
-declare function t-coll:make-annotationCollection-uri($server as xs:string,
+declare function tapi-coll:make-annotationCollection-uri($server as xs:string,
     $collection-uri as xs:string)
 as xs:string {
     $server || "/api/textapi/ahikar/" || $collection-uri || "/annotationCollection.json"

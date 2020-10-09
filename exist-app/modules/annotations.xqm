@@ -1,7 +1,7 @@
 xquery version "3.1";
 
 (:~
- : This module provides the TextAPI for Ahikar.
+ : This module provides the Annotation Layer via TextAPI for Ahikar.
  :
  : @author Michelle Weidling
  : @version 1.8.1
