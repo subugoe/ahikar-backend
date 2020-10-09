@@ -5,15 +5,12 @@ xquery version "3.1";
  : them.
  : 
  : The following Unicode code blocks are sorted out:
- : * Arabic
- :      * Tashkil from ISO 8859-6
- :      * Combining maddah and hamza
- :      * Other combining marks
  : * Syriac
  :      * Syriac punctuation and signs
  :      * Syriac points (vowels)
  :      * Syriac marks
  : 
+ : The vocalization of the Arabic text is kept.
  :
  : @see https://unicode-table.com/en/blocks/arabic/
  : @see https://unicode-table.com/en/blocks/syrian/
@@ -37,32 +34,7 @@ declare variable $norm:syriac-vowels :=
         1851,
         1853,
         1854
-    );
-    
-declare variable $norm:arabic-tashkil-and-combining-marks :=
-    (
-        1611,
-        1612,
-        1613,
-        1614,
-        1615,
-        1616,
-        1617,
-        1618,
-        1619,
-        1620,
-        1621,
-        1622,
-        1623,
-        1624,
-        1625,
-        1626,
-        1627,
-        1628,
-        1629,
-        1630
-    );
-    
+    );    
 
 declare function norm:get-txt-without-diacritics($txt as xs:string)
 as xs:string {
@@ -76,8 +48,7 @@ declare function norm:remove-codepoints($codepoints as xs:integer+)
 as xs:integer+ {
     let $diacritics := 
     (
-        $norm:syriac-vowels,
-        $norm:arabic-tashkil-and-combining-marks
+        $norm:syriac-vowels
     )
     for $cp in $codepoints return
         if ($cp = $diacritics)  then
