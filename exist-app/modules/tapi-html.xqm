@@ -11,6 +11,7 @@ declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
+import module namespace tei2html="http://ahikar.sub.uni-goettingen.de/ns/tei2html" at "tei2html.xqm";
 
 (:~
  : Initiates the HTML serialization of a given page.
@@ -90,12 +91,10 @@ as element() {
 
 declare function tapi-html:get-html-from-fragment($fragment as element())
 as element(xhtml:div) {
-    let $stylesheet := doc("/db/apps/sade_assets/TEI-Stylesheets/html5/html5.xsl")
-    return
-        (: this wrapping is necessary in order to correctly set the namespace.
-        otherwise, error XQST0070 is raised during the tests. :)
-        element xhtml:div {
-            attribute class {"tei_body"},
-            transform:transform($fragment, $stylesheet, ())/xhtml:body//xhtml:div[@class = "tei_body"]/*
-        }
+    (: this wrapping is necessary in order to correctly set the namespace.
+    otherwise, error XQST0070 is raised during the tests. :)
+    element xhtml:div {
+        attribute class {"tei_body"},
+        tei2html:transform($fragment)/*
+    }
 };
