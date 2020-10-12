@@ -20,18 +20,7 @@ module namespace norm="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normaliza
 
 declare variable $norm:syriac-vowels :=
     (
-        1840,
-        1841,
-        1842,
-        1843,
-        1844,
-        1845,
-        1846,
-        1847,
-        1848,
-        1849,
-        1850,
-        1851,
+        1840 to 1851, (: decimal for unicode U+073A and following :)
         1853,
         1854
     );    
