@@ -117,8 +117,8 @@ declare function anno:make-annotationCollection($collection as xs:string, $docum
         let $tei := anno:find-in-map($anno:uris, $document)
         let $pages := anno:get-pages-in-TEI($tei)
         let $title := anno:get-metadata-title($document)
-        let $first-entry := $server || "/textapi/ahikar/" || $collection || "/" || $document || "-" || $pages[1] || "/annotationPage.json"
-        let $last-entry := $server || "/textapi/ahikar/" || $collection || "/" || $document || "-" || $pages[last()] || "/annotationPage.json"
+        let $first-entry := $server || "/api/textapi/ahikar/" || $collection || "/" || $document || "-" || $pages[1] || "/annotationPage.json"
+        let $last-entry := $server || "/api/textapi/ahikar/" || $collection || "/" || $document || "-" || $pages[last()] || "/annotationPage.json"
     
         return
             anno:make-annotationCollection-map($document, $title, $first-entry, $last-entry)
