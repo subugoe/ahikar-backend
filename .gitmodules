@@ -1,0 +1,3 @@
+[submodule "docker/apache_exporter"]
+	path = docker/apache_exporter
+	url = git@github.com:Lusitaniae/apache_exporter.git

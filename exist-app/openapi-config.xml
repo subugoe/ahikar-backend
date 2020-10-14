@@ -1,0 +1,14 @@
+<config xmlns="https://lab.sub.uni-goettingen.de/restxqopenapi">
+    <info>
+        <termsOfService>https://ahikar-dev.sub.uni-goettingen.de/terms-of-use</termsOfService>
+        <contact>
+            <email>goebel@sub.uni-goettingen.de</email>
+            <!--<email>weidling@sub.uni-goettingen.de</email>-->
+        </contact>
+    </info>
+    <servers>
+        <server url="https://ahikar.sub.uni-goettingen.de/">Production server</server>
+        <server url="https://ahikar-dev.sub.uni-goettingen.de/">Development server</server>
+        <server url="https://ahikar-test.sub.uni-goettingen.de/">Test server</server>
+    </servers>
+</config>

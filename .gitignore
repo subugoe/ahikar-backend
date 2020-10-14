@@ -1,1 +1,23 @@
-/build
+# eXist app related files
+exist-app/build/**
+exist-app/expath-pkg.xml
+exist-app/**/*.xar
+
+# env with secrets
+**/ahikar.env
+
+# docker container files (COPY statements) and volumes
+docker/exist*/**
+docker/frontend
+
+# exclude all ZIP files
+**/*.zip
+
+# exclude local scripts
+*.sh
+!get-unit-test-failures-and-errors.sh
+
+# exlude data for commitizen
+node_modules
+package.json
+package-lock.json

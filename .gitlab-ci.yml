@@ -1,50 +1,246 @@
 stages:
+  - unit_tests
   - build
   - package
-  - deploy
+  - deploy_docker
+  - deploy_app
+  - test
   - release
+  - reassign_labels
 
-build_exist_app:
+## TEMPLATES:
+.ssh-config: &ssh
+- which ssh-agent
+- eval $(ssh-agent -s)
+- echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+- mkdir -p ~/.ssh
+- chmod 700 ~/.ssh
+
+.env: &env
+- echo $SECRETS >> docker/ahikar.env
+- sh docker/set-env-for-docker-compose.sh
+
+# used for develop and main, see test for all other cases!
+.deploy: &deploy
+- scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/ahikar.env
+- scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/tg.env
+- scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/docker-compose.yml
+- scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/.env
+- ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
+- ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
+
+## JOBS
+
+test_exist_app:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  stage: unit_tests
+  before_script:
+    - apt install libxml2-utils
+  script:
+    - ant -f exist-app/build.xml test
+    - bash exist-app/test/bin/startup.sh | tee output.log &
+    - while [ $(curl --head --silent http://localhost:8080 | grep -c "200 OK") == 0 ]; do sleep 1s; done
+    - curl http://localhost:8080/exist/restxq/trigger-tests
+    - sleep 60
+    - bash exist-app/test/bin/shutdown.sh
+    - failures=$(./get-unit-test-failures-and-errors.sh)
+    - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
+    - if [[ "$failures" -gt 0 ]]; then exit 1; else exit 0; fi
+  artifacts:
+    paths:
+      - exist-app/test/test-results.xml
+    reports:
+      junit: exist-app/test/test-results.xml
+
+build_exist_app-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
   script:
-    - ant
+    - cd exist-app
+    - ant -propertyfile ${CI_COMMIT_REF_NAME}.build.properties prepare
+    - FILENAME=$(ls build/ahikar*.xar)
+    - curl -u ci:${EXIST_UPLOAD_PW} -X POST -F file=@${FILENAME} https://ci.de.dariah.eu/exist-upload
   artifacts:
     paths:
-      - build/*.xar
+      - exist-app/build/*.xar
+      - exist-app/build/dependencies/*.xar
+  
+load_frontend-all:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  stage: build
+  variables:
+    FRONTEND_REPO_ID: "9882"
+  script:
+    - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
+    - unzip frontend.zip
+    - mkdir frontend
+    - mv Qviewer/dist/* docker/frontend/
+  artifacts:
+    paths:
+      - docker/frontend/
 
-build_docker:
-  image: tmaier/docker-compose:latest
+build_docker-all:
+  image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker
   services:
     - docker:dind
   stage: package
   script:
+    - *ssh
+    - *env
+    - cd docker
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose build --pull
-    - docker-compose up &
-    - while [ $(curl --silent --head http://localhost:8094/db/ | grep -c "200 OK") == 0 ]; do sleep 1s; done
-    - docker-compose down
+    # - docker-compose up & sleep 30s &&
+    # like to add a test here, but seems that within the runner specified port is not available.
+    # - while ! curl --silent --head http://localhost:8094/db/ | grep "200 OK"; do sleep 2s; echo "test failed"; curl --head http://localhost:8094/db/; done
+    # - docker-compose down
     - docker-compose push
-  only:
-    - develop
   except:
     - tags
   timeout: 5m
 
-deploy_service:
+deploy_docker-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
-  stage: deploy
+  stage: deploy_docker
+  except:
+    - main
+    - develop
+    - tags
   environment:
-    name: test
+    name: testing
   script:
-    - which ssh-agent
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - scp -o 'StrictHostKeyChecking no' docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
+    - *ssh
+    - *env
+    - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/ahikar.env
+    - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/tg.env
+    - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
+    - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/.env
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
+
+deploy_docker-dev:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  stage: deploy_docker
+  only:
+    - develop
+  environment:
+    name: ahikar-dev
+  script:
+    - *ssh
+    - *env
+    - *deploy
+
+deploy_docker-main:
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  stage: deploy_docker
+  only:
+    - main
+  environment:
+    name: ahikar
+  script:
+    - *ssh
+    - *env
+    - *deploy
+
+deploy_app-test:
+  image: curlimages/curl
+  stage: deploy_app
+  except:
+    - main
+    - develop
+    - tags
+  environment:
+    name: ahikar-test
+  script:
+    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" != "200" ]]; then exit 1; fi
+    - curl --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
+
+deploy_app-dev:
+  image: curlimages/curl
+  stage: deploy_app
+  only:
+    - develop
+  environment:
+    name: ahikar-dev
+  script:
+    - curl --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
+
+deploy_app-main:
+  image: curlimages/curl
+  stage: deploy_app
+  only:
+    - main
+    - tags
+  environment:
+    name: ahikar
+  script:
+    - curl --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
+
+# this serves for checking if a commit has accidentally broken the API
+test_api_status-test:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  except:
+    - main
+    - tags
+    - develop
+  script:
+    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
+
+test_api_status-develop:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  only:
+    - develop
+  script: 
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
+
+test_api_status-main:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  only:
+    - main
+  script: 
+    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
+  retry: 2
+
+full_plain_text_api_status-test:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  except:
+    - main
+    - tags
+    - develop
+  script:
+    - header=$(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
+
+full_plain_text_api_status-develop:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  only:
+    - develop
+  script:
+    - header=$(curl --head --silent https://ahikar-dev.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
+
+full_plain_text_api_status-main:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: test
+  only:
+    - main
+  script:
+    - header=$(curl --head --silent https://ahikar.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
@@ -77,3 +273,38 @@ deploy_service:
   artifacts:
     paths:
       - gitlab-release.json
+
+
+# although relabelling issues works perfectly on a technical level, the GitLab
+# GUI displays them in the wrong list ("Open" instead of "In Review"). furhter
+# investigation has to be done before this works properly.
+.reassign_labels:
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: reassign_labels
+  only:
+    - merge_requests
+  #rules:
+  #  - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_TITLE =~ /^Merge.+?into ''develop''/'
+  #    when: always
+  script:
+    # declare variables for general usability
+    - project_id=$CI_PROJECT_ID
+    # get the IID of the issue to be closed.
+    # the first (= .[0]) entry of the JSON retrieved via
+    # /api/v4/projects/$project_id/merge_requests?state=merged is always the
+    # most recent merged MR.
+    # ATTENTION: This assumes some kind of template in the MR description where
+    # the last issue mentioned via #${iid} is the issue to be closed.
+    - 'curl --output merges.json --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/merge_requests?state=merged"'
+    - issue_iid=$(jq -r ".[0].description" merges.json | grep "#[0-9]\+" | tail -1 | grep -o "[0-9]\+")
+    # return the issue last mentioned, i.e. the one to be closed
+    - 'curl --output issue_id.txt --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/issues/${issue_iid}"'
+    # return all the issue's labels WITHOUT "Doing"
+    - former_labels=$(cat issue_id.txt | jq .labels[] | grep -v "Doing")
+    # adds the label "In Review"
+    - new_labels="${former_labels} \"In Review\""
+    # encode the parameters with URL encoding (white spaces are replaced with %20)
+    - new_labels=$(echo $new_labels | sed -e 's/" "/,/g' -e 's/"//g' -e 's/ /%20/g')
+    # set new labels for the issue to be closed.
+    # ATTENTION: $API_TOKEN has to be a token with read/write access to the API
+    - 'curl --request PUT --header "PRIVATE-TOKEN: $API_TOKEN" https://gitlab.gwdg.de/api/v4/projects/{$project_id}/issues/${issue_iid}?labels=${new_labels}'

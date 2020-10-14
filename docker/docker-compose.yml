@@ -1,0 +1,58 @@
+version: '3.4'
+
+volumes:
+  existdb_data:
+    name: ahikar-existdb_Data-${TAG}
+
+services:
+  existdb:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile-exist
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:${TAG}
+    entrypoint:
+      - java
+      - -javaagent:/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8079:/prometheus/jmx_prometheus_config.yaml
+      - -Xmx1g
+      - org.exist.start.Main
+      - jetty
+    ports:
+      - "8080"
+      - "8079"
+    restart: unless-stopped
+    env_file:
+      - ahikar.env
+      - tg.env
+    environment:
+      - APP_NAME=${APP_NAME}
+    volumes:
+      # eXist's data should be persistent but easily removable if the
+      # database's index is broken for some reason. Therefore we put
+      # it in a volume instead of a bind mount.
+      - type: volume
+        source: existdb_data
+        target: /exist/data
+      - type: bind
+        source: ./exist/logs
+        target: /exist/logs
+      - type: bind
+        source: ./prometheus
+        target: /prometheus
+
+  httpd:
+    build:
+      context: .
+      dockerfile: Dockerfile-httpd
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/httpd:${TAG}
+    ports:
+      - "${PORT}:80"
+    restart: unless-stopped
+
+  httpd-prometheus:
+    # can be built with the submodule "apache_exporter" integrated here.
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/apache-prometheus:latest
+    entrypoint:
+      - /bin/apache_exporter
+      - --scrape_uri=http://httpd/server-status/?auto
+    ports:
+      - "9117"

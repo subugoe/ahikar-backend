@@ -1,0 +1,76 @@
+<meta xmlns="http://exist-db.org/xquery/repo">
+    <description>Dockerized TextAPI for Ahikar Digital Editon</description>
+    <author>Mathias Göbel</author>
+    <author>Michelle Weidling</author>
+    <status>alpha</status>
+    <license>GNU-LGPL</license>
+    <copyright>true</copyright>
+    <type>application</type>
+    <target>ahikar</target>
+    <permissions user="ahikar" group="ahikar" mode="rw-rw-r--"/>
+    <prepare/>
+    <finish>post-install.xq</finish>
+
+    <changelog>
+      <change version="0.4.0">
+        <ul xmlns="http://www.w3.org/1999/xhtml">
+          <li class="feat">Features
+            <ul>
+              <li>add sample text for the viewer</li>
+              <li>only consider pagebreaks with a facsimile in serialization</li>
+            </ul>
+          </li>
+        </ul>
+      </change>
+      <change version="0.2.0">
+        <ul xmlns="http://www.w3.org/1999/xhtml">
+          <li class="feat">Features
+            <ul>
+              <li>add image endpoint</li>
+              <li>refine Text-API structure</li>
+              <li>add function documentation</li>
+            </ul>
+          </li>
+          <li class="bugs">Bugfixes
+            <ul>
+              <li/>
+            </ul>
+          </li>
+        </ul>
+      </change>
+      <change version="0.1.0">
+        <ul xmlns="http://www.w3.org/1999/xhtml">
+          <li class="feat">Features
+            <ul>
+              <li>plain text generation</li>
+              <li>plain text download</li>
+              <li>deployment via API</li>
+              <li>renamed application to match development tracks (git flow)</li>
+            </ul>
+          </li>
+          <li class="bugs">Bugfixes
+            <ul>
+              <li/>
+            </ul>
+          </li>
+        </ul>
+      </change>
+      <change version="0.0.0">
+        <ul xmlns="http://www.w3.org/1999/xhtml">
+          <li class="feat">Features
+            <ul>
+              <li>Application setup</li>
+              <li>Docker implementation incl. httpd reverse proxy</li>
+            </ul>
+          </li>
+          <li class="bugs">Bugfixes
+            <ul>
+              <li/>
+            </ul>
+          </li>
+        </ul>
+      </change>
+     </changelog>
+  
+<deployed>2020-06-04T05:35:59.135Z</deployed>
+</meta>

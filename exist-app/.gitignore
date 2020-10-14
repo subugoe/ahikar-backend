@@ -1,0 +1,5 @@
+build/**
+expath-pkg.xml
+**/*.xar
+test/
+tests*.log.xml

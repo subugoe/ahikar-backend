@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="xar" name="ahikar" xmlns:xdb="http://exist-db.org/ant">
+
+  <property environment="env"/>
+  <property name="build.dir" value="build"/>
+  <property file="local.build.properties"/>
+  <property file="build.properties"/>
+  <xmlproperty file="expath-pkg.xml.tmpl"/>
+
+    <target name="xar">
+        <copy file="expath-pkg.xml.tmpl" tofile="expath-pkg.xml" filtering="true" overwrite="true">
+            <filterset>
+                <filter token="project.version" value="${project.version}"/>
+                <filter token="project.title" value="${project.title}"/>
+                <filter token="project.abbrev" value="${project.abbrev}"/>
+                <filter token="project.name" value="${project.name}"/>
+                <filter token="project.processorversion" value="${project.processorversion}"/>
+            </filterset>
+        </copy>
+        <mkdir dir="${build.dir}"/>
+        <zip basedir="." destfile="${destfile}"
+            includes="expath-pkg.xml, **"
+            excludesfile=".gitignore"/>
+        <zip basedir="." destfile="${destfile}"
+            includes="expath-pkg.xml"
+            update="yes"/>
+    </target>
+
+    <target name="cleanup">
+      <delete failonerror="false">
+        <fileset dir="${build.dir}" includes="*.xar"/>
+      </delete>
+    </target>
+
+    <target name="prepare" depends="cleanup, xar, dependencies" />
+
+    <target name="test" depends="cleanup, xar, dependencies">
+      <delete dir="${test.dir}"/>
+      <get src="https://bintray.com/existdb/releases/download_file?file_path=exist-distribution-${project.processorversion}-unix.tar.bz2" dest="${build.dir}/eXist-${project.processorversion}.tar.bz2" skipexisting="true" quiet="true" />
+      <untar src="${build.dir}/eXist-${project.processorversion}.tar.bz2" dest="${test.dir}" compression="bzip2">
+        <cutdirsmapper dirs="1" />
+      </untar>
+      <setpermissions mode="755">
+        <fileset dir="${test.dir}">
+          <filename name="bin/*.sh"/>
+        </fileset>
+      </setpermissions>
+
+      <copy file="${destfile}" todir="${test.dir}/autodeploy" />
+      <copy  todir="${test.dir}/autodeploy">
+        <fileset dir="${dependencies.dir}">
+          <include name="*.xar"/>
+        </fileset>
+      </copy>
+    </target>
+
+    <target name="dependencies">
+      <mkdir dir="${dependencies.dir}" />
+      <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=${sade.abbrev}&amp;processor=${project.processorversion}" dest="${dependencies.dir}/sade-develop-latest.xar" ignoreerrors="true"/>
+      <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=${assets.abbrev}&amp;processor=${project.processorversion}" dest="${dependencies.dir}/sade_assets-latest.xar" ignoreerrors="true"/>
+      <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=${code-viewer.abbrev}&amp;processor=${project.processorversion}" dest="${dependencies.dir}/codeview-latest.xar" ignoreerrors="true"/>
+      <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=openapi&amp;processor=${project.processorversion}" dest="${dependencies.dir}/openapi-latest.xar" ignoreerrors="true"/>
+    </target>
+
+</project>
