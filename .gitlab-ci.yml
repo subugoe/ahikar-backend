@@ -17,7 +17,7 @@ stages:
 - chmod 700 ~/.ssh
 
 .env: &env
-- echo $SECRETS >> docker/ahikar.env
+- echo $SECRETS | sed "s#\s#\n#g" >> docker/ahikar.env
 - sh docker/set-env-for-docker-compose.sh
 
 # used for develop and master, see test for all other cases!
