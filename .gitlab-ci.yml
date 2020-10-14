@@ -20,7 +20,7 @@ stages:
 - echo $SECRETS >> docker/ahikar.env
 - sh docker/set-env-for-docker-compose.sh
 
-# used for develop and master, see test for all other cases!
+# used for develop and main, see test for all other cases!
 .deploy: &deploy
 - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/ahikar.env
 - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/tg.env
@@ -103,7 +103,7 @@ deploy_docker-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy_docker
   except:
-    - master
+    - main
     - develop
     - tags
   environment:
@@ -130,11 +130,11 @@ deploy_docker-dev:
     - *env
     - *deploy
 
-deploy_docker-master:
+deploy_docker-main:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy_docker
   only:
-    - master
+    - main
   environment:
     name: ahikar
   script:
@@ -146,7 +146,7 @@ deploy_app-test:
   image: curlimages/curl
   stage: deploy_app
   except:
-    - master
+    - main
     - develop
     - tags
   environment:
@@ -168,11 +168,11 @@ deploy_app-dev:
   script:
     - curl --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
 
-deploy_app-master:
+deploy_app-main:
   image: curlimages/curl
   stage: deploy_app
   only:
-    - master
+    - main
     - tags
   environment:
     name: ahikar
@@ -184,7 +184,7 @@ test_api_status-test:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: test
   except:
-    - master
+    - main
     - tags
     - develop
   script:
@@ -204,11 +204,11 @@ test_api_status-develop:
     - echo "Current HTTP status is $status."
     - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
 
-test_api_status-master:
+test_api_status-main:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: test
   only:
-    - master
+    - main
   script: 
     - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
@@ -220,7 +220,7 @@ full_plain_text_api_status-test:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: test
   except:
-    - master
+    - main
     - tags
     - develop
   script:
@@ -234,11 +234,11 @@ full_plain_text_api_status-develop:
   script:
     - header=$(curl --head --silent https://ahikar-dev.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
 
-full_plain_text_api_status-master:
+full_plain_text_api_status-main:
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: test
   only:
-    - master
+    - main
   script:
     - header=$(curl --head --silent https://ahikar.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
 
