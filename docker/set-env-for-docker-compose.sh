@@ -5,7 +5,7 @@ echo CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
 echo "# THIS FILE IS CREATED BY SCRIPT. DO NOT TOUCH!" > docker/.env
 
 case ${CI_COMMIT_REF_NAME} in
-"master")
+"main")
   echo "PORT=8092" >> docker/.env
   echo "TAG=release" >> docker/.env
   echo "APP_NAME=https://ahikar.sub.uni-goettingen.de/" >> docker/.env
