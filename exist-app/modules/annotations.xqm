@@ -26,7 +26,14 @@ import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "tapi.xqm";
 
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
-declare variable $anno:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
+declare variable $anno:server :=
+    if(try {
+    requestr:hostname() = "existdb"
+} catch * {
+    true()
+})
+    then doc("../expath-pkg.xml")/*/@name => replace("/$", "")
+    else "http://localhost:8094/exist/restxq";
 
 declare variable $anno:annotationElements := 
     (
