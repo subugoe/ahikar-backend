@@ -952,7 +952,8 @@ $page as xs:string) as xs:integer {
 };
 
 
-declare function anno:get-document($uri as xs:string, $type as xs:string) {
+declare function anno:get-document($uri as xs:string, $type as xs:string)
+as document-node() {
     let $collection :=
         switch ($type)
             case "agg" return $commons:agg
