@@ -43,7 +43,7 @@ declare variable $anno:annotationElements :=
 
 (: this variable holds a map with the complete project structure (excluding images) :)
 declare variable $anno:uris :=
-    let $main-collection := "3r132"
+    let $main-collection := "3r132" (: main textgrid edition object :)
     let $language-aggs := anno:get-uris($main-collection)
     return
         map { $main-collection:
