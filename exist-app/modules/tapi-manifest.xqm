@@ -29,7 +29,7 @@ as element(object) {
             tapi-mani:make-current-location($manifest-uri)
         }
         <license>CC0-1.0</license>
-        <annotationCollection>{$server}/api/textapi/ahikar/{$collection-uri}/{$manifest-uri}/annotationCollection.json</annotationCollection>
+        <annotationCollection>{$server}/api/textapi/ahikar/annotation/collection/{$collection-uri}/{$manifest-uri}/annotationCollection.json</annotationCollection>
         {tapi-mani:make-sequences($collection-uri, $manifest-uri, $server)}
     </object>
 };
