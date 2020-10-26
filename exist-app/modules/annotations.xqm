@@ -24,6 +24,8 @@ import module namespace functx = "http://www.functx.com";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "tapi.xqm";
+import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
+
 
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 declare variable $anno:server :=
@@ -492,7 +494,7 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
             $pageChunk//*[name(.) = $name]
     
     for $annotation in $annotation-elements return
-        let $id := generate-id($annotation)
+        let $id := string( $annotation/@id )
         return
         map {
             "id": $anno:ns || "/" || $documentURI || "/annotation-" || $id,
@@ -511,26 +513,9 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
  : @param $page The page to be returned as tei:pb/@n/string()
  :)
 declare function anno:get-page-fragment($documentURI as xs:string, $page as xs:string) {
-    let $node :=anno:get-document($documentURI, "data"),
-        $start-node := $node//tei:pb[@n = $page and @facs],
-        $end-node :=
-            let $followingPb := $node//tei:pb[@n = $page and @facs]/following::tei:pb[1][@facs]
-            return
-                if($followingPb)
-                then $followingPb
-                else $node//tei:pb[@n = $page and @facs]/following::tei:ab[last()],
-        $wrap-in-first-common-ancestor-only := false(),
-        $include-start-and-end-nodes := false(),
-        $empty-ancestor-elements-to-include := ("")
-        
+    let $nodeURI :=anno:get-document($documentURI, "data")/base-uri()
     return
-        fragment:get-fragment-from-doc( 
-            $node,
-            $start-node,
-            $end-node,
-            $wrap-in-first-common-ancestor-only,
-            $include-start-and-end-nodes,
-            $empty-ancestor-elements-to-include)
+        tapi-html:get-page-fragment($nodeURI, $page)
 };
 
 
