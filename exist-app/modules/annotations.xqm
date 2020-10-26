@@ -494,7 +494,7 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
             $pageChunk//*[name(.) = $name]
     
     for $annotation in $annotation-elements return
-        let $id := string( $annotation/@id )
+        let $id := string( $annotation/@id ) (: get the predefined ID from the in-memory TEI with IDs :)
         return
         map {
             "id": $anno:ns || "/" || $documentURI || "/annotation-" || $id,
