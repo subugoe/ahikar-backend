@@ -40,6 +40,10 @@ test_exist_app:
     - ant -f exist-app/build.xml test
     - bash exist-app/test/bin/startup.sh | tee output.log &
     - while [ $(curl --head --silent http://localhost:8080 | grep -c "200 OK") == 0 ]; do sleep 1s; done
+    - header=$(curl --head -s http://localhost:8080/exist/restxq/trigger-tests)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" == "200" ]]; then ; else exit 1; fi
     - curl http://localhost:8080/exist/restxq/trigger-tests
     - sleep 60
     - bash exist-app/test/bin/shutdown.sh
