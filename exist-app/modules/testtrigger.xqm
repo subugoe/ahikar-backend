@@ -33,6 +33,7 @@ import module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" a
  :)
 declare
   %rest:GET
+  %rest:HEAD
   %rest:path("/trigger-tests")
   %rest:query-param("token", "{$token}")
 function testtrigger:trigger($token)
