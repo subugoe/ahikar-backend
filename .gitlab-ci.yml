@@ -43,7 +43,7 @@ test_exist_app:
     - header=$(curl --head -s http://localhost:8080/exist/restxq/trigger-tests)
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
-    - if [[ "$status" == "200" ]]; then ; else exit 1; fi
+    - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl http://localhost:8080/exist/restxq/trigger-tests
     - sleep 60
     - bash exist-app/test/bin/shutdown.sh
