@@ -24,8 +24,6 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
 };
 
-<<<<<<< HEAD
-=======
 (:  set admin password on deployment. Convert to string
     so local development will not fail because of missing
     env var. :)
@@ -40,7 +38,6 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
 
 ),
 
->>>>>>> develop
 ( 
     (: register REST APIs :)
     for $uri at $pos in (collection($target)/base-uri())[ends-with(., ".xqm")]
