@@ -49,12 +49,12 @@ test_exist_app:
     - bash exist-app/test/bin/shutdown.sh
     - failures=$(./get-unit-test-failures-and-errors.sh)
     - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
-    - if [[ "$failures" -gt 0 ]]; then exit 1; else exit 0; fi
+    - if [[ "$failures" -gt 0 || ! -f "exist-app/test/ahikar-test-results.xml" ]]; then exit 1; else exit 0; fi
   artifacts:
     paths:
-      - exist-app/test/test-results.xml
+      - exist-app/test/ahikar-test-results.xml
     reports:
-      junit: exist-app/test/test-results.xml
+      junit: exist-app/test/ahikar-test-results.xml
 
 build_exist_app-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
