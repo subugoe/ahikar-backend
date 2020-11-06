@@ -71,7 +71,7 @@ declare variable $anno:uris :=
  : it has mainly been designed for Ahikar's main collection, 3r132.
  : 
  : For retrieving annotation information about other collections cf. the endpoint
- : /textapi/ahikar/{$collection}/{$document}/annotationCollection.json
+ : /annotations/ahikar/{$collection}/{$document}/annotationCollection.json
  : 
  : @param $collection The URI of the collection, e.g. '3r132'
  : @return An Annotation Collecion for the given collection
@@ -79,7 +79,7 @@ declare variable $anno:uris :=
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection}/annotationCollection.json")
+    %rest:path("/annotations/ahikar/{$collection}/annotationCollection.json")
     %output:method("json")
 function anno:collection-rest($collection as xs:string) {
     if (anno:are-resources-available($collection)) then
@@ -106,8 +106,8 @@ declare function anno:make-annotationCollection($collection as xs:string, $docum
     at this point it is relevant if $document is actually a manifest or a collection.
     we have to create different paths containing $first and $last for the two of them,
     namely
-        $server || "/textapi/ahikar/" || $document || "/" || $first || "/annotationPage.json" for $document being a collection
-        $server || "/textapi/ahikar/" || $collection || "/" || $document || "-" || $first || "/annotationPage.json" for $document being a manifest :)
+        $server || "/annotations/ahikar/" || $document || "/" || $first || "/annotationPage.json" for $document being a collection
+        $server || "/annotations/ahikar/" || $collection || "/" || $document || "-" || $first || "/annotationPage.json" for $document being a manifest :)
     if ($document and anno:find-in-map($anno:uris, $document) instance of map()) then
         anno:get-information-for-collection-object($document, $server)
     
@@ -117,8 +117,8 @@ declare function anno:make-annotationCollection($collection as xs:string, $docum
         let $tei := anno:find-in-map($anno:uris, $document)
         let $pages := anno:get-pages-in-TEI($tei)
         let $title := anno:get-metadata-title($document)
-        let $first-entry := $server || "/api/textapi/ahikar/" || $collection || "/" || $document || "-" || $pages[1] || "/annotationPage.json"
-        let $last-entry := $server || "/api/textapi/ahikar/" || $collection || "/" || $document || "-" || $pages[last()] || "/annotationPage.json"
+        let $first-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "-" || $pages[1] || "/annotationPage.json"
+        let $last-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "-" || $pages[last()] || "/annotationPage.json"
     
         return
             anno:make-annotationCollection-map($document, $title, $first-entry, $last-entry)
@@ -144,8 +144,8 @@ declare function anno:get-information-for-collection-object($collectionURI as xs
     let $first := $child-keys[1]
     let $last := $child-keys[last()]
     let $title := anno:get-metadata-title($collectionURI)
-    let $first-entry := $server || "/api/textapi/ahikar/" || $collectionURI || "/" || $first || "/annotationPage.json"
-    let $last-entry := $server || "/api/textapi/ahikar/" || $collectionURI || "/" || $last || "/annotationPage.json"
+    let $first-entry := $server || "/api/annotations/ahikar/" || $collectionURI || "/" || $first || "/annotationPage.json"
+    let $last-entry := $server || "/api/annotations/ahikar/" || $collectionURI || "/" || $last || "/annotationPage.json"
 
     return
         anno:make-annotationCollection-map($collectionURI, $title, $first-entry, $last-entry)
@@ -227,7 +227,7 @@ declare function anno:get-creator($uri as xs:string) as xs:string {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/textapi/ahikar/{$collection}/{$document}/annotationPage.json")
+    %rest:path("/api/annotations/ahikar/{$collection}/{$document}/annotationPage.json")
     %output:method("json")
 function anno:annotationPage-for-collection-rest($collection as xs:string, 
 $document as xs:string) {
@@ -304,7 +304,7 @@ $document as xs:string, $server as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/textapi/ahikar/{$collection}/{$document}/annotationCollection.json")
+    %rest:path("/api/annotations/ahikar/{$collection}/{$document}/annotationCollection.json")
     %output:method("json")
 function anno:manifest-rest($collection as xs:string, 
 $document as xs:string) {
@@ -335,7 +335,7 @@ $document as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/textapi/ahikar/{$collection}/{$document}-{$page}/annotationCollection.json")
+    %rest:path("/api/annotations/ahikar/{$collection}/{$document}-{$page}/annotationCollection.json")
     %output:method("json")
 function anno:annotationCollection-for-manifest-rest($collection as xs:string, 
 $document as xs:string, $page as xs:string) {
@@ -378,7 +378,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
                     "label":    "Ahikar annotations for textgrid:" || $document || ": " || $title || ", page " || $page,
                     "x-creator":  anno:get-creator($document),
                     "total":    anno:get-total-no-of-annotations($page),
-                    "first":    $server || "/api/textapi/ahikar/" || $collection || "/" || $document || "-" || $page || "/annotationPage.json"
+                    "first":    $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "-" || $page || "/annotationPage.json"
                 }
         }
 };
@@ -403,7 +403,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/textapi/ahikar/{$collection}/{$document}-{$page}/annotationPage.json")
+    %rest:path("/api/annotations/ahikar/{$collection}/{$document}-{$page}/annotationPage.json")
     %output:method("json")
 function anno:annotationPage-for-manifest-rest($collection as xs:string, 
 $document as xs:string, $page as xs:string) {
@@ -720,7 +720,7 @@ $document as xs:string?, $page as xs:string?, $server as xs:string) {
             ()
     return
         if ($document) then
-            $server || "/api/textapi/ahikar/" || $collection|| "/" || $document || $pageSuffix || "/annotationPage.json"
+            $server || "/api/annotations/ahikar/" || $collection|| "/" || $document || $pageSuffix || "/annotationPage.json"
         else
             ()
 };

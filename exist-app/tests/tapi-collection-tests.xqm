@@ -198,7 +198,7 @@ function tct:make-sequence($collection-uri as xs:string) {
 };
 
 declare
-    %test:args("ahiqar_collection") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/ahiqar_collection/annotationCollection.json")
+    %test:args("ahiqar_collection") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/ahiqar_collection/annotationCollection.json")
 function tct:make-annotationCollection-uri($collection-uri as xs:string)
 as xs:string {
     tapi-coll:make-annotationCollection-uri($tc:server, $collection-uri)
