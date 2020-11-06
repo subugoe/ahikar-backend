@@ -24,6 +24,23 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
 };
 
+<<<<<<< HEAD
+=======
+(:  set admin password on deployment. Convert to string
+    so local development will not fail because of missing
+    env var. :)
+
+(
+    if(environment-variable("EXIST_ADMIN_PW_RIPEMD160"))
+    then
+        (update replace doc('/db/system/security/exist/accounts/admin.xml')//*:password/text() with text{ string(environment-variable("EXIST_ADMIN_PW_RIPEMD160")) },
+         update replace doc('/db/system/security/exist/accounts/admin.xml')//*:digestPassword/text() with text{ string(environment-variable("EXIST_ADMIN_PW_DIGEST")) })
+    else (: we do not have the env vars available, so we leave the configuration as it is :) 
+        true() 
+
+),
+
+>>>>>>> develop
 ( 
     (: register REST APIs :)
     for $uri at $pos in (collection($target)/base-uri())[ends-with(., ".xqm")]
