@@ -60,7 +60,7 @@ as item()? {
     
     let $testWrap := <tests time="{current-dateTime()}">{ $tests }</tests>
     
-    let $filename := $system-path || "test-results.xml"
+    let $filename := $system-path || "ahikar-test-results.xml"
     let $file := file:serialize($testWrap, $filename, ())
     
     return
