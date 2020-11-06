@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The AnnotationAPI is now served at `/api/annotations` instead of `/api/textapi`.
 
+## [1.13.1] - 2020-10-06
+
+### Fixed
+
+- Unit tests are executed again.
+
+### Changed
+
+- The CI tests if 1. the unit test API is available and 2. the XML file resulting from the test exists.
+
 ## [1.13.0] - 2020-10-13
 
 ### Added
