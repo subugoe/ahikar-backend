@@ -38,3 +38,10 @@ function ct:open-tei-xml($tei-xml-uri as xs:string)
 as document-node() {
     commons:open-tei-xml($tei-xml-uri)
 };
+
+declare
+    %test:args("ahiqar_sample") %test:assertXPath("$result//*[local-name(.) = 'title'] = 'Beispieldatei zum Testen'")
+function ct:get-metadata-file($uri as xs:string)
+as document-node() {
+    commons:get-metadata-file($uri)
+};

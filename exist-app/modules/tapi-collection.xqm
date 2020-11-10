@@ -30,7 +30,7 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
 declare function tapi-coll:get-json($collection-uri as xs:string,
     $server as xs:string)
 as item()+ {
-    let $metadata-file := tapi-coll:get-metadata-file($collection-uri)
+    let $metadata-file := commons:get-metadata-file($collection-uri)
     let $format-type := tapi-coll:get-format-type($metadata-file)
     let $sequence := tapi-coll:make-sequence($collection-uri, $server)
     let $annotationCollection-uri := tapi-coll:make-annotationCollection-uri($server, $collection-uri)
@@ -95,11 +95,6 @@ as xs:string {
     replace($uri, "textgrid:", "")
 };
 
-declare function tapi-coll:get-metadata-file($uri as xs:string)
-as document-node() {
-    doc($commons:meta || $uri || ".xml")
-};
-
 declare function tapi-coll:make-sequence($collection-uri as xs:string,
     $server as xs:string)
 as element(sequence)+ {
@@ -107,7 +102,7 @@ as element(sequence)+ {
     let $allowed-manifest-uris := tapi-coll:get-allowed-manifest-uris($aggregation/*)
     
     for $manifest-uri in $allowed-manifest-uris return
-        let $manifest-metadata :=  tapi-coll:get-metadata-file($manifest-uri)
+        let $manifest-metadata :=  commons:get-metadata-file($manifest-uri)
         let $id := tapi-coll:make-id($server, $collection-uri, $manifest-uri)
         let $type := tapi-coll:make-format-type($manifest-metadata)
         return

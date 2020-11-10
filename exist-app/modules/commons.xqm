@@ -44,3 +44,8 @@ declare function commons:open-tei-xml($tei-xml-uri as xs:string)
 as document-node() {
     doc($commons:data || $tei-xml-uri || ".xml")
 };
+
+declare function commons:get-metadata-file($uri as xs:string)
+as document-node() {
+    doc($commons:meta || $uri || ".xml")
+};
