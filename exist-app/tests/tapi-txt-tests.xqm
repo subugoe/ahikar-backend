@@ -466,8 +466,12 @@ function ttt:get-tei-xml-uri-from-edition($document as xs:string) {
 
 
 declare
-    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
-function ttt:get-edition-aggregates-without-uri-namespace($document as xs:string) {
+    %test:args("ahiqar_agg") 
+    %test:assertXPath("count($result) = 2")
+    %test:assertXPath("$result = 'ahiqar_sample'")
+    %test:assertXPath("$result = 'ahiqar_tile'")
+function ttt:get-edition-aggregates-without-uri-namespace($document as xs:string)
+as xs:string+ {
     tapi-txt:get-edition-aggregates-without-uri-namespace($document)
 };
 
