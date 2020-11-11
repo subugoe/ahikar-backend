@@ -17,16 +17,23 @@ import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milesto
 declare variable $coll:textgrid := "/db/apps/sade/textgrid";
 declare variable $coll:data := $coll:textgrid || "/data";
 declare variable $coll:txt := $coll:textgrid || "/txt";
+declare variable $coll:milestone-types :=
+    ("first_narrative_section",
+    "sayings",
+    "second_narrative_section",
+    "parables",
+    "third_narrative_section");
 
 
 declare function coll:main() 
 as xs:string+ {
     coll:create-txt-collection-if-not-available(),
     for $text in coll:get-transcriptions-and-transliterations() return
-        let $relevant-text := coll:get-relevant-text($text)
-        let $file-name := coll:make-file-name($text)
-        return
-            xmldb:store($coll:txt, $file-name, $relevant-text, "text/plain")
+        for $milestone-type in $coll:milestone-types return
+            let $relevant-text := coll:get-relevant-text($text)
+            let $file-name := coll:make-file-name($text, $milestone-type)
+            return
+                xmldb:store($coll:txt, $file-name, $relevant-text, "text/plain")
 };
 
 declare function coll:create-txt-collection-if-not-available()
@@ -45,23 +52,21 @@ as element(tei:text)+ {
 
 declare function coll:has-text-milestone($text as element(tei:text))
 as xs:boolean {
-    if ($text//tei:milestone) then
-        true()
-    else
-        false()
+    exists($text//tei:milestone)
 };
 
 (:~
  : An example for the file name is 
  : syriac-Brit_Lib_Add_7200-3r131-transcription.txt
  :)
-declare function coll:make-file-name($text as element(tei:text))
+declare function coll:make-file-name($text as element(tei:text),
+    $milestone-type as xs:string)
 as xs:string {
     let $lang-prefix := coll:get-language-prefix($text)
     let $title-from-metadata := coll:create-metadata-title-for-file-name($text)
-    let $uri-plus-text-type := coll:make-file-name-suffix($text)
+    let $uri-text-type-milestone := coll:make-file-name-suffix($text, $milestone-type)
     return
-        $lang-prefix || "-" || $title-from-metadata || "-" || $uri-plus-text-type
+        $lang-prefix || "-" || $title-from-metadata || "-" || $uri-text-type-milestone
 };
 
 declare function coll:get-language-prefix($text as element(tei:text))
@@ -100,13 +105,14 @@ as xs:string{
     base-uri($text)
 };
 
-declare function coll:make-file-name-suffix($text as element(tei:text))
+declare function coll:make-file-name-suffix($text as element(tei:text),
+    $milestone-type as xs:string)
 as xs:string {
     let $base-uri := coll:get-base-uri($text)
     let $file-name := coll:get-file-name($base-uri)
     let $type := $text/@type
     return
-        $file-name || "-" || $type || ".txt"
+        $file-name || "-" || $type || "-" || $milestone-type || ".txt"
 };
 
 declare function coll:get-file-name($base-uri as xs:string)
@@ -159,10 +165,7 @@ as node() {
 
 declare function coll:has-following-milestone($milestone as element(tei:milestone))
 as xs:boolean {
-    if ($milestone/following::tei:milestone[ancestor::tei:text[1] = $milestone/ancestor::tei:text[1]]) then
-        true()
-    else
-        false()
+    exists($milestone/following::tei:milestone[ancestor::tei:text[1] = $milestone/ancestor::tei:text[1]])
 };
 
 declare function coll:get-next-milestone($milestone as element(tei:milestone))

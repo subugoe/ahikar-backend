@@ -256,17 +256,17 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription.txt")
+    %test:assertEquals("karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-first_narrative_section.txt")
 function coll-tests:make-file-name()
 as xs:string {
-    coll:make-file-name($coll-tests:sample-transcription)
+    coll:make-file-name($coll-tests:sample-transcription, "first_narrative_section")
 };
 
 declare
-    %test:assertEquals("ahiqar_sample-transcription.txt")
+    %test:assertEquals("ahiqar_sample-transcription-first_narrative_section.txt")
 function coll-tests:make-file-name-suffix()
 as xs:string {
-    coll:make-file-name-suffix($coll-tests:sample-transcription)
+    coll:make-file-name-suffix($coll-tests:sample-transcription, "first_narrative_section")
 };
 
 declare
