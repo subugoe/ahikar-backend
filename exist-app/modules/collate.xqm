@@ -30,7 +30,7 @@ as xs:string+ {
     coll:create-txt-collection-if-not-available(),
     for $text in coll:get-transcriptions-and-transliterations() return
         for $milestone-type in coll:get-milestone-types-per-text($text) return
-            let $relevant-text := coll:get-relevant-text($text)
+            let $relevant-text := coll:get-relevant-text($text, $milestone-type)
             let $file-name := coll:make-file-name($text, $milestone-type)
             return
                 xmldb:store($coll:txt, $file-name, $relevant-text, "text/plain")
@@ -126,29 +126,20 @@ as xs:string {
     => substring-before(".xml")
 };
 
-declare function coll:get-relevant-text($text as element(tei:text))
+declare function coll:get-relevant-text($text as element(tei:text),
+    $milestone-type as xs:string)
 as xs:string {
-    let $milestones := coll:get-milestones-in-text($text)
-    let $chunks := coll:get-chunks($milestones)
-    let $texts := coll:get-relevant-text-from-chunks($chunks)
+    let $chunk := coll:get-chunk($text, $milestone-type)
+    let $bla := console:log($chunk)
     return
-        string-join($texts, " ")
+        coll:get-relevant-text-from-chunks($chunk)
 };
 
-declare function coll:get-milestones-in-text($text as element(tei:text))
-as element(tei:milestone)+ {
-    $text//tei:milestone
-};
-
-declare function coll:get-chunks($milestones as element(tei:milestone)+)
-as element(tei:TEI)+ {
-    for $milestone in $milestones return
-        coll:get-chunk($milestone)
-};
-
-declare function coll:get-chunk($milestone as element(tei:milestone))
+declare function coll:get-chunk($text as element(tei:text),
+    $milestone-type as xs:string)
 as element(tei:TEI) {
-    let $root := $milestone/root()
+    let $root := $text/root()
+    let $milestone := $text//tei:milestone[@unit = $milestone-type]
     let $end-of-chunk := coll:get-end-of-chunk($milestone)
     return
         fragment:get-fragment-from-doc(

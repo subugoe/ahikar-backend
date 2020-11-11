@@ -19,13 +19,6 @@ function coll-tests:open-file($uri as xs:string) as document-node() {
 };
 
 declare
-    %test:assertXPath("count($result) = 2")
-function coll-tests:get-milestones-in-text()
-as element(tei:milestone)* {
-    coll:get-milestones-in-text($coll-tests:sample-transliteration)
-};
-
-declare
     %test:assertExists
 function coll-tests:get-next-milestone-succecss()
 as element(tei:milestone)? {
@@ -48,9 +41,9 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'ab']")
 function coll-tests:get-chunk()
 as element(tei:TEI) {
-    let $milestone := $coll-tests:sample-transliteration//tei:milestone[1]
+    let $milestone-type := "first_narrative_section"
     return
-        coll:get-chunk($milestone)
+        coll:get-chunk($coll-tests:sample-transliteration, $milestone-type)
 };
 
 
@@ -277,8 +270,9 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("text of the first narrative section some sayings")
-function coll-tests:get-relevant-text() {
+    %test:args("first_narrative_section") %test:assertEquals("text of the first narrative section")
+    %test:args("sayings") %test:assertEquals("some sayings")
+function coll-tests:get-relevant-text($milestone-type as xs:string) {
     let $TEI :=
         <TEI xmlns="http://www.tei-c.org/ns/1.0">
             <text>
@@ -286,27 +280,19 @@ function coll-tests:get-relevant-text() {
                     <ab>some ignored text</ab>
                     <milestone unit="first_narrative_section"/>
                     <ab>text of the first narrative section</ab>
-                    <milestone unit="saying"/>
+                    <milestone unit="sayings"/>
                     <ab>some sayings</ab>
                 </body>
             </text>
         </TEI>
     return
-        coll:get-relevant-text($TEI/tei:text)
-};
-
-declare
-    %test:assertXPath("count($result) = 2")
-function coll-tests:get-chunks() {
-    let $milestones := coll:get-milestones-in-text($coll-tests:sample-transliteration)
-    return
-        coll:get-chunks($milestones)
+        coll:get-relevant-text($TEI/tei:text, $milestone-type)
 };
 
 declare
     %test:assertXPath("$result[self::*[local-name(.) = 'milestone']]")
 function coll-tests:get-end-of-chunk-milestone() {
-    let $milestone := coll:get-milestones-in-text($coll-tests:sample-transliteration)[1]
+    let $milestone := $coll-tests:sample-transliteration//tei:milestone[1]
     return
         coll:get-end-of-chunk($milestone)
 };
@@ -314,7 +300,7 @@ function coll-tests:get-end-of-chunk-milestone() {
 declare
     %test:assertXPath("$result[self::*[local-name(.) = 'ab']]")
 function coll-tests:get-end-of-chunk-end-of-text() {
-    let $milestone := coll:get-milestones-in-text($coll-tests:sample-transliteration)[2]
+    let $milestone := $coll-tests:sample-transliteration//tei:milestone[2]
     return
         coll:get-end-of-chunk($milestone)
 };
@@ -352,7 +338,7 @@ declare
     %test:assertTrue
 function coll-tests:has-following-milestone-true()
 as xs:boolean {
-    let $milestone := coll:get-milestones-in-text($coll-tests:sample-transliteration)[1]
+    let $milestone := $coll-tests:sample-transliteration//tei:milestone[1]
     return
         coll:has-following-milestone($milestone)
 };
@@ -361,7 +347,7 @@ declare
     %test:assertFalse
 function coll-tests:has-following-milestone-false()
 as xs:boolean {
-    let $milestone := coll:get-milestones-in-text($coll-tests:sample-transliteration)[2]
+    let $milestone := $coll-tests:sample-transliteration//tei:milestone[2]
     return
         coll:has-following-milestone($milestone)
 };
