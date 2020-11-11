@@ -130,7 +130,6 @@ declare function coll:get-relevant-text($text as element(tei:text),
     $milestone-type as xs:string)
 as xs:string {
     let $chunk := coll:get-chunk($text, $milestone-type)
-    let $bla := console:log($chunk)
     return
         coll:get-relevant-text-from-chunks($chunk)
 };
