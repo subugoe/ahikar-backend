@@ -418,6 +418,15 @@ function coll-tests:has-text-milestones-fail() {
         coll:has-text-milestone($text)  
 };
 
+
+declare
+    %test:assertXPath("$result = 'first_narrative_section'")
+    %test:assertXPath("$result = 'second_narrative_section'")
+function coll-tests:get-milestone-types-per-text()
+as xs:string+ {
+    coll:get-milestone-types-per-text($coll-tests:sample-transliteration)
+};
+
 declare function local:open-file($uri as xs:string)
 as document-node() {
     doc($coll:data || "/" || $uri || ".xml")

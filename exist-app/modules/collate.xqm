@@ -29,11 +29,16 @@ declare function coll:main()
 as xs:string+ {
     coll:create-txt-collection-if-not-available(),
     for $text in coll:get-transcriptions-and-transliterations() return
-        for $milestone-type in $coll:milestone-types return
+        for $milestone-type in coll:get-milestone-types-per-text($text) return
             let $relevant-text := coll:get-relevant-text($text)
             let $file-name := coll:make-file-name($text, $milestone-type)
             return
                 xmldb:store($coll:txt, $file-name, $relevant-text, "text/plain")
+};
+
+declare function coll:get-milestone-types-per-text($text as element(tei:text))
+as xs:string+ {
+    $text//tei:milestone/@unit[./string() = $coll:milestone-types]/string()
 };
 
 declare function coll:create-txt-collection-if-not-available()
