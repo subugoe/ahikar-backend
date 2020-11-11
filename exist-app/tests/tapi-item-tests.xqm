@@ -4,17 +4,16 @@ module namespace titemt="http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests"
 
 declare namespace http = "http://expath.org/ns/http-client";
 
+import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
 import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "test-commons.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item" at "../modules/tapi-item.xqm";
 
 
 declare
-    %test:args("ahiqar_agg", "82a") %test:assertEquals("3r1nz")
-function titemt:get-facsimile-uri-for-page($manifest-uri as xs:string,
-    $page as xs:string)
-as xs:string {
-    tapi-item:get-facsimile-uri-for-page($manifest-uri, $page)
+    %test:setUp
+function titemt:_test-setup() {
+    local:create-and-store-test-data()
 };
 
 declare
@@ -25,7 +24,8 @@ as xs:string {
 };
 
 declare
-    %test:args("ahiqar_agg", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz")
+    %test:args("ahiqar_agg", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.0,0.4,49.8,100.0")
+    %test:args("ahiqar_agg_wo_tile", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz")
 function titemt:make-facsimile-id($manifest-uri as xs:string,
     $page as xs:string)
 as xs:string {
@@ -42,7 +42,7 @@ as xs:string {
 
 
 declare
-    %test:args("ahiqar_collection", "ahiqar_agg", "82a")
+    %test:args("ahiqar_collection", "ahiqar_agg_wo_tile", "82a")
     (: checks if the correct file has been opened :)
     %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
                king of Assyria and Nineveh' ")
@@ -51,10 +51,10 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'langAlt'] = 'karshuni' ")
     %test:assertXPath("$result//*[local-name(.) = 'x-langString'][matches(., 'Classical Syriac')]")
     (: checks if underlying pages are identified :)
-    %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://0.0.0.0:8080/exist/restxq/api/content/ahiqar_sample-82a.html' ")
+    %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://0.0.0.0:8080/exist/restxq/api/content/ahiqar_sample_2-82a.html' ")
     (: checks if images connected to underlying pages are identified :)
     %test:assertXPath("$result//*[local-name(.) = 'id'] = 'http://0.0.0.0:8080/exist/restxq/api/images/3r1nz' ")
-    %test:assertXPath("$result//*[local-name(.) = 'annotationCollection'] = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/ahiqar_collection/ahiqar_agg-82a/annotationCollection.json' ")
+    %test:assertXPath("$result//*[local-name(.) = 'annotationCollection'] = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/ahiqar_collection/ahiqar_agg_wo_tile-82a/annotationCollection.json' ")
 function titemt:get-json($collection as xs:string,
     $document as xs:string,
     $page as xs:string) 
@@ -67,7 +67,46 @@ declare
     %test:args("ahiqar_agg") %test:assertXPath("count($result) = 5")
     %test:args("ahiqar_agg") %test:assertXPath("$result[local-name(.) = ('lang', 'langAlt')]")
     %test:args("ahiqar_agg") %test:assertXPath("count($result[local-name(.) = 'lang']) = 2")
-function titemt:make-language-elements($manifest-uri as xs:string)
-as element()+ {
+function titemt:make-language-elements($manifest-uri as xs:string) {
     tapi-item:make-language-elements($manifest-uri)
+};
+
+
+declare
+    %test:args("3r1nz") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz")
+function titemt:make-url-for-single-page-image($facsimile-uri as xs:string)
+as xs:string {
+    tapi-item:make-url-for-single-page-image($facsimile-uri, $tc:server)
+};
+
+declare
+    %test:args("3r1nz", "ahiqar_agg", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.0,0.4,49.8,100.0")
+function titemt:make-url-for-double-page-image($facsimile-uri as xs:string,
+    $manifest-uri as xs:string,
+    $page as xs:string)
+as xs:string {
+    tapi-item:make-url-for-double-page-image($facsimile-uri, $manifest-uri, $page, $tc:server)
+};
+
+
+declare function local:create-and-store-test-data()
+as xs:string+ {
+    let $agg-wo-tile :=
+        <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+            <rdf:Description xmlns:tei="http://www.tei-c.org/ns/1.0" rdf:about="textgrid:ahiqar_agg.0">
+                <ore:aggregates rdf:resource="textgrid:ahiqar_sample_2"/>
+            </rdf:Description>
+        </rdf:RDF>
+    let $agg-wo-tile-meta := commons:get-metadata-file("ahiqar_agg")
+        
+    let $sample-xml-2 := commons:open-tei-xml("ahiqar_sample")
+    let $sample-xml-2-meta := commons:get-metadata-file("ahiqar_sample")
+        
+    return
+        (
+            xmldb:store("/db/apps/sade/textgrid/agg", "ahiqar_agg_wo_tile.xml", $agg-wo-tile),
+            xmldb:store("/db/apps/sade/textgrid/data", "ahiqar_sample_2.xml", $sample-xml-2),
+            xmldb:store("/db/apps/sade/textgrid/meta", "ahiqar_sample_2.xml", $sample-xml-2-meta),
+            xmldb:store("/db/apps/sade/textgrid/meta", "ahiqar_agg_wo_tile.xml", $agg-wo-tile-meta)
+        )
 };

@@ -11,6 +11,7 @@ module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
+import module namespace tapi-img="http://ahikar.sub.uni-goettingen.de/ns/tapi/images" at "tapi-img.xqm";
 
 
 declare function tapi-item:get-json($collection-uri as xs:string,
@@ -35,7 +36,7 @@ as element(object) {
 };
 
 
-declare function tapi-item:make-title($manifest-uri)
+declare function tapi-item:make-title($manifest-uri as xs:string)
 as xs:string {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     return
@@ -72,17 +73,26 @@ declare function tapi-item:make-facsimile-id($manifest-uri as xs:string,
     $page as xs:string,
     $server as xs:string)
 as xs:string {
-    let $image-uri := tapi-item:get-facsimile-uri-for-page($manifest-uri, $page)
+    let $facsimile-uri := tapi-img:get-facsimile-uri-for-page($manifest-uri, $page)
     return
-        $server || "/api/images/" || $image-uri
+        if (tapi-img:has-manifest-tile($manifest-uri)) then
+            tapi-item:make-url-for-double-page-image($facsimile-uri, $manifest-uri, $page, $server)
+        else
+            tapi-item:make-url-for-single-page-image($facsimile-uri, $server)
 };
 
-
-declare function tapi-item:get-facsimile-uri-for-page($manifest-uri as xs:string,
-    $page as xs:string)
+declare function tapi-item:make-url-for-single-page-image($facsimile-uri as xs:string,
+    $server as xs:string)
 as xs:string {
-    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
+    $server || "/api/images/" || $facsimile-uri
+};
+
+declare function tapi-item:make-url-for-double-page-image($facsimile-uri as xs:string,
+    $manifest-uri as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as xs:string {
+    let $image-section := tapi-img:get-relevant-image-section($manifest-uri, $page)
     return
-        $tei-xml//tei:pb[@n = $page]/@facs
-        => substring-after("textgrid:")
+        $server || "/api/images/" || $facsimile-uri || "/" || $image-section
 };
