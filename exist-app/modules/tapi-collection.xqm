@@ -141,5 +141,5 @@ as xs:string {
 declare function tapi-coll:make-annotationCollection-uri($server as xs:string,
     $collection-uri as xs:string)
 as xs:string {
-    $server || "/api/textapi/ahikar/annotation/collection/" || $collection-uri || "/annotationCollection.json"
+    $server || "/api/annotations/ahikar/" || $collection-uri || "/annotationCollection.json"
 };

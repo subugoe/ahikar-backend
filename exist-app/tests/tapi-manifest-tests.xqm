@@ -150,8 +150,10 @@ function tmt:get-valid-page-ids($manifest-uri as xs:string) {
 };
 
 declare
-    %test:args("ahiqar_collection", "ahiqar_agg") %test:assertXPath("$result//label = 'Beispieldatei zum Testen'")
-    %test:args("ahiqar_collection", "ahiqar_agg") %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json')]")
+    %test:args("ahiqar_collection", "ahiqar_agg")
+    %test:assertXPath("$result//label = 'Beispieldatei zum Testen'")
+    %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json')]")
+    %test:assertXPath("$result//annotationCollection[matches(., '/api/annotations/ahikar/ahiqar_collection/ahiqar_agg-82a/annotationCollection.json')] ")
 function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
@@ -203,4 +205,3 @@ function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
 };
-
