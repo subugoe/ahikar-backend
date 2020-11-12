@@ -145,7 +145,11 @@ declare function tapi-txt:get-chunk($text as element(tei:text),
     $milestone-type as xs:string)
 as element(tei:TEI) {
     let $root := $text/root()
-    let $milestone := $text//tei:milestone[@unit = $milestone-type]
+    (: the positional predicate must only be provided as long as there are 
+    several milestones of the same unit in a text.
+    as soon as we have found a solution for this, this predicate should be
+    removed. :)
+    let $milestone := $text//tei:milestone[@unit = $milestone-type][1]
     let $end-of-chunk := tapi-txt:get-end-of-chunk($milestone)
     return
         fragment:get-fragment-from-doc(
