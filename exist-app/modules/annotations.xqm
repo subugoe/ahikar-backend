@@ -705,10 +705,18 @@ $document as xs:string, $type as xs:string) {
 
 declare function anno:get-prev-or-next-annotationPage-url($collection as xs:string,
 $document as xs:string?, $page as xs:string?, $server as xs:string) {
-        if ($document) then
-            $server || "/api/annotations/ahikar/" || $collection|| "/" || $document || "/" || $pageSuffix || "/annotationPage.json"
+    let $pageSuffix :=
+        if ($page) then
+            "/" || $page
         else
             ()
+    return
+        if ($document) then
+            $server || "/api/annotations/ahikar/" || $collection|| "/" || $document || $pageSuffix || "/annotationPage.json"
+        else
+            ()
+};
+
 };
 
 (:~
