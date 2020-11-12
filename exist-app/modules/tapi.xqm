@@ -27,7 +27,6 @@ import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tei2html="http://ahikar.sub.uni-goettingen.de/ns/tei2html" at "tei2html.xqm";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
-import module namespace coll="http://ahikar.sub.uni-goettingen.de/ns/collate" at "collate.xqm";
 
 declare variable $tapi:server :=
     if(requestr:hostname() = "existdb") then
@@ -241,7 +240,7 @@ declare
     %rest:path("/content/ahikar-plain-text.zip")
     %output:method("binary")
 function tapi:endpoint-zip() as item()+ {
-    let $prepare := coll:main()
+    let $prepare := tapi-txt:main()
     return
         $commons:responseHeader200,
         tapi-txt:compress-to-zip()

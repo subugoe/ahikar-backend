@@ -20,16 +20,32 @@ import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milesto
 declare variable $tapi-txt:textgrid := "/db/apps/sade/textgrid";
 declare variable $tapi-txt:data := $tapi-txt:textgrid || "/data";
 declare variable $tapi-txt:txt := $tapi-txt:textgrid || "/txt";
+declare variable $tapi-txt:milestone-types :=
+    ("first_narrative_section",
+    "sayings",
+    "second_narrative_section",
+    "parables",
+    "parables_1",
+    "parables_2",
+    "third_narrative_section");
 
 
 declare function tapi-txt:main() 
 as xs:string+ {
     tapi-txt:create-txt-collection-if-not-available(),
     for $text in tapi-txt:get-transcriptions-and-transliterations() return
-        let $relevant-text := tapi-txt:get-relevant-text($text)
-        let $file-name := tapi-txt:make-file-name($text)
-        return
-            xmldb:store($tapi-txt:txt, $file-name, $relevant-text, "text/plain")
+        for $milestone-type in tapi-txt:get-milestone-types-per-text($text) return
+            let $relevant-text := tapi-txt:get-relevant-text($text, $milestone-type)
+            return
+                if (matches($relevant-text, "\w")) then
+                    xmldb:store($tapi-txt:txt, tapi-txt:make-file-name($text, $milestone-type), $relevant-text, "text/plain")
+                else
+                    ()
+};
+
+declare function tapi-txt:get-milestone-types-per-text($text as element(tei:text))
+as xs:string+ {
+    $text//tei:milestone/@unit[./string() = $tapi-txt:milestone-types]/string()
 };
 
 declare function tapi-txt:create-txt-collection-if-not-available()
@@ -48,23 +64,21 @@ as element(tei:text)+ {
 
 declare function tapi-txt:has-text-milestone($text as element(tei:text))
 as xs:boolean {
-    if ($text//tei:milestone) then
-        true()
-    else
-        false()
+    exists($text//tei:milestone[@unit = $tapi-txt:milestone-types])
 };
 
 (:~
  : An example for the file name is 
  : syriac-Brit_Lib_Add_7200-3r131-transcription.txt
  :)
-declare function tapi-txt:make-file-name($text as element(tei:text))
+declare function tapi-txt:make-file-name($text as element(tei:text),
+    $milestone-type as xs:string)
 as xs:string {
     let $lang-prefix := tapi-txt:get-language-prefix($text)
     let $title-from-metadata := tapi-txt:create-metadata-title-for-file-name($text)
-    let $uri-plus-text-type := tapi-txt:make-file-name-suffix($text)
+    let $uri-text-type-milestone := tapi-txt:make-file-name-suffix($text, $milestone-type)
     return
-        $lang-prefix || "-" || $title-from-metadata || "-" || $uri-plus-text-type
+        $lang-prefix || "-" || $title-from-metadata || "-" || $uri-text-type-milestone
 };
 
 declare function tapi-txt:get-language-prefix($text as element(tei:text))
@@ -103,13 +117,14 @@ as xs:string{
     base-uri($text)
 };
 
-declare function tapi-txt:make-file-name-suffix($text as element(tei:text))
+declare function tapi-txt:make-file-name-suffix($text as element(tei:text),
+    $milestone-type as xs:string)
 as xs:string {
     let $base-uri := tapi-txt:get-base-uri($text)
     let $file-name := tapi-txt:get-file-name($base-uri)
     let $type := $text/@type
     return
-        $file-name || "-" || $type || ".txt"
+        $file-name || "-" || $type || "-" || $milestone-type || ".txt"
 };
 
 declare function tapi-txt:get-file-name($base-uri as xs:string)
@@ -118,29 +133,19 @@ as xs:string {
     => substring-before(".xml")
 };
 
-declare function tapi-txt:get-relevant-text($text as element(tei:text))
+declare function tapi-txt:get-relevant-text($text as element(tei:text),
+    $milestone-type as xs:string)
 as xs:string {
-    let $milestones := tapi-txt:get-milestones-in-text($text)
-    let $chunks := tapi-txt:get-chunks($milestones)
-    let $texts := tapi-txt:get-relevant-text-from-chunks($chunks)
+    let $chunk := tapi-txt:get-chunk($text, $milestone-type)
     return
-        string-join($texts, " ")
+        tapi-txt:get-relevant-text-from-chunks($chunk)
 };
 
-declare function tapi-txt:get-milestones-in-text($text as element(tei:text))
-as element(tei:milestone)+ {
-    $text//tei:milestone
-};
-
-declare function tapi-txt:get-chunks($milestones as element(tei:milestone)+)
-as element(tei:TEI)+ {
-    for $milestone in $milestones return
-        tapi-txt:get-chunk($milestone)
-};
-
-declare function tapi-txt:get-chunk($milestone as element(tei:milestone))
+declare function tapi-txt:get-chunk($text as element(tei:text),
+    $milestone-type as xs:string)
 as element(tei:TEI) {
-    let $root := $milestone/root()
+    let $root := $text/root()
+    let $milestone := $text//tei:milestone[@unit = $milestone-type]
     let $end-of-chunk := tapi-txt:get-end-of-chunk($milestone)
     return
         fragment:get-fragment-from-doc(
@@ -162,10 +167,7 @@ as node() {
 
 declare function tapi-txt:has-following-milestone($milestone as element(tei:milestone))
 as xs:boolean {
-    if ($milestone/following::tei:milestone[ancestor::tei:text[1] = $milestone/ancestor::tei:text[1]]) then
-        true()
-    else
-        false()
+    exists($milestone/following::tei:milestone[ancestor::tei:text[1] = $milestone/ancestor::tei:text[1]])
 };
 
 declare function tapi-txt:get-next-milestone($milestone as element(tei:milestone))

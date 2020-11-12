@@ -14,7 +14,6 @@ module namespace testtrigger="http://ahikar.sub.uni-goettingen.de/ns/testtrigger
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
-import module namespace coll-tests="http://ahikar.sub.uni-goettingen.de/ns/coll-tests" at "../tests/collate-tests.xqm";
 import module namespace ct="http://ahikar.sub.uni-goettingen.de/ns/commons-tests" at "../tests/commons-tests.xqm";
 import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" at "../tests/tei2html-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
@@ -46,7 +45,6 @@ as item()? {
     let $tests := 
         (
             test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/coll-tests")),
             test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/commons-tests")),
             test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests")),
             test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests")),

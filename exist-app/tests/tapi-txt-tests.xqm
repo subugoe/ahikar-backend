@@ -12,25 +12,10 @@ declare variable $ttt:sample-transliteration := $ttt:sample-file//tei:text[@type
 declare variable $ttt:sample-transcription := $ttt:sample-file//tei:text[@type = "transcription"];
 
 declare
-    %test:setUp
-function ttt:_test-setup()
-as xs:string+ {
-    tapi-txt:main()
-};
-
-
-declare
     %test:args("ahiqar_sample") %test:assertExists
     %test:args("1234") %test:assertError("org.exist.xquery.XPathException")
 function ttt:open-file($uri as xs:string) as document-node() {
     local:open-file($uri)
-};
-
-declare
-    %test:assertXPath("count($result) = 2")
-function ttt:get-milestones-in-text()
-as element(tei:milestone)* {
-    tapi-txt:get-milestones-in-text($ttt:sample-transliteration)
 };
 
 declare
@@ -56,9 +41,9 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'ab']")
 function ttt:get-chunk()
 as element(tei:TEI) {
-    let $milestone := $ttt:sample-transliteration//tei:milestone[1]
+    let $milestone-type := "first_narrative_section"
     return
-        tapi-txt:get-chunk($milestone)
+        tapi-txt:get-chunk($ttt:sample-transliteration, $milestone-type)
 };
 
 
@@ -264,17 +249,17 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription.txt")
+    %test:assertEquals("karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-first_narrative_section.txt")
 function ttt:make-file-name()
 as xs:string {
-    tapi-txt:make-file-name($ttt:sample-transcription)
+    tapi-txt:make-file-name($ttt:sample-transcription, "first_narrative_section")
 };
 
 declare
-    %test:assertEquals("ahiqar_sample-transcription.txt")
+    %test:assertEquals("ahiqar_sample-transcription-first_narrative_section.txt")
 function ttt:make-file-name-suffix()
 as xs:string {
-    tapi-txt:make-file-name-suffix($ttt:sample-transcription)
+    tapi-txt:make-file-name-suffix($ttt:sample-transcription, "first_narrative_section")
 };
 
 declare
@@ -285,8 +270,9 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("text of the first narrative section some sayings")
-function ttt:get-relevant-text() {
+    %test:args("first_narrative_section") %test:assertEquals("text of the first narrative section")
+    %test:args("sayings") %test:assertEquals("some sayings")
+function ttt:get-relevant-text($milestone-type as xs:string) {
     let $TEI :=
         <TEI xmlns="http://www.tei-c.org/ns/1.0">
             <text>
@@ -294,27 +280,19 @@ function ttt:get-relevant-text() {
                     <ab>some ignored text</ab>
                     <milestone unit="first_narrative_section"/>
                     <ab>text of the first narrative section</ab>
-                    <milestone unit="saying"/>
+                    <milestone unit="sayings"/>
                     <ab>some sayings</ab>
                 </body>
             </text>
         </TEI>
     return
-        tapi-txt:get-relevant-text($TEI/tei:text)
-};
-
-declare
-    %test:assertXPath("count($result) = 2")
-function ttt:get-chunks() {
-    let $milestones := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)
-    return
-        tapi-txt:get-chunks($milestones)
+        tapi-txt:get-relevant-text($TEI/tei:text, $milestone-type)
 };
 
 declare
     %test:assertXPath("$result[self::*[local-name(.) = 'milestone']]")
 function ttt:get-end-of-chunk-milestone() {
-    let $milestone := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)[1]
+    let $milestone := $ttt:sample-transliteration//tei:milestone[1]
     return
         tapi-txt:get-end-of-chunk($milestone)
 };
@@ -322,7 +300,7 @@ function ttt:get-end-of-chunk-milestone() {
 declare
     %test:assertXPath("$result[self::*[local-name(.) = 'ab']]")
 function ttt:get-end-of-chunk-end-of-text() {
-    let $milestone := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)[2]
+    let $milestone := $ttt:sample-transliteration//tei:milestone[2]
     return
         tapi-txt:get-end-of-chunk($milestone)
 };
@@ -360,7 +338,7 @@ declare
     %test:assertTrue
 function ttt:has-following-milestone-true()
 as xs:boolean {
-    let $milestone := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)[1]
+    let $milestone := $ttt:sample-transliteration//tei:milestone[1]
     return
         tapi-txt:has-following-milestone($milestone)
 };
@@ -369,7 +347,7 @@ declare
     %test:assertFalse
 function ttt:has-following-milestone-false()
 as xs:boolean {
-    let $milestone := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)[2]
+    let $milestone := $ttt:sample-transliteration//tei:milestone[2]
     return
         tapi-txt:has-following-milestone($milestone)
 };
@@ -431,6 +409,14 @@ as document-node() {
     doc($tapi-txt:data || "/" || $uri || ".xml")
 };
 
+
+declare
+    %test:assertXPath("$result = 'first_narrative_section'")
+    %test:assertXPath("$result = 'second_narrative_section'")
+function ttt:get-milestone-types-per-text()
+as xs:string+ {
+    tapi-txt:get-milestone-types-per-text($ttt:sample-transliteration)
+};
 
 declare
     %test:args("ahiqar_sample", "transcription")
