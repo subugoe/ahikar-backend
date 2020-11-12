@@ -4,6 +4,7 @@ module namespace ttt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
 import module namespace tapi-txt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt" at "../modules/tapi-txt.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
@@ -185,7 +186,7 @@ declare
 function ttt:create-txt-collection-if-not-available() {
     let $create-collection := tapi-txt:create-txt-collection-if-not-available()
     return
-        if (xmldb:collection-available("/db/apps/sade/textgrid/txt/")) then
+        if (xmldb:collection-available($commons:tg-collection || "/txt/")) then
             true()
         else
             false()
@@ -483,5 +484,12 @@ declare
     %test:assertExists
 function ttt:compress-text()
 as xs:base64Binary {
-    tapi-txt:compress-to-zip()
+    if (xmldb:collection-available($commons:tg-collection || "/txt")) then
+        tapi-txt:compress-to-zip()
+    else
+        (
+            let $prepare := tapi-txt:main()
+            return
+                tapi-txt:compress-to-zip()
+        )
 };
