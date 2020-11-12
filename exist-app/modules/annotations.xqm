@@ -114,7 +114,7 @@ declare function anno:make-annotationCollection($collection as xs:string, $docum
     (: if $document is a collection then its value in $anno:uris is a map containing the aggregated manifests.
     at this point it is relevant if $document is actually a manifest or a collection.
     we have to create different paths containing $first and $last for the two of them,
-    namely :)
+    namely
         $server || "/annotations/ahikar/" || $document || "/" || $first || "/annotationPage.json" for $document being a collection
         $server || "/annotations/ahikar/" || $collection || "/" || $document || "/" || $first || "/annotationPage.json" for $document being a manifest :)
     if ($document and anno:find-in-map($anno:uris, $document) instance of map()) then
