@@ -31,9 +31,11 @@ as xs:string+ {
     for $text in coll:get-transcriptions-and-transliterations() return
         for $milestone-type in coll:get-milestone-types-per-text($text) return
             let $relevant-text := coll:get-relevant-text($text, $milestone-type)
-            let $file-name := coll:make-file-name($text, $milestone-type)
             return
-                xmldb:store($coll:txt, $file-name, $relevant-text, "text/plain")
+                if (matches($relevant-text, "\w")) then
+                    xmldb:store($coll:txt, coll:make-file-name($text, $milestone-type), $relevant-text, "text/plain")
+                else
+                    ()
 };
 
 declare function coll:get-milestone-types-per-text($text as element(tei:text))
@@ -57,7 +59,7 @@ as element(tei:text)+ {
 
 declare function coll:has-text-milestone($text as element(tei:text))
 as xs:boolean {
-    exists($text//tei:milestone)
+    exists($text//tei:milestone[@unit = $coll:milestone-types])
 };
 
 (:~
