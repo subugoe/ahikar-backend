@@ -717,7 +717,6 @@ $document as xs:string?, $page as xs:string?, $server as xs:string) {
             ()
 };
 
-};
 
 (:~
  : Returns a sequence of URIs that are part of a given aggregation.
