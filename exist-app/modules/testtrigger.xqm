@@ -23,6 +23,7 @@ import module namespace thtmlt="http://ahikar.sub.uni-goettingen.de/ns/tapi/html
 import module namespace titemt="http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests" at "../tests/tapi-item-tests.xqm";
 import module namespace tmt="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" at "../tests/tapi-manifest-tests.xqm";
 import module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" at "../tests/tapi-tests.xqm";
+import module namespace at="http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" at "../tests/annotation-tests.xqm";
 
 (:~
  : Triggers the tests for the Ahikar backend. Called by the CI.
@@ -52,7 +53,8 @@ as item()? {
             test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests")),
             test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests")),
             test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests"))
+            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests")),
+            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests"))
         )
     
     let $fileSeparator := util:system-property("file.separator")
