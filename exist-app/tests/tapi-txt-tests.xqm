@@ -466,13 +466,6 @@ function ttt:get-tei-xml-uri-from-edition($document as xs:string) {
 
 
 declare
-    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
-function ttt:get-edition-aggregates-without-uri-namespace($document as xs:string) {
-    tapi-txt:get-edition-aggregates-without-uri-namespace($document)
-};
-
-
-declare
     %test:args("ahiqar_sample") %test:assertEquals("ahiqar_sample")
 function ttt:get-tei-xml-from-aggregates($aggregates as xs:string+) {
     tapi-txt:get-tei-xml-from-aggregates($aggregates)

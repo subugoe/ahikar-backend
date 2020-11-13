@@ -12,9 +12,9 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/annotations.xqm";
 
 declare
-    %test:assertTrue
-function at:success() {
-    true()
+    %test:assertFalse
+function at:fail() {
+    false()
 };
 
 

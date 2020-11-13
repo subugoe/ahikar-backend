@@ -279,17 +279,8 @@ declare function tapi-txt:get-format($uri as xs:string) as xs:string {
 
 declare function tapi-txt:get-tei-xml-uri-from-edition($document-uri as xs:string)
 as xs:string {
-    let $aggregates := tapi-txt:get-edition-aggregates-without-uri-namespace($document-uri)
-    return
-        tapi-txt:get-tei-xml-from-aggregates($aggregates)
-};
-
-
-declare function tapi-txt:get-edition-aggregates-without-uri-namespace($document-uri as xs:string)
-as xs:string+ {
-    let $edition := commons:get-document($document-uri, "agg")
-    for $agg in $edition//ore:aggregates/@rdf:resource return
-        replace($agg, "textgrid:", "")
+    commons:get-available-aggregates($document-uri)
+    => tapi-txt:get-tei-xml-from-aggregates()
 };
 
 

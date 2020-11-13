@@ -54,3 +54,16 @@ as document-node()? {
         else
             error(QName($commons:ns, "COMMONS002"), "URI " || $uri || " not found.")
 };
+
+declare function commons:get-available-aggregates($aggregation-uri as xs:string)
+as xs:string* {
+    let $aggregation-doc := commons:get-document($aggregation-uri, "agg")
+    for $aggregate in $aggregation-doc//ore:aggregates/@rdf:resource
+        let $unprefixed-uri := substring-after($aggregate, "textgrid:")
+        let $aggregate-base-uri := $commons:meta || $unprefixed-uri || ".xml"
+        return
+            if (doc-available($aggregate-base-uri)) then
+                $unprefixed-uri
+            else
+                ()
+};

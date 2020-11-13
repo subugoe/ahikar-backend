@@ -46,7 +46,7 @@ declare variable $anno:annotationElements :=
 (: this variable holds a map with the complete project structure (excluding images) :)
 declare variable $anno:uris :=
     let $main-edition-object := "3r132"
-    let $language-aggs := anno:get-uris($main-edition-object)
+    let $language-aggs := commons:get-available-aggregates($main-edition-object)
     return
         map { $main-edition-object:
                 (: level 1: language aggregations :)
@@ -54,10 +54,10 @@ declare variable $anno:uris :=
                 map:entry($lang, 
                     (: level 2 (key): editions associated to a language aggregation :)
                     map:merge(
-                            let $editions := anno:get-uris($lang)
-                            for $uri in $editions[not(. = "3rrnp")] return
+                            let $editions := commons:get-available-aggregates($lang)
+                            for $uri in $editions return
                                 (: level 2 (value): XML associated with edition :)
-                                let $edition-parts := anno:get-uris($uri)
+                                let $edition-parts := commons:get-available-aggregates($uri)
                                 for $part in $edition-parts
                                 return
                                     if (anno:is-resource-xml($part)) then
@@ -68,12 +68,6 @@ declare variable $anno:uris :=
                 ))
         }
     ;
-
-(: 
- : ##################
- : # REST ENDPOINTS #
- : ##################
- :)
 
 (:~
  : Returns annotation information about a single collection. Although this works for all collections,
@@ -715,27 +709,6 @@ $document as xs:string?, $page as xs:string?, $server as xs:string) {
             $server || "/api/annotations/ahikar/" || $collection|| "/" || $document || $pageSuffix || "/annotationPage.json"
         else
             ()
-};
-
-
-(:~
- : Returns a sequence of URIs that are part of a given aggregation.
- : 
- : @param $resource The URI of the current aggregation, e.g. '3r9ps'
- : @return A sequence of resource URIs that are part of the given aggregation
- : @error The resource provided isn't an aggregation or the file couldn't be opened
- :)
-declare function anno:get-uris($resource as xs:string) as xs:string+ {
-    let $resource-doc :=
-        try {
-            commons:get-document($resource, "agg")
-        } catch * {
-            error(QName($anno:ns, "ANNO01"), 
-                $resource || " is either not an aggregation or could not be found in the database.")
-        }
-            
-    return
-        for $res in $resource-doc//ore:aggregates/@rdf:resource return substring-after($res, "textgrid:")
 };
 
 (:~

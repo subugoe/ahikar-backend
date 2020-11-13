@@ -37,3 +37,11 @@ function ct:get-document($uri as xs:string,
 as document-node()? {
     commons:get-document($uri, $type)
 };
+
+declare
+    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
+    %test:args("qwerty") %test:assertError("COMMONS002")
+function ct:get-available-aggregates($uri as xs:string)
+as xs:string+ {
+    commons:get-available-aggregates($uri)
+};
