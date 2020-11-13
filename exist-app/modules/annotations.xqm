@@ -601,6 +601,7 @@ declare function anno:get-bodyValue($annotation as node()) as xs:string {
  : @param $resources The URI of the resources to be checked
  : @return true() if all resources are available
  :)
+(:  ## tested ## :)
 declare function anno:are-resources-available($resources as xs:string+)
 as xs:boolean {
     let $availability :=
@@ -619,6 +620,7 @@ as xs:boolean {
  : @param $resources The URIs of resource's requested in an API call
  : @return The response header
  :)
+(:  ## tested ## :)
 declare function anno:get-404-header($resources as xs:string+) {
     <rest:response>
         <http:response xmlns:http="http://expath.org/ns/http-client" 
@@ -717,20 +719,21 @@ $document as xs:string?, $page as xs:string?, $server as xs:string) {
  : @param $uri The resource's URI
  : @return true() if resources stated by $uri is a TEI/XML resource
  :)
+ (: ## tested ## :)
 declare function anno:is-resource-xml($uri as xs:string) as xs:boolean {
     commons:get-document($uri, "meta")//tgmd:format = "text/xml"
 };
 
 (:~ 
  : Checks if the URI to a given resource belongs to an edition object. In this
- : case, its entry in $anno:uris isn't a map but a simple xs:string denoting the
- : URI of the corresponding TEI/XML.
+ : case, its format i text/tg.edition+tg.aggregation+xml.
  : 
  : @param $uri The resource's URI
  : @return true() if resources stated by $uri is an edition object
  :)
+ (: ## tested ## :)
 declare function anno:is-resource-edition($uri as xs:string) as xs:boolean {
-    not(anno:find-in-map($anno:uris, $uri) instance of map())
+    commons:get-document($uri, "meta")//tgmd:format = "text/tg.edition+tg.aggregation+xml"
 };
 
 (:~
@@ -739,6 +742,7 @@ declare function anno:is-resource-edition($uri as xs:string) as xs:boolean {
  : @param $documentURI The TEI resource's URI
  : @return A sequence of all page breaks occuring in the resource
  :)
+ (: ## tested ## :)
 declare function anno:get-pages-in-TEI($documentURI as xs:string) as xs:string+ {
     commons:get-document($documentURI, "data")//tei:pb[@facs]/@n/string()
 };

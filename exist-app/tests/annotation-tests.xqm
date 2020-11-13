@@ -17,6 +17,58 @@ function at:fail() {
     false()
 };
 
+declare
+    %test:args("ahiqar_sample") %test:assertTrue
+    %test:args("ahiqar_agg") %test:assertFalse
+function at:is-resource-xml($uri as xs:string)
+as xs:boolean {
+    anno:is-resource-xml($uri)
+};
+
+declare
+    %test:args("ahiqar_sample") %test:assertFalse
+    %test:args("ahiqar_agg") %test:assertTrue
+function at:is-resource-edition($uri as xs:string)
+as xs:boolean {
+    anno:is-resource-edition($uri)
+};
+
+declare
+    %test:args("ahiqar_sample") %test:assertXPath("count($result) = 4")
+    %test:args("ahiqar_sample") %test:assertXPath("$result = '82a'")
+function at:get-pages-in-TEI($uri as xs:string)
+as xs:string+ {
+    anno:get-pages-in-TEI($uri)
+};
+
+declare
+    %test:assertTrue
+function at:are-resources-available-true()
+as xs:boolean {
+    let $resources := "ahiqar_sample"
+    return
+        anno:are-resources-available($resources)
+};
+
+declare
+    %test:assertFalse
+function at:are-resources-available-false()
+as xs:boolean {
+    let $resources := ("qwerty", "ahiqar_sample")
+    return
+        anno:are-resources-available($resources)
+};
+
+declare
+    %test:assertXPath("$result//@status = '404'")
+    %test:assertXPath("$result//@message = 'One of the following requested resources couldn''t be found: qwerty, ahiqar_sample'")
+function at:get-404-header()
+as element() {
+    let $resources := ("qwerty", "ahiqar_sample")
+    return
+       anno:get-404-header($resources)
+};
+
 
 (:declare:)
 (:    %test:args("3r679", "114r"):)
