@@ -45,10 +45,10 @@ declare variable $anno:annotationElements :=
 
 (: this variable holds a map with the complete project structure (excluding images) :)
 declare variable $anno:uris :=
-    let $main-collection := "3r132" (: main textgrid edition object :)
-    let $language-aggs := anno:get-uris($main-collection)
+    let $main-edition-object := "3r132"
+    let $language-aggs := anno:get-uris($main-edition-object)
     return
-        map { $main-collection:
+        map { $main-edition-object:
                 (: level 1: language aggregations :)
                 map:merge(for $lang in $language-aggs return
                 map:entry($lang, 
