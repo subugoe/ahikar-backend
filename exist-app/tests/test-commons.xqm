@@ -18,7 +18,8 @@ declare function tc:get-http-status($url as xs:string) as xs:string {
         http:send-request($req)[1]/@status
 };
 
-declare function tc:make-request($url as xs:string) {
+declare function tc:make-request($url as xs:string)
+as element() {
     <http:request href="{$url}" method="get">
         <http:header name="Connection" value="close"/>
    </http:request>
