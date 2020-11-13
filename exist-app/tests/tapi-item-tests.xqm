@@ -54,7 +54,7 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://0.0.0.0:8080/exist/restxq/api/content/ahiqar_sample_2-82a.html' ")
     (: checks if images connected to underlying pages are identified :)
     %test:assertXPath("$result//*[local-name(.) = 'id'] = 'http://0.0.0.0:8080/exist/restxq/api/images/3r1nz' ")
-    %test:assertXPath("$result//*[local-name(.) = 'annotationCollection'] = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/ahiqar_collection/ahiqar_agg_wo_tile-82a/annotationCollection.json' ")
+    %test:assertXPath("$result//*[local-name(.) = 'annotationCollection'] = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/ahiqar_collection/ahiqar_agg_wo_tile/82a/annotationCollection.json' ")
 function titemt:get-json($collection as xs:string,
     $document as xs:string,
     $page as xs:string) 
@@ -67,7 +67,8 @@ declare
     %test:args("ahiqar_agg") %test:assertXPath("count($result) = 5")
     %test:args("ahiqar_agg") %test:assertXPath("$result[local-name(.) = ('lang', 'langAlt')]")
     %test:args("ahiqar_agg") %test:assertXPath("count($result[local-name(.) = 'lang']) = 2")
-function titemt:make-language-elements($manifest-uri as xs:string) {
+function titemt:make-language-elements($manifest-uri as xs:string)
+as element()+ {
     tapi-item:make-language-elements($manifest-uri)
 };
 

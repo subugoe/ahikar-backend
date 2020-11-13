@@ -31,7 +31,7 @@ as element(object) {
         <image>
             <id>{tapi-item:make-facsimile-id($manifest-uri, $page, $server)}</id>
         </image>
-        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-uri}/{$manifest-uri}-{$page}/annotationCollection.json</annotationCollection>
+        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-uri}/{$manifest-uri}/{$page}/annotationCollection.json</annotationCollection>
     </object>
 };
 
