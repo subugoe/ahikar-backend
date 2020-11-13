@@ -45,28 +45,46 @@ declare variable $anno:annotationElements :=
 
 (: this variable holds a map with the complete project structure (excluding images) :)
 declare variable $anno:uris :=
-    let $main-edition-object := "3r132"
-    let $language-aggs := commons:get-available-aggregates($main-edition-object)
-    return
-        map { $main-edition-object:
-                (: level 1: language aggregations :)
-                map:merge(for $lang in $language-aggs return
-                map:entry($lang, 
-                    (: level 2 (key): editions associated to a language aggregation :)
-                    map:merge(
-                            let $editions := commons:get-available-aggregates($lang)
-                            for $uri in $editions return
-                                (: level 2 (value): XML associated with edition :)
-                                let $edition-parts := commons:get-available-aggregates($uri)
-                                for $part in $edition-parts
-                                return
-                                    if (anno:is-resource-xml($part)) then
-                                        map:entry($uri, $part)
-                                    else
-                                        ()
-                    )
-                ))
-        }
+    if (doc-available($commons:agg || "3r132.xml")) then
+        let $main-edition-object := "3r132"
+        let $language-aggs := commons:get-available-aggregates($main-edition-object)
+        return
+            map { $main-edition-object:
+                    (: level 1: language aggregations :)
+                    map:merge(for $lang in $language-aggs return
+                    map:entry($lang, 
+                        (: level 2 (key): editions associated to a language aggregation :)
+                        map:merge(
+                                let $editions := commons:get-available-aggregates($lang)
+                                for $uri in $editions return
+                                    (: level 2 (value): XML associated with edition :)
+                                    let $edition-parts := commons:get-available-aggregates($uri)
+                                    for $part in $edition-parts
+                                    return
+                                        if (anno:is-resource-xml($part)) then
+                                            map:entry($uri, $part)
+                                        else
+                                            ()
+                        )
+                    ))
+            }
+    else
+        let $main-edition-object := "ahiqar_collection"
+        let $editions := commons:get-available-aggregates($main-edition-object)
+        return
+            map { $main-edition-object:
+                map:merge(
+                    for $uri in $editions return
+                        (: level 2 (value): XML associated with edition :)
+                        let $edition-parts := commons:get-available-aggregates($uri)
+                        for $part in $edition-parts
+                        return
+                            if (anno:is-resource-xml($part)) then
+                                map:entry($uri, $part)
+                            else
+                                ()
+                )
+            }
     ;
 
 (:~
