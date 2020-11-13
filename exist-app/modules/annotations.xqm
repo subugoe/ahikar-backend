@@ -948,7 +948,8 @@ as document-node() {
             default return error(QName($anno:ns, "ANNO02"), "Unknown type " || $type)
     let $document-uri := $collection || $uri || ".xml"
     return
-        if(doc-available($document-uri))
-        then doc($document-uri)
-        else error(QName($anno:ns, "ANNO03"), "Document not found: " || $document-uri)
+        if(doc-available($document-uri)) then
+            doc($document-uri)
+        else
+            error(QName($anno:ns, "ANNO03"), "Document not found: " || $document-uri)
 };
