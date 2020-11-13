@@ -35,7 +35,7 @@ as element(object) {
 };
 
 
-declare function tapi-item:make-title($manifest-uri)
+declare function tapi-item:make-title($manifest-uri as xs:string)
 as xs:string {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     return
