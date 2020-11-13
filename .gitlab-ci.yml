@@ -61,12 +61,13 @@ build_exist_app:
   stage: build
   script:
     - cd exist-app
-    - ant xar
+    - ant -propertyfile ${CI_COMMIT_REF_NAME}.build.properties prepare
     - FILENAME=$(ls build/ahikar*.xar)
     - curl -u ci:${EXIST_UPLOAD_PW} -X POST -F file=@${FILENAME} https://ci.de.dariah.eu/exist-upload
   artifacts:
     paths:
       - exist-app/build/*.xar
+      - exist-app/build/dependencies/*.xar
   
 load_frontend-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
