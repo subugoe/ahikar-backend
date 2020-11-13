@@ -161,7 +161,9 @@ declare function anno:get-information-for-collection-object($collectionURI as xs
  : @param $uri The resource's URI
  : @return The resource's title
  :)
-declare function anno:get-metadata-title($uri as xs:string) as xs:string {
+(: ## tested ## :)
+declare function anno:get-metadata-title($uri as xs:string)
+as xs:string {
     commons:get-document($uri, "meta")//tgmd:title/string()
 };
 
@@ -368,7 +370,10 @@ $document as xs:string, $page as xs:string) {
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  :)
 declare function anno:make-annotationCollection-for-manifest($collection as xs:string,
-$document as xs:string, $page as xs:string, $server as xs:string) {
+    $document as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as map() {
     let $title := anno:get-metadata-title($collection)
 
     return
@@ -376,7 +381,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
             "annotationCollection":
                 map {
                     "@context": "http://www.w3.org/ns/anno.jsonld",
-                    "id":       $anno:ns || "/annotationCollection/" || $document || "-" || $page,
+                    "id":       $anno:ns || "/annotationCollection/" || $document || "/" || $page,
                     "type":     "AnnotationCollection",
                     "label":    "Ahikar annotations for textgrid:" || $document || ": " || $title || ", page " || $page,
                     "x-creator":  anno:get-creator($document),
@@ -507,7 +512,7 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
  : @param $page The page to be returned as tei:pb/@n/string()
  :)
 declare function anno:get-page-fragment($documentURI as xs:string, $page as xs:string) {
-    let $nodeURI :=commons:get-document($documentURI, "data")/base-uri()
+    let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
     return
         tapi-html:get-page-fragment($nodeURI, $page)
 };
@@ -570,7 +575,11 @@ declare function anno:get-all-xml-uris-for-submap($map as map()) {
  : @param $id The node ID of the annotation. It is equivalent to generate-id($annotation)
  : @return A map containing the target information
  :)
-declare function anno:get-target-information($annotation as node(), $documentURI as xs:string, $id as xs:string) as map(*) {
+(: ## tested ## :)
+declare function anno:get-target-information($annotation as node(),
+    $documentURI as xs:string,
+    $id as xs:string)
+as map(*) {
     map {
         "id": $anno:ns || "/" || $documentURI || "/"|| $id,
         "format": "text/xml",
@@ -587,7 +596,9 @@ declare function anno:get-target-information($annotation as node(), $documentURI
  : @param $annotation The node which serves as a basis for the annotation
  : @return The content of bodyValue.
  :)
-declare function anno:get-bodyValue($annotation as node()) as xs:string {
+(: ## tested ## :)
+declare function anno:get-bodyValue($annotation as node())
+as xs:string {
     switch ($annotation/local-name())
         case "persName" return "A person's name."
         case "placeName" return "A place's name."
@@ -726,14 +737,14 @@ declare function anno:is-resource-xml($uri as xs:string) as xs:boolean {
 
 (:~ 
  : Checks if the URI to a given resource belongs to an edition object. In this
- : case, its format i text/tg.edition+tg.aggregation+xml.
+ : case, its entry in $anno:uris isn't a map but a simple xs:string denoting the
+ : URI of the corresponding TEI/XML.
  : 
  : @param $uri The resource's URI
  : @return true() if resources stated by $uri is an edition object
  :)
- (: ## tested ## :)
 declare function anno:is-resource-edition($uri as xs:string) as xs:boolean {
-    commons:get-document($uri, "meta")//tgmd:format = "text/tg.edition+tg.aggregation+xml"
+    not(anno:find-in-map($anno:uris, $uri) instance of map())
 };
 
 (:~
@@ -757,7 +768,9 @@ declare function anno:get-pages-in-TEI($documentURI as xs:string) as xs:string+ 
  : @param $type "prev" for the previous, "next" for the next page break
  :)
 declare function anno:get-prev-or-next-page($documentURI as xs:string,
-$page as xs:string, $type as xs:string) as xs:string? {
+    $page as xs:string, 
+    $type as xs:string)
+as xs:string? {
     let $tei := anno:find-in-map($anno:uris, $documentURI)
     let $pages := anno:get-pages-in-TEI($tei)
     let $no-of-pages := count($pages)
@@ -841,10 +854,14 @@ declare function anno:get-prev-xml-uris($uri as xs:string) as xs:string* {
  : @param $uri The resource's URI
  : @return The URI of the given resource's parent aggregation
  :)
-declare function anno:get-parent-aggregation($uri as xs:string) as xs:string {
-  for $doc in collection($commons:agg) return
-    if ($doc//@rdf:resource[matches(., $uri)]) then
-        base-uri($doc) => substring-after("agg/") => substring-before(".xml")
+(: ## tested ## :)
+declare function anno:get-parent-aggregation($uri as xs:string)
+as xs:string? {
+    if (collection($commons:agg)[.//@rdf:resource = "textgrid:" || $uri]) then
+        collection($commons:agg)[.//@rdf:resource = "textgrid:" || $uri]
+        => base-uri()
+        => substring-after("agg/")
+        => substring-before(".xml")
     else
         ()
 };

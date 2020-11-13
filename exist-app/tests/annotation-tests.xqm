@@ -11,11 +11,7 @@ import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/annotations.xqm";
 
-declare
-    %test:assertFalse
-function at:fail() {
-    false()
-};
+declare variable $at:sample-doc := doc($commons:data || "/ahiqar_sample.xml");
 
 declare
     %test:args("ahiqar_sample") %test:assertTrue
@@ -28,6 +24,7 @@ as xs:boolean {
 declare
     %test:args("ahiqar_sample") %test:assertFalse
     %test:args("ahiqar_agg") %test:assertTrue
+    %test:pending
 function at:is-resource-edition($uri as xs:string)
 as xs:boolean {
     anno:is-resource-edition($uri)
@@ -69,6 +66,69 @@ as element() {
        anno:get-404-header($resources)
 };
 
+
+declare
+    %test:args("ahiqar_sample") %test:assertEquals("ahiqar_agg")
+    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_collection")
+    %test:args("ahiqar_collection") %test:assertEmpty
+function at:get-parent-aggregation($uri as xs:string)
+as xs:string? {
+    anno:get-parent-aggregation($uri)
+};
+
+declare
+    %test:args("ahiqar_sample", "82a", "next") %test:assertEquals("82b")
+    %test:args("ahiqar_sample", "82b", "prev") %test:assertEquals("82a")
+    %test:args("ahiqar_sample", "83b", "next") %test:assertEmpty
+    %test:args("ahiqar_sample", "82a", "prev") %test:assertEmpty
+    %test:pending
+function at:get-prev-or-next-page($documentURI as xs:string,
+    $page as xs:string, 
+    $type as xs:string)
+as xs:string? {
+    anno:get-prev-or-next-page($documentURI, $page, $type)
+};
+
+declare
+    %test:args("ahiqar_sample") %test:assertEquals("Beispieldatei zum Testen")
+function at:get-metadata-title($uri as xs:string)
+as xs:string {
+    anno:get-metadata-title($uri)
+};
+
+declare
+    %test:assertEquals("A place's name.")
+function at:anno-get-bodyValue() {
+    let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
+    return
+        anno:get-bodyValue($annotation)
+};
+
+declare
+    %test:args("ahiqar_sample", "N1.2.3.4")
+    %test:assertXPath("map:get($result, 'id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/ahiqar_sample/N1.2.3.4'")
+    %test:assertXPath("map:get($result, 'format') = 'text/xml'")
+    %test:assertXPath("map:get($result, 'language') = 'karshuni'")
+function at:get-target-information($documentURI as xs:string,
+    $id as xs:string)
+as map() {
+    let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
+    return
+        anno:get-target-information($annotation, $documentURI, $id)
+};
+
+declare
+    %test:args("ahiqar_collection", "ahiqar_agg", "82a", "http://localhost:8080")
+    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationCollection/ahiqar_agg/82a'")
+    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:ahiqar_agg: Beispieldatei zum Testen, page 82a'")
+    %test:pending
+function at:make-annotationCollection-for-manifest($collection as xs:string,
+    $document as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as map() {
+    anno:make-annotationCollection-for-manifest($collection, $document, $page, $server)
+};
 
 (:declare:)
 (:    %test:args("3r679", "114r"):)
@@ -117,14 +177,6 @@ as element() {
 (:};:)
 
 
-(:declare:)
-(:    %test:assertEquals("A place's name."):)
-(:function at:anno-get-bodyValue() {:)
-(:    let $annotation := doc("/db/test-records/sample-tei.xml")//tei:placeName:)
-(:    return:)
-(:        anno:get-bodyValue($annotation):)
-(:};:)
-(::)
 (::)
 (:declare:)
 (:    %test:args("asdf"):)
