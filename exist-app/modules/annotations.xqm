@@ -24,9 +24,18 @@ import module namespace functx = "http://www.functx.com";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "tapi.xqm";
+import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
+
 
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
-declare variable $anno:server := if(requestr:hostname() = "existdb") then doc("../expath-pkg.xml")/*/@name => replace("/$", "") else "http://localhost:8094/exist/restxq";
+declare variable $anno:server :=
+    if(try {
+    requestr:hostname() = "existdb"
+} catch * {
+    true()
+})
+    then doc("../expath-pkg.xml")/*/@name => replace("/$", "")
+    else "http://localhost:8094/exist/restxq";
 
 declare variable $anno:annotationElements := 
     (
@@ -36,10 +45,10 @@ declare variable $anno:annotationElements :=
 
 (: this variable holds a map with the complete project structure (excluding images) :)
 declare variable $anno:uris :=
-    let $main-collection := "3r132"
-    let $language-aggs := anno:get-uris($main-collection)
+    let $main-edition-object := "3r132"
+    let $language-aggs := anno:get-uris($main-edition-object)
     return
-        map { $main-collection:
+        map { $main-edition-object:
                 (: level 1: language aggregations :)
                 map:merge(for $lang in $language-aggs return
                 map:entry($lang, 
@@ -107,7 +116,7 @@ declare function anno:make-annotationCollection($collection as xs:string, $docum
     we have to create different paths containing $first and $last for the two of them,
     namely
         $server || "/annotations/ahikar/" || $document || "/" || $first || "/annotationPage.json" for $document being a collection
-        $server || "/annotations/ahikar/" || $collection || "/" || $document || "-" || $first || "/annotationPage.json" for $document being a manifest :)
+        $server || "/annotations/ahikar/" || $collection || "/" || $document || "/" || $first || "/annotationPage.json" for $document being a manifest :)
     if ($document and anno:find-in-map($anno:uris, $document) instance of map()) then
         anno:get-information-for-collection-object($document, $server)
     
@@ -117,8 +126,8 @@ declare function anno:make-annotationCollection($collection as xs:string, $docum
         let $tei := anno:find-in-map($anno:uris, $document)
         let $pages := anno:get-pages-in-TEI($tei)
         let $title := anno:get-metadata-title($document)
-        let $first-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "-" || $pages[1] || "/annotationPage.json"
-        let $last-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "-" || $pages[last()] || "/annotationPage.json"
+        let $first-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $pages[1] || "/annotationPage.json"
+        let $last-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $pages[last()] || "/annotationPage.json"
     
         return
             anno:make-annotationCollection-map($document, $title, $first-entry, $last-entry)
@@ -335,7 +344,7 @@ $document as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/annotations/ahikar/{$collection}/{$document}-{$page}/annotationCollection.json")
+    %rest:path("/api/annotations/ahikar/{$collection}/{$document}/{$page}/annotationCollection.json")
     %output:method("json")
 function anno:annotationCollection-for-manifest-rest($collection as xs:string, 
 $document as xs:string, $page as xs:string) {
@@ -378,7 +387,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
                     "label":    "Ahikar annotations for textgrid:" || $document || ": " || $title || ", page " || $page,
                     "x-creator":  anno:get-creator($document),
                     "total":    anno:get-total-no-of-annotations($page),
-                    "first":    $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "-" || $page || "/annotationPage.json"
+                    "first":    $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $page || "/annotationPage.json"
                 }
         }
 };
@@ -403,7 +412,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/annotations/ahikar/{$collection}/{$document}-{$page}/annotationPage.json")
+    %rest:path("/api/annotations/ahikar/{$collection}/{$document}/{$page}/annotationPage.json")
     %output:method("json")
 function anno:annotationPage-for-manifest-rest($collection as xs:string, 
 $document as xs:string, $page as xs:string) {
@@ -485,7 +494,7 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
             $pageChunk//*[name(.) = $name]
     
     for $annotation in $annotation-elements return
-        let $id := generate-id($annotation)
+        let $id := string( $annotation/@id ) (: get the predefined ID from the in-memory TEI with IDs :)
         return
         map {
             "id": $anno:ns || "/" || $documentURI || "/annotation-" || $id,
@@ -504,26 +513,9 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
  : @param $page The page to be returned as tei:pb/@n/string()
  :)
 declare function anno:get-page-fragment($documentURI as xs:string, $page as xs:string) {
-    let $node :=anno:get-document($documentURI, "data"),
-        $start-node := $node//tei:pb[@n = $page and @facs],
-        $end-node :=
-            let $followingPb := $node//tei:pb[@n = $page and @facs]/following::tei:pb[1][@facs]
-            return
-                if($followingPb)
-                then $followingPb
-                else $node//tei:pb[@n = $page and @facs]/following::tei:ab[last()],
-        $wrap-in-first-common-ancestor-only := false(),
-        $include-start-and-end-nodes := false(),
-        $empty-ancestor-elements-to-include := ("")
-        
+    let $nodeURI :=anno:get-document($documentURI, "data")/base-uri()
     return
-        fragment:get-fragment-from-doc( 
-            $node,
-            $start-node,
-            $end-node,
-            $wrap-in-first-common-ancestor-only,
-            $include-start-and-end-nodes,
-            $empty-ancestor-elements-to-include)
+        tapi-html:get-page-fragment($nodeURI, $page)
 };
 
 
@@ -715,7 +707,7 @@ declare function anno:get-prev-or-next-annotationPage-url($collection as xs:stri
 $document as xs:string?, $page as xs:string?, $server as xs:string) {
     let $pageSuffix :=
         if ($page) then
-            "-" || $page
+            "/" || $page
         else
             ()
     return
@@ -724,6 +716,7 @@ $document as xs:string?, $page as xs:string?, $server as xs:string) {
         else
             ()
 };
+
 
 (:~
  : Returns a sequence of URIs that are part of a given aggregation.
@@ -945,13 +938,18 @@ $page as xs:string) as xs:integer {
 };
 
 
-declare function anno:get-document($uri as xs:string, $type as xs:string) {
+declare function anno:get-document($uri as xs:string, $type as xs:string)
+as document-node() {
     let $collection :=
         switch ($type)
             case "agg" return $commons:agg
             case "data" return $commons:tg-collection || "/data/"
             case "meta" return $commons:meta
             default return error(QName($anno:ns, "ANNO02"), "Unknown type " || $type)
+    let $document-uri := $collection || $uri || ".xml"
     return
-        doc($collection || $uri || ".xml")
+        if(doc-available($document-uri)) then
+            doc($document-uri)
+        else
+            error(QName($anno:ns, "ANNO03"), "Document not found: " || $document-uri)
 };

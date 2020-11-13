@@ -30,12 +30,12 @@ as element(object) {
         <image>
             <id>{tapi-item:make-facsimile-id($manifest-uri, $page, $server)}</id>
         </image>
-        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-uri}/{$manifest-uri}-{$page}/annotationCollection.json</annotationCollection>
+        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-uri}/{$manifest-uri}/{$page}/annotationCollection.json</annotationCollection>
     </object>
 };
 
 
-declare function tapi-item:make-title($manifest-uri)
+declare function tapi-item:make-title($manifest-uri as xs:string)
 as xs:string {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     return
