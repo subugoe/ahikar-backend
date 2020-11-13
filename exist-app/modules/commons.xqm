@@ -13,6 +13,8 @@ declare variable $commons:meta := $commons:tg-collection || "/meta/";
 declare variable $commons:agg := $commons:tg-collection || "/agg/";
 declare variable $commons:appHome := "/db/apps/ahikar";
 
+declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
+
 declare variable $commons:responseHeader200 :=
     <rest:response>
         <http:response xmlns:http="http://expath.org/ns/http-client" status="200">
@@ -20,14 +22,9 @@ declare variable $commons:responseHeader200 :=
         </http:response>
     </rest:response>;
 
-declare function commons:get-aggregation($manifest-uri as xs:string)
-as document-node() {
-    doc($commons:agg || $manifest-uri || ".xml")
-};
-
 declare function commons:get-xml-uri($manifest-uri as xs:string)
 as xs:string {
-    let $aggregation-file := commons:get-aggregation($manifest-uri)
+    let $aggregation-file := commons:get-document($manifest-uri, "agg")
     return
         $aggregation-file//ore:aggregates[1]/@rdf:resource
         => substring-after(":")
@@ -37,10 +34,23 @@ declare function commons:get-tei-xml-for-manifest($manifest-uri as xs:string)
 as document-node() {
     let $xml-uri := commons:get-xml-uri($manifest-uri)
     return
-        doc($commons:data || $xml-uri || ".xml")
+        commons:get-document($xml-uri, "data")
 };
 
-declare function commons:open-tei-xml($tei-xml-uri as xs:string)
-as document-node() {
-    doc($commons:data || $tei-xml-uri || ".xml")
+
+declare function commons:get-document($uri as xs:string,
+    $type as xs:string)
+as document-node()? {
+    let $collection :=
+        switch ($type)
+            case "agg" return $commons:agg
+            case "data" return $commons:data
+            case "meta" return $commons:meta
+            default return error(QName($commons:ns, "COMMONS001"), "Unknown type " || $type)
+    let $base-uri := $collection || $uri || ".xml"
+    return
+        if (doc-available($base-uri)) then
+            doc($base-uri)
+        else
+            error(QName($commons:ns, "COMMONS002"), "URI " || $uri || " not found.")
 };

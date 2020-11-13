@@ -12,12 +12,6 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 declare variable $ct:restxq := "http://0.0.0.0:8080/exist/restxq/";
 
 declare
-    %test:args("ahiqar_agg") %test:assertXPath("$result//@* = 'textgrid:ahiqar_sample'")
-function ct:get-aggregation($manifest-uri as xs:string) {
-    commons:get-aggregation($manifest-uri)
-};
-
-declare
     %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
 function ct:get-xml-uri($manifest-uri as xs:string)
 as xs:string {
@@ -33,8 +27,13 @@ function ct:get-tei-xml-for-manifest($manifest-uri) {
 
 
 declare
-    %test:args("ahiqar_sample") %test:assertXPath("$result//*[local-name(.) = 'TEI']")
-function ct:open-tei-xml($tei-xml-uri as xs:string)
-as document-node() {
-    commons:open-tei-xml($tei-xml-uri)
+    %test:args("ahiqar_sample", "data") %test:assertXPath("$result/*[local-name(.) = 'TEI']")
+    %test:args("ahiqar_sample", "meta") %test:assertXPath("$result//* = 'Beispieldatei zum Testen'")
+    %test:args("ahiqar_agg", "agg") %test:assertXPath("$result//@* = 'textgrid:ahiqar_sample'")
+    %test:args("ahiqar_sample", "sata") %test:assertError("COMMONS001")
+    %test:args("qwerty", "data") %test:assertError("COMMONS002")
+function ct:get-document($uri as xs:string,
+    $type as xs:string)
+as document-node()? {
+    commons:get-document($uri, $type)
 };

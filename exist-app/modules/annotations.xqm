@@ -168,7 +168,7 @@ declare function anno:get-information-for-collection-object($collectionURI as xs
  : @return The resource's title
  :)
 declare function anno:get-metadata-title($uri as xs:string) as xs:string {
-    anno:get-document($uri, "meta")//tgmd:title/string()
+    commons:get-document($uri, "meta")//tgmd:title/string()
 };
 
 
@@ -216,7 +216,7 @@ declare function anno:get-creator($uri as xs:string) as xs:string {
             return
                 anno:get-all-xml-uris-for-submap($map)
     let $creators := for $xml in $xmls return
-        let $doc := anno:get-document($xml, "data")
+        let $doc := commons:get-document($xml, "data")
         return $doc//tei:teiHeader//tei:editor
     return
         distinct-values($creators) => string-join(", ")
@@ -513,7 +513,7 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
  : @param $page The page to be returned as tei:pb/@n/string()
  :)
 declare function anno:get-page-fragment($documentURI as xs:string, $page as xs:string) {
-    let $nodeURI :=anno:get-document($documentURI, "data")/base-uri()
+    let $nodeURI :=commons:get-document($documentURI, "data")/base-uri()
     return
         tapi-html:get-page-fragment($nodeURI, $page)
 };
@@ -538,7 +538,7 @@ declare function anno:get-total-no-of-annotations($uri as xs:string) as xs:integ
             
     let $annotation-no-per-xml :=
         for $xml in $xmls return
-            let $doc := anno:get-document($xml, "data")
+            let $doc := commons:get-document($xml, "data")
             let $noOfElementsEach :=
                 for $element in $anno:annotationElements return
                     count($doc//tei:text//*[name(.) = $element])
@@ -728,7 +728,7 @@ $document as xs:string?, $page as xs:string?, $server as xs:string) {
 declare function anno:get-uris($resource as xs:string) as xs:string+ {
     let $resource-doc :=
         try {
-            anno:get-document($resource, "agg")
+            commons:get-document($resource, "agg")
         } catch * {
             error(QName($anno:ns, "ANNO01"), 
                 $resource || " is either not an aggregation or could not be found in the database.")
@@ -745,7 +745,7 @@ declare function anno:get-uris($resource as xs:string) as xs:string+ {
  : @return true() if resources stated by $uri is a TEI/XML resource
  :)
 declare function anno:is-resource-xml($uri as xs:string) as xs:boolean {
-    anno:get-document($uri, "meta")//tgmd:format = "text/xml"
+    commons:get-document($uri, "meta")//tgmd:format = "text/xml"
 };
 
 (:~ 
@@ -767,7 +767,7 @@ declare function anno:is-resource-edition($uri as xs:string) as xs:boolean {
  : @return A sequence of all page breaks occuring in the resource
  :)
 declare function anno:get-pages-in-TEI($documentURI as xs:string) as xs:string+ {
-    anno:get-document($documentURI, "data")//tei:pb[@facs]/@n/string()
+    commons:get-document($documentURI, "data")//tei:pb[@facs]/@n/string()
 };
 
 
@@ -846,7 +846,7 @@ as xs:string* {
  :)
 declare function anno:get-prev-xml-uris($uri as xs:string) as xs:string* {
     let $collection := anno:get-parent-aggregation($uri)
-    let $collection := anno:get-document($collection, "agg")
+    let $collection := commons:get-document($collection, "agg")
     
     let $tgURI := "textgrid:" || $uri
     let $tgURINode := $collection//@rdf:resource[./string() = $tgURI]
@@ -885,12 +885,12 @@ declare function anno:get-parent-aggregation($uri as xs:string) as xs:string {
  : @return The relative position of the first annotation
  :)
 declare function anno:determine-start-index($uri as xs:string) as xs:integer {
-    let $resourceType := anno:get-document($uri, "meta")//tgmd:format
+    let $resourceType := commons:get-document($uri, "meta")//tgmd:format
     return
         if ($resourceType = "text/tg.aggregation+xml") then
             let $project := anno:get-parent-aggregation($uri)
-            let $nodeForURI := anno:get-document($project, "agg")//*[@rdf:resource[matches(., $uri)]]
-            let $prevCollections := anno:get-document($project, "agg")//*[@rdf:resource[. << $nodeForURI]]/@rdf:resource
+            let $nodeForURI := commons:get-document($project, "agg")//*[@rdf:resource[matches(., $uri)]]
+            let $prevCollections := commons:get-document($project, "agg")//*[@rdf:resource[. << $nodeForURI]]/@rdf:resource
             let $prevCollections :=
                 for $collURI in $prevCollections return
                     replace($collURI, "textgrid:", "")
@@ -903,7 +903,7 @@ declare function anno:determine-start-index($uri as xs:string) as xs:integer {
             let $prevXMLs := anno:get-xmls-prev-in-collection($uri)
             let $noOfAnnotationsPerXML :=
                 for $xml in $prevXMLs return
-                    let $doc := anno:get-document($xml, "data")
+                    let $doc := commons:get-document($xml, "data")
                     let $noOfAnnotationsPerElement :=
                         for $name in $anno:annotationElements return
                             count($doc//tei:text//*[name(.) = $name])
@@ -928,28 +928,11 @@ declare function anno:determine-start-index($uri as xs:string) as xs:integer {
 declare function anno:determine-start-index-for-page($uri as xs:string,
 $page as xs:string) as xs:integer {
     let $xml := anno:find-in-map($anno:uris, $uri)
-    let $doc := anno:get-document($xml, "data")
+    let $doc := commons:get-document($xml, "data")
     let $currentPb := $doc//tei:pb[@n = $page and @facs]
     let $noOfAnnotationsPerElement :=
         for $name in $anno:annotationElements return
             count($doc//tei:text//*[name(.) = $name][. << $currentPb])
     return
         sum($noOfAnnotationsPerElement)
-};
-
-
-declare function anno:get-document($uri as xs:string, $type as xs:string)
-as document-node() {
-    let $collection :=
-        switch ($type)
-            case "agg" return $commons:agg
-            case "data" return $commons:tg-collection || "/data/"
-            case "meta" return $commons:meta
-            default return error(QName($anno:ns, "ANNO02"), "Unknown type " || $type)
-    let $document-uri := $collection || $uri || ".xml"
-    return
-        if(doc-available($document-uri)) then
-            doc($document-uri)
-        else
-            error(QName($anno:ns, "ANNO03"), "Document not found: " || $document-uri)
 };
