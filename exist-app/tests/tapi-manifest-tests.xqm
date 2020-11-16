@@ -143,7 +143,7 @@ function tmt:make-sequences($collection-uri as xs:string,
 };
 
 declare
-     %test:args("sample_edition") %test:assertXPath("count($result) = 4")
+     %test:args("sample_edition") %test:assertXPath("count($result) = 5")
 function tmt:get-valid-page-ids($manifest-uri as xs:string) {
     tapi-mani:get-valid-page-ids($manifest-uri)
 };

@@ -46,6 +46,7 @@ declare variable $anno:uris :=
     let $main-edition-object := 
         if (doc-available($commons:agg || "3r132.xml")) then
             "3r132"
+        (: this main edition object is for testing purposes :)
         else
             "sample_main_edition"
     
@@ -179,6 +180,7 @@ as xs:string {
  : @param $first-entry The IRI of the first Annotation Page that is included within the Collection
  : @param $last-entry The IRI of the last Annotation Page that is included within the Collection
  :)
+(: ## tested ## :)
 declare function anno:make-annotationCollection-map($uri as xs:string,
     $title as xs:string,
     $first-entry as xs:string,
@@ -208,6 +210,7 @@ as map() {
  : @return A string containing the creators of the annotations as stated in the
  : TEI header of the (underlying) resource(s).
  :)
+(: ## tested ## :)
 declare function anno:get-creator($uri as xs:string)
 as xs:string {
     let $xmls :=
@@ -265,6 +268,7 @@ $document as xs:string) {
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
  :)
+(: ## tested ## :)
 declare function anno:make-annotationPage($collection as xs:string, 
     $document as xs:string,
     $server as xs:string)
@@ -493,13 +497,13 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
  : 
  : At this stage, TEI files are scraped for person and place names.
  : 
- : @param $documentURI The XML's URI. Attention: This refers directly to the XML file, NOT the superordinate edition!
+ : @param $teixml-uri The XML's URI.
  : @param $page The page within an XML file, i.e. a tei:pb/@n within a TEI resource
  :)
-declare function anno:get-annotations($documentURI as xs:string,
+declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
-as map() {
-    let $pageChunk := anno:get-page-fragment($documentURI, $page)
+as map()+ {
+    let $pageChunk := anno:get-page-fragment($teixml-uri, $page)
     
     let $annotation-elements := 
         for $name in $anno:annotationElements return
@@ -509,10 +513,10 @@ as map() {
         let $id := string( $annotation/@id ) (: get the predefined ID from the in-memory TEI with IDs :)
         return
         map {
-            "id": $anno:ns || "/" || $documentURI || "/annotation-" || $id,
+            "id": $anno:ns || "/" || $teixml-uri || "/annotation-" || $id,
             "type": "Annotation",
             "bodyValue": anno:get-bodyValue($annotation),
-            "target": anno:get-target-information($annotation, $documentURI, $id)
+            "target": anno:get-target-information($annotation, $teixml-uri, $id)
         }
 };
 
@@ -771,7 +775,7 @@ declare function anno:is-resource-xml($uri as xs:string) as xs:boolean {
  : @param $uri The resource's URI
  : @return true() if resources stated by $uri is an edition object
  :)
-(: ## tested ää :)
+(: ## tested ## :)
 declare function anno:is-resource-edition($map as map(),
     $uri as xs:string)
 as xs:boolean {
@@ -841,7 +845,7 @@ as xs:string* {
             let $edition := anno:get-parent-aggregation($uri)
             return
                 anno:get-prev-xml-uris($edition)
-    else if(anno:is-resource-edition($anno-uris, $uri)) then
+    else if(anno:is-resource-edition($anno:uris, $uri)) then
         anno:get-prev-xml-uris($uri)
     else
         ()

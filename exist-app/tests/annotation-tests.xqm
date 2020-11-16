@@ -22,7 +22,7 @@ as xs:boolean {
 };
 
 declare
-    %test:args("sample_teixml") %test:assertXPath("count($result) = 4")
+    %test:args("sample_teixml") %test:assertXPath("count($result) = 5")
     %test:args("sample_teixml") %test:assertXPath("$result = '82a'")
 function at:get-pages-in-TEI($uri as xs:string)
 as xs:string+ {
@@ -129,8 +129,8 @@ as element(tei:TEI) {
 };
 
 declare
-    %test:args("sample_main_edition") %test:assertEquals("65")
-    %test:args("sample_lang_aggregation") %test:assertEquals("65")
+    %test:args("sample_main_edition") %test:assertEquals("66")
+    %test:args("sample_lang_aggregation") %test:assertEquals("66")
 function at:get-total-no-of-annotations($uri as xs:string) {
     anno:get-total-no-of-annotations($uri)
 };
@@ -213,108 +213,43 @@ as xs:string? {
     anno:get-prev-or-next-page($manifest-uri, $page, $type)
 };
 
-(:declare:)
-(:    %test:args("3r679", "114r"):)
-(:    %test:assertEquals("0"):)
-(:function at:anno-determine-start-index-for-page($uri as xs:string, $page as xs:string) {:)
-(:    anno:determine-start-index-for-page($uri, $page):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertEquals("16"):)
-(:function at:anno-determine-start-index($uri as xs:string) {:)
-(:    anno:determine-start-index($uri):)
-(:};:)
-(::)
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertEquals("3r679"):)
-(:function at:anno-get-parent-aggregation($uri as xs:string) {:)
-(:    anno:get-parent-aggregation($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertEquals("114r", "114v"):)
-(:function at:anno-get-pages-in-TEI($uri as xs:string) {:)
-(:    anno:get-pages-in-TEI($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r679"):)
-(:    %test:assertTrue:)
-(:function at:anno-is-resource-edition($uri as xs:string) {:)
-(:    anno:is-resource-edition($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertTrue:)
-(:function at:anno-is-resource-xml($uri as xs:string) {:)
-(:    anno:is-resource-xml($uri):)
-(:};:)
+declare
+    %test:args("sample_teixml") %test:assertEquals("Simon Birol, Aly Elrefaei")
+    %test:args("sample_edition") %test:assertEquals("Simon Birol, Aly Elrefaei")
+function at:get-creator($uri as xs:string)
+as xs:string {
+    anno:get-creator($uri)
+};
 
+declare
+    %test:args("sample_edition", 
+        "Beispieledition", 
+        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/82a/annotationPage.json", 
+        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/83b/annotationPage.json")
+    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:sample_edition: Beispieledition'")
+    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('x-creator') = 'Simon Birol, Aly Elrefaei'")
+function at:make-annotationCollection-map($uri as xs:string,
+    $title as xs:string,
+    $first-entry as xs:string,
+    $last-entry as xs:string)
+as map() {
+    anno:make-annotationCollection-map($uri, $title, $first-entry, $last-entry)
+};
 
-(::)
-(:declare:)
-(:    %test:args("asdf"):)
-(:    %test:assertFalse:)
-(:(:    %test:args("3r131"):):)
-(:(:    %test:assertTrue:):)
-(:function at:anno-are-resources-available($resources as xs:string+) {:)
-(:    anno:are-resources-available($resources):)
-(:};:)
+declare
+    %test:args("sample_lang_aggregation", "sample_edition", "http://localhost:8080")
+    %test:assertXPath("map:get($result, 'annotationPage') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationPage/sample_lang_aggregation/sample_edition'")
+function at:make-annotationPage($collection as xs:string, 
+    $manifest as xs:string,
+    $server as xs:string)
+as map() {
+    anno:make-annotationPage($collection, $manifest, $server)
+};
 
-
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertEquals("Simon Birol, Aly Elrefaei"):)
-(:function at:anno-get-creator($uri as xs:string) {:)
-(:    anno:get-creator($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r131"):)
-(:    %test:assertEquals("Brit. Lib. Add. 7200"):)
-(:function at:anno-get-metadata-title($uri as xs:string) {:)
-(:    anno:get-metadata-title($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r679"):)
-(:    %test:assertEquals("3r676", "3r672"):)
-(:function at:anno-get-prev-xml-uris($uri as xs:string) {:)
-(:    anno:get-prev-xml-uris($uri):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r679"):)
-(:    %test:assertEquals("3r676", "3r672"):)
-(:function at:anno-get-xmls-prev-in-collection($uri as xs:string) {:)
-(:    anno:get-xmls-prev-in-collection($uri):)
-(:};:)
-
-
-(:declare:)
-(:    %test:args("3r679", "114r", "next"):)
-(:    %test:assertEquals("114v"):)
-(:function at:anno-get-prev-or-next-page($documentURI as xs:string,:)
-(:$page as xs:string, $type as xs:string) {:)
-(:    anno:get-prev-or-next-page($documentURI, $page, $type):)
-(:};:)
-(::)
-(::)
-(:declare:)
-(:    %test:args("3r9ps"):)
-(:    %test:assertEquals("3r177", "3r178", "3r7vw", "3r7p1", "3r7p9", "3r7sk", "3r7tp", "3r7vd", "3r179", "3r7n0", "3r9vn", "3r9wf", "3rb3z", "3rbm9", "3rbmc", "3rx14", "3vp38"):)
-(:function at:anno-get-uris($documentURI) {:)
-(:    anno:get-uris($documentURI):)
-(:};:)
+declare
+    %test:args("sample_teixml", "83b") %test:assertXPath("count($result) = 15")
+function at:get-annotations($teixml-uri as xs:string,
+    $page as xs:string)
+as map()+ {
+    anno:get-annotations($teixml-uri, $page)
+};

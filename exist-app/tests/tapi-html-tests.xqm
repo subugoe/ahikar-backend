@@ -24,8 +24,8 @@ declare
     %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result[local-name(.) = 'pb']")
     %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result/@facs = 'textgrid:3r1p0'")
     %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result/@n = '82b'")
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "83b") %test:assertXPath("$result[local-name(.) = 'ab']")
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "83b") %test:assertXPath("matches($result, 'ܘܗܦܟܬ ܛܥܢܬ ܐܰܒܵܪܐ ܘܠܐ ܐܝܼܩܰܪ ܥܠ')")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "84a") %test:assertXPath("$result[local-name(.) = 'ab']")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "84a") %test:assertXPath("matches($result, 'ܢܕܢ')")
 function thtmlt:get-end-node($tei-xml-base-uri as xs:string,
     $page as xs:string)
 as item()+ {

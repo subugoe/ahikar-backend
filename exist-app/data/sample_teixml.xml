@@ -810,6 +810,10 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <!-- addition with unknown type -->
                <ab> ܘܗܦܟܬ ܛܥܢܬ ܐܰܒܵܪܐ ܘܠܐ ܐܝܼܩܰܪ ܥܠܝ <add place="sidelong">ܐܝܟ</add>
                </ab>
+               
+               <pb facs="textgrid:3r85r" n="84a"/>
+               <ab>some test text</ab>
+              <ab>some test<persName>ܢܕܢ܂</persName></ab>
             </body>
          </text>
       </group>
