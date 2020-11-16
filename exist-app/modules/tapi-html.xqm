@@ -42,8 +42,9 @@ as element() {
         $start-node := $node//tei:pb[@n = $page and @facs],
         $end-node := tapi-html:get-end-node($start-node),
         $wrap-in-first-common-ancestor-only := false(),
-        $include-start-and-end-nodes := false(),
+        $include-start-and-end-nodes := true(),
         $empty-ancestor-elements-to-include := ("")
+        
     return
         fragment:get-fragment-from-doc(
             $node,
