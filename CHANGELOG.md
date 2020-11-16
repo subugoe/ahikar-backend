@@ -5,12 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.1] - 2020-1-12
+## [2.2.1] - 2020-11-16
 
 ## Changed
 
 - When extracting the relevant plain text sections, the semantic divisions of the texts are now considered.
 Each semantic division, which is indicated in the texts by a tei:milestone, is now stored in a separate file.
+
+## [2.1.0] - 2020-11-12
+
+### Changed
+
+- prepared for changed endpoints at Text-API (document-page to document/page)
+
+### Fixed
+
+- wrong Annotation IDs
 
 ## [2.0.0] - 2020-11-06
 
