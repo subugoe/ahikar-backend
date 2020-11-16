@@ -12,7 +12,6 @@ module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests";
 declare namespace http = "http://expath.org/ns/http-client";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/annotations.xqm";
 import module namespace map="http://www.w3.org/2005/xpath-functions/map";
 import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "../modules/tapi.xqm";
 import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "test-commons.xqm";
