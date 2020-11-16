@@ -53,4 +53,10 @@ order by $result//@package return
     and $result//@errors = 0) then
         <OK name="{local:get-human-readable-pkg-name($result//@package)}" package="{$result//@package}"/>
     else
-        $result
+        <PROBLEM name="{local:get-human-readable-pkg-name($result//@package)}"
+            package="{$result//@package}"
+            errors="{$result//@errors}"
+            failures="{$result//@failures}">
+            {$result//testcase[child::*[self::failure or self::error]]}
+        </PROBLEM>
+        
