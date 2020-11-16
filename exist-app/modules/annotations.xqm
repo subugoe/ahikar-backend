@@ -800,6 +800,7 @@ declare function anno:get-pages-in-TEI($documentURI as xs:string) as xs:string+ 
  : @param $page The @n attribute of the current page break/tei:pb
  : @param $type "prev" for the previous, "next" for the next page break
  :)
+(: ## tested ## :)
 declare function anno:get-prev-or-next-page($manifest-uri as xs:string,
     $page as xs:string, 
     $type as xs:string)
@@ -814,19 +815,14 @@ as xs:string? {
         else
             $current-position - 1
     return
-        switch ($type)
-            case "prev" return
-                if ($new-position le $no-of-pages
-                and $new-position != 0) then
-                    $pages[$new-position]
-                else
-                    ()
-            case "next" return
-                if ($new-position le $no-of-pages) then
-                    $pages[$new-position]
-                else
-                    ()
-            default return ()
+        if ($new-position le $no-of-pages
+        and ($type = "prev"
+        and $new-position != 0
+        or
+        $type = "next")) then
+            $pages[$new-position]
+        else
+            ()
 };
 
 
