@@ -359,7 +359,7 @@ as map() {
 (: ## tested ## :)
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
-as map()+ {
+as map()* {
     let $pageChunk := anno:get-page-fragment($teixml-uri, $page)
     
     let $annotation-elements := 

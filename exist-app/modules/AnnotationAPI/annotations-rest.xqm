@@ -12,11 +12,7 @@ xquery version "3.1";
 
 module namespace anno-rest="http://ahikar.sub.uni-goettingen.de/ns/annotations/rest";
 
-declare namespace tei="http://www.tei-c.org/ns/1.0";
-declare namespace ore="http://www.openarchives.org/ore/terms/";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
-declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "annotations.xqm";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
@@ -42,6 +38,7 @@ declare variable $anno-rest:server :=
  : @param $collection The URI of the collection, e.g. '3r132'
  : @return An Annotation Collecion for the given collection
  :)
+(: ## tested ## :)
 declare
     %rest:GET
     %rest:HEAD
@@ -65,10 +62,11 @@ function anno-rest:collection-rest($collection as xs:string) {
  : @param $collection The URI of the Collection Object
  : @param $document The URI of an aggregated Collection or Manifest Object
  :)
+(: ## tested ## :)
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/annotations/ahikar/{$collection}/{$document}/annotationPage.json")
+    %rest:path("/annotations/ahikar/{$collection}/{$document}/annotationPage.json")
     %output:method("json")
 function anno-rest:annotationPage-for-collection-rest($collection as xs:string, 
 $document as xs:string) {
@@ -95,13 +93,15 @@ $document as xs:string) {
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @return An Annotation Collecion for the given Collection or Manifest Object
  :)
+(: ## tested ## :)
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/annotations/ahikar/{$collection}/{$document}/annotationCollection.json")
+    %rest:path("/annotations/ahikar/{$collection}/{$document}/annotationCollection.json")
     %output:method("json")
 function anno-rest:manifest-rest($collection as xs:string, 
-$document as xs:string) {
+    $document as xs:string)
+as item()+ {
     if (anno:are-resources-available(($collection, $document))) then
         ($commons:responseHeader200,
         anno:make-annotationCollection($collection, $document, $anno-rest:server))
@@ -129,10 +129,12 @@ $document as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/annotations/ahikar/{$collection}/{$document}/{$page}/annotationCollection.json")
+    %rest:path("/annotations/ahikar/{$collection}/{$document}/{$page}/annotationCollection.json")
     %output:method("json")
 function anno-rest:annotationCollection-for-manifest-rest($collection as xs:string, 
-$document as xs:string, $page as xs:string) {
+    $document as xs:string,
+    $page as xs:string)
+as item()+ {
     if (anno:are-resources-available(($collection, $document))) then
         ($commons:responseHeader200,
         anno:make-annotationCollection-for-manifest($collection, $document, $page, $anno-rest:server))
@@ -160,12 +162,12 @@ $document as xs:string, $page as xs:string) {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/api/annotations/ahikar/{$collection}/{$document}/{$page}/annotationPage.json")
+    %rest:path("/annotations/ahikar/{$collection}/{$document}/{$page}/annotationPage.json")
     %output:method("json")
 function anno-rest:annotationPage-for-manifest-rest($collection as xs:string, 
     $document as xs:string,
     $page as xs:string)
-as element()+ {
+as item()+ {
     if (anno:are-resources-available(($collection, $document))) then
         ($commons:responseHeader200,
         anno:make-annotationPage-for-manifest($collection, $document, $page, $anno-rest:server))
@@ -183,7 +185,8 @@ as element()+ {
  : @return The response header
  :)
 (:  ## tested ## :)
-declare function anno-rest:get-404-header($resources as xs:string+) {
+declare function anno-rest:get-404-header($resources as xs:string+)
+as element() {
     <rest:response>
         <http:response xmlns:http="http://expath.org/ns/http-client" 
             status="404"
