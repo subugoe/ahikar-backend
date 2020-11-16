@@ -11,8 +11,6 @@ import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/annotations.xqm";
 
-import module namespace console="http://exist-db.org/xquery/console";
-
 declare variable $at:sample-doc := doc($commons:data || "/sample_teixml.xml");
 
 declare
