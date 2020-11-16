@@ -47,17 +47,6 @@ as xs:boolean {
 };
 
 declare
-    %test:assertXPath("$result//@status = '404'")
-    %test:assertXPath("$result//@message = 'One of the following requested resources couldn''t be found: qwerty, sample_teixml'")
-function at:get-404-header()
-as element() {
-    let $resources := ("qwerty", "sample_teixml")
-    return
-       anno:get-404-header($resources)
-};
-
-
-declare
     %test:args("sample_teixml") %test:assertEquals("sample_edition")
     %test:args("sample_edition") %test:assertEquals("sample_lang_aggregation")
     %test:args("sample_main_edition") %test:assertEmpty

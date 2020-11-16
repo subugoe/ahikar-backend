@@ -24,6 +24,7 @@ import module namespace titemt="http://ahikar.sub.uni-goettingen.de/ns/tapi/item
 import module namespace tmt="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" at "../tests/tapi-manifest-tests.xqm";
 import module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" at "../tests/tapi-tests.xqm";
 import module namespace at="http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" at "../tests/annotation-tests.xqm";
+import module namespace art="http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" at "../tests/annotation-rest-tests.xqm";
 
 (:~
  : Triggers the tests for the Ahikar backend. Called by the CI.
@@ -70,7 +71,8 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests"))
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests"))
     )
 
     for $result in $test-results
@@ -100,5 +102,6 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" return "TEI2HTML transformation"
         case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" return "TEI2HTML text processing"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"
+        case "http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" return "AnnotationAPI REST"
         default return ()
 };
