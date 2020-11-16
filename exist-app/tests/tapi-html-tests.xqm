@@ -14,18 +14,18 @@ declare
     %test:assertXPath("$result//@id = 'N4'")
 function thtmlt:add-IDs()
 as node()+ {
-    let $manifest := doc($commons:data || "ahiqar_sample.xml")/*
+    let $manifest := doc($commons:data || "sample_teixml.xml")/*
     return
         tapi-html:add-IDs($manifest)
 };
 
 
 declare
-    %test:args("/db/apps/sade/textgrid/data/ahiqar_sample.xml", "82a") %test:assertXPath("$result[local-name(.) = 'pb']")
-    %test:args("/db/apps/sade/textgrid/data/ahiqar_sample.xml", "82a") %test:assertXPath("$result/@facs = 'textgrid:3r1p0'")
-    %test:args("/db/apps/sade/textgrid/data/ahiqar_sample.xml", "82a") %test:assertXPath("$result/@n = '82b'")
-    %test:args("/db/apps/sade/textgrid/data/ahiqar_sample.xml", "83b") %test:assertXPath("$result[local-name(.) = 'ab']")
-    %test:args("/db/apps/sade/textgrid/data/ahiqar_sample.xml", "83b") %test:assertXPath("matches($result, 'ܘܗܦܟܬ ܛܥܢܬ ܐܰܒܵܪܐ ܘܠܐ ܐܝܼܩܰܪ ܥܠ')")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result[local-name(.) = 'pb']")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result/@facs = 'textgrid:3r1p0'")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result/@n = '82b'")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "83b") %test:assertXPath("$result[local-name(.) = 'ab']")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "83b") %test:assertXPath("matches($result, 'ܘܗܦܟܬ ܛܥܢܬ ܐܰܒܵܪܐ ܘܠܐ ܐܝܼܩܰܪ ܥܠ')")
 function thtmlt:get-end-node($tei-xml-base-uri as xs:string,
     $page as xs:string)
 as item()+ {
@@ -37,7 +37,7 @@ as item()+ {
 
 
 declare
-    %test:args("/db/apps/sade/textgrid/data/ahiqar_sample.xml", "82a") %test:assertXPath("$result//*[local-name(.) = 'add'][@place = 'margin'] = 'حقًا'")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result//*[local-name(.) = 'add'][@place = 'margin'] = 'حقًا'")
 function thtmlt:get-page-fragment($tei-xml-base-uri as xs:string,
     $page as xs:string)
 as element() {
@@ -46,7 +46,7 @@ as element() {
     
                         
 declare
-    %test:args("/db/apps/sade/textgrid/data/ahiqar_sample.xml", "82a") %test:assertXPath("$result//text()[matches(., 'حقًا')]")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result//text()[matches(., 'حقًا')]")
 function thtmlt:transform-fragment($tei-xml-base-uri as xs:string,
     $page as xs:string)
 as element(xhtml:div) {
@@ -57,8 +57,8 @@ as element(xhtml:div) {
 
 
 declare
-    %test:args("ahiqar_sample", "82a") %test:assertXPath("$result//text()[matches(., 'حقًا')]")
-    %test:args("ahiqar_sample", "82a")
+    %test:args("sample_teixml", "82a") %test:assertXPath("$result//text()[matches(., 'حقًا')]")
+    %test:args("sample_teixml", "82a")
     (: checks if there is text at all in the result :)
     %test:assertXPath("$result//text()[matches(., '[\w]')]")
     (: if a div[@class = 'tei_body'] is present, the transformation has been successfull :)

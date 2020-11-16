@@ -86,7 +86,7 @@ declare
     %test:assertTrue
 function tt:is-html-api-available()
 as xs:boolean {
-    let $url := $tc:server || "/content/ahiqar_sample-82a.html"
+    let $url := $tc:server || "/content/sample_teixml-82a.html"
     return
         tc:is-endpoint-http200($url)
 };
@@ -97,7 +97,7 @@ declare
      : the underlying function. :)
     %test:assertXPath("$result//*[@class = 'tei_body']")
 function tt:content-rest() as document-node() {
-    let $url := $tc:server || "/content/ahiqar_sample-82a.html"
+    let $url := $tc:server || "/content/sample_teixml-82a.html"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]
 };
@@ -124,7 +124,7 @@ declare
      : the underlying function. :)
     %test:assertXPath("matches($result, '[\w]')")
 function tt:content-txt() as xs:string {
-    let $url := $tc:server || "/textapi/ahikar/ahiqar_collection/ahiqar_sample.txt"
+    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_teixml.txt"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -135,13 +135,13 @@ function tt:content-txt() as xs:string {
 declare
     %test:assertTrue
 function tt:is-txt-api-available() {
-    let $url := $tc:server || "/content/ahiqar_sample.txt"
+    let $url := $tc:server || "/content/sample_teixml.txt"
     return
         tc:is-endpoint-http200($url)
 };
 
 declare function tt:txt() {
-    let $url := $tc:server || "textapi/ahiqar/ahiqar_collection/ahiqar_sample.txt"
+    let $url := $tc:server || "textapi/ahiqar/sample_main_edition/sample_teixml.txt"
     let $req := tc:make-request($url)
     return http:send-request($req)[2] => util:base64-decode()
 };
@@ -158,7 +158,7 @@ function tt:remove-whitespaces() as document-node() {
 declare
     %test:assertTrue
 function tt:is-collection-endpoint-http200() {
-    let $url := $tc:server || "/textapi/ahikar/ahiqar_collection/collection.json"
+    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/collection.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -174,7 +174,7 @@ declare
     %test:assertXPath("map:contains($result, 'sequence')")
 function tt:endpoint-collection()
 as item() {
-    let $url := $tc:server || "/textapi/ahikar/ahiqar_collection/collection.json"
+    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/collection.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -184,7 +184,7 @@ as item() {
 declare
     %test:assertTrue
 function tt:is-manifest-endpoint-http200() {
-    let $url := $tc:server || "/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json"
+    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition/manifest.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -205,7 +205,7 @@ declare
     %test:assertXPath("map:contains($result, 'sequence')")
 function tt:endpoint-manifest()
 as item() {
-    let $url := $tc:server || "/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json"
+    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition/manifest.json"
     let $req := tc:make-request($url)
     return
         http:send-request($req)[2]
@@ -216,7 +216,7 @@ as item() {
 declare
     %test:assertTrue
 function tt:is-item-endpoint-http200() {
-    let $url := $tc:server || "/textapi/ahikar/ahiqar_collection/ahiqar_agg-82a/latest/item.json"
+    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -235,7 +235,7 @@ declare
     %test:assertXPath("map:contains($result, 'langAlt')")
     %test:assertXPath("map:contains($result, 'image')")
 function tt:endpoint-item() as item() {
-    let $url := $tc:server || "/textapi/ahikar/ahiqar_collection/ahiqar_agg-82a/latest/item.json"
+    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]
         => util:base64-decode()

@@ -12,14 +12,14 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 declare variable $ct:restxq := "http://0.0.0.0:8080/exist/restxq/";
 
 declare
-    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
+    %test:args("sample_edition") %test:assertEquals("sample_teixml")
 function ct:get-xml-uri($manifest-uri as xs:string)
 as xs:string {
     commons:get-xml-uri($manifest-uri)
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
+    %test:args("sample_edition") %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
                king of Assyria and Nineveh'")
 function ct:get-tei-xml-for-manifest($manifest-uri) {
     commons:get-tei-xml-for-manifest($manifest-uri)
@@ -27,10 +27,10 @@ function ct:get-tei-xml-for-manifest($manifest-uri) {
 
 
 declare
-    %test:args("ahiqar_sample", "data") %test:assertXPath("$result/*[local-name(.) = 'TEI']")
-    %test:args("ahiqar_sample", "meta") %test:assertXPath("$result//* = 'Beispieldatei zum Testen'")
-    %test:args("ahiqar_agg", "agg") %test:assertXPath("$result//@* = 'textgrid:ahiqar_sample'")
-    %test:args("ahiqar_sample", "sata") %test:assertError("COMMONS001")
+    %test:args("sample_teixml", "data") %test:assertXPath("$result/*[local-name(.) = 'TEI']")
+    %test:args("sample_teixml", "meta") %test:assertXPath("$result//* = 'Beispieldatei zum Testen'")
+    %test:args("sample_edition", "agg") %test:assertXPath("$result//@* = 'textgrid:sample_teixml'")
+    %test:args("sample_teixml", "sata") %test:assertError("COMMONS001")
     %test:args("qwerty", "data") %test:assertError("COMMONS002")
 function ct:get-document($uri as xs:string,
     $type as xs:string)
@@ -39,7 +39,7 @@ as document-node()? {
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
+    %test:args("sample_edition") %test:assertEquals("sample_teixml")
     %test:args("qwerty") %test:assertError("COMMONS002")
 function ct:get-available-aggregates($uri as xs:string)
 as xs:string+ {

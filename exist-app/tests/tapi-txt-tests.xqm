@@ -7,7 +7,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 import module namespace tapi-txt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt" at "../modules/tapi-txt.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
-declare variable $ttt:sample-file := local:open-file("ahiqar_sample");
+declare variable $ttt:sample-file := local:open-file("sample_teixml");
 declare variable $ttt:sample-transliteration := $ttt:sample-file//tei:text[@type = "transliteration"];
 declare variable $ttt:sample-transcription := $ttt:sample-file//tei:text[@type = "transcription"];
 
@@ -20,7 +20,7 @@ as xs:string+ {
 
 
 declare
-    %test:args("ahiqar_sample") %test:assertExists
+    %test:args("sample_teixml") %test:assertExists
     %test:args("1234") %test:assertError("org.exist.xquery.XPathException")
 function ttt:open-file($uri as xs:string) as document-node() {
     local:open-file($uri)
@@ -250,7 +250,7 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("/db/apps/sade/textgrid/data/ahiqar_sample.xml")
+    %test:assertEquals("/db/apps/sade/textgrid/data/sample_teixml.xml")
 function ttt:get-base-uri()
 as xs:string {
     tapi-txt:get-base-uri($ttt:sample-transcription)
@@ -264,21 +264,21 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription.txt")
+    %test:assertEquals("karshuni-Beispieldatei_zum_Testen-sample_teixml-transcription.txt")
 function ttt:make-file-name()
 as xs:string {
     tapi-txt:make-file-name($ttt:sample-transcription)
 };
 
 declare
-    %test:assertEquals("ahiqar_sample-transcription.txt")
+    %test:assertEquals("sample_teixml-transcription.txt")
 function ttt:make-file-name-suffix()
 as xs:string {
     tapi-txt:make-file-name-suffix($ttt:sample-transcription)
 };
 
 declare
-    %test:args("/db/apps/sade/textgrid/data/ahiqar_sample.xml") %test:assertEquals("ahiqar_sample")
+    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml") %test:assertEquals("sample_teixml")
 function ttt:get-file-name($base-uri as xs:string)
 as xs:string {
     tapi-txt:get-file-name($base-uri)
@@ -433,7 +433,7 @@ as document-node() {
 
 
 declare
-    %test:args("ahiqar_sample", "transcription")
+    %test:args("sample_teixml", "transcription")
     %test:assertXPath("$result[local-name(.) = 'text' and @type = 'transcription']")
 function ttt:get-tei($document-uri as xs:string,
     $type as xs:string)
@@ -442,8 +442,8 @@ as element() {
 };
 
 declare
-    %test:args("ahiqar_sample") %test:assertEquals("text/xml")
-    %test:args("ahiqar_agg") %test:assertEquals("text/tg.edition+tg.aggregation+xml")
+    %test:args("sample_teixml") %test:assertEquals("text/xml")
+    %test:args("sample_edition") %test:assertEquals("text/tg.edition+tg.aggregation+xml")
 function ttt:tgmd-format($uri as xs:string)
 as xs:string {
     tapi-txt:get-format($uri)
@@ -451,7 +451,7 @@ as xs:string {
 
 
 declare
-    %test:args("ahiqar_sample", "transcription")
+    %test:args("sample_teixml", "transcription")
     %test:assertXPath("$result[local-name(.) = 'text' and @type = 'transcription']")
 function ttt:get-tei($document as xs:string, $type as xs:string) as element() {
     tapi-txt:get-TEI-text($document, $type)
@@ -459,28 +459,28 @@ function ttt:get-tei($document as xs:string, $type as xs:string) as element() {
 
 
 declare
-    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_sample")
+    %test:args("sample_edition") %test:assertEquals("sample_teixml")
 function ttt:get-tei-xml-uri-from-edition($document as xs:string) {
     tapi-txt:get-tei-xml-uri-from-edition($document)
 };
 
 
 declare
-    %test:args("ahiqar_sample") %test:assertEquals("ahiqar_sample")
+    %test:args("sample_teixml") %test:assertEquals("sample_teixml")
 function ttt:get-tei-xml-from-aggregates($aggregates as xs:string+) {
     tapi-txt:get-tei-xml-from-aggregates($aggregates)
 };
 
 
 declare 
-    %test:args("ahiqar_sample", "transliteration") %test:assertXPath("$result[@type = 'transliteration']")
+    %test:args("sample_teixml", "transliteration") %test:assertXPath("$result[@type = 'transliteration']")
 function ttt:get-text-of-type($uri as xs:string, $type as xs:string) {
     tapi-txt:get-text-of-type($uri, $type)
 };
 
 declare
-    %test:args("ahiqar_sample") %test:assertTrue
-    %test:args("ahiqar_agg") %test:assertFalse
+    %test:args("sample_teixml") %test:assertTrue
+    %test:args("sample_edition") %test:assertFalse
 function ttt:is-document-tei-xml($document-uri as xs:string)
 as xs:boolean {
     tapi-txt:is-document-tei-xml($document-uri)

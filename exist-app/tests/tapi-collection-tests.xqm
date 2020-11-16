@@ -42,7 +42,7 @@ function tct:_test-setup(){
         <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/"
         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="test-aggregation-1">
-                <ore:aggregates rdf:resource="textgrid:ahiqar_sample"/>
+                <ore:aggregates rdf:resource="textgrid:sample_teixml"/>
             </rdf:Description>
         </rdf:RDF>
     let $agg1-meta :=
@@ -62,7 +62,7 @@ function tct:_test-setup(){
         <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/"
         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="test-aggregation-2">
-                <ore:aggregates rdf:resource="textgrid:ahiqar_sample"/>
+                <ore:aggregates rdf:resource="textgrid:sample_teixml"/>
             </rdf:Description>
         </rdf:RDF>
     let $agg2-meta :=
@@ -102,7 +102,7 @@ function tct:_test-teardown() {
 };
 
 declare
-    %test:args("ahiqar_collection") %test:assertXPath("$result//*[local-name(.) = 'aggregates']")
+    %test:args("sample_main_edition") %test:assertXPath("$result//*[local-name(.) = 'aggregates']")
 function tct:get-aggregation($uri as xs:string) {
     tapi-coll:get-aggregation($uri)
 };
@@ -141,7 +141,7 @@ function tct:get-allowed-manifest-uris-mock-up-input-excluded() {
 
 
 declare
-    %test:args("ahiqar_collection", "ahiqar_agg") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json")
+    %test:args("sample_main_edition", "sample_edition") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/sample_main_edition/sample_edition/manifest.json")
 function tct:make-id($colletion-uri as xs:string, $manifest-uri as xs:string)
 as xs:string {
     tapi-coll:make-id($tc:server, $colletion-uri, $manifest-uri)
@@ -149,15 +149,15 @@ as xs:string {
 
 
 declare
-    %test:assertEquals("ahiqar_agg")
+    %test:assertEquals("sample_edition")
 function tct:get-allowed-manifest-uris-sample-input() {
-    let $collection-metadata := tapi-coll:get-aggregation("ahiqar_collection")
+    let $collection-metadata := tapi-coll:get-aggregation("sample_lang_aggregation")
     return
         tapi-coll:get-allowed-manifest-uris($collection-metadata)
 };
 
 declare
-    %test:args("ahiqar_collection") %test:assertXPath("$result[self::document-node()]")
+    %test:args("sample_main_edition") %test:assertXPath("$result[self::document-node()]")
 function tct:get-metadata-file($uri as xs:string) {
     tapi-coll:get-metadata-file($uri)
 };
@@ -181,15 +181,15 @@ function tct:make-format-type($tgmd-format as xs:string) {
 declare
     %test:assertEquals("manifest")
 function tct:get-format-type() {
-    let $metadata := tapi-coll:get-metadata-file("ahiqar_agg")
+    let $metadata := tapi-coll:get-metadata-file("sample_edition")
     return
         tapi-coll:get-format-type($metadata)
 };
 
 
 declare
-    %test:args("ahiqar_collection") %test:assertXPath("$result//type[. = 'manifest']")
-    %test:args("ahiqar_collection") %test:assertXPath("$result//id[matches(., 'ahiqar_agg/manifest.json')]")
+    %test:args("sample_main_edition") %test:assertXPath("$result//type[. = 'manifest']")
+    %test:args("sample_lang_aggregation") %test:assertXPath("$result//id[matches(., 'sample_edition/manifest.json')]")
     %test:args("testapi-collection") %test:assertXPath("$result//id[matches(., 'test-aggregation-1/manifest.json')]")
     %test:args("testapi-collection") %test:assertXPath("$result//id[matches(., 'test-aggregation-2/manifest.json')]")
 function tct:make-sequence($collection-uri as xs:string) {
@@ -197,7 +197,7 @@ function tct:make-sequence($collection-uri as xs:string) {
 };
 
 declare
-    %test:args("ahiqar_collection") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/ahiqar_collection/annotationCollection.json")
+    %test:args("sample_main_edition") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/sample_main_edition/annotationCollection.json")
 function tct:make-annotationCollection-uri($collection-uri as xs:string)
 as xs:string {
     tapi-coll:make-annotationCollection-uri($tc:server, $collection-uri)
@@ -205,8 +205,8 @@ as xs:string {
 
 
 declare
-    %test:args("ahiqar_collection") %test:assertXPath("$result//title = 'The Story and Proverbs of Ahikar the Wise'")
-    %test:args("ahiqar_collection") %test:assertXPath("$result//*/string() = 'http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json' ")
+    %test:args("sample_lang_aggregation") %test:assertXPath("$result//title = 'The Story and Proverbs of Ahikar the Wise'")
+    %test:args("sample_lang_aggregation") %test:assertXPath("$result//*/string() = 'http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/sample_lang_aggregation/sample_edition/manifest.json' ")
 function tct:get-json($collection-uri as xs:string) {
     tapi-coll:get-json($collection-uri, $tc:server)
 };

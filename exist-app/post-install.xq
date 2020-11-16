@@ -18,7 +18,7 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
                     xmldb:rename($target-meta-collection, $filename, $new-filename)
                 )
         else
-            if (matches($filename, "sample")) then
+            if (matches($filename, "teixml")) then
                 xmldb:move($data-file-path, $target-data-collection, $filename)
             else
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
@@ -64,14 +64,16 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 ( 
     let $files := 
         ( 
-        "ahiqar_sample.xml",
-        "ahiqar_sample_meta.xml",
-        "ahiqar_agg.xml",
-        "ahiqar_agg_meta.xml",
+        "sample_teixml.xml",
+        "sample_teixml_meta.xml",
+        "sample_edition.xml",
+        "sample_edition_meta.xml",
         "ahiqar_images.xml",
         "ahiqar_images_meta.xml",
-        "ahiqar_collection.xml",
-        "ahiqar_collection_meta.xml")
+        "sample_main_edition.xml",
+        "sample_main_edition_meta.xml",
+        "sample_lang_aggregation.xml",
+        "sample_lang_aggregation_meta.xml")
     return
         ( 
             for $file in $files return

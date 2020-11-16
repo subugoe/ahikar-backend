@@ -69,7 +69,7 @@ declare variable $anno:uris :=
                     ))
             }
     else
-        let $main-edition-object := "ahiqar_collection"
+        let $main-edition-object := "sample_main_edition"
         let $editions := commons:get-available-aggregates($main-edition-object)
         return
             map { $main-edition-object:

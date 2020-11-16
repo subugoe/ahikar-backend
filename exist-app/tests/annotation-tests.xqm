@@ -11,19 +11,19 @@ import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/annotations.xqm";
 
-declare variable $at:sample-doc := doc($commons:data || "/ahiqar_sample.xml");
+declare variable $at:sample-doc := doc($commons:data || "/sample_teixml.xml");
 
 declare
-    %test:args("ahiqar_sample") %test:assertTrue
-    %test:args("ahiqar_agg") %test:assertFalse
+    %test:args("sample_teixml") %test:assertTrue
+    %test:args("sample_edition") %test:assertFalse
 function at:is-resource-xml($uri as xs:string)
 as xs:boolean {
     anno:is-resource-xml($uri)
 };
 
 declare
-    %test:args("ahiqar_sample") %test:assertFalse
-    %test:args("ahiqar_agg") %test:assertTrue
+    %test:args("sample_teixml") %test:assertFalse
+    %test:args("sample_edition") %test:assertTrue
     %test:pending
 function at:is-resource-edition($uri as xs:string)
 as xs:boolean {
@@ -31,8 +31,8 @@ as xs:boolean {
 };
 
 declare
-    %test:args("ahiqar_sample") %test:assertXPath("count($result) = 4")
-    %test:args("ahiqar_sample") %test:assertXPath("$result = '82a'")
+    %test:args("sample_teixml") %test:assertXPath("count($result) = 4")
+    %test:args("sample_teixml") %test:assertXPath("$result = '82a'")
 function at:get-pages-in-TEI($uri as xs:string)
 as xs:string+ {
     anno:get-pages-in-TEI($uri)
@@ -42,7 +42,7 @@ declare
     %test:assertTrue
 function at:are-resources-available-true()
 as xs:boolean {
-    let $resources := "ahiqar_sample"
+    let $resources := "sample_teixml"
     return
         anno:are-resources-available($resources)
 };
@@ -51,36 +51,36 @@ declare
     %test:assertFalse
 function at:are-resources-available-false()
 as xs:boolean {
-    let $resources := ("qwerty", "ahiqar_sample")
+    let $resources := ("qwerty", "sample_teixml")
     return
         anno:are-resources-available($resources)
 };
 
 declare
     %test:assertXPath("$result//@status = '404'")
-    %test:assertXPath("$result//@message = 'One of the following requested resources couldn''t be found: qwerty, ahiqar_sample'")
+    %test:assertXPath("$result//@message = 'One of the following requested resources couldn''t be found: qwerty, sample_teixml'")
 function at:get-404-header()
 as element() {
-    let $resources := ("qwerty", "ahiqar_sample")
+    let $resources := ("qwerty", "sample_teixml")
     return
        anno:get-404-header($resources)
 };
 
 
 declare
-    %test:args("ahiqar_sample") %test:assertEquals("ahiqar_agg")
-    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_collection")
-    %test:args("ahiqar_collection") %test:assertEmpty
+    %test:args("sample_teixml") %test:assertEquals("sample_edition")
+    %test:args("sample_edition") %test:assertEquals("sample_lang_aggregation")
+    %test:args("sample_main_edition") %test:assertEmpty
 function at:get-parent-aggregation($uri as xs:string)
 as xs:string? {
     anno:get-parent-aggregation($uri)
 };
 
 declare
-    %test:args("ahiqar_sample", "82a", "next") %test:assertEquals("82b")
-    %test:args("ahiqar_sample", "82b", "prev") %test:assertEquals("82a")
-    %test:args("ahiqar_sample", "83b", "next") %test:assertEmpty
-    %test:args("ahiqar_sample", "82a", "prev") %test:assertEmpty
+    %test:args("sample_teixml", "82a", "next") %test:assertEquals("82b")
+    %test:args("sample_teixml", "82b", "prev") %test:assertEquals("82a")
+    %test:args("sample_teixml", "83b", "next") %test:assertEmpty
+    %test:args("sample_teixml", "82a", "prev") %test:assertEmpty
     %test:pending
 function at:get-prev-or-next-page($documentURI as xs:string,
     $page as xs:string, 
@@ -90,7 +90,7 @@ as xs:string? {
 };
 
 declare
-    %test:args("ahiqar_sample") %test:assertEquals("Beispieldatei zum Testen")
+    %test:args("sample_teixml") %test:assertEquals("Beispieldatei zum Testen")
 function at:get-metadata-title($uri as xs:string)
 as xs:string {
     anno:get-metadata-title($uri)
@@ -105,8 +105,8 @@ function at:anno-get-bodyValue() {
 };
 
 declare
-    %test:args("ahiqar_sample", "N1.2.3.4")
-    %test:assertXPath("map:get($result, 'id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/ahiqar_sample/N1.2.3.4'")
+    %test:args("sample_teixml", "N1.2.3.4")
+    %test:assertXPath("map:get($result, 'id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/N1.2.3.4'")
     %test:assertXPath("map:get($result, 'format') = 'text/xml'")
     %test:assertXPath("map:get($result, 'language') = 'karshuni'")
 function at:get-target-information($documentURI as xs:string,
@@ -118,9 +118,9 @@ as map() {
 };
 
 declare
-    %test:args("ahiqar_collection", "ahiqar_agg", "82a", "http://localhost:8080")
-    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationCollection/ahiqar_agg/82a'")
-    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:ahiqar_agg: Beispieldatei zum Testen, page 82a'")
+    %test:args("sample_main_edition", "sample_edition", "82a", "http://localhost:8080")
+    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationCollection/sample_edition/82a'")
+    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:sample_edition: Beispieldatei zum Testen, page 82a'")
     %test:pending
 function at:make-annotationCollection-for-manifest($collection as xs:string,
     $document as xs:string,
