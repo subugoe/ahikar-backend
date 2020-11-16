@@ -19,11 +19,9 @@ declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
-import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
 import module namespace functx = "http://www.functx.com";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
-import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "tapi.xqm";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
 
 
