@@ -24,8 +24,6 @@ import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
 
-import module namespace console="http://exist-db.org/xquery/console";
-
 
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 declare variable $anno:server :=
