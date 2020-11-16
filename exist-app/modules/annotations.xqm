@@ -24,6 +24,8 @@ import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
 
+import module namespace console="http://exist-db.org/xquery/console";
+
 
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 declare variable $anno:server :=
@@ -179,7 +181,11 @@ as xs:string {
  : @param $first-entry The IRI of the first Annotation Page that is included within the Collection
  : @param $last-entry The IRI of the last Annotation Page that is included within the Collection
  :)
-declare function anno:make-annotationCollection-map($uri as xs:string, $title as xs:string, $first-entry as xs:string, $last-entry as xs:string) {
+declare function anno:make-annotationCollection-map($uri as xs:string,
+    $title as xs:string,
+    $first-entry as xs:string,
+    $last-entry as xs:string)
+as map() {
     map {
         "annotationCollection":
             map {
@@ -204,11 +210,12 @@ declare function anno:make-annotationCollection-map($uri as xs:string, $title as
  : @return A string containing the creators of the annotations as stated in the
  : TEI header of the (underlying) resource(s).
  :)
-declare function anno:get-creator($uri as xs:string) as xs:string {
+declare function anno:get-creator($uri as xs:string)
+as xs:string {
     let $xmls :=
         if (anno:is-resource-xml($uri)) then
             $uri
-        else if(anno:is-resource-edition($uri)) then
+        else if(anno:is-resource-edition($anno:uris, $uri)) then
             anno:find-in-map($anno:uris, $uri)
         else
             let $map := anno:find-in-map($anno:uris, $uri)
@@ -261,12 +268,14 @@ $document as xs:string) {
  : @return A map with all information necessary for the Annotation Collection
  :)
 declare function anno:make-annotationPage($collection as xs:string, 
-$document as xs:string, $server as xs:string) {
+    $document as xs:string,
+    $server as xs:string)
+as map() {
     let $nextPage := anno:get-prev-or-next-annotationPage-ID($collection, $document, "next")
     let $prevPage := anno:get-prev-or-next-annotationPage-ID($collection, $document, "prev")
 
     let $xmls :=
-        if(anno:is-resource-edition($document)) then
+        if(anno:is-resource-edition($anno:uris, $document)) then
             anno:find-in-map($anno:uris, $document)
         else
             anno:find-in-map($anno:uris, $document) => anno:get-all-xml-uris-for-submap()
@@ -372,6 +381,7 @@ $document as xs:string, $page as xs:string) {
  : @param $page The page within an item, i.e. a tei:pb/@n within a TEI resource
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  :)
+(: ## tested ## :)
 declare function anno:make-annotationCollection-for-manifest($collection as xs:string,
     $document as xs:string,
     $page as xs:string,
@@ -488,7 +498,9 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
  : @param $documentURI The XML's URI. Attention: This refers directly to the XML file, NOT the superordinate edition!
  : @param $page The page within an XML file, i.e. a tei:pb/@n within a TEI resource
  :)
-declare function anno:get-annotations($documentURI as xs:string, $page as xs:string) {
+declare function anno:get-annotations($documentURI as xs:string,
+    $page as xs:string)
+as map() {
     let $pageChunk := anno:get-page-fragment($documentURI, $page)
     
     let $annotation-elements := 
@@ -514,7 +526,10 @@ declare function anno:get-annotations($documentURI as xs:string, $page as xs:str
  : @param $documentURI The resource's URI. Attention: This refers to the TEI file itself!
  : @param $page The page to be returned as tei:pb/@n/string()
  :)
-declare function anno:get-page-fragment($documentURI as xs:string, $page as xs:string) {
+(: ## tested ## :)
+declare function anno:get-page-fragment($documentURI as xs:string,
+    $page as xs:string)
+as element(tei:TEI) {
     let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
     return
         tapi-html:get-page-fragment($nodeURI, $page)
@@ -529,11 +544,13 @@ declare function anno:get-page-fragment($documentURI as xs:string, $page as xs:s
  : @param $uri The resource's URI
  : @return The number of annotations that are associated with the $uri
  :)
-declare function anno:get-total-no-of-annotations($uri as xs:string) as xs:integer {
+(: ## tested ## :)
+declare function anno:get-total-no-of-annotations($uri as xs:string)
+as xs:integer {
     let $map-entry-for-uri := anno:find-in-map($anno:uris, $uri)
     
     let $xmls :=
-        if (anno:is-resource-edition($uri)) then
+        if (anno:is-resource-edition($anno:uris, $uri)) then
             $map-entry-for-uri
         else
             anno:get-all-xml-uris-for-submap($map-entry-for-uri)
@@ -557,16 +574,20 @@ declare function anno:get-total-no-of-annotations($uri as xs:string) as xs:integ
  : @param $map A part of the $anno:uris map
  : @return All values of the lowest $map level
  :)
-declare function anno:get-all-xml-uris-for-submap($map as map()) {
+(: ## tested ## :)
+declare function anno:get-all-xml-uris-for-submap($map as map())
+as xs:string* {
     let $get-values := function($key, $value){$value}
     
     for $value in map:for-each($map, $get-values) return
         if ($value instance of map()) then
              anno:get-all-xml-uris-for-submap($value)
-        else if ($value = "3rrnp") then
-            ()
-        else
+        (: this condition ensures that TEI/XMLs that have been deleted or aren't
+        available for some other reason are not considered :)
+        else if(doc-available($commons:data || $value || ".xml")) then
             $value
+        else
+            ()
 };
 
 
@@ -657,7 +678,10 @@ declare function anno:get-404-header($resources as xs:string+) {
  : @param $key The key whose value is to be returned
  : @return The value of the given $key
  :)
-declare function anno:find-in-map($map as map(), $key as xs:string) as item()? {
+(: ## tested ## :)
+declare function anno:find-in-map($map as map(),
+    $key as xs:string)
+as item()? {
     let $get-values := function($key, $value){$value}
     return
         if (map:keys($map) = $key) then
@@ -712,9 +736,12 @@ $document as xs:string, $type as xs:string) {
             default return ()
 };
 
-
+(: ## tested ## :)
 declare function anno:get-prev-or-next-annotationPage-url($collection as xs:string,
-$document as xs:string?, $page as xs:string?, $server as xs:string) {
+    $document as xs:string?,
+    $page as xs:string?,
+    $server as xs:string)
+as xs:string? {
     let $pageSuffix :=
         if ($page) then
             "/" || $page
@@ -746,8 +773,11 @@ declare function anno:is-resource-xml($uri as xs:string) as xs:boolean {
  : @param $uri The resource's URI
  : @return true() if resources stated by $uri is an edition object
  :)
-declare function anno:is-resource-edition($uri as xs:string) as xs:boolean {
-    not(anno:find-in-map($anno:uris, $uri) instance of map())
+(: ## tested ää :)
+declare function anno:is-resource-edition($map as map(),
+    $uri as xs:string)
+as xs:boolean {
+    not(anno:find-in-map($map, $uri) instance of map())
 };
 
 (:~
@@ -766,15 +796,15 @@ declare function anno:get-pages-in-TEI($documentURI as xs:string) as xs:string+ 
  : Returns the previous or next @n of a tei:pb seen from a given tei:pb which is
  : denoted in $page.
  : 
- : @param $documentURI The current resource's URI
+ : @param $manifest-uri The current manifest's URI
  : @param $page The @n attribute of the current page break/tei:pb
  : @param $type "prev" for the previous, "next" for the next page break
  :)
-declare function anno:get-prev-or-next-page($documentURI as xs:string,
+declare function anno:get-prev-or-next-page($manifest-uri as xs:string,
     $page as xs:string, 
     $type as xs:string)
 as xs:string? {
-    let $tei := anno:find-in-map($anno:uris, $documentURI)
+    let $tei := anno:find-in-map($anno:uris, $manifest-uri)
     let $pages := anno:get-pages-in-TEI($tei)
     let $no-of-pages := count($pages)
     let $current-position := index-of($pages, $page)
@@ -817,7 +847,7 @@ as xs:string* {
             let $edition := anno:get-parent-aggregation($uri)
             return
                 anno:get-prev-xml-uris($edition)
-    else if(anno:is-resource-edition($uri)) then
+    else if(anno:is-resource-edition($anno-uris, $uri)) then
         anno:get-prev-xml-uris($uri)
     else
         ()

@@ -22,15 +22,6 @@ as xs:boolean {
 };
 
 declare
-    %test:args("sample_teixml") %test:assertFalse
-    %test:args("sample_edition") %test:assertTrue
-    %test:pending
-function at:is-resource-edition($uri as xs:string)
-as xs:boolean {
-    anno:is-resource-edition($uri)
-};
-
-declare
     %test:args("sample_teixml") %test:assertXPath("count($result) = 4")
     %test:args("sample_teixml") %test:assertXPath("$result = '82a'")
 function at:get-pages-in-TEI($uri as xs:string)
@@ -118,16 +109,108 @@ as map() {
 };
 
 declare
-    %test:args("sample_main_edition", "sample_edition", "82a", "http://localhost:8080")
+    %test:args("sample_lang_aggregation", "sample_edition", "82a", "http://localhost:8080")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationCollection/sample_edition/82a'")
-    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:sample_edition: Beispieldatei zum Testen, page 82a'")
-    %test:pending
+    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('type') = 'AnnotationCollection'")
 function at:make-annotationCollection-for-manifest($collection as xs:string,
     $document as xs:string,
     $page as xs:string,
     $server as xs:string)
 as map() {
     anno:make-annotationCollection-for-manifest($collection, $document, $page, $server)
+};
+
+declare
+    %test:args("sample_teixml", "82a") %test:assertXPath("$result//* = 'حقًا'")
+function at:get-page-fragment($documentURI as xs:string,
+    $page as xs:string)
+as element(tei:TEI) {
+    anno:get-page-fragment($documentURI, $page)
+};
+
+declare
+    %test:args("sample_main_edition") %test:assertEquals("65")
+    %test:args("sample_lang_aggregation") %test:assertEquals("65")
+function at:get-total-no-of-annotations($uri as xs:string) {
+    anno:get-total-no-of-annotations($uri)
+};
+
+declare
+    %test:assertEquals("sample_teixml")
+function at:get-all-xml-uris-for-submap()
+as xs:string* {
+    let $map :=
+         map {
+            "sample_lang_aggregation":
+            map {
+                "sample_edition": "sample_teixml",
+                "faux_edition": "faux_teixml"
+            }
+         }
+    return
+        anno:get-all-xml-uris-for-submap($map)
+};
+
+
+declare
+    %test:args("sample_edition") %test:assertEquals("sample_teixml")
+function at:find-in-map($key as xs:string)
+as item()? {
+    let $map :=
+        map {
+                "sample_lang_aggregation":
+                map {
+                    "sample_edition": "sample_teixml",
+                    "faux_edition": "faux_teixml"
+                }
+             }  
+    
+    return
+        anno:find-in-map($map, $key)
+};
+
+
+declare
+    %test:args("sample_edition", "11")
+    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/11/annotationPage.json")
+    %test:args("sample_edition", "")
+    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/annotationPage.json")
+    %test:args("", "")
+    %test:assertEmpty
+function at:get-prev-or-next-annotationPage-url($document as xs:string?,
+    $page as xs:string?)
+as xs:string? {
+    let $collection := "sample_lang_aggregation"
+    let $server := "http://localhost:8080"
+    return
+        anno:get-prev-or-next-annotationPage-url($collection, $document, $page, $server)
+};
+
+declare
+    %test:args("sample_edition") %test:assertTrue
+    %test:args("sample_lang_aggregation") %test:assertFalse
+function at:is-resource-edition($uri as xs:string) {
+    let $map := 
+        map {
+                "sample_lang_aggregation":
+                map {
+                    "sample_edition": "sample_teixml",
+                    "faux_edition": "faux_teixml"
+                }
+             }  
+    return
+        anno:is-resource-edition($map, $uri)
+};
+
+declare
+    %test:args("sample_edition", "82a", "next") %test:assertEquals("82b")
+    %test:args("sample_edition", "82a", "prev") %test:assertEmpty
+    %test:args("sample_edition", "82b", "prev") %test:assertEquals("82a")
+function at:get-prev-or-next-page($manifest-uri as xs:string,
+    $page as xs:string, 
+    $type as xs:string)
+as xs:string? {
+    anno:get-prev-or-next-page($manifest-uri, $page, $type)
 };
 
 (:declare:)
