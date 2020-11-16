@@ -43,19 +43,7 @@ as item()? {
     then error(QName("error://1", "deploy"), "Deploy token incorrect.")
   else
     let $sysout := util:log-system-out("TextAPI and package installation done. running tests…")
-    let $tests := 
-        (
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/commons-tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests")),
-            test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests"))
-        )
+    let $tests := testtrigger:execute-tests()
     
     let $fileSeparator := util:system-property("file.separator")
     let $system-path := system:get-exist-home() || $fileSeparator
@@ -67,4 +55,50 @@ as item()? {
     
     return
         util:log-system-out("Tests complete. See " || $filename)
+};
+
+declare function testtrigger:execute-tests()
+as element()+ {
+    let $test-results :=
+    (
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/commons-tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests"))
+    )
+
+    for $result in $test-results
+    order by $result//@package return
+        if ($result//@failures = 0
+        and $result//@errors = 0) then
+            <OK name="{local:get-human-readable-pkg-name($result//@package)}" package="{$result//@package}"/>
+        else
+            <PROBLEM name="{local:get-human-readable-pkg-name($result//@package)}"
+                package="{$result//@package}"
+                errors="{$result//@errors}"
+                failures="{$result//@failures}">
+                {$result//testcase[child::*[self::failure or self::error]]}
+            </PROBLEM>
+};
+
+declare function local:get-human-readable-pkg-name($package as xs:string)
+as xs:string? {
+    switch ($package)
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" return "TextAPI general"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests" return "TXT creation"
+        case "http://ahikar.sub.uni-goettingen.de/ns/commons-tests" return "Commons"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests" return "TextAPI Collections"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" return "TextAPI Manifests"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests" return "TextAPI Items"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests" return "HTML creation"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" return "TEI2HTML transformation"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" return "TEI2HTML text processing"
+        case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"
+        default return ()
 };
