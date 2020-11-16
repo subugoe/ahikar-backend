@@ -38,7 +38,6 @@ declare variable $anno-rest:server :=
  : @param $collection The URI of the collection, e.g. '3r132'
  : @return An Annotation Collecion for the given collection
  :)
-(: ## tested ## :)
 declare
     %rest:GET
     %rest:HEAD
@@ -62,7 +61,6 @@ function anno-rest:collection-rest($collection as xs:string) {
  : @param $collection The URI of the Collection Object
  : @param $document The URI of an aggregated Collection or Manifest Object
  :)
-(: ## tested ## :)
 declare
     %rest:GET
     %rest:HEAD
@@ -93,7 +91,6 @@ $document as xs:string) {
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @return An Annotation Collecion for the given Collection or Manifest Object
  :)
-(: ## tested ## :)
 declare
     %rest:GET
     %rest:HEAD
@@ -184,7 +181,6 @@ as item()+ {
  : @param $resources The URIs of resource's requested in an API call
  : @return The response header
  :)
-(:  ## tested ## :)
 declare function anno-rest:get-404-header($resources as xs:string+)
 as element() {
     <rest:response>
