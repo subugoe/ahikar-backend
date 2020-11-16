@@ -8,7 +8,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
 import module namespace map="http://www.w3.org/2005/xpath-functions/map";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
-import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/annotations.xqm";
+import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/AnnotationAPI/annotations.xqm";
 
 declare variable $at:sample-doc := doc($commons:data || "/sample_teixml.xml");
 
