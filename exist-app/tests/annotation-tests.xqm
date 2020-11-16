@@ -7,7 +7,6 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
 import module namespace map="http://www.w3.org/2005/xpath-functions/map";
-import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "test-commons.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/annotations.xqm";
 
@@ -89,7 +88,8 @@ as xs:string {
 
 declare
     %test:assertEquals("A place's name.")
-function at:anno-get-bodyValue() {
+function at:anno-get-bodyValue()
+as xs:string {
     let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
     return
         anno:get-bodyValue($annotation)
@@ -331,4 +331,73 @@ function anno:get-prev-or-next-annotationPage-ID($collection as xs:string,
     $type as xs:string)
 as xs:string? {
     anno:get-prev-or-next-annotationPage-ID($collection, $document, $type)
+};
+
+declare
+    %test:args("sample_lang_aggregation", "sample_edition", "84a", "http://localhost:8080")
+    %test:assertEquals("http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationPage/sample_lang_aggregation/sample_edition-84a")
+function at:make-annotationPage-for-manifest-id($collection as xs:string,
+    $document as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as xs:string {
+    let $result := anno:make-annotationPage-for-manifest($collection, $document, $page, $server)
+    return
+        map:get($result, "annotationPage")
+        => map:get("id")
+};
+
+
+declare
+    %test:args("sample_lang_aggregation", "sample_edition", "84a", "http://localhost:8080")
+    %test:assertEquals("http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationCollection/sample_edition")
+function at:make-annotationPage-for-manifest-part-of($collection as xs:string,
+    $document as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as xs:string {
+    let $result := anno:make-annotationPage-for-manifest($collection, $document, $page, $server)
+    return
+        map:get($result, "annotationPage")
+        => map:get("partOf")
+        => map:get("id")
+};
+
+declare
+    %test:args("sample_lang_aggregation", "http://localhost:8080")
+    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/annotationPage.json")
+function at:get-information-for-collection-object($collectionURI as xs:string,
+    $server as xs:string)
+as xs:string {
+    let $result := anno:get-information-for-collection-object($collectionURI, $server)
+    return
+        map:get($result, "annotationCollection")
+        => map:get("first")
+};
+
+declare
+    %test:args("sample_lang_aggregation", "sample_edition", "http://localhost:8080")
+    %test:assertXPath("$result instance of map()")
+    %test:args("sample_lang_aggregation", "", "http://localhost:8080")
+    %test:assertXPath("$result instance of map()")
+function at:make-annotationCollection($collection as xs:string,
+    $document as xs:string?,
+    $server as xs:string)
+as map() {
+    anno:make-annotationCollection($collection, $document, $server)
+};
+
+declare
+    %test:args("sample_teixml") %test:assertEmpty
+function at:get-prev-xml-uris($uri as xs:string)
+as xs:string* {
+    anno:get-prev-xml-uris($uri)
+};
+
+declare
+    %test:args("sample_teixml") %test:assertEmpty
+    %test:args("sample_edition") %test:assertEmpty
+function at:get-xmls-prev-in-collection($uri as xs:string)
+as xs:string* {
+    anno:get-xmls-prev-in-collection($uri)
 };

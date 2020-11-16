@@ -24,7 +24,6 @@ import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
 
-
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 declare variable $anno:server :=
     if(try {
@@ -108,7 +107,11 @@ function anno:collection-rest($collection as xs:string) {
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
  :)
-declare function anno:make-annotationCollection($collection as xs:string, $document as xs:string?, $server as xs:string) as map(){
+(: ## tested ## :)
+declare function anno:make-annotationCollection($collection as xs:string,
+    $document as xs:string?,
+    $server as xs:string)
+as map() {
     (: if $document is a collection then its value in $anno:uris is a map containing the aggregated manifests.
     at this point it is relevant if $document is actually a manifest or a collection.
     we have to create different paths containing $first and $last for the two of them,
@@ -146,7 +149,10 @@ declare function anno:make-annotationCollection($collection as xs:string, $docum
  : @param The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
  :)
-declare function anno:get-information-for-collection-object($collectionURI as xs:string, $server as xs:string) as map() {
+(: ## tested ## :)
+declare function anno:get-information-for-collection-object($collectionURI as xs:string,
+    $server as xs:string)
+as map() {
     let $child-keys := anno:find-in-map($anno:uris, $collectionURI) => map:keys()
     let $first := $child-keys[1]
     let $last := $child-keys[last()]
@@ -429,7 +435,9 @@ declare
     %rest:path("/api/annotations/ahikar/{$collection}/{$document}/{$page}/annotationPage.json")
     %output:method("json")
 function anno:annotationPage-for-manifest-rest($collection as xs:string, 
-$document as xs:string, $page as xs:string) {
+    $document as xs:string,
+    $page as xs:string)
+as element()+ {
     if (anno:are-resources-available(($collection, $document))) then
         ($commons:responseHeader200,
         anno:make-annotationPage-for-manifest($collection, $document, $page, $anno:server))
@@ -453,8 +461,12 @@ $document as xs:string, $page as xs:string) {
  : @param $page The page within an item, i.e. a tei:pb/@n within a TEI resource
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  :)
+(: ## tested ## :)
 declare function anno:make-annotationPage-for-manifest($collection as xs:string,
-$document as xs:string, $page as xs:string, $server as xs:string) {
+    $document as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as map() {
     let $docTitle := anno:get-metadata-title($document)
     let $xml := anno:find-in-map($anno:uris, $document)
     let $prevPage := anno:get-prev-or-next-page($document, $page, "prev")
@@ -834,6 +846,7 @@ as xs:string? {
  : @param $uri The URI of the current resource. This may refer to a edition or TEI/XML.
  : @return A list of URIs that appear before the given resource in a collection 
  :)
+(: ## tested ## :)
 declare function anno:get-xmls-prev-in-collection($uri as xs:string)
 as xs:string* {
     if (anno:is-resource-xml($uri)) then
@@ -860,6 +873,7 @@ as xs:string* {
  : @param $uri The URI of the current edition
  : @return A list of all URIs of TEI resources that appear before the given edition in a collection 
  :)
+(: ## tested ## :)
 declare function anno:get-prev-xml-uris($uri as xs:string)
 as xs:string* {
     let $collection := anno:get-parent-aggregation($uri)
@@ -868,7 +882,9 @@ as xs:string* {
     let $tgURI := "textgrid:" || $uri
     let $tgURINode := $collection//@rdf:resource[./string() = $tgURI]
     let $prevEditions := $collection//@rdf:resource[. << $tgURINode]
-    let $prevEditionsURIs := for $edition in $prevEditions return replace($edition, "textgrid:", "")
+    let $prevEditionsURIs := 
+        for $edition in $prevEditions return
+            replace($edition, "textgrid:", "")
     
     for $edition in $prevEditionsURIs return
         anno:find-in-map($anno:uris, $edition)
