@@ -11,6 +11,8 @@ import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/annotations.xqm";
 
+import module namespace console="http://exist-db.org/xquery/console";
+
 declare variable $at:sample-doc := doc($commons:data || "/sample_teixml.xml");
 
 declare
@@ -239,6 +241,7 @@ as map() {
 declare
     %test:args("sample_lang_aggregation", "sample_edition", "http://localhost:8080")
     %test:assertXPath("map:get($result, 'annotationPage') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationPage/sample_lang_aggregation/sample_edition'")
+    %test:pending
 function at:make-annotationPage($collection as xs:string, 
     $manifest as xs:string,
     $server as xs:string)
@@ -252,4 +255,82 @@ function at:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()+ {
     anno:get-annotations($teixml-uri, $page)
+};
+
+declare
+    %test:args("sample_teixml", "84a")
+    %test:assertXPath("$result = 'A person''s name.'")
+function at:get-annotations-detailed-bodyValue($teixml-uri as xs:string,
+    $page as xs:string)
+as xs:string {
+    let $result-map := anno:get-annotations($teixml-uri, $page)
+    let $bodyValue := map:get($result-map, "bodyValue")
+    return
+        $bodyValue
+};
+
+declare
+    %test:args("sample_teixml", "84a")
+    %test:assertXPath("$result = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/annotation-N4.4.2.4.4.354.2'")
+function at:get-annotations-detailed-id($teixml-uri as xs:string,
+    $page as xs:string)
+as xs:string {
+    let $result-map := anno:get-annotations($teixml-uri, $page)
+    let $id := map:get($result-map, "id")
+    return
+        $id
+};
+
+declare
+    %test:args("sample_teixml", "84a")
+    %test:assertXPath("$result instance of map()")
+function at:get-annotations-detailed-target($teixml-uri as xs:string,
+    $page as xs:string)
+as map() {
+    let $result-map := anno:get-annotations($teixml-uri, $page)
+    let $target := map:get($result-map, "target")
+    return
+        $target
+};
+
+declare
+    %test:args("sample_edition", "82a") %test:assertEquals("0")
+    %test:args("sample_edition", "82b") %test:assertEquals("11")
+function at:determine-start-index-for-page($uri as xs:string,
+    $page as xs:string)
+as xs:integer {
+    anno:determine-start-index-for-page($uri, $page)
+};
+
+declare
+    %test:args("sample_lang_aggregation") %test:assertEquals("0")
+    %test:args("sample_edition") %test:assertEquals("0")
+    %test:args("sample_teixml") %test:assertEquals("0")
+function at:determine-start-index($uri as xs:string)
+as xs:integer {
+    anno:determine-start-index($uri)
+};
+
+
+declare
+    %test:args("next", "1r") %test:assertEquals("1v")
+    %test:args("prev", "1r") %test:assertEmpty
+    %test:args("next", "2r") %test:assertEmpty
+    %test:args("prev", "2r") %test:assertEquals("1ab")
+function at:get-prev-or-next($type as xs:string,
+    $searched-for as xs:string)
+as xs:string? {
+    let $entities := ("1r", "1v", "1ab", "2r")
+    return
+        anno:get-prev-or-next($entities, $searched-for, $type)
+};
+
+declare
+    %test:args("sample_lang_aggregation", "sample_edition", "next") %test:assertEmpty
+    %test:args("sample_lang_aggregation", "sample_edition", "prev") %test:assertEmpty
+function anno:get-prev-or-next-annotationPage-ID($collection as xs:string,
+    $document as xs:string,
+    $type as xs:string)
+as xs:string? {
+    anno:get-prev-or-next-annotationPage-ID($collection, $document, $type)
 };

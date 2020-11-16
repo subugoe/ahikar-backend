@@ -500,6 +500,7 @@ $document as xs:string, $page as xs:string, $server as xs:string) {
  : @param $teixml-uri The XML's URI.
  : @param $page The page within an XML file, i.e. a tei:pb/@n within a TEI resource
  :)
+(: ## tested ## :)
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()+ {
@@ -512,12 +513,12 @@ as map()+ {
     for $annotation in $annotation-elements return
         let $id := string( $annotation/@id ) (: get the predefined ID from the in-memory TEI with IDs :)
         return
-        map {
-            "id": $anno:ns || "/" || $teixml-uri || "/annotation-" || $id,
-            "type": "Annotation",
-            "bodyValue": anno:get-bodyValue($annotation),
-            "target": anno:get-target-information($annotation, $teixml-uri, $id)
-        }
+            map {
+                "id": $anno:ns || "/" || $teixml-uri || "/annotation-" || $id,
+                "type": "Annotation",
+                "bodyValue": anno:get-bodyValue($annotation),
+                "target": anno:get-target-information($annotation, $teixml-uri, $id)
+            }
 };
 
 
@@ -713,29 +714,37 @@ as item()? {
  : @param $type "prev" for getting the previous page, "next" for getting the next page
  : @return 
  :)
+(: ## tested ## :)
 declare function anno:get-prev-or-next-annotationPage-ID($collection as xs:string,
-$document as xs:string, $type as xs:string) {
+    $document as xs:string,
+    $type as xs:string)
+as xs:string? {
     let $collection-keys := anno:find-in-map($anno:uris, $collection) => map:keys()
-    let $no-of-keys := count($collection-keys)
-    let $position := index-of($collection-keys, $document)
+    return
+        anno:get-prev-or-next($collection-keys, $document, $type)
+};
+
+(: ## tested ## :)
+declare function anno:get-prev-or-next($entities as item()+,
+    $searched-for as xs:string,
+    $type as xs:string)
+as xs:string? {
+    let $no-of-entities := count($entities)
+    let $position-of-searched-for := index-of($entities, $searched-for)
     let $new-position := 
         if ($type = "prev") then
-            $position - 1
+            $position-of-searched-for - 1
         else
-            $position + 1
+            $position-of-searched-for + 1
     return
-        switch ($type)
-            case "prev" return
-                if ($new-position le $no-of-keys) then
-                    $collection-keys[$new-position]
-                else
-                    ()
-            case "next" return
-                if ($new-position le $no-of-keys) then
-                    $collection-keys[$new-position]
-                else
-                    ()
-            default return ()
+        if ($new-position le $no-of-entities
+        and ($type = "prev"
+        and $new-position != 0
+        or
+        $type = "next")) then
+            $entities[$new-position]
+        else
+            ()
 };
 
 (: ## tested ## :)
@@ -809,22 +818,8 @@ declare function anno:get-prev-or-next-page($manifest-uri as xs:string,
 as xs:string? {
     let $tei := anno:find-in-map($anno:uris, $manifest-uri)
     let $pages := anno:get-pages-in-TEI($tei)
-    let $no-of-pages := count($pages)
-    let $current-position := index-of($pages, $page)
-    let $new-position :=
-        if ($type = "next") then
-            $current-position + 1
-        else
-            $current-position - 1
     return
-        if ($new-position le $no-of-pages
-        and ($type = "prev"
-        and $new-position != 0
-        or
-        $type = "next")) then
-            $pages[$new-position]
-        else
-            ()
+        anno:get-prev-or-next($pages, $page, $type)
 };
 
 
@@ -865,7 +860,8 @@ as xs:string* {
  : @param $uri The URI of the current edition
  : @return A list of all URIs of TEI resources that appear before the given edition in a collection 
  :)
-declare function anno:get-prev-xml-uris($uri as xs:string) as xs:string* {
+declare function anno:get-prev-xml-uris($uri as xs:string)
+as xs:string* {
     let $collection := anno:get-parent-aggregation($uri)
     let $collection := commons:get-document($collection, "agg")
     
@@ -909,7 +905,9 @@ as xs:string? {
  : an edition.
  : @return The relative position of the first annotation
  :)
-declare function anno:determine-start-index($uri as xs:string) as xs:integer {
+(: ## tested ## :)
+declare function anno:determine-start-index($uri as xs:string)
+as xs:integer {
     let $resourceType := commons:get-document($uri, "meta")//tgmd:format
     return
         if ($resourceType = "text/tg.aggregation+xml") then
@@ -946,18 +944,20 @@ declare function anno:determine-start-index($uri as xs:string) as xs:integer {
  : XML file, and this function returns the start index for a page in a TEI/XML.
  : 
  : @see https://www.w3.org/TR/annotation-model/#annotation-page
- : @param $uri The URI of the given resource. This may refers to an edition.
+ : @param $uri The URI of the given resource. This may refer to an edition.
  : @param $page The @n attribute of the current tei:pb
  : @return The relative position of the first annotation
  :)
+(: ## tested ## :)
 declare function anno:determine-start-index-for-page($uri as xs:string,
-$page as xs:string) as xs:integer {
+    $page as xs:string)
+as xs:integer {
     let $xml := anno:find-in-map($anno:uris, $uri)
     let $doc := commons:get-document($xml, "data")
     let $currentPb := $doc//tei:pb[@n = $page and @facs]
     let $noOfAnnotationsPerElement :=
         for $name in $anno:annotationElements return
-            count($doc//tei:text//*[name(.) = $name][. << $currentPb])
+            count($doc//*[name(.) = $name][.[ancestor::tei:text[1] = $currentPb/ancestor::tei:text[1]] << $currentPb])
     return
         sum($noOfAnnotationsPerElement)
 };
