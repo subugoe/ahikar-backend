@@ -17,6 +17,21 @@ import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-te
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "tei2html-textprocessing-tests.xqm";
 import module namespace at="http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" at "../tests/annotation-tests.xqm";
 
+declare function local:get-human-readable-pkg-name($package as xs:string)
+as xs:string? {
+    switch ($package)
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" return "TextAPI general"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests" return "TXT creation"
+        case "http://ahikar.sub.uni-goettingen.de/ns/commons-tests" return "Commons"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests" return "TextAPI Collections"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" return "TextAPI Manifests"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests" return "TextAPI Items"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests" return "HTML creation"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" return "TEI2HTML transformation"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" return "TEI2HTML text processing"
+        case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"
+        default return ()
+};
 
 let $test-results :=
     (
@@ -32,9 +47,16 @@ let $test-results :=
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests"))
     )
 
-for $result in $test-results return
+for $result in $test-results
+order by $result//@package return
     if ($result//@failures = 0
     and $result//@errors = 0) then
-        "Everything okay: " || $result//@package
+        <OK name="{local:get-human-readable-pkg-name($result//@package)}" package="{$result//@package}"/>
     else
-        $result
+        <PROBLEM name="{local:get-human-readable-pkg-name($result//@package)}"
+            package="{$result//@package}"
+            errors="{$result//@errors}"
+            failures="{$result//@failures}">
+            {$result//testcase[child::*[self::failure or self::error]]}
+        </PROBLEM>
+        
