@@ -1,0 +1,67 @@
+# Templates
+
+.job_definition: &job_definition
+  image: docker.gitlab.gwdg.de/mrodzis/test
+  stage: api_test
+
+.check_HTTP_status: &check_HTTP_status
+  - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+  - echo "Current HTTP status is $status."
+  - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
+
+
+# TextAPI
+
+test_api_status-test:
+  <<: *job_definition
+  except:
+    - main
+    - tags
+    - develop
+  script:
+    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - *check_HTTP_status
+
+test_api_status-develop:
+  <<: *job_definition
+  only:
+    - develop
+  script: 
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - *check_HTTP_status
+
+test_api_status-main:
+  <<: *job_definition
+  only:
+    - main
+  script: 
+    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - *check_HTTP_status
+  retry: 2
+
+# AnnotationAPI
+
+# API for ZIPs
+
+full_plain_text_api_status-test:
+  <<: *job_definition
+  except:
+    - main
+    - tags
+    - develop
+  script:
+    - header=$(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
+
+full_plain_text_api_status-develop:
+  <<: *job_definition
+  only:
+    - develop
+  script:
+    - header=$(curl --head --silent https://ahikar-dev.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
+
+full_plain_text_api_status-main:
+  <<: *job_definition
+  only:
+    - main
+  script:
+    - header=$(curl --head --silent https://ahikar.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
