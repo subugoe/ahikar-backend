@@ -1,13 +1,5 @@
 #!/bin/bash
 
-failures=$(xmllint --xpath '/tests/testsuites/testsuite/@failures' exist-app/test/ahikar-test-results.xml | egrep -o "[0-9]+")
-errors=$(xmllint --xpath '/tests/testsuites/testsuite/@errors' exist-app/test/ahikar-test-results.xml | egrep -o "[0-9]+")
+PROBLEMS=$(xmllint --xpath 'count(/tests/PROBLEM)' exist-app/test/ahikar-test-results.xml)
 
-problem_sum=0
-
-for FAILURE in $failures $errors
-do
-    let problem_sum+=$FAILURE
-done
-
-echo $problem_sum
+echo $PROBLEMS
