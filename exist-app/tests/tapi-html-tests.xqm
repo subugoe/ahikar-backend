@@ -9,48 +9,12 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "../modules/tapi-html.xqm";
 
-
-declare
-    %test:assertXPath("$result//@id = 'N4'")
-function thtmlt:add-IDs()
-as node()+ {
-    let $manifest := doc($commons:data || "sample_teixml.xml")/*
-    return
-        tapi-html:add-IDs($manifest)
-};
-
-
-declare
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result[local-name(.) = 'pb']")
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result/@facs = 'textgrid:3r1p0'")
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result/@n = '82b'")
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "84a") %test:assertXPath("$result[local-name(.) = 'ab']")
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "84a") %test:assertXPath("matches($result, 'ܢܕܢ')")
-function thtmlt:get-end-node($tei-xml-base-uri as xs:string,
-    $page as xs:string)
-as item()+ {
-    let $node := doc($tei-xml-base-uri)/*
-    let $start-node := $node//tei:pb[@n = $page and @facs]
-    return
-        tapi-html:get-end-node($start-node)
-};
-
-
-declare
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result//*[local-name(.) = 'add'][@place = 'margin'] = 'حقًا'")
-function thtmlt:get-page-fragment($tei-xml-base-uri as xs:string,
-    $page as xs:string)
-as element() {
-    tapi-html:get-page-fragment($tei-xml-base-uri, $page)
-};
-    
-                        
 declare
     %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result//text()[matches(., 'حقًا')]")
 function thtmlt:transform-fragment($tei-xml-base-uri as xs:string,
     $page as xs:string)
 as element(xhtml:div) {
-    let $fragment := tapi-html:get-page-fragment($tei-xml-base-uri, $page)
+    let $fragment := commons:get-page-fragment($tei-xml-base-uri, $page)
     return
         tapi-html:get-html-from-fragment($fragment)
 };

@@ -10,6 +10,7 @@ import module namespace map="http://www.w3.org/2005/xpath-functions/map";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
 declare variable $ct:restxq := "http://0.0.0.0:8080/exist/restxq/";
+declare variable $ct:base-uri := "/db/apps/sade/textgrid/data/sample_teixml.xml";
 
 declare
     %test:args("sample_edition") %test:assertEquals("sample_teixml")
@@ -44,4 +45,36 @@ declare
 function ct:get-available-aggregates($uri as xs:string)
 as xs:string+ {
     commons:get-available-aggregates($uri)
+};
+
+declare
+    %test:assertXPath("$result//@id = 'N4'")
+function ct:add-IDs()
+as node()+ {
+    let $manifest := doc($commons:data || "sample_teixml.xml")/*
+    return
+        commons:add-IDs($manifest)
+};
+
+
+declare
+    %test:args("82a") %test:assertXPath("$result[local-name(.) = 'pb']")
+    %test:args("82a") %test:assertXPath("$result/@facs = 'textgrid:3r1p0'")
+    %test:args("82a") %test:assertXPath("$result/@n = '82b'")
+    %test:args("84a") %test:assertXPath("$result[local-name(.) = 'ab']")
+    %test:args("84a") %test:assertXPath("matches($result, 'ܢܕܢ')")
+function ct:get-end-node($page as xs:string)
+as item()+ {
+    let $node := doc($ct:base-uri)/*
+    let $start-node := $node//tei:pb[@n = $page and @facs]
+    return
+        commons:get-end-node($start-node)
+};
+
+
+declare
+    %test:args("82a") %test:assertXPath("$result//*[local-name(.) = 'add'][@place = 'margin'] = 'حقًا'")
+function ct:get-page-fragment($page as xs:string)
+as element() {
+    commons:get-page-fragment($ct:base-uri, $page)
 };

@@ -20,7 +20,6 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
 import module namespace functx = "http://www.functx.com";
-import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "../tapi-html.xqm";
 
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
@@ -381,7 +380,7 @@ declare function anno:get-page-fragment($documentURI as xs:string,
 as element(tei:TEI) {
     let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
     return
-        tapi-html:get-page-fragment($nodeURI, $page)
+        commons:get-page-fragment($nodeURI, $page)
 };
 
 
