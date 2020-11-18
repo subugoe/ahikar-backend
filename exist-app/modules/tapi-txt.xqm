@@ -32,13 +32,10 @@ declare function tapi-txt:main()
 as xs:string+ {
     tapi-txt:create-txt-collection-if-not-available(),
     for $text in tapi-txt:get-transcriptions-and-transliterations() return
-        for $milestone-type in tapi-txt:get-milestone-types-per-text($text) return
+        for $milestone-type in $tapi-txt:milestone-types return
             let $relevant-text := tapi-txt:get-relevant-text($text, $milestone-type)
             return
-                if (matches($relevant-text, "\w")) then
-                    xmldb:store($tapi-txt:txt, tapi-txt:make-file-name($text, $milestone-type), $relevant-text, "text/plain")
-                else
-                    ()
+                xmldb:store($tapi-txt:txt, tapi-txt:make-file-name($text, $milestone-type), $relevant-text, "text/plain")
 };
 
 declare function tapi-txt:get-milestone-types-per-text($text as element(tei:text))
@@ -135,28 +132,38 @@ declare function tapi-txt:get-relevant-text($text as element(tei:text),
     $milestone-type as xs:string)
 as xs:string {
     let $chunk := tapi-txt:get-chunk($text, $milestone-type)
+    (: this filler is needed where tapi-txt:get-relevant-text-from-chunks is
+    empty because a manuscript doesn't have any text in the section of $milestone-type.
+    nevertheless, we want this manuscript to be part of the collation in order
+    to quickly see that said text is missing. however, compress:zip does not
+    allow for empty files, so we insert at least a white space in the file. :)
+    let $filler := " "
     return
-        tapi-txt:get-relevant-text-from-chunks($chunk)
+        $filler || tapi-txt:get-relevant-text-from-chunks($chunk)
 };
 
+(:~
+ : this function returns an empty tei:TEI element if the narrative section
+ : searched for via $milestone-type does not exist in a manuscript. 
+ :)
 declare function tapi-txt:get-chunk($text as element(tei:text),
     $milestone-type as xs:string)
 as element(tei:TEI) {
     let $root := $text/root()
-    (: the positional predicate must only be provided as long as there are 
-    several milestones of the same unit in a text.
-    as soon as we have found a solution for this, this predicate should be
-    removed. :)
-    let $milestone := $text//tei:milestone[@unit = $milestone-type][1]
-    let $end-of-chunk := tapi-txt:get-end-of-chunk($milestone)
+    let $milestone := $text//tei:milestone[@unit = $milestone-type]
     return
-        fragment:get-fragment-from-doc(
-            $root,
-            $milestone,
-            $end-of-chunk,
-            false(),
-            true(),
-            (""))
+        if (exists($milestone)) then
+            let $end-of-chunk := tapi-txt:get-end-of-chunk($milestone)
+            return
+                fragment:get-fragment-from-doc(
+                    $root,
+                    $milestone,
+                    $end-of-chunk,
+                    false(),
+                    true(),
+                    (""))
+        else
+            element {QName("http://www.tei-c.org/ns/1.0", "TEI")} {text{" "}}
 };
 
 declare function tapi-txt:get-end-of-chunk($milestone as element(tei:milestone))

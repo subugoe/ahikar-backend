@@ -40,9 +40,19 @@ as element(tei:milestone)? {
 declare
     %test:assertExists
     %test:assertXPath("$result//*[local-name(.) = 'ab']")
-function ttt:get-chunk()
+function ttt:get-chunk-successs()
 as element(tei:TEI) {
     let $milestone-type := "first_narrative_section"
+    return
+        tapi-txt:get-chunk($ttt:sample-transliteration, $milestone-type)
+};
+
+declare
+    %test:assertExists
+    %test:assertXPath("not($result//*)")
+function ttt:get-chunk-fail()
+as element(tei:TEI) {
+    let $milestone-type := "third_narrative_section"
     return
         tapi-txt:get-chunk($ttt:sample-transliteration, $milestone-type)
 };
@@ -271,9 +281,10 @@ as xs:string {
 };
 
 declare
-    %test:args("first_narrative_section") %test:assertEquals("text of the first narrative section")
-    %test:args("sayings") %test:assertEquals("some sayings")
-function ttt:get-relevant-text($milestone-type as xs:string) {
+    %test:args("first_narrative_section") %test:assertEquals(" text of the first narrative section")
+    %test:args("sayings") %test:assertEquals(" some sayings")
+function ttt:get-relevant-text($milestone-type as xs:string)
+as xs:string {
     let $TEI :=
         <TEI xmlns="http://www.tei-c.org/ns/1.0">
             <text>
