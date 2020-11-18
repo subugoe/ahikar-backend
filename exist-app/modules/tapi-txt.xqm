@@ -25,8 +25,6 @@ declare variable $tapi-txt:milestone-types :=
     "sayings",
     "second_narrative_section",
     "parables",
-    "parables_1",
-    "parables_2",
     "third_narrative_section");
 
 
