@@ -16,6 +16,7 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
+import module namespace norm="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization" at "tapi-txt-normalization.xqm";
 
 declare variable $tapi-txt:textgrid := "/db/apps/sade/textgrid";
 declare variable $tapi-txt:data := $tapi-txt:textgrid || "/data";
@@ -242,6 +243,7 @@ as xs:string {
     => replace(" @", "")
     => replace("[\p{P}\n+]", "")
     => replace("\s+", " ")
+    => norm:get-txt-without-diacritics()
 };
 
 
