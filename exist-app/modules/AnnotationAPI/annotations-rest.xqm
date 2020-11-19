@@ -25,7 +25,7 @@ declare variable $anno-rest:server :=
 } catch * {
     true()
 })
-    then doc("../expath-pkg.xml")/*/@name => replace("/$", "")
+    then $commons:expath-pkg/*/@name => replace("/$", "")
     else "http://localhost:8094/exist/restxq";
 
 (:~
