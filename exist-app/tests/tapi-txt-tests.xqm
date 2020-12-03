@@ -16,6 +16,23 @@ declare variable $ttt:sample-transcription := $ttt:sample-file//tei:text[@type =
 declare variable $ttt:kant-sample := local:open-file("kant_sample");
 declare variable $ttt:kant-transcription := $ttt:kant-sample//tei:text[@type = "transcription"];
 
+declare 
+    %test:tearDown
+function ttt:_test-teardown() {
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-first_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-sayings.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-second_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-third_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-parables.txt"),
+    
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-first_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-sayings.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-second_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-third_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-parables.txt")
+    
+};
+
 declare
     %test:args("ahiqar_sample") %test:assertExists
     %test:args("1234") %test:assertError("org.exist.xquery.XPathException")
