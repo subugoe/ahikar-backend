@@ -54,8 +54,7 @@ as xs:string? {
 
 declare function tapi-txt:get-transcriptions-and-transliterations()
 as element(tei:text)+ {
-    collection($tapi-txt:data)//tei:text[@type = ("transcription", "transliteration")]
-        [tapi-txt:has-text-milestone(.)]
+    collection($tapi-txt:data)//tei:text[@type = ("transcription", "transliteration")][tapi-txt:has-text-milestone(.)]
 };
 
 declare function tapi-txt:has-text-milestone($text as element(tei:text))
@@ -168,8 +167,8 @@ as element(tei:TEI) {
 };
 
 declare function tapi-txt:get-end-of-chunk($milestone as element(tei:milestone))
-as node() {
-    if (tapi-txt:has-following-milestone($milestone)) then
+as element() {
+    if (tapi-txt:has-following-milestone($milestone)) then 
         tapi-txt:get-next-milestone($milestone)
     else
         $milestone/ancestor::tei:text[1]/tei:body/child::*[last()]
@@ -177,12 +176,12 @@ as node() {
 
 declare function tapi-txt:has-following-milestone($milestone as element(tei:milestone))
 as xs:boolean {
-    exists($milestone/following::tei:milestone[ancestor::tei:text[1] = $milestone/ancestor::tei:text[1]])
+    exists($milestone/following::*[local-name(.) = 'milestone'][./ancestor::tei:text[1] = $milestone/ancestor::tei:text[1]])
 };
 
 declare function tapi-txt:get-next-milestone($milestone as element(tei:milestone))
 as element(tei:milestone)? {
-    $milestone/following::tei:milestone[ancestor::tei:text[1] = $milestone/ancestor::tei:text[1]][1]
+    $milestone/following::*[local-name(.) = 'milestone'][./ancestor::tei:text[1] = $milestone/ancestor::tei:text[1]][1]
 };
 
 declare function tapi-txt:get-relevant-text-from-chunks($chunks as element(tei:TEI)+)

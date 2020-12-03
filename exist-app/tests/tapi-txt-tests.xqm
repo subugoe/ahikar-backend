@@ -8,9 +8,13 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
 import module namespace tapi-txt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt" at "../modules/tapi-txt.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
+
 declare variable $ttt:sample-file := local:open-file("ahiqar_sample");
 declare variable $ttt:sample-transliteration := $ttt:sample-file//tei:text[@type = "transliteration"];
 declare variable $ttt:sample-transcription := $ttt:sample-file//tei:text[@type = "transcription"];
+
+declare variable $ttt:kant-sample := local:open-file("kant_sample");
+declare variable $ttt:kant-transcription := $ttt:kant-sample//tei:text[@type = "transcription"];
 
 declare
     %test:args("ahiqar_sample") %test:assertExists
@@ -498,9 +502,74 @@ as xs:base64Binary {
     if (xmldb:collection-available($commons:tg-collection || "/txt")) then
         tapi-txt:compress-to-zip()
     else
-        (
+        ( 
             let $prepare := tapi-txt:main()
             return
                 tapi-txt:compress-to-zip()
         )
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertEquals(" Daß alle unsere Erkenntnis mit der Erfahrung anfange daran")
+    %test:args("sayings")
+    %test:assertEquals(" Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt so entspringt sie darum doch nicht eben")
+    %test:args("second_narrative_section")
+    %test:assertEquals(" Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den")
+function ttt:check-contents($chunk-type as xs:string) {
+    let $serialize := tapi-txt:main()
+    let $filepath := "/db/apps/sade/textgrid/txt/arabic--kant_sample-transcription-" || $chunk-type || ".txt"
+    return
+        util:binary-doc($filepath)
+        => util:base64-decode()
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertXPath("$result[local-name(.) = 'milestone'][@unit = 'sayings']")
+    %test:args("sayings")
+    %test:assertXPath("$result[local-name(.) = 'milestone'][@unit = 'second_narrative_section']")
+    %test:args("second_narrative_section")
+    %test:assertXPath("$result[local-name(.) = 'ab']")
+function ttt:get-end-of-chunk-kant($type as xs:string) {
+    let $milestone := $ttt:kant-transcription//tei:milestone[@unit = $type]
+    return
+        tapi-txt:get-end-of-chunk($milestone)
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertXPath("$result//*[local-name(.) = 'ab'][count(../*[local-name(.) = 'ab']) = 1]/text() = 'Daß alle unsere Erkenntnis mit der Erfahrung anfange, daran '")
+    %test:args("sayings")
+    %test:assertXPath("$result//*[local-name(.) = 'ab'][count(../*[local-name(.) = 'ab']) = 1]/text() = 'Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt, so entspringt sie darum doch nicht eben'")
+    %test:args("second_narrative_section")
+    %test:assertXPath("$result//*[local-name(.) = 'ab'][count(../*[local-name(.) = 'ab']) = 1]/text() = 'Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den'")
+function ttt:get-chunk-kant($type as xs:string) {
+    tapi-txt:get-chunk($ttt:kant-transcription, $type)
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertEquals("Daß alle unsere Erkenntnis mit der Erfahrung anfange daran")
+    %test:args("sayings")
+    %test:assertEquals("Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt so entspringt sie darum doch nicht eben")
+    %test:args("second_narrative_section")
+    %test:assertEquals("Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den")
+function ttt:get-relevant-text-from-chunks($type as xs:string)
+as xs:string {
+    let $chunk := tapi-txt:get-chunk($ttt:kant-transcription, $type)
+    return
+        tapi-txt:get-relevant-text-from-chunks($chunk)
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertEquals(" Daß alle unsere Erkenntnis mit der Erfahrung anfange daran")
+    %test:args("sayings")
+    %test:assertEquals(" Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt so entspringt sie darum doch nicht eben")
+    %test:args("second_narrative_section")
+    %test:assertEquals(" Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den")
+function ttt:get-relevant-text($type as xs:string)
+as xs:string {
+    tapi-txt:get-relevant-text($ttt:kant-transcription, $type)
 };
