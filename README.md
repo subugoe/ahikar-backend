@@ -114,9 +114,9 @@ docker-compose --env-file docker/.env --file docker/docker-compose.yml up --deta
 
 ## Connecting the Backend with the Frontend
 
-The corresponding frontend for the Ahiwar backend is the [EMo viewer](https://gitlab.gwdg.de/subugoe/emo/Qviewer).
+The corresponding frontend for the Ahiqar backend is [Ahiqar's version of the TIDO viewer](https://gitlab.gwdg.de/subugoe/ahiqar/frontend).
 In order to connect it with the simply has to expose a REST API that complies to the specification of the [SUB's generic TextAPI](https://subugoe.pages.gwdg.de/emo/text-api/)
-The frontend takes care of the data transfer as described in the [frontend's README](https://gitlab.gwdg.de/subugoe/emo/Qviewer/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
+The frontend takes care of the data transfer as described in [TIDO's README](https://gitlab.gwdg.de/subugoe/emo/Qviewer/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
 
 ## API documentation
 
