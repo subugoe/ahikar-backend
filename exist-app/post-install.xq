@@ -71,7 +71,8 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
         "ahiqar_images.xml",
         "ahiqar_images_meta.xml",
         "ahiqar_collection.xml",
-        "ahiqar_collection_meta.xml")
+        "ahiqar_collection_meta.xml",
+        "kant_sample.xml")
     return
         ( 
             for $file in $files return

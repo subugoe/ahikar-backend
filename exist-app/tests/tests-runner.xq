@@ -15,7 +15,7 @@ import module namespace tmt="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifes
 import module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" at "tapi-tests.xqm";
 import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" at "tei2html-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "tei2html-textprocessing-tests.xqm";
-
+import module namespace ttnt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" at "tapi-txt-normalization-tests.xqm";
 
 let $test-results :=
     (
@@ -27,7 +27,8 @@ let $test-results :=
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests"))
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests"))
     )
 
 for $result in $test-results return
