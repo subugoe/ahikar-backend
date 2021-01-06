@@ -24,7 +24,7 @@ as xs:string {
 };
 
 declare
-    %test:args("ahiqar_agg", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.0,0.4,49.8,100.0")
+    %test:args("ahiqar_agg", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.03,0.48,49.83,100.00")
     %test:args("ahiqar_agg_wo_tile", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz")
 function titemt:make-facsimile-id($manifest-uri as xs:string,
     $page as xs:string)
@@ -81,7 +81,7 @@ as xs:string {
 };
 
 declare
-    %test:args("3r1nz", "ahiqar_agg", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.0,0.4,49.8,100.0")
+    %test:args("3r1nz", "ahiqar_agg", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.03,0.48,49.83,100.00")
 function titemt:make-url-for-double-page-image($facsimile-uri as xs:string,
     $manifest-uri as xs:string,
     $page as xs:string)

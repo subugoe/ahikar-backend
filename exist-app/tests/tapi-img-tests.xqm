@@ -80,7 +80,7 @@ as element() {
 };
 
 declare
-    %test:assertEquals("50.0,0.4,49.8,100.0")
+    %test:assertEquals("50.03,0.48,49.83,100.00")
 function t:get-svg-section-dimensions-as-string()
 as xs:string {
     let $manifest-uri := "ahiqar_agg"
@@ -92,7 +92,7 @@ as xs:string {
 };
 
 declare
-    %test:args("ahiqar_agg", "82a") %test:assertEquals("50.0,0.4,49.8,100.0")
+    %test:args("ahiqar_agg", "82a") %test:assertEquals("50.03,0.48,49.83,100.00")
 function t:get-relevant-image-section($manifest-uri as xs:string,
     $page-uri as xs:string)
 as xs:string {
