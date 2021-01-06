@@ -108,10 +108,10 @@ as xs:string {
 
 declare function local:truncate($number-as-string as attribute())
 as xs:string {
-    if (matches($number-as-string, "\.")) then
-        functx:get-matches($number-as-string, "\d+\.\d{1}")
-    else
-        $number-as-string/string()
+  $number-as-string
+    => substring-before("%")
+    => xs:decimal()
+    => format-number("0.00") (: will round last number; converts to string :)
 };
 
 declare function tapi-img:get-relevant-image-section($manifest-uri as xs:string,
