@@ -1,0 +1,97 @@
+
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title type="main">The Story and Proverbs of Ahiqar the Wise</title>
+                <editor>Simon Birol</editor>
+                <editor>Aly Elrefaei</editor>
+            </titleStmt>
+            <publicationStmt>
+                <authority>Georg-August Universität Göttingen, Theologische Fakultät, Seminar für Altes Testament</authority>
+            </publicationStmt>
+            <sourceDesc>
+                <msDesc>
+                    <msIdentifier>
+                        <settlement>
+                            <country>Vatican</country>
+                        </settlement>
+                        <institution>Vatican Library</institution>
+                        <idno>Borg. ar. 201</idno>
+                    </msIdentifier>
+                    <msContents>
+                        <msItem>
+                            <colophon sameAs="#xpath(//ab[@type='colophon'])"/>
+                        </msItem>
+                    </msContents>
+                    <history>
+                        <origin>
+                            <objectType>codex</objectType>
+                            <date notAfter="1900" precision="medium" notBefore="1801">19th century</date>
+                        </origin>
+                    </history>
+                </msDesc>
+                <listBibl>
+                    <bibl>Graf, GCAL I, p. 218; Delio V. Proverbio, Turcica Vaticana. Città del Vaticano (Biblioteca Apostolica Vaticana, 2010), p. 199.</bibl>
+                    <bibl>E. Tisserant, Inventaire sommaire des manuscrits arabes du fonds Borgia à la Bibliothèque Vaticane, in Miscellanea Francesco Ehrle. Scritti di storia e paleografia pubblicati sotto gli auspici di S. S. Pio XI in occasione dell'ottantesimo natalizio dell'E.mo cardinale Francesco Ehrle, V: Biblioteca ed Archivio Vaticano. Biblioteche diverse, Roma 1924, pp. 1-34 (20).</bibl>
+                </listBibl>
+            </sourceDesc>
+        </fileDesc>
+        <profileDesc>
+            <abstract>
+                <ab>the last two sections of the story including Ahikar return to Assyria and his parables are missing from the MS.</ab>
+            </abstract>
+            <textClass>
+                <keywords>
+                    <term>proverb</term>
+                    <term>prose</term>
+                </keywords>
+            </textClass>
+            <langUsage>
+                <language ident="ara" xml:base="https://iso639-3.sil.org/code/" xml:id="ara">Arabic</language>
+                <language ident="syc" xml:base="https://iso639-3.sil.org/code/" xml:id="syr">Classical Syriac</language>
+                <language ident="eng" xml:base="https://iso639-3.sil.org/code/" xml:id="eng">English</language>
+                <language ident="lat" xml:base="https://iso639-3.sil.org/code/" xml:id="lat">Latin</language>
+                <language ident="karshuni">Karshuni</language>          
+                <language ident="syc-syrj" xml:base="https://glottolog.org/resource/languoid/id/" xml:id="west2764">Western Syriac</language>
+                <language ident="syc-syrn" xml:base="https://glottolog.org/resource/languoid/id/" xml:id="east2681">Eastern Syriac</language>
+            </langUsage>
+        </profileDesc>
+        <encodingDesc>
+            <tagsDecl>
+                <rendition scheme="css" xml:id="red">color: red;</rendition>
+                <rendition scheme="free" xml:id="font">Serto Jerusalem</rendition>
+            </tagsDecl>
+        </encodingDesc>
+        <revisionDesc>
+            <listChange>
+                <change when="2019-07-04T16:49:29.094+02:00">
+                    <ab>Convertion to specified TEI by SUB Göttingen</ab>
+                </change>
+            </listChange>
+        </revisionDesc>
+    </teiHeader>
+    <text>
+        <group>
+            <text xml:lang="eng" type="translation">
+                <body>
+                    <ab/>
+                </body>
+            </text>
+            <text xml:lang="ara" type="transcription">
+                <body>
+                    <milestone unit="first_narrative_section"/>
+                    <ab>Daß alle unsere Erkenntnis mit der Erfahrung anfange, daran </ab>
+                            
+                    <milestone unit="sayings"/>
+                    <ab>Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt, so entspringt sie darum doch nicht eben</ab>
+                    
+                    
+                    <milestone unit="second_narrative_section"/>
+                    <ab>Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den</ab>                           
+                            
+                </body>
+            </text>
+        </group>
+    </text>
+</TEI>
