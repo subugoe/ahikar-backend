@@ -157,12 +157,6 @@ function tct:get-allowed-manifest-uris-sample-input() {
         tapi-coll:get-allowed-manifest-uris($collection-metadata)
 };
 
-declare
-    %test:args("ahiqar_collection") %test:assertXPath("$result[self::document-node()]")
-function tct:get-metadata-file($uri as xs:string) {
-    tapi-coll:get-metadata-file($uri)
-};
-
 
 declare
     %test:args("textgrid:1234") %test:assertEquals("1234")
@@ -182,7 +176,7 @@ function tct:make-format-type($tgmd-format as xs:string) {
 declare
     %test:assertEquals("manifest")
 function tct:get-format-type() {
-    let $metadata := tapi-coll:get-metadata-file("ahiqar_agg")
+    let $metadata := commons:get-metadata-file("ahiqar_agg")
     return
         tapi-coll:get-format-type($metadata)
 };

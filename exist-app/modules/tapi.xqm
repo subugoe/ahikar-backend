@@ -198,6 +198,37 @@ as item()+ {
     )[2] => xs:base64Binary()
 };
 
+(:~
+ : Returns an image section belonging to a given URI as defined by the $image-section
+ : paramater.
+ : This function doesn't work locally unless you have all necessary login
+ : information filled in at ahikar.env.
+ : 
+ : Since the images of the Ahikar project aren't publicly available, this
+ : function cannot be tested by unit tests.
+ :
+ : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
+ : @param $image-section Indicated the image section in percentage to be retured as defined by
+ : the IIIF Image API
+ : @return The image as binary
+ :)
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/images/{$uri}/{$image-section}")
+    %rest:produces("image/jpeg")
+    %output:method("binary")
+function tapi:endpoint-image($uri as xs:string,
+    $image-section as xs:string)
+as item()+ {
+    $commons:responseHeader200,
+    hc:send-request( 
+        <hc:request method="GET"
+        href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri};sid={environment-variable('TEXTGRID.SESSION')}/pct:{$image-section}/,2000/0/native.jpg"
+        />
+    )[2] => xs:base64Binary()
+};
+
 
 (:~
  : Endpoint to deliver a single plain text version of the

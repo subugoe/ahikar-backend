@@ -1,0 +1,14 @@
+<MetadataContainerType xmlns="http://textgrid.info/namespaces/metadata/core/2010" xmlns:ns2="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <object>
+        <generic>
+            <provided>
+                <title>Ahiqar TILE Sample</title>
+                <format>text/linkeditorlinkedfile</format>
+            </provided>
+            <generated>
+                <created>2020-11-09T09:03:45.740+01:00</created>
+                <lastModified>2020-11-09T09:07:14.863+01:00</lastModified>
+            </generated>
+        </generic>
+    </object>
+</MetadataContainerType>

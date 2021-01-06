@@ -130,13 +130,6 @@ function tmt:_test-teardown() {
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertXPath("$result//* = 'textgrid:ahiqar_agg.0'")
-function tmt:get-metadata-file($manifest-uri) {
-    tapi-mani:get-metadata-file($manifest-uri)
-};
-
-
-declare
     %test:args("ahiqar_collection", "ahiqar_agg") %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/ahiqar_collection/ahiqar_agg-82a/latest/item.json')]")
 function tmt:make-sequences($collection-uri as xs:string,
     $manifest-uri as xs:string) {

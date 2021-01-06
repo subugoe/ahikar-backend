@@ -59,14 +59,9 @@ as xs:string+ {
 
 declare function tapi-mani:get-manifest-title($manifest-uri as xs:string)
 as xs:string {
-    let $metadata-file := tapi-mani:get-metadata-file($manifest-uri)
+    let $metadata-file := commons:get-metadata-file($manifest-uri)
     return
         $metadata-file//tgmd:title/string()
-};
-
-declare function tapi-mani:get-metadata-file($manifest-uri as xs:string)
-as document-node() {
-    doc($commons:tg-collection || "/meta/" || $manifest-uri || ".xml")
 };
 
 

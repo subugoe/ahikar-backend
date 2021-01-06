@@ -56,7 +56,7 @@ test_exist_app:
     reports:
       junit: exist-app/test/ahikar-test-results.xml
 
-build_exist_app-all:
+build_exist_app:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
   script:
