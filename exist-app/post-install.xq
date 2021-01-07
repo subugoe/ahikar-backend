@@ -1,11 +1,10 @@
 xquery version "3.1";
 (: the target collection into which the app is deployed :)
-declare variable $target external;
-declare variable $ahikar-base := "/db/apps/ahikar";
+declare variable $target external; (: := "/db/apps/ahikar"; :)
 declare variable $tg-base := "/db/apps/sade/textgrid";
 
 declare function local:move-and-rename($filename as xs:string) as item()* {
-    let $data-file-path := $ahikar-base || "/data/"
+    let $data-file-path := $target || "/data/"
     let $target-data-collection := $tg-base || "/data/"
     let $target-meta-collection := $tg-base || "/meta/"
     let $target-agg-collection := $tg-base || "/agg/"
@@ -49,43 +48,29 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
 ),
 
 (: set owner and mode for RestXq module :)
-(let $path := $ahikar-base || "/modules/tapi.xqm"
+(let $path := $target || "/modules/tapi.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: set owner and mode for deployment module :)
-(let $path := $ahikar-base || "/modules/deploy.xqm"
+(let $path := $target || "/modules/deploy.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: set owner and mode for testtrigger module :)
-(let $path := $ahikar-base || "/modules/testtrigger.xqm"
+(let $path := $target || "/modules/testtrigger.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: move the sample XMLs to sade/textgrid to be available in the viewer :)
 ( 
-    let $files := 
-        ( 
-        "sample_teixml.xml",
-        "sample_teixml_meta.xml",
-        "sample_edition.xml",
-        "sample_edition_meta.xml",
-        "ahiqar_images.xml",
-        "ahiqar_images_meta.xml",
-        "sample_main_edition.xml",
-        "sample_main_edition_meta.xml",
-        "sample_lang_aggregation.xml",
-        "sample_lang_aggregation_meta.xml")
-    return
-        ( 
-            for $file in $files return
-                local:move-and-rename($file)
-        )
+    
+    xmldb:get-child-resources($target || "/data")[ends-with(., ".xml")]
+    ! local:move-and-rename(.)
 ),
 
 (: make Ahikar specific OpenAPI config available to the OpenAPI app :)
 ( 
     if (xmldb:collection-available("/db/apps/openapi")) then
         (xmldb:remove("/db/apps/openapi", "openapi-config.xml"),
-        xmldb:move($ahikar-base, "/db/apps/openapi", "openapi-config.xml"))
+        xmldb:move($target, "/db/apps/openapi", "openapi-config.xml"))
     else
         ()
 )
