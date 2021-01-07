@@ -4,6 +4,7 @@ module namespace ttt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
 import module namespace tapi-txt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt" at "../modules/tapi-txt.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
@@ -11,26 +12,31 @@ declare variable $ttt:sample-file := local:open-file("sample_teixml");
 declare variable $ttt:sample-transliteration := $ttt:sample-file//tei:text[@type = "transliteration"];
 declare variable $ttt:sample-transcription := $ttt:sample-file//tei:text[@type = "transcription"];
 
-declare
-    %test:setUp
-function ttt:_test-setup()
-as xs:string+ {
-    tapi-txt:main()
-};
+declare variable $ttt:kant-sample := local:open-file("kant_sample");
+declare variable $ttt:kant-transcription := $ttt:kant-sample//tei:text[@type = "transcription"];
 
+declare 
+    %test:tearDown
+function ttt:_test-teardown() {
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-first_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-sayings.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-second_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-third_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-parables.txt"),
+    
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-first_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-sayings.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-second_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-third_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-parables.txt")
+    
+};
 
 declare
     %test:args("sample_teixml") %test:assertExists
     %test:args("1234") %test:assertError("org.exist.xquery.XPathException")
 function ttt:open-file($uri as xs:string) as document-node() {
     local:open-file($uri)
-};
-
-declare
-    %test:assertXPath("count($result) = 2")
-function ttt:get-milestones-in-text()
-as element(tei:milestone)* {
-    tapi-txt:get-milestones-in-text($ttt:sample-transliteration)
 };
 
 declare
@@ -54,11 +60,21 @@ as element(tei:milestone)? {
 declare
     %test:assertExists
     %test:assertXPath("$result//*[local-name(.) = 'ab']")
-function ttt:get-chunk()
+function ttt:get-chunk-successs()
 as element(tei:TEI) {
-    let $milestone := $ttt:sample-transliteration//tei:milestone[1]
+    let $milestone-type := "first_narrative_section"
     return
-        tapi-txt:get-chunk($milestone)
+        tapi-txt:get-chunk($ttt:sample-transliteration, $milestone-type)
+};
+
+declare
+    %test:assertExists
+    %test:assertXPath("not($result//*)")
+function ttt:get-chunk-fail()
+as element(tei:TEI) {
+    let $milestone-type := "third_narrative_section"
+    return
+        tapi-txt:get-chunk($ttt:sample-transliteration, $milestone-type)
 };
 
 
@@ -200,7 +216,7 @@ declare
 function ttt:create-txt-collection-if-not-available() {
     let $create-collection := tapi-txt:create-txt-collection-if-not-available()
     return
-        if (xmldb:collection-available("/db/apps/sade/textgrid/txt/")) then
+        if (xmldb:collection-available($commons:tg-collection || "/txt/")) then
             true()
         else
             false()
@@ -264,17 +280,17 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("karshuni-Beispieldatei_zum_Testen-sample_teixml-transcription.txt")
+    %test:assertEquals("karshuni-Beispieldatei_zum_Testen-sample_teixml-transcription-first_narrative_section.txt")
 function ttt:make-file-name()
 as xs:string {
-    tapi-txt:make-file-name($ttt:sample-transcription)
+    tapi-txt:make-file-name($ttt:sample-transcription, "first_narrative_section")
 };
 
 declare
-    %test:assertEquals("sample_teixml-transcription.txt")
+    %test:assertEquals("sample_teixml-transcription-first_narrative_section.txt")
 function ttt:make-file-name-suffix()
 as xs:string {
-    tapi-txt:make-file-name-suffix($ttt:sample-transcription)
+    tapi-txt:make-file-name-suffix($ttt:sample-transcription, "first_narrative_section")
 };
 
 declare
@@ -285,8 +301,10 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("text of the first narrative section some sayings")
-function ttt:get-relevant-text() {
+    %test:args("first_narrative_section") %test:assertEquals(" text of the first narrative section")
+    %test:args("sayings") %test:assertEquals(" some sayings")
+function ttt:get-relevant-text($milestone-type as xs:string)
+as xs:string {
     let $TEI :=
         <TEI xmlns="http://www.tei-c.org/ns/1.0">
             <text>
@@ -294,27 +312,19 @@ function ttt:get-relevant-text() {
                     <ab>some ignored text</ab>
                     <milestone unit="first_narrative_section"/>
                     <ab>text of the first narrative section</ab>
-                    <milestone unit="saying"/>
+                    <milestone unit="sayings"/>
                     <ab>some sayings</ab>
                 </body>
             </text>
         </TEI>
     return
-        tapi-txt:get-relevant-text($TEI/tei:text)
-};
-
-declare
-    %test:assertXPath("count($result) = 2")
-function ttt:get-chunks() {
-    let $milestones := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)
-    return
-        tapi-txt:get-chunks($milestones)
+        tapi-txt:get-relevant-text($TEI/tei:text, $milestone-type)
 };
 
 declare
     %test:assertXPath("$result[self::*[local-name(.) = 'milestone']]")
 function ttt:get-end-of-chunk-milestone() {
-    let $milestone := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)[1]
+    let $milestone := $ttt:sample-transliteration//tei:milestone[1]
     return
         tapi-txt:get-end-of-chunk($milestone)
 };
@@ -322,7 +332,7 @@ function ttt:get-end-of-chunk-milestone() {
 declare
     %test:assertXPath("$result[self::*[local-name(.) = 'ab']]")
 function ttt:get-end-of-chunk-end-of-text() {
-    let $milestone := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)[2]
+    let $milestone := $ttt:sample-transliteration//tei:milestone[2]
     return
         tapi-txt:get-end-of-chunk($milestone)
 };
@@ -360,7 +370,7 @@ declare
     %test:assertTrue
 function ttt:has-following-milestone-true()
 as xs:boolean {
-    let $milestone := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)[1]
+    let $milestone := $ttt:sample-transliteration//tei:milestone[1]
     return
         tapi-txt:has-following-milestone($milestone)
 };
@@ -369,7 +379,7 @@ declare
     %test:assertFalse
 function ttt:has-following-milestone-false()
 as xs:boolean {
-    let $milestone := tapi-txt:get-milestones-in-text($ttt:sample-transliteration)[2]
+    let $milestone := $ttt:sample-transliteration//tei:milestone[2]
     return
         tapi-txt:has-following-milestone($milestone)
 };
@@ -433,6 +443,14 @@ as document-node() {
 
 
 declare
+    %test:assertXPath("$result = 'first_narrative_section'")
+    %test:assertXPath("$result = 'second_narrative_section'")
+function ttt:get-milestone-types-per-text()
+as xs:string+ {
+    tapi-txt:get-milestone-types-per-text($ttt:sample-transliteration)
+};
+
+declare
     %test:args("sample_teixml", "transcription")
     %test:assertXPath("$result[local-name(.) = 'text' and @type = 'transcription']")
 function ttt:get-tei($document-uri as xs:string,
@@ -490,5 +508,77 @@ declare
     %test:assertExists
 function ttt:compress-text()
 as xs:base64Binary {
-    tapi-txt:compress-to-zip()
+    if (xmldb:collection-available($commons:tg-collection || "/txt")) then
+        tapi-txt:compress-to-zip()
+    else
+        ( 
+            let $prepare := tapi-txt:main()
+            return
+                tapi-txt:compress-to-zip()
+        )
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertEquals(" Daß alle unsere Erkenntnis mit der Erfahrung anfange daran")
+    %test:args("sayings")
+    %test:assertEquals(" Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt so entspringt sie darum doch nicht eben")
+    %test:args("second_narrative_section")
+    %test:assertEquals(" Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den")
+function ttt:check-contents($chunk-type as xs:string) {
+    let $serialize := tapi-txt:main()
+    let $filepath := "/db/apps/sade/textgrid/txt/arabic--kant_sample-transcription-" || $chunk-type || ".txt"
+    return
+        util:binary-doc($filepath)
+        => util:base64-decode()
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertXPath("$result[local-name(.) = 'milestone'][@unit = 'sayings']")
+    %test:args("sayings")
+    %test:assertXPath("$result[local-name(.) = 'milestone'][@unit = 'second_narrative_section']")
+    %test:args("second_narrative_section")
+    %test:assertXPath("$result[local-name(.) = 'ab']")
+function ttt:get-end-of-chunk-kant($type as xs:string) {
+    let $milestone := $ttt:kant-transcription//tei:milestone[@unit = $type]
+    return
+        tapi-txt:get-end-of-chunk($milestone)
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertXPath("$result//*[local-name(.) = 'ab'][count(../*[local-name(.) = 'ab']) = 1]/text() = 'Daß alle unsere Erkenntnis mit der Erfahrung anfange, daran '")
+    %test:args("sayings")
+    %test:assertXPath("$result//*[local-name(.) = 'ab'][count(../*[local-name(.) = 'ab']) = 1]/text() = 'Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt, so entspringt sie darum doch nicht eben'")
+    %test:args("second_narrative_section")
+    %test:assertXPath("$result//*[local-name(.) = 'ab'][count(../*[local-name(.) = 'ab']) = 1]/text() = 'Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den'")
+function ttt:get-chunk-kant($type as xs:string) {
+    tapi-txt:get-chunk($ttt:kant-transcription, $type)
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertEquals("Daß alle unsere Erkenntnis mit der Erfahrung anfange daran")
+    %test:args("sayings")
+    %test:assertEquals("Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt so entspringt sie darum doch nicht eben")
+    %test:args("second_narrative_section")
+    %test:assertEquals("Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den")
+function ttt:get-relevant-text-from-chunks($type as xs:string)
+as xs:string {
+    let $chunk := tapi-txt:get-chunk($ttt:kant-transcription, $type)
+    return
+        tapi-txt:get-relevant-text-from-chunks($chunk)
+};
+
+declare
+    %test:args("first_narrative_section")
+    %test:assertEquals(" Daß alle unsere Erkenntnis mit der Erfahrung anfange daran")
+    %test:args("sayings")
+    %test:assertEquals(" Wenn aber gleich alle unsere Erkenntnis mit der Erfahrung anhebt so entspringt sie darum doch nicht eben")
+    %test:args("second_narrative_section")
+    %test:assertEquals(" Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den")
+function ttt:get-relevant-text($type as xs:string)
+as xs:string {
+    tapi-txt:get-relevant-text($ttt:kant-transcription, $type)
 };
