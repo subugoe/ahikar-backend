@@ -6,7 +6,6 @@ declare namespace http = "http://expath.org/ns/http-client";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
-import module namespace map="http://www.w3.org/2005/xpath-functions/map";
 import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "test-commons.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace tapi-mani="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest" at "../modules/tapi-manifest.xqm";
@@ -130,37 +129,44 @@ function tmt:_test-teardown() {
 };
 
 declare
-    %test:args("ahiqar_collection", "ahiqar_agg") %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/ahiqar_collection/ahiqar_agg-82a/latest/item.json')]")
+    %test:args("sample_edition") %test:assertXPath("$result//* = 'textgrid:sample_edition.0'")
+function tmt:get-metadata-file($manifest-uri) {
+    tapi-mani:get-metadata-file($manifest-uri)
+};
+
+
+declare
+    %test:args("sample_main_edition", "sample_edition") %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json')]")
 function tmt:make-sequences($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:make-sequences($collection-uri, $manifest-uri, $tc:server)
 };
 
 declare
-     %test:args("ahiqar_agg") %test:assertXPath("count($result) = 4")
+     %test:args("sample_edition") %test:assertXPath("count($result) = 5")
 function tmt:get-valid-page-ids($manifest-uri as xs:string) {
     tapi-mani:get-valid-page-ids($manifest-uri)
 };
 
 declare
-    %test:args("ahiqar_collection", "ahiqar_agg")
+    %test:args("sample_main_edition", "sample_edition")
     %test:assertXPath("$result//label = 'Beispieldatei zum Testen'")
-    %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/ahiqar_collection/ahiqar_agg/manifest.json')]")
-    %test:assertXPath("$result//annotationCollection[matches(., '/api/annotations/ahikar/ahiqar_collection/ahiqar_agg-82a/annotationCollection.json')] ")
+    %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/sample_main_edition/sample_edition/manifest.json')]")
+    %test:assertXPath("$result//annotationCollection[matches(., '/api/annotations/ahikar/sample_main_edition/sample_edition-82a/annotationCollection.json')] ")
 function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertEquals("Beispieldatei zum Testen")
+    %test:args("sample_edition") %test:assertEquals("Beispieldatei zum Testen")
 function tmt:get-manifest-title($manifest-uri as xs:string) {
     tapi-mani:get-manifest-title($manifest-uri)
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertXPath("count($result) = 2")
-    %test:args("ahiqar_agg") %test:assertXPath("$result//name = 'Simon Birol'")
+    %test:args("sample_edition") %test:assertXPath("count($result) = 2")
+    %test:args("sample_edition") %test:assertXPath("$result//name = 'Simon Birol'")
     %test:args("test-manifest1") %test:assertXPath("count($result) = 1")
     %test:args("test-manifest1") %test:assertXPath("$result//name = 'none'")
 function tmt:make-editors($manifest-uri as xs:string) {
@@ -168,14 +174,14 @@ function tmt:make-editors($manifest-uri as xs:string) {
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertXPath("$result/string() = '18.10.1697'")
+    %test:args("sample_edition") %test:assertXPath("$result/string() = '18.10.1697'")
     %test:args("test-manifest1") %test:assertXPath("$result/string() = 'unknown'")
 function tmt:make-creation-date($manifest-uri as xs:string) {
     tapi-mani:make-creation-date($manifest-uri)
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertXPath("$result/string() = 'Alqosh, Iraq'")
+    %test:args("sample_edition") %test:assertXPath("$result/string() = 'Alqosh, Iraq'")
     %test:args("test-manifest1") %test:assertXPath("$result/string() = 'unknown'")
     %test:args("test-manifest2") %test:assertXPath("$result/string() = 'Iraq'")
     %test:args("test-manifest3") %test:assertXPath("$result/string() = 'Alqosh'")
@@ -184,7 +190,7 @@ function tmt:make-origin($manifest-uri as xs:string) {
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertXPath("$result/string() = 'University of Cambridge - Cambridge University Library, Great Britain'")
+    %test:args("sample_edition") %test:assertXPath("$result/string() = 'University of Cambridge - Cambridge University Library, Great Britain'")
     %test:args("test-manifest1") %test:assertXPath("$result/string() = 'unknown'")
     %test:args("test-manifest2") %test:assertXPath("$result/string() = 'University of Cambridge - Cambridge University Library'")
     %test:args("test-manifest3") %test:assertXPath("$result/string() = 'Great Britain'")
@@ -193,7 +199,7 @@ function tmt:make-current-location($manifest-uri as xs:string) {
 };
 
 declare
-     %test:args("ahiqar_collection", "ahiqar_agg") %test:assertExists
+     %test:args("sample_main_edition", "sample_edition") %test:assertExists
 function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
