@@ -17,7 +17,7 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
                     xmldb:rename($target-meta-collection, $filename, $new-filename)
                 )
         else
-            if (matches($filename, "teixml")) then
+            if (matches($filename, "teixml|kant")) then
                 xmldb:move($data-file-path, $target-data-collection, $filename)
             else
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
