@@ -28,7 +28,7 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
                     )
             case "tile" return 
                 xmldb:move($data-file-path, $target-tile-collection, $filename)
-            case "sample" return
+            case "teixml" return
                 xmldb:move($data-file-path, $target-data-collection, $filename)
             default return
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
