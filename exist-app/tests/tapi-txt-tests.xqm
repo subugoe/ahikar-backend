@@ -12,7 +12,7 @@ declare variable $ttt:sample-file := local:open-file("sample_teixml");
 declare variable $ttt:sample-transliteration := $ttt:sample-file//tei:text[@type = "transliteration"];
 declare variable $ttt:sample-transcription := $ttt:sample-file//tei:text[@type = "transcription"];
 
-declare variable $ttt:kant-sample := local:open-file("kant_sample");
+declare variable $ttt:kant-sample := local:open-file("kant_sample_teixml");
 declare variable $ttt:kant-transcription := $ttt:kant-sample//tei:text[@type = "transcription"];
 
 declare 
