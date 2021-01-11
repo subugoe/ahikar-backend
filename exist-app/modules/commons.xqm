@@ -124,3 +124,22 @@ as element() {
         else
             $start-node/following::tei:ab[last()]
 };
+
+(: following added by MERGE !55 feat/#52-annotation-api-tests :)
+
+declare function commons:get-metadata-file($uri as xs:string)
+as document-node() {
+    doc($commons:meta || $uri || ".xml")
+};
+
+declare function commons:get-aggregation($manifest-uri as xs:string)
+as document-node() {
+    doc($commons:agg || $manifest-uri || ".xml")
+};
+
+declare function commons:open-tei-xml($tei-xml-uri as xs:string)
+as document-node() {
+    doc($commons:data || $tei-xml-uri || ".xml")
+};
+
+
