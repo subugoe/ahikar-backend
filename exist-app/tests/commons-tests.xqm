@@ -78,3 +78,10 @@ function ct:get-page-fragment($page as xs:string)
 as element() {
     commons:get-page-fragment($ct:base-uri, $page)
 };
+
+declare
+    %test:args("ahiqar_sample") %test:assertXPath("$result//*[local-name(.) = 'title'] = 'Beispieldatei zum Testen'")
+function ct:get-metadata-file($uri as xs:string)
+as document-node() {
+    commons:get-metadata-file($uri)
+};

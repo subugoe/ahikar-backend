@@ -1,4 +1,7 @@
 xquery version "3.1";
+
+import module namespace functx="http://www.functx.com";
+
 (: the target collection into which the app is deployed :)
 declare variable $target external; (: := "/db/apps/ahikar"; :)
 declare variable $tg-base := "/db/apps/sade/textgrid";
@@ -8,18 +11,26 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
     let $target-data-collection := $tg-base || "/data/"
     let $target-meta-collection := $tg-base || "/meta/"
     let $target-agg-collection := $tg-base || "/agg/"
+    let $target-tile-collection := $tg-base || "/tile/"
+    
+    let $file-type := functx:substring-after-last($filename, "_")
+        => substring-before(".xml")
+    
     return
-        if(matches($filename, "meta")) then
-            let $new-filename := substring-before($filename, "_meta") || ".xml"
-            return
-                ( 
-                    xmldb:move($data-file-path, $target-meta-collection, $filename),
-                    xmldb:rename($target-meta-collection, $filename, $new-filename)
-                )
-        else
-            if (matches($filename, "teixml|kant")) then
+        
+        switch ($file-type)
+            case "meta" return
+                let $new-filename := substring-before($filename, "_meta") || ".xml"
+                return
+                    ( 
+                        xmldb:move($data-file-path, $target-meta-collection, $filename),
+                        xmldb:rename($target-meta-collection, $filename, $new-filename)
+                    )
+            case "tile" return 
+                xmldb:move($data-file-path, $target-tile-collection, $filename)
+            case "sample" return
                 xmldb:move($data-file-path, $target-data-collection, $filename)
-            else
+            default return
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
 };
 

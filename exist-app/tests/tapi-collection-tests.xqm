@@ -181,7 +181,7 @@ function tct:make-format-type($tgmd-format as xs:string) {
 declare
     %test:assertEquals("manifest")
 function tct:get-format-type() {
-    let $metadata := tapi-coll:get-metadata-file("sample_edition")
+    let $metadata := commons:get-metadata-file("sample_edition")
     return
         tapi-coll:get-format-type($metadata)
 };

@@ -14,6 +14,7 @@ declare variable $commons:tg-collection := "/db/apps/sade/textgrid";
 declare variable $commons:data := $commons:tg-collection || "/data/";
 declare variable $commons:meta := $commons:tg-collection || "/meta/";
 declare variable $commons:agg := $commons:tg-collection || "/agg/";
+declare variable $commons:tile := $commons:tg-collection || "/tile/";
 declare variable $commons:appHome := "/db/apps/ahikar";
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";

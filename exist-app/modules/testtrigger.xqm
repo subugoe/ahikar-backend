@@ -19,6 +19,7 @@ import module namespace art="http://ahikar.sub.uni-goettingen.de/ns/annotations/
 import module namespace ct="http://ahikar.sub.uni-goettingen.de/ns/commons-tests" at "../tests/commons-tests.xqm";
 import module namespace tct="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests" at "../tests/tapi-collection-tests.xqm";
 import module namespace thtmlt="http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests" at "../tests/tapi-html-tests.xqm";
+import module namespace timgt="http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests" at "../tests/tapi-img-tests.xqm";
 import module namespace titemt="http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests" at "../tests/tapi-item-tests.xqm";
 import module namespace tmt="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" at "../tests/tapi-manifest-tests.xqm";
 import module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" at "../tests/tapi-tests.xqm";
@@ -74,7 +75,8 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests"))
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests"))
     )
 
     for $result in $test-results
@@ -106,5 +108,6 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" return "TXT normalization"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" return "AnnotationAPI REST"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests" return "Image Sections"
         default return ()
 };
