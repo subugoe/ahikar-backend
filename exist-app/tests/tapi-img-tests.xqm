@@ -8,7 +8,7 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 import module namespace tapi-img="http://ahikar.sub.uni-goettingen.de/ns/tapi/images" at "../modules/tapi-img.xqm";
 
 declare
-    %test:args("ahiqar_agg")
+    %test:args("sample_edition")
     %test:assertTrue
 function t:has-manifest-tile($manifest-uri) as xs:boolean {
     tapi-img:has-manifest-tile($manifest-uri)
@@ -30,7 +30,7 @@ as xs:boolean {
 };
 
 declare
-    %test:args("ahiqar_agg") %test:assertEquals("ahiqar_tile")
+    %test:args("sample_edition") %test:assertEquals("ahiqar_tile")
 function t:get-tile-uri($manifest-uri as xs:string)
 as xs:string {
     tapi-img:get-tile-uri($manifest-uri)
@@ -38,7 +38,7 @@ as xs:string {
 
 
 declare
-    %test:args("ahiqar_agg") %test:assertXPath("$result//*[local-name(.) = 'rect']")
+    %test:args("sample_edition") %test:assertXPath("$result//*[local-name(.) = 'rect']")
 function t:get-tile($manifest-uri as xs:string)
 as document-node() {
     tapi-img:get-tile($manifest-uri)
@@ -46,8 +46,8 @@ as document-node() {
 
 
 declare
-    %test:args("ahiqar_agg", "82a") %test:assertEquals("3r1nz")
-    %test:args("ahiqar_agg_wo_tile", "82b") %test:assertEquals("3r1p0")
+    %test:args("sample_edition", "82a") %test:assertEquals("3r1nz")
+(:    %test:args("ahiqar_agg_wo_tile", "82b") %test:assertEquals("3r1p0"):)
 function t:get-facsimile-uri-for-page($manifest-uri as xs:string,
     $page as xs:string)
 as xs:string {
@@ -55,7 +55,7 @@ as xs:string {
 };
 
 declare
-    %test:args("ahiqar_agg", "82a") %test:assertEquals("a1")
+    %test:args("sample_edition", "82a") %test:assertEquals("a1")
 function t:get-xml-id-for-page($manifest-uri as xs:string,
     $page as xs:string)
 as xs:string {
@@ -63,7 +63,7 @@ as xs:string {
 };
 
 declare
-    %test:args("ahiqar_agg", "a1") %test:assertEquals("shape-1")
+    %test:args("sample_edition", "a1") %test:assertEquals("shape-1")
 function t:get-shape-id($manifest-uri as xs:string,
     $page-id as xs:string)
 as xs:string {
@@ -92,7 +92,7 @@ as xs:string {
 };
 
 declare
-    %test:args("ahiqar_agg", "82a") %test:assertEquals("50.03,0.48,49.83,100.00")
+    %test:args("sample_edition", "82a") %test:assertEquals("50.03,0.48,49.83,100.00")
 function t:get-relevant-image-section($manifest-uri as xs:string,
     $page-uri as xs:string)
 as xs:string {

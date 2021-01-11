@@ -157,13 +157,6 @@ function tct:get-allowed-manifest-uris-sample-input() {
 };
 
 declare
-    %test:args("sample_main_edition") %test:assertXPath("$result[self::document-node()]")
-function tct:get-metadata-file($uri as xs:string) {
-    tapi-coll:get-metadata-file($uri)
-};
-
-
-declare
     %test:args("textgrid:1234") %test:assertEquals("1234")
     %test:args("1234") %test:assertEquals("1234")
 function tct:remove-textgrid-prefix($uri as xs:string) {

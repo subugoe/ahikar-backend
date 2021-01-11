@@ -80,7 +80,7 @@ as element() {
 };
 
 declare
-    %test:args("ahiqar_sample") %test:assertXPath("$result//*[local-name(.) = 'title'] = 'Beispieldatei zum Testen'")
+    %test:args("sample_teixml") %test:assertXPath("$result//*[local-name(.) = 'title'] = 'Beispieldatei zum Testen'")
 function ct:get-metadata-file($uri as xs:string)
 as document-node() {
     commons:get-metadata-file($uri)

@@ -128,12 +128,6 @@ function tmt:_test-teardown() {
     xmldb:remove($commons:data, $tmt:tei3-uri)
 };
 
-declare
-    %test:args("sample_edition") %test:assertXPath("$result//* = 'textgrid:sample_edition.0'")
-function tmt:get-metadata-file($manifest-uri) {
-    tapi-mani:get-metadata-file($manifest-uri)
-};
-
 
 declare
     %test:args("sample_main_edition", "sample_edition") %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json')]")

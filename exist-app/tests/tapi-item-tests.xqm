@@ -16,6 +16,7 @@ function titemt:_test-setup() {
     local:create-and-store-test-data()
 };
 
+(: TODO @michelle: is this still required?
 declare
     %test:args("sample_edition", "82a") %test:assertEquals("3r1nz")
 function titemt:get-facsimile-uri-for-page($manifest-uri as xs:string,
@@ -23,6 +24,7 @@ function titemt:get-facsimile-uri-for-page($manifest-uri as xs:string,
 as xs:string {
     tapi-item:get-facsimile-uri-for-page($manifest-uri, $page)
 };
+:)
 
 declare
     %test:args("sample_edition") %test:assertEquals("Arabic, Classical Syriac, Eastern Syriac, Karshuni, Western Syriac")
