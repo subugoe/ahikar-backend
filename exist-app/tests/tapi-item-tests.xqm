@@ -10,12 +10,6 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 import module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item" at "../modules/tapi-item.xqm";
 
 
-declare
-    %test:setUp
-function titemt:_test-setup() {
-    local:create-and-store-test-data()
-};
-
 (: TODO @michelle: is this still required?
 declare
     %test:args("sample_edition", "82a") %test:assertEquals("3r1nz")
@@ -100,27 +94,4 @@ function titemt:make-url-for-double-page-image($facsimile-uri as xs:string,
     $page as xs:string)
 as xs:string {
     tapi-item:make-url-for-double-page-image($facsimile-uri, $manifest-uri, $page, $tc:server)
-};
-
-
-declare function local:create-and-store-test-data()
-as xs:string+ {
-    let $agg-wo-tile :=
-        <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <rdf:Description xmlns:tei="http://www.tei-c.org/ns/1.0" rdf:about="textgrid:ahiqar_agg.0">
-                <ore:aggregates rdf:resource="textgrid:ahiqar_sample_2"/>
-            </rdf:Description>
-        </rdf:RDF>
-    let $agg-wo-tile-meta := commons:get-metadata-file("ahiqar_agg")
-        
-    let $sample-xml-2 := commons:open-tei-xml("ahiqar_sample")
-    let $sample-xml-2-meta := commons:get-metadata-file("ahiqar_sample")
-        
-    return
-        (
-            xmldb:store("/db/apps/sade/textgrid/agg", "ahiqar_agg_wo_tile.xml", $agg-wo-tile),
-            xmldb:store("/db/apps/sade/textgrid/data", "ahiqar_sample_2.xml", $sample-xml-2),
-            xmldb:store("/db/apps/sade/textgrid/meta", "ahiqar_sample_2.xml", $sample-xml-2-meta),
-            xmldb:store("/db/apps/sade/textgrid/meta", "ahiqar_agg_wo_tile.xml", $agg-wo-tile-meta)
-        )
 };
