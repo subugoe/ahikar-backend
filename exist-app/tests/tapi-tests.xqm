@@ -71,7 +71,7 @@ declare
     (: check if requests work :)
     %test:assertXPath("map:get($result, 'request') => map:get('scheme') = 'http'")
     (: check if expathpkg works :)
-    %test:assertXPath("map:get($result, 'package') => map:get('title') = 'TextAPI for Ahikar'")
+    %test:assertXPath("map:get($result, 'package') => map:get('title') = 'Ahiqar'")
     (: check if repo.xml works :)
     %test:assertXPath("map:get($result, 'meta') => map:get('target') = 'ahikar'")
 function tt:api-info()  as item() {
