@@ -40,7 +40,7 @@ as document-node()? {
 };
 
 declare
-    %test:args("sample_edition") %test:assertEquals("sample_teixml")
+    %test:args("sample_edition") %test:assertXPath("count($result) = 2 and $result = 'sample_teixml' and $result = 'ahiqar_tile'")
     %test:args("qwerty") %test:assertError("COMMONS002")
 function ct:get-available-aggregates($uri as xs:string)
 as xs:string+ {
