@@ -18,11 +18,11 @@ declare variable $ttt:kant-transcription := $ttt:kant-sample//tei:text[@type = "
 declare 
     %test:tearDown
 function ttt:_test-teardown() {
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-first_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-sayings.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-second_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-third_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample-transcription-parables.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-first_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-sayings.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-second_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-third_narrative_section.txt"),
+    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-parables.txt"),
     
     xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-first_narrative_section.txt"),
     xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-sayings.txt"),
@@ -527,7 +527,7 @@ declare
     %test:assertEquals(" Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den")
 function ttt:check-contents($chunk-type as xs:string) {
     let $serialize := tapi-txt:main()
-    let $filepath := "/db/apps/sade/textgrid/txt/arabic--kant_sample-transcription-" || $chunk-type || ".txt"
+    let $filepath := "/db/apps/sade/textgrid/txt/arabic--kant_sample_teixml-transcription-" || $chunk-type || ".txt"
     return
         util:binary-doc($filepath)
         => util:base64-decode()
