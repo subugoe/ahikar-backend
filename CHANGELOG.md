@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Tests for the AnnotationAPI.
 
+## [2.2.2.] - 2021-01-11
+
+### Fixed
+
+- semantic errors that lead to the application not being installed properly.
+
 ## [2.2.1] - 2020-11-16
 
 ## Changed
