@@ -2,5 +2,6 @@
     <rdf:Description xmlns:tei="http://www.tei-c.org/ns/1.0" rdf:about="textgrid:sample_edition.0">
         <ore:aggregates rdf:resource="textgrid:sample_teixml"/>
         <ore:aggregates rdf:resource="textgrid:faux_teixml"/>
+        <ore:aggregates rdf:resource="textgrid:ahiqar_tile"/>
     </rdf:Description>
 </rdf:RDF>
