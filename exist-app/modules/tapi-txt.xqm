@@ -261,7 +261,7 @@ declare function tapi-txt:get-TEI-text($document-uri as xs:string,
     $type as xs:string)
 as element(tei:text) {
     if (tapi-txt:is-document-tei-xml($document-uri)) then
-        commons:open-tei-xml($document-uri)//tei:text[@type = $type]
+        commons:get-document($document-uri, "data")//tei:text[@type = $type]
     else
         tapi-txt:get-tei-xml-uri-from-edition
         => tapi-txt:get-text-of-type($type)
@@ -291,17 +291,8 @@ declare function tapi-txt:get-format($uri as xs:string) as xs:string {
 
 declare function tapi-txt:get-tei-xml-uri-from-edition($document-uri as xs:string)
 as xs:string {
-    let $aggregates := tapi-txt:get-edition-aggregates-without-uri-namespace($document-uri)
-    return
-        tapi-txt:get-tei-xml-from-aggregates($aggregates)
-};
-
-
-declare function tapi-txt:get-edition-aggregates-without-uri-namespace($document-uri as xs:string)
-as xs:string+ {
-    let $edition := commons:get-aggregation($document-uri)
-    for $agg in $edition//ore:aggregates/@rdf:resource return
-        replace($agg, "textgrid:", "")
+    commons:get-available-aggregates($document-uri)
+    => tapi-txt:get-tei-xml-from-aggregates()
 };
 
 
@@ -318,7 +309,7 @@ as xs:string {
 declare function tapi-txt:get-text-of-type($uri as xs:string,
     $type as xs:string)
 as element(tei:text) {
-    commons:open-tei-xml($uri)//tei:text[@type = $type]
+    commons:get-document($uri, "data")//tei:text[@type = $type]
 };
 
 

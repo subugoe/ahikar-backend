@@ -17,7 +17,6 @@ declare namespace svg="http://www.w3.org/2000/svg";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
-import module namespace functx="http://www.functx.com";
 
 declare function tapi-img:has-manifest-tile($manifest-uri as xs:string)
 as xs:boolean {
@@ -43,8 +42,7 @@ as xs:string* {
     for $element in $aggregated return
         let $stripped-uri := substring-after($element/@rdf:resource/string(), "textgrid:")
         return
-            if (tapi-img:is-resource-tile($stripped-uri)
-            and tapi-img:is-tile-available($stripped-uri)) then
+            if (tapi-img:is-tile-available($stripped-uri)) then
                 $stripped-uri
             else
                 ()

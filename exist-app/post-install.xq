@@ -3,12 +3,11 @@ xquery version "3.1";
 import module namespace functx="http://www.functx.com";
 
 (: the target collection into which the app is deployed :)
-declare variable $target external;
-declare variable $ahikar-base := "/db/apps/ahikar";
+declare variable $target external; (: := "/db/apps/ahikar"; :)
 declare variable $tg-base := "/db/apps/sade/textgrid";
 
 declare function local:move-and-rename($filename as xs:string) as item()* {
-    let $data-file-path := $ahikar-base || "/data/"
+    let $data-file-path := $target || "/data/"
     let $target-data-collection := $tg-base || "/data/"
     let $target-meta-collection := $tg-base || "/meta/"
     let $target-agg-collection := $tg-base || "/agg/"
@@ -29,7 +28,7 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
                     )
             case "tile" return 
                 xmldb:move($data-file-path, $target-tile-collection, $filename)
-            case "sample" return
+            case "teixml" return
                 xmldb:move($data-file-path, $target-data-collection, $filename)
             default return
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
@@ -60,45 +59,29 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
 ),
 
 (: set owner and mode for RestXq module :)
-(let $path := $ahikar-base || "/modules/tapi.xqm"
+(let $path := $target || "/modules/tapi.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: set owner and mode for deployment module :)
-(let $path := $ahikar-base || "/modules/deploy.xqm"
+(let $path := $target || "/modules/deploy.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: set owner and mode for testtrigger module :)
-(let $path := $ahikar-base || "/modules/testtrigger.xqm"
+(let $path := $target || "/modules/testtrigger.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: move the sample XMLs to sade/textgrid to be available in the viewer :)
 ( 
-    let $files := 
-        ( 
-        "ahiqar_sample.xml",
-        "ahiqar_sample_meta.xml",
-        "ahiqar_agg.xml",
-        "ahiqar_agg_meta.xml",
-        "ahiqar_images.xml",
-        "ahiqar_images_meta.xml",
-        "ahiqar_collection.xml",
-        "ahiqar_collection_meta.xml",
-        "ahiqar_tile.xml",
-        "ahiqar_tile_meta.xml",
-        "kant_sample.xml")
-
-    return
-        ( 
-            for $file in $files return
-                local:move-and-rename($file)
-        )
+    
+    xmldb:get-child-resources($target || "/data")[ends-with(., ".xml")]
+    ! local:move-and-rename(.)
 ),
 
 (: make Ahikar specific OpenAPI config available to the OpenAPI app :)
 ( 
     if (xmldb:collection-available("/db/apps/openapi")) then
         (xmldb:remove("/db/apps/openapi", "openapi-config.xml"),
-        xmldb:move($ahikar-base, "/db/apps/openapi", "openapi-config.xml"))
+        xmldb:move($target, "/db/apps/openapi", "openapi-config.xml"))
     else
         ()
 )

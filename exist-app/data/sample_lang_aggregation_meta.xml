@@ -2,16 +2,17 @@
     <object>
         <generic>
             <provided>
-                <title>Meta collection for test purposes</title>
-                <format>text/tg.edition+tg.aggregation+xml</format>
+                <title>Beispieldatei für Sprachenaggregation</title>
+                <format>text/tg.aggregation+xml</format>
                 <notes/>
             </provided>
             <generated>
-              <textgridUri extRef="">textgrid:ahiqar_collection.0</textgridUri>
+              <textgridUri extRef="">textgrid:sample_lang_aggregation.0</textgridUri>
             </generated>
         </generic>
         <edition>
             <isEditionOf/>
+            <agent role="actor" id=""/>
         </edition>
         <custom>
             <cns:templateEditor xmlns:tgs="http://www.textgrid.info/namespaces/middleware/tgsearch" xmlns:tg="http://textgrid.info/relation-ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cns="http://textgrid.info/custom-namespace/2009-01-01" xmlns:ns4="http://textgrid.info/namespaces/middleware/tgcrud/services/TGCrudService" xmlns:ns3="http://textgrid.info/namespaces/metadata/core/2010"/>
