@@ -18,17 +18,17 @@ declare variable $ttt:kant-transcription := $ttt:kant-sample//tei:text[@type = "
 declare 
     %test:tearDown
 function ttt:_test-teardown() {
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-first_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-sayings.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-second_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-third_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "arabic--kant_sample_teixml-transcription-parables.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "arabic--kant_sample_teixml-transcription-first_narrative_section.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "arabic--kant_sample_teixml-transcription-sayings.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "arabic--kant_sample_teixml-transcription-second_narrative_section.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "arabic--kant_sample_teixml-transcription-third_narrative_section.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "arabic--kant_sample_teixml-transcription-parables.txt"),
     
-    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-first_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-sayings.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-second_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-third_narrative_section.txt"),
-    xmldb:remove("/db/apps/sade/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-parables.txt")
+    xmldb:remove("/db/data/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-first_narrative_section.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-sayings.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-second_narrative_section.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-third_narrative_section.txt"),
+    xmldb:remove("/db/data/textgrid/txt", "karshuni-Beispieldatei_zum_Testen-ahiqar_sample-transcription-parables.txt")
     
 };
 
@@ -216,10 +216,7 @@ declare
 function ttt:create-txt-collection-if-not-available() {
     let $create-collection := tapi-txt:create-txt-collection-if-not-available()
     return
-        if (xmldb:collection-available($commons:tg-collection || "/txt/")) then
-            true()
-        else
-            false()
+        xmldb:collection-available("/db/data/textgrid/txt/")
 };
 
 declare
@@ -266,7 +263,7 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("/db/apps/sade/textgrid/data/sample_teixml.xml")
+    %test:assertEquals("/db/data/textgrid/data/sample_teixml.xml")
 function ttt:get-base-uri()
 as xs:string {
     tapi-txt:get-base-uri($ttt:sample-transcription)
@@ -294,7 +291,7 @@ as xs:string {
 };
 
 declare
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml") %test:assertEquals("sample_teixml")
+    %test:args("/db/data/textgrid/data/sample_teixml.xml") %test:assertEquals("sample_teixml")
 function ttt:get-file-name($base-uri as xs:string)
 as xs:string {
     tapi-txt:get-file-name($base-uri)
@@ -527,7 +524,7 @@ declare
     %test:assertEquals(" Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den")
 function ttt:check-contents($chunk-type as xs:string) {
     let $serialize := tapi-txt:main()
-    let $filepath := "/db/apps/sade/textgrid/txt/arabic--kant_sample_teixml-transcription-" || $chunk-type || ".txt"
+    let $filepath := "/db/data/textgrid/txt/arabic--kant_sample_teixml-transcription-" || $chunk-type || ".txt"
     return
         util:binary-doc($filepath)
         => util:base64-decode()

@@ -1,8 +1,4 @@
 xquery version "3.1";
-(: 
- : This module is for preparing the HTML serialization of a
- : given TEI document or fragment.
- :)
 
 module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html";
 

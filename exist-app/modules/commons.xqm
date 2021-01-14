@@ -10,7 +10,7 @@ import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milesto
 
 declare variable $commons:expath-pkg := doc("../expath-pkg.xml");
 declare variable $commons:version := $commons:expath-pkg/*/@version;
-declare variable $commons:tg-collection := "/db/apps/sade/textgrid";
+declare variable $commons:tg-collection := "/db/data/textgrid";
 declare variable $commons:data := $commons:tg-collection || "/data/";
 declare variable $commons:meta := $commons:tg-collection || "/meta/";
 declare variable $commons:agg := $commons:tg-collection || "/agg/";

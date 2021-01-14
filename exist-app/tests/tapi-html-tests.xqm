@@ -9,15 +9,6 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "../modules/tapi-html.xqm";
 
-declare
-    %test:args("/db/apps/sade/textgrid/data/sample_teixml.xml", "82a") %test:assertXPath("$result//text()[matches(., 'حقًا')]")
-function thtmlt:transform-fragment($tei-xml-base-uri as xs:string,
-    $page as xs:string)
-as element(xhtml:div) {
-    let $fragment := commons:get-page-fragment($tei-xml-base-uri, $page)
-    return
-        tapi-html:get-html-from-fragment($fragment)
-};
 
 
 declare
