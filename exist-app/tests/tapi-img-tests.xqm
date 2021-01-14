@@ -128,16 +128,17 @@ as xs:string+ {
         
     return
         (
-            xmldb:store("/db/apps/sade/textgrid/agg", "ahiqar_agg_wo_tile.xml", $agg-wo-tile),
-            xmldb:store("/db/apps/sade/textgrid/data", "ahiqar_sample_2.xml", $sample-xml-2),
-            xmldb:store("/db/apps/sade/textgrid/meta", "ahiqar_sample_2.xml", $sample-xml-2-meta),
-            xmldb:store("/db/apps/sade/textgrid/meta", "ahiqar_agg_wo_tile.xml", $agg-wo-tile-meta)
+            xmldb:store("/db/data/textgrid/agg", "ahiqar_agg_wo_tile.xml", $agg-wo-tile),
+            xmldb:store("/db/data/textgrid/meta", "ahiqar_agg_wo_tile.xml", $agg-wo-tile-meta),
+
+            xmldb:store("/db/data/textgrid/data", "ahiqar_sample_2.xml", $sample-xml-2),
+            xmldb:store("/db/data/textgrid/meta", "ahiqar_sample_2.xml", $sample-xml-2-meta)
         )
 };
 
 declare function local:remove-test-data() {
-    xmldb:remove("/db/apps/sade/textgrid/agg", "ahiqar_agg_wo_tile.xml"),
-    xmldb:remove("/db/apps/sade/textgrid/data", "ahiqar_sample_2.xml"),
-    xmldb:remove("/db/apps/sade/textgrid/meta", "ahiqar_sample_2.xml"),
-    xmldb:remove("/db/apps/sade/textgrid/meta", "ahiqar_agg_wo_tile.xml")
+    xmldb:remove("/db/data/textgrid/agg", "ahiqar_agg_wo_tile.xml"),
+    xmldb:remove("/db/data/textgrid/data", "ahiqar_sample_2.xml"),
+    xmldb:remove("/db/data/textgrid/meta", "ahiqar_sample_2.xml"),
+    xmldb:remove("/db/data/textgrid/meta", "ahiqar_agg_wo_tile.xml")
 };

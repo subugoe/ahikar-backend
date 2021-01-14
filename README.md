@@ -80,7 +80,7 @@ To pass credentials to the container, we use the file `ahikar.env` which is not 
 - TGUSER
 - TGPASS
 
-For local development this file MUST be present but can be left empty. In this case, the SADE Publish Tool may be used to import data from TextGrid.
+For local development this file MUST be present but can be left empty. In this case, TextGrid Connect Standalone may be used to import data from TextGrid.
 
 ```bash
 touch docker/ahikar.env

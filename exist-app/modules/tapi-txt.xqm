@@ -18,7 +18,7 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
 import module namespace norm="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization" at "tapi-txt-normalization.xqm";
 
-declare variable $tapi-txt:textgrid := "/db/apps/sade/textgrid";
+declare variable $tapi-txt:textgrid := "/db/data/textgrid";
 declare variable $tapi-txt:data := $tapi-txt:textgrid || "/data";
 declare variable $tapi-txt:txt := $tapi-txt:textgrid || "/txt";
 declare variable $tapi-txt:milestone-types :=
@@ -100,7 +100,7 @@ as xs:string? {
 declare function tapi-txt:create-metadata-title-for-file-name($text as element(tei:text))
 as xs:string {
     let $base-uri := tapi-txt:get-base-uri($text)
-    let $metadata := doc($base-uri => replace("/data/", "/meta/"))
+    let $metadata := doc($base-uri => replace("textgrid/data/", "textgrid/meta/"))
     return
         $metadata//tgmd:title
         => replace("[^a-zA-Z0-9]", "_")

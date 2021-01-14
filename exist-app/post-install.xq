@@ -4,7 +4,7 @@ import module namespace functx="http://www.functx.com";
 
 (: the target collection into which the app is deployed :)
 declare variable $target external; (: := "/db/apps/ahikar"; :)
-declare variable $tg-base := "/db/apps/sade/textgrid";
+declare variable $tg-base := "/db/data/textgrid";
 
 declare function local:move-and-rename($filename as xs:string) as item()* {
     let $data-file-path := $target || "/data/"
@@ -70,7 +70,7 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 (let $path := $target || "/modules/testtrigger.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
-(: move the sample XMLs to sade/textgrid to be available in the viewer :)
+(: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
 ( 
     
     xmldb:get-child-resources($target || "/data")[ends-with(., ".xml")]

@@ -10,7 +10,7 @@ import module namespace map="http://www.w3.org/2005/xpath-functions/map";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
 declare variable $ct:restxq := "http://0.0.0.0:8080/exist/restxq/";
-declare variable $ct:base-uri := "/db/apps/sade/textgrid/data/sample_teixml.xml";
+declare variable $ct:base-uri := "/db/data/textgrid/data/sample_teixml.xml";
 
 declare
     %test:args("sample_edition") %test:assertEquals("sample_teixml")
