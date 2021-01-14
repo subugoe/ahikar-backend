@@ -151,7 +151,7 @@ as xs:string {
 declare
     %test:assertEquals("sample_edition")
 function tct:get-allowed-manifest-uris-sample-input() {
-    let $collection-metadata := tapi-coll:get-aggregation("sample_lang_aggregation")
+    let $collection-metadata := tapi-coll:get-aggregation("sample_lang_aggregation_syriac")
     return
         tapi-coll:get-allowed-manifest-uris($collection-metadata)
 };
@@ -182,7 +182,7 @@ function tct:get-format-type() {
 
 declare
     %test:args("sample_main_edition") %test:assertXPath("$result//type[. = 'manifest']")
-    %test:args("sample_lang_aggregation") %test:assertXPath("$result//id[matches(., 'sample_edition/manifest.json')]")
+    %test:args("sample_lang_aggregation_syriac") %test:assertXPath("$result//id[matches(., 'sample_edition/manifest.json')]")
     %test:args("testapi-collection") %test:assertXPath("$result//id[matches(., 'test-aggregation-1/manifest.json')]")
     %test:args("testapi-collection") %test:assertXPath("$result//id[matches(., 'test-aggregation-2/manifest.json')]")
 function tct:make-sequence($collection-uri as xs:string) {
@@ -198,8 +198,8 @@ as xs:string {
 
 
 declare
-    %test:args("sample_lang_aggregation") %test:assertXPath("$result//title = 'The Story and Proverbs of Ahikar the Wise'")
-    %test:args("sample_lang_aggregation") %test:assertXPath("$result//*/string() = 'http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/sample_lang_aggregation/sample_edition/manifest.json' ")
+    %test:args("sample_lang_aggregation_syriac") %test:assertXPath("$result//title = 'The Story and Proverbs of Ahikar the Wise'")
+    %test:args("sample_lang_aggregation_syriac") %test:assertXPath("$result//*/string() = 'http://0.0.0.0:8080/exist/restxq/api/textapi/ahikar/sample_lang_aggregation_syriac/sample_edition/manifest.json' ")
 function tct:get-json($collection-uri as xs:string) {
     tapi-coll:get-json($collection-uri, $tc:server)
 };
