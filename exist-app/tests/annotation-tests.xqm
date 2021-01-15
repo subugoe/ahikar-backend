@@ -120,6 +120,7 @@ as element(tei:TEI) {
 declare
     %test:args("sample_main_edition") %test:assertEquals("198")
     %test:args("syriac") %test:assertEquals("66")
+    %test:args("arabic-karshuni") %test:assertEquals("132")
 function at:get-total-no-of-annotations($uri as xs:string) {
     anno:get-total-no-of-annotations($uri)
 };
