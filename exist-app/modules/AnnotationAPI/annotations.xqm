@@ -12,6 +12,7 @@ xquery version "3.1";
 
 module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
+declare namespace err = "http://www.w3.org/2005/xqt-errors";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace ore="http://www.openarchives.org/ore/terms/";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
@@ -147,7 +148,7 @@ as xs:string {
     switch ($collection-type)
         case "syriac" return "The Syriac Collection"
         case "arabic-karshuni" return "The Arabic and Karshuni Collections"
-        default return error("ANNO01", "Unknown collection type " || $collection-type)
+        default return anno:get-metadata-title($collection-type)
 };
 
 
@@ -166,29 +167,29 @@ as xs:string {
 (:~
  : Creates a map containing all information necessary for a W3C compliant Annotation Collection.
  : 
- : @param $uri The resource's URI
+ : @param $collection Either the type of the collection (syriac or arabic-karshuni) or the collection URI of an edition.
  : @param $title The resource's title
  : @param $first-entry The IRI of the first Annotation Page that is included within the Collection
  : @param $last-entry The IRI of the last Annotation Page that is included within the Collection
  :)
-declare function anno:make-annotationCollection-map($uri as xs:string,
+declare function anno:make-annotationCollection-map($collection as xs:string,
     $title as xs:string,
     $first-entry as xs:string,
     $last-entry as xs:string)
 as map() {
-    map {
-        "annotationCollection":
-            map {
-                "@context": "http://www.w3.org/ns/anno.jsonld",
-                "id":       $anno:ns || "/annotationCollection/" || $uri,
-                "type":     "AnnotationCollection",
-                "label":    "Ahikar annotations for textgrid:" || $uri || ": " || $title,
-                "x-creator":  anno:get-creator($uri),
-                "total":    anno:get-total-no-of-annotations($uri),
-                "first":    $first-entry,
-                "last":     $last-entry
-            }
-    }
+        map {
+            "annotationCollection":
+                map {
+                    "@context": "http://www.w3.org/ns/anno.jsonld",
+                    "id":       $anno:ns || "/annotationCollection/" || $collection,
+                    "type":     "AnnotationCollection",
+                    "label":    "Ahikar annotations for textgrid:" || $collection || ": " || $title,
+                    "x-creator":  anno:get-creator($collection),
+                    "total":    anno:get-total-no-of-annotations($collection),
+                    "first":    $first-entry,
+                    "last":     $last-entry
+                }
+        }
 };
 
 (:~
@@ -611,7 +612,8 @@ as xs:string? {
  : @return true() if resources stated by $uri is a TEI/XML resource
  :)
 declare function anno:is-resource-xml($uri as xs:string) as xs:boolean {
-    commons:get-document($uri, "meta")//tgmd:format = "text/xml"
+    doc-available($commons:data || $uri || ".xml")
+    and commons:get-document($uri, "meta")//tgmd:format = "text/xml"
 };
 
 (:~ 

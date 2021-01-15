@@ -206,6 +206,8 @@ as xs:string? {
 declare
     %test:args("sample_teixml") %test:assertEquals("Simon Birol, Aly Elrefaei")
     %test:args("sample_edition") %test:assertEquals("Simon Birol, Aly Elrefaei")
+    %test:args("syriac") %test:assertEquals("Simon Birol, Aly Elrefaei")
+    %test:args("arabic-karshuni") %test:assertEquals("Simon Birol, Aly Elrefaei")
 function at:get-creator($uri as xs:string)
 as xs:string {
     anno:get-creator($uri)
@@ -356,10 +358,10 @@ as xs:string {
 declare
     %test:args("syriac", "http://localhost:8080")
     %test:assertEquals("http://localhost:8080/api/annotations/ahikar/syriac/sample_edition/annotationPage.json")
-function at:get-information-for-collection-object($collectionURI as xs:string,
+function at:get-information-for-collection-object($collection-type as xs:string,
     $server as xs:string)
 as xs:string {
-    let $result := anno:get-information-for-collection-object($collectionURI, $server)
+    let $result := anno:get-information-for-collection-object($collection-type, $server)
     return
         map:get($result, "annotationCollection")
         => map:get("first")
@@ -403,7 +405,17 @@ as xs:string+ {
 declare
     %test:args("syriac") %test:assertEquals("The Syriac Collection")
     %test:args("arabic-karshuni") %test:assertEquals("The Arabic and Karshuni Collections")
-    %test:args("asdf") %test:assertError("ANNO01")
+    %test:args("sample_edition") %test:assertEquals("Beispieldatei zum Testen")
+    %test:args("asdf") %test:assertError("COMMONS002")
 function at:make-collection-object-title($collection-type as xs:string) {
     anno:make-collection-object-title($collection-type)
+};
+
+declare
+    %test:args("syriac") %test:assertEquals("sample_lang_aggregation_syriac")
+    %test:args("arabic-karshuni") %test:assertXPath("count($result) = 2 and $result = 'sample_lang_aggregation_arabic' and $result = 'sample_lang_aggregation_karshuni'")
+    %test:args("sample_edition") %test:assertEquals("sample_edition")
+function at:determine-uris-for-collection($collection as xs:string)
+as xs:string+ {
+    anno:determine-uris-for-collection($collection)
 };
