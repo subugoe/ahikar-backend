@@ -124,22 +124,22 @@ as map() {
  : @see https://www.w3.org/TR/annotation-model/#annotation-collection
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : 
- : @param $collectionURI The URI of the current Collection Object
+ : @param $collection-type The type of the current Collection Object (syriac or arabic-karshuni)
  : @param The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
  :)
-declare function anno:get-information-for-collection-object($collectionURI as xs:string,
+declare function anno:get-information-for-collection-object($collection-type as xs:string,
     $server as xs:string)
 as map() {
-    let $child-keys := anno:find-in-map($anno:uris, $collectionURI) => map:keys()
+    let $child-keys := anno:find-in-map($anno:uris, $collection-type) => map:keys()
     let $first := $child-keys[1]
     let $last := $child-keys[last()]
-    let $title := anno:get-metadata-title($collectionURI)
-    let $first-entry := $server || "/api/annotations/ahikar/" || $collectionURI || "/" || $first || "/annotationPage.json"
-    let $last-entry := $server || "/api/annotations/ahikar/" || $collectionURI || "/" || $last || "/annotationPage.json"
+    let $title := anno:get-metadata-title($collection-type)
+    let $first-entry := $server || "/api/annotations/ahikar/" || $collection-type || "/" || $first || "/annotationPage.json"
+    let $last-entry := $server || "/api/annotations/ahikar/" || $collection-type || "/" || $last || "/annotationPage.json"
 
     return
-        anno:make-annotationCollection-map($collectionURI, $title, $first-entry, $last-entry)
+        anno:make-annotationCollection-map($collection-type, $title, $first-entry, $last-entry)
 };
 
 
