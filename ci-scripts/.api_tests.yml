@@ -19,7 +19,7 @@ test_api_status-test:
     - tags
     - develop
   script:
-    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/arabic-karshuni/collection.json)
     - *check_HTTP_status
 
 test_api_status-develop:
@@ -27,7 +27,7 @@ test_api_status-develop:
   only:
     - develop
   script: 
-    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/arabic-karshuni/collection.json)
     - *check_HTTP_status
 
 test_api_status-main:
@@ -35,7 +35,7 @@ test_api_status-main:
   only:
     - main
   script: 
-    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
+    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/textapi/ahikar/arabic-karshuni/collection.json)
     - *check_HTTP_status
   retry: 2
 
