@@ -134,12 +134,20 @@ as map() {
     let $child-keys := anno:find-in-map($anno:uris, $collection-type) => map:keys()
     let $first := $child-keys[1]
     let $last := $child-keys[last()]
-    let $title := anno:get-metadata-title($collection-type)
+    let $title := anno:make-collection-object-title($collection-type)
     let $first-entry := $server || "/api/annotations/ahikar/" || $collection-type || "/" || $first || "/annotationPage.json"
     let $last-entry := $server || "/api/annotations/ahikar/" || $collection-type || "/" || $last || "/annotationPage.json"
 
     return
         anno:make-annotationCollection-map($collection-type, $title, $first-entry, $last-entry)
+};
+
+declare function anno:make-collection-object-title($collection-type as xs:string)
+as xs:string {
+    switch ($collection-type)
+        case "syriac" return "The Syriac Collection"
+        case "arabic-karshuni" return "The Arabic and Karshuni Collections"
+        default return error("ANNO01", "Unknown collection type " || $collection-type)
 };
 
 

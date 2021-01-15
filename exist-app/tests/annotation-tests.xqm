@@ -399,3 +399,11 @@ function at:get-lang-aggregation-uris($collection-type as xs:string)
 as xs:string+ {
     anno:get-lang-aggregation-uris($collection-type)
 };
+
+declare
+    %test:args("syriac") %test:assertEquals("The Syriac Collection")
+    %test:args("arabic-karshuni") %test:assertEquals("The Arabic and Karshuni Collections")
+    %test:args("asdf") %test:assertError("ANNO01")
+function at:make-collection-object-title($collection-type as xs:string) {
+    anno:make-collection-object-title($collection-type)
+};
