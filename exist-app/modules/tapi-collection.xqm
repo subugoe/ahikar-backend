@@ -14,6 +14,20 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
 
+declare variable $tapi-coll:uris :=
+    map {
+        "syriac": if (doc-available($commons:agg || "3r84g.xml")) then "3r84g" else "sample_lang_aggregation_syriac",
+        "arabic-karshuni": (
+            if (doc-available($commons:agg || "3r9ps.xml")) then "3r9ps" else "sample_lang_aggregation_arabic",
+            if (doc-available($commons:agg || "3r84h.xml")) then "3r84h" else "sample_lang_aggregation_karshuni")
+    };
+    
+declare function tapi-coll:get-uris($collection-type as xs:string)
+as xs:string+ {
+    map:get($tapi-coll:uris, $collection-type)
+};
+
+
 (:~
  : Returns information about the main collection for the project. This encompasses
  : the key data described at https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object.
@@ -27,43 +41,53 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
  : @param $server A string indicating the server. This parameter has been introduced to make this function testable.
  : @return An object element containing all necessary information
  :)
-declare function tapi-coll:get-json($collection-uri as xs:string,
+declare function tapi-coll:get-json($collection-type as xs:string,
     $server as xs:string)
 as item()+ {
-    let $metadata-file := commons:get-metadata-file($collection-uri)
-    let $format-type := tapi-coll:get-format-type($metadata-file)
-    let $sequence := tapi-coll:make-sequence($collection-uri, $server)
-    let $annotationCollection-uri := tapi-coll:make-annotationCollection-uri($server, $collection-uri)
-
+    let $collection-string := tapi-coll:get-collection-string($collection-type)
+    let $sequence := tapi-coll:make-sequence($collection-type, $server)
+    let $annotationCollection-uri := tapi-coll:make-annotationCollection-uri($server, $collection-type)
+    
     return
-    <object>
-        <textapi>{$commons:version}</textapi>
-        <title>
-            <title>The Story and Proverbs of Ahikar the Wise</title>
-            <type>{$format-type}</type>
-        </title>
-        <!-- this empty title element is necessary to force JSON to
-        generate an array instead of a simple object. -->
-        <title/>
-        <collector>
-            <role>collector</role>
-            <name>Prof. Dr. theol. Kratz, Reinhard Gregor</name>
-            <idref>
-                <base>http://d-nb.info/gnd/</base>
-                <id>115412700</id>
-                <type>GND</type>
-            </idref>
-        </collector>
-        <description>Main collection for the Ahikar project. Funded by DFG, 2019–2020. University of Göttingen</description>
-        <annotationCollection>{$annotationCollection-uri}</annotationCollection>
-        {$sequence}
-    </object>
+        <object>
+            <textapi>{$commons:version}</textapi>
+            <title>
+                <title>The Story and Proverbs of Ahikar the Wise</title>
+                <type>main</type>
+            </title>
+            <!-- this empty title element is necessary to force JSON to
+            generate an array instead of a simple object. -->
+            <title/>
+            <collector>
+                <role>collector</role>
+                <name>Prof. Dr. theol. Kratz, Reinhard Gregor</name>
+                <idref>
+                    <base>http://d-nb.info/gnd/</base>
+                    <id>115412700</id>
+                    <type>GND</type>
+                </idref>
+            </collector>
+            <description>{$collection-string} collection for the Ahiqar project. Funded by DFG, 2019–2020. University of Göttingen</description>
+            <annotationCollection>{$annotationCollection-uri}</annotationCollection>
+            {$sequence}
+        </object>
 };
 
-declare function tapi-coll:get-aggregation($collection-uri as xs:string)
-as document-node() {
-    doc($commons:agg || $collection-uri || ".xml")
+declare function tapi-coll:get-collection-string($collection-type as xs:string)
+as xs:string {
+    switch ($collection-type)
+        case "syriac" return "Syriac"
+        case "arabic-karshuni" return "Arabic/Karshuni"
+        default return error("D001", "Unknown collection type " || $collection-type)
 };
+
+
+declare function tapi-coll:get-aggregations($uris as xs:string+)
+as document-node()+ {
+    for $uri in $uris return
+        doc($commons:agg || $uri || ".xml")
+};
+
 
 (:~
  : Some "editions" that appear in the ore:aggregates list of a collection are
@@ -76,15 +100,16 @@ as document-node() {
  : @return A list of ore:aggregates without the manifests to be excluded
  : 
  :)
-declare function tapi-coll:get-allowed-manifest-uris($aggregation-file as node())
+declare function tapi-coll:get-allowed-manifest-uris($aggregations as node()+)
 as xs:string+ {
     let $not-allowed :=
         (
             "textgrid:3vp38"
         )
     let $allowed := 
-        for $aggregate in $aggregation-file//ore:aggregates return
-            $aggregate[@rdf:resource != $not-allowed]/@rdf:resource
+        for $aggregation-file in $aggregations return
+            for $aggregate in $aggregation-file//ore:aggregates return
+                $aggregate[@rdf:resource != $not-allowed]/@rdf:resource
     return
         for $uri in $allowed return
             tapi-coll:remove-textgrid-prefix($uri)
@@ -95,15 +120,15 @@ as xs:string {
     replace($uri, "textgrid:", "")
 };
 
-declare function tapi-coll:make-sequence($collection-uri as xs:string,
+declare function tapi-coll:make-sequence($collection-type as xs:string,
     $server as xs:string)
 as element(sequence)+ {
-    let $aggregation := tapi-coll:get-aggregation($collection-uri)
-    let $allowed-manifest-uris := tapi-coll:get-allowed-manifest-uris($aggregation/*)
-    
+    let $uris := tapi-coll:get-uris($collection-type)
+    let $aggregations := tapi-coll:get-aggregations($uris)
+    let $allowed-manifest-uris := tapi-coll:get-allowed-manifest-uris($aggregations)
     for $manifest-uri in $allowed-manifest-uris return
         let $manifest-metadata :=  commons:get-metadata-file($manifest-uri)
-        let $id := tapi-coll:make-id($server, $collection-uri, $manifest-uri)
+        let $id := tapi-coll:make-id($server, $collection-type, $manifest-uri)
         let $type := tapi-coll:make-format-type($manifest-metadata)
         return
             <sequence>
@@ -113,10 +138,10 @@ as element(sequence)+ {
 };
 
 declare function tapi-coll:make-id($server as xs:string,
-    $collection-uri as xs:string,
+    $collection-type as xs:string,
     $manifest-uri as xs:string)
 as xs:string {
-    $server || "/api/textapi/ahikar/" || $collection-uri || "/" || $manifest-uri || "/manifest.json"
+    $server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"
 };
 
 declare function tapi-coll:get-format-type($metadata as document-node())
@@ -134,7 +159,7 @@ as xs:string {
 };
 
 declare function tapi-coll:make-annotationCollection-uri($server as xs:string,
-    $collection-uri as xs:string)
+    $collection-type as xs:string)
 as xs:string {
-    $server || "/api/annotations/ahikar/" || $collection-uri || "/annotationCollection.json"
+    $server || "/api/annotations/ahikar/" || $collection-type || "/annotationCollection.json"
 };

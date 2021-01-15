@@ -27,7 +27,6 @@ import module namespace ttnt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/no
 import module namespace ttt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests" at "../tests/tapi-txt-tests.xqm";
 import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" at "../tests/tei2html-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
-import module namespace t="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection-draft/tests" at "../tests/draft-tapi-collection-tests.xqm";
 
 (:~
  : Triggers the tests for the Ahikar backend. Called by the CI.
@@ -69,7 +68,6 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/commons-tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/collection-draft/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests")),

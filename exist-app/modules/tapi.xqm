@@ -19,7 +19,6 @@ declare namespace test="http://exist-db.org/xquery/xqsuite";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
 import module namespace tapi-coll="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection" at "tapi-collection.xqm";
-import module namespace d="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection-draft" at "draft-tapi-collection.xqm";
 import module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item" at "tapi-item.xqm";
 import module namespace tapi-mani="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest" at "tapi-manifest.xqm";
 import module namespace tapi-txt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt" at "tapi-txt.xqm";
@@ -99,7 +98,7 @@ declare
 function tapi:endpoint-collection($collection-type as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    d:get-json($collection-type, $tapi:server)
+    tapi-coll:get-json($collection-type, $tapi:server)
 };
 
 
