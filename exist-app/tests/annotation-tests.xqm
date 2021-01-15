@@ -118,8 +118,8 @@ as element(tei:TEI) {
 };
 
 declare
-    %test:args("sample_main_edition") %test:assertEquals("66")
-    %test:args("sample_lang_aggregation_syriac") %test:assertEquals("66")
+    %test:args("sample_main_edition") %test:assertEquals("198")
+    %test:args("syriac") %test:assertEquals("66")
 function at:get-total-no-of-annotations($uri as xs:string) {
     anno:get-total-no-of-annotations($uri)
 };
@@ -161,9 +161,9 @@ as item()? {
 
 declare
     %test:args("sample_edition", "11")
-    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/11/annotationPage.json")
+    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/11/annotationPage.json")
     %test:args("sample_edition", "")
-    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/annotationPage.json")
+    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/annotationPage.json")
     %test:args("", "")
     %test:assertEmpty
 function at:get-prev-or-next-annotationPage-url($document as xs:string?,
@@ -213,8 +213,8 @@ as xs:string {
 declare
     %test:args("sample_edition", 
         "Beispieledition", 
-        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/82a/annotationPage.json", 
-        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/83b/annotationPage.json")
+        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/82a/annotationPage.json", 
+        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/83b/annotationPage.json")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:sample_edition: Beispieledition'")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('x-creator') = 'Simon Birol, Aly Elrefaei'")
 function at:make-annotationCollection-map($uri as xs:string,
@@ -227,7 +227,7 @@ as map() {
 
 declare
     %test:args("sample_lang_aggregation_syriac", "sample_edition", "http://localhost:8080")
-    %test:assertXPath("map:get($result, 'annotationPage') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationPage/sample_lang_aggregation/sample_edition'")
+    %test:assertXPath("map:get($result, 'annotationPage') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationPage/sample_lang_aggregation_syriac/sample_edition'")
     %test:pending
 function at:make-annotationPage($collection as xs:string, 
     $manifest as xs:string,
@@ -324,7 +324,7 @@ as xs:string? {
 
 declare
     %test:args("sample_lang_aggregation_syriac", "sample_edition", "84a", "http://localhost:8080")
-    %test:assertEquals("http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationPage/sample_lang_aggregation/sample_edition-84a")
+    %test:assertEquals("http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationPage/sample_lang_aggregation_syriac/sample_edition-84a")
 function at:make-annotationPage-for-manifest-id($collection as xs:string,
     $document as xs:string,
     $page as xs:string,
@@ -354,7 +354,7 @@ as xs:string {
 
 declare
     %test:args("sample_lang_aggregation_syriac", "http://localhost:8080")
-    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation/sample_edition/annotationPage.json")
+    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/annotationPage.json")
 function at:get-information-for-collection-object($collectionURI as xs:string,
     $server as xs:string)
 as xs:string {
@@ -389,4 +389,12 @@ declare
 function at:get-xmls-prev-in-collection($uri as xs:string)
 as xs:string* {
     anno:get-xmls-prev-in-collection($uri)
+};
+
+declare
+    %test:args("syriac") %test:assertEquals("sample_lang_aggregation_syriac")
+    %test:args("arabic-karshuni") %test:assertXPath("count($result) = 2 and $result = 'sample_lang_aggregation_arabic' and $result = 'sample_lang_aggregation_karshuni'")
+function at:get-lang-aggregation-uris($collection-type as xs:string)
+as xs:string+ {
+    anno:get-lang-aggregation-uris($collection-type)
 };
