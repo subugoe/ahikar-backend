@@ -354,8 +354,8 @@ as xs:string {
 };
 
 declare
-    %test:args("sample_lang_aggregation_syriac", "http://localhost:8080")
-    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/annotationPage.json")
+    %test:args("syriac", "http://localhost:8080")
+    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/syriac/sample_edition/annotationPage.json")
 function at:get-information-for-collection-object($collectionURI as xs:string,
     $server as xs:string)
 as xs:string {
@@ -366,9 +366,9 @@ as xs:string {
 };
 
 declare
-    %test:args("sample_lang_aggregation_syriac", "sample_edition", "http://localhost:8080")
+    %test:args("syriac", "sample_edition", "http://localhost:8080")
     %test:assertXPath("$result instance of map()")
-    %test:args("sample_lang_aggregation_syriac", "", "http://localhost:8080")
+    %test:args("syriac", "", "http://localhost:8080")
     %test:assertXPath("$result instance of map()")
 function at:make-annotationCollection($collection as xs:string,
     $document as xs:string?,
