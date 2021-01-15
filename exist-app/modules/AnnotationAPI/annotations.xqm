@@ -29,6 +29,14 @@ declare variable $anno:annotationElements :=
         "persName"
     );
 
+declare variable $anno:lang-aggs := 
+    map {
+        "syriac": if (doc-available($commons:agg || "3r84g.xml")) then "3r84g" else "sample_lang_aggregation_syriac",
+        "arabic-karshuni":
+            if (doc-available($commons:agg || "3r84h.xml")
+            and doc-available($commons:agg || "3r9ps.xml")) then ("3r84h", "3r9ps") else ("sample_lang_aggregation_arabic", "sample_lang_aggregation_karshuni")
+    };
+
 (: this variable holds a map with the complete project structure (excluding images) :)
 declare variable $anno:uris :=
     let $main-edition-object := 
@@ -38,14 +46,16 @@ declare variable $anno:uris :=
         else
             "sample_main_edition"
     
-    let $language-aggs := commons:get-available-aggregates($main-edition-object)
+    let $views := ("syriac", "arabic-karshuni")
     return
         map { $main-edition-object:
                 (: level 1: language aggregations :)
-                map:merge(for $lang in $language-aggs return
-                map:entry($lang, 
+                map:merge(for $view in $views return
+                map:entry($view, 
                     (: level 2 (key): editions associated to a language aggregation :)
                     map:merge(
+                        let $language-aggregates := anno:get-lang-aggregation-uris($view)
+                            for $lang in $language-aggregates return
                             let $editions := commons:get-available-aggregates($lang)
                             for $uri in $editions return
                                 (: level 2 (value): XML associated with edition :)
@@ -60,6 +70,11 @@ declare variable $anno:uris :=
                 ))
         }
 ;
+
+declare function anno:get-lang-aggregation-uris($collection-type as xs:string)
+as xs:string+ {
+    $anno:lang-aggs?($collection-type)
+};
 
 (:~
  : A generic function for creating an W3C compliant Annotation Collection for a given resource.
