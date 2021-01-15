@@ -38,6 +38,15 @@ as xs:boolean {
 };
 
 declare
+    %test:assertTrue
+function at:are-resources-available-lang-collection-true()
+as xs:boolean {
+    let $resources := "syriac"
+    return
+        anno:are-resources-available($resources)
+};
+
+declare
     %test:assertFalse
 function at:are-resources-available-false()
 as xs:boolean {
@@ -98,9 +107,10 @@ as map() {
 };
 
 declare
-    %test:args("sample_lang_aggregation_syriac", "sample_edition", "82a", "http://localhost:8080")
+    %test:args("syriac", "sample_edition", "82a", "http://localhost:8080")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationCollection/sample_edition/82a'")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('type') = 'AnnotationCollection'")
+    %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:sample_edition: Beispieldatei zum Testen, page 82a'")
 function at:make-annotationCollection-for-manifest($collection as xs:string,
     $document as xs:string,
     $page as xs:string,

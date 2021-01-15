@@ -192,6 +192,15 @@ as map() {
         }
 };
 
+
+declare function anno:determine-uris-for-collection($collection as xs:string)
+as xs:string+ {
+    switch ($collection)
+        case "syriac" return $anno:lang-aggs?($collection)
+        case "arabic-karshuni" return $anno:lang-aggs?($collection)
+        default return $collection
+};
+
 (:~
  : Extracts the current edition's editor(s) from the TEI metadata.
  : In case the URI of a collection or edition is passed, the aggregated TEI/XML
@@ -289,7 +298,7 @@ declare function anno:make-annotationCollection-for-manifest($collection as xs:s
     $page as xs:string,
     $server as xs:string)
 as map() {
-    let $title := anno:get-metadata-title($collection)
+    let $title := anno:get-metadata-title($document)
 
     return
         map {
@@ -508,7 +517,11 @@ declare function anno:are-resources-available($resources as xs:string+)
 as xs:boolean {
     let $availability :=
         for $resource in $resources return
-            doc-available($commons:meta || $resource || ".xml")
+            if ($resource = ("syriac", "arabic-karshuni")) then
+                for $edition in $anno:lang-aggs?($resource) return
+                    doc-available($commons:meta || $edition || ".xml")
+            else
+                doc-available($commons:meta || $resource || ".xml")
     return
         not(functx:is-value-in-sequence(false(), $availability))
 };
