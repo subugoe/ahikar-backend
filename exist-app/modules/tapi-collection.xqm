@@ -37,7 +37,7 @@ as xs:string+ {
  : the XMLs and images in them.
  :
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
- : @param $collection-uri The unprefixed TextGrid URI of a collection. For Ahiqar's main collection this is '3r132'.
+ : @param $collection-type The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $server A string indicating the server. This parameter has been introduced to make this function testable.
  : @return An object element containing all necessary information
  :)
@@ -96,7 +96,7 @@ as document-node()+ {
  : In order to not have them included in the list of "actual" editions, they
  : have to be explicitly excluded.
  : 
- : @param $doc The root element of an aggregation object
+ : @param $aggregatins The root element(s) of one or more aggregation objects
  : @return A list of ore:aggregates without the manifests to be excluded
  : 
  :)

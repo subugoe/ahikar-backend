@@ -3,7 +3,7 @@ xquery version "3.1";
 (: 
  : This module handles calls to the API on item level, e.g.
  : 
- : /textapi/ahikar/3r9ps/3rx15-8a/latest/item.json
+ : /textapi/ahikar/arabic-karshuni/3rx15-8a/latest/item.json
  :)
 
 module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item";
@@ -14,7 +14,7 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
 import module namespace tapi-img="http://ahikar.sub.uni-goettingen.de/ns/tapi/images" at "tapi-img.xqm";
 
 
-declare function tapi-item:get-json($collection-uri as xs:string,
+declare function tapi-item:get-json($collection-type as xs:string,
     $manifest-uri as xs:string,
     $page as xs:string,
     $server as xs:string)
@@ -31,7 +31,7 @@ as element(object) {
         <image>
             <id>{tapi-item:make-facsimile-id($manifest-uri, $page, $server)}</id>
         </image>
-        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-uri}/{$manifest-uri}/{$page}/annotationCollection.json</annotationCollection>
+        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/{$page}/annotationCollection.json</annotationCollection>
     </object>
 };
 

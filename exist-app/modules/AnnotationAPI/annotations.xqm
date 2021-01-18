@@ -12,7 +12,6 @@ xquery version "3.1";
 
 module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
-declare namespace err = "http://www.w3.org/2005/xqt-errors";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace ore="http://www.openarchives.org/ore/terms/";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
@@ -30,6 +29,10 @@ declare variable $anno:annotationElements :=
         "persName"
     );
 
+(:
+ : Determines the correct language aggregations.
+ : The ones starting with "sample_" are for testing only.
+ :)
 declare variable $anno:lang-aggs := 
     map {
         "syriac": if (doc-available($commons:agg || "3r84g.xml")) then "3r84g" else "sample_lang_aggregation_syriac",
@@ -83,7 +86,7 @@ as xs:string+ {
  : @see https://www.w3.org/TR/annotation-model/#annotation-collection
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : 
- : @param $collection The URI of a Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of a Collection or Manifest Object. May be an empty sequence if only information about the $collection should be created
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
@@ -125,7 +128,7 @@ as map() {
  : @see https://www.w3.org/TR/annotation-model/#annotation-collection
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : 
- : @param $collection-type The type of the current Collection Object (syriac or arabic-karshuni)
+ : @param $collection-type The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
  :)
@@ -236,7 +239,7 @@ as xs:string {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of a Collection Object, e.g. '3r132'
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of a Collection or Manifest Object, e.g. '3r84g'
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
@@ -288,7 +291,7 @@ as map() {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of the Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @param $page The page within an item, i.e. a tei:pb/@n within a TEI resource
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
@@ -325,7 +328,7 @@ as map() {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of the Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @param $page The page within an item, i.e. a tei:pb/@n within a TEI resource
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
