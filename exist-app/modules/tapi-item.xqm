@@ -21,7 +21,7 @@ declare function tapi-item:get-json($collection-uri as xs:string,
 as element(object) {
     <object>
         <textapi>{$commons:version}</textapi>
-        <title>{tapi-item:make-title($manifest-uri)}</title>
+        {tapi-item:make-title-object($manifest-uri)}
         <type>page</type>
         <n>{$page}</n>
         <content>{$server}/api/content/{commons:get-xml-uri($manifest-uri)}-{$page}.html</content>
@@ -36,11 +36,18 @@ as element(object) {
 };
 
 
-declare function tapi-item:make-title($manifest-uri as xs:string)
-as xs:string {
+declare function tapi-item:make-title-object($manifest-uri as xs:string)
+as element() {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
-    return
+    let $title :=
         $tei-xml//tei:title[@type = "main"]/string()
+        => normalize-space()
+    let $type := $tei-xml//tei:title/@type/string()
+    return
+        <title>
+            <title>{$title}</title>
+            <type>{$type}</type>
+        </title>
 };
 
 
