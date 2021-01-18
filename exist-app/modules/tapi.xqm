@@ -108,13 +108,13 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection-uri}/{$manifest-uri}/manifest.json")
+    %rest:path("/textapi/ahikar/{$collection-type}/{$manifest-uri}/manifest.json")
     %output:method("json")
-function tapi:endpoint-manifest($collection-uri as xs:string,
+function tapi:endpoint-manifest($collection-type as xs:string,
     $manifest-uri as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi-mani:get-json($collection-uri, $manifest-uri, $tapi:server)
+    tapi-mani:get-json($collection-type, $manifest-uri, $tapi:server)
 };
 
 
@@ -142,7 +142,7 @@ function tapi:endpoint-item($collection-type as xs:string,
     $page as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi-item:get-json($collection-uri, $manifest-uri, $page, $tapi:server)
+    tapi-item:get-json($collection-type, $manifest-uri, $page, $tapi:server)
 };
 
 (:~
