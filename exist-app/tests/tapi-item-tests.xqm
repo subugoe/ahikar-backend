@@ -33,9 +33,9 @@ as xs:string {
 
 
 declare
-    %test:args("sample_edition", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.03,0.48,49.83,100.00")
+    %test:args("sample_edition", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00")
     (: the following file is test data created by setUp :)
-    %test:args("ahiqar_agg_wo_tile", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz")
+    %test:args("ahiqar_agg_wo_tile", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz")
 function titemt:make-facsimile-id($manifest-uri as xs:string,
     $page as xs:string)
 as xs:string {
@@ -64,7 +64,7 @@ declare
     (: checks if underlying pages are identified :)
     %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://0.0.0.0:8080/exist/restxq/api/content/sample_teixml-82a.html' ")
     (: checks if images connected to underlying pages are identified :)
-    %test:assertXPath("$result//*[local-name(.) = 'id'] = 'http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.03,0.48,49.83,100.00' ")
+    %test:assertXPath("$result//*[local-name(.) = 'id'] = 'http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00' ")
     %test:assertXPath("$result//*[local-name(.) = 'annotationCollection'] = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/sample_main_edition/sample_edition/82a/annotationCollection.json' ")
 function titemt:get-json($collection as xs:string,
     $document as xs:string,
@@ -85,14 +85,14 @@ as element()+ {
 
 
 declare
-    %test:args("3r1nz") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz")
+    %test:args("3r1nz") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz")
 function titemt:make-url-for-single-page-image($facsimile-uri as xs:string)
 as xs:string {
     tapi-item:make-url-for-single-page-image($facsimile-uri, $tc:server)
 };
 
 declare
-    %test:args("3r1nz", "sample_edition", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/3r1nz/50.03,0.48,49.83,100.00")
+    %test:args("3r1nz", "sample_edition", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00")
 function titemt:make-url-for-double-page-image($facsimile-uri as xs:string,
     $manifest-uri as xs:string,
     $page as xs:string)
@@ -100,6 +100,23 @@ as xs:string {
     tapi-item:make-url-for-double-page-image($facsimile-uri, $manifest-uri, $page, $tc:server)
 };
 
+declare
+    %test:args("3qzg5") %test:assertEquals("public/")
+    %test:args("3r85p") %test:assertEquals("restricted/")
+    %test:assumeInternetAccess("https://textgridlab.org/1.0/tgcrud-public/rest/")
+function titemt:make-restricted-or-public-path-component($facsimile-uri as xs:string)
+as xs:string {
+    tapi-item:make-restricted-or-public-path-component($facsimile-uri)
+};
+
+declare
+    %test:args("3qzg5") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/public/3qzg5")
+    %test:args("3r85p") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r85p")
+    %test:assumeInternetAccess("https://textgridlab.org/1.0/tgcrud-public/rest/")
+function titemt:make-img-url-prefix($facsimile-uri as xs:string)
+as xs:string {
+    tapi-item:make-img-url-prefix($facsimile-uri, $tc:server)
+};
 
 declare function local:create-and-store-test-data()
 as xs:string+ {

@@ -133,7 +133,8 @@ function tt:content-txt() as xs:string {
 
 declare
     %test:assertTrue
-function tt:is-txt-api-available() {
+function tt:is-txt-api-available()
+as xs:boolean {
     let $url := $tc:server || "/content/sample_teixml.txt"
     return
         tc:is-endpoint-http200($url)
@@ -156,7 +157,8 @@ function tt:remove-whitespaces() as document-node() {
 
 declare
     %test:assertTrue
-function tt:is-collection-endpoint-http200() {
+function tt:is-collection-endpoint-http200()
+as xs:boolean {
     let $url := $tc:server || "/textapi/ahikar/sample_main_edition/collection.json"
     return
         tc:is-endpoint-http200($url)
@@ -182,7 +184,8 @@ as item() {
 
 declare
     %test:assertTrue
-function tt:is-manifest-endpoint-http200() {
+function tt:is-manifest-endpoint-http200()
+as xs:boolean {
     let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition/manifest.json"
     return
         tc:is-endpoint-http200($url)
@@ -214,7 +217,8 @@ as item() {
 
 declare
     %test:assertTrue
-function tt:is-item-endpoint-http200() {
+function tt:is-item-endpoint-http200()
+as xs:boolean {
     let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json"
     return
         tc:is-endpoint-http200($url)

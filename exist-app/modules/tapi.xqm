@@ -175,8 +175,32 @@ as item()+ {
 (:~
  : Returns an image belonging to a given URI. This function doesn't work locally
  : unless you have all necessary login information filled in at ahikar.env.
+ :
+ : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
+ : @return The image as binary
+ :)
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/images/public/{$uri}")
+    %rest:produces("image/jpeg")
+    %output:method("binary")
+function tapi:endpoint-public-image($uri as xs:string)
+as item()+ {
+    $commons:responseHeader200,
+    hc:send-request(
+        <hc:request method="GET"
+        href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri}/full/,2000/0/native.jpg"
+        />
+    )[2] => xs:base64Binary()
+};
+
+
+(:~
+ : Returns an image belonging to a given URI. This function doesn't work locally
+ : unless you have all necessary login information filled in at ahikar.env.
  : 
- : Since the images of the Ahikar project aren't publicly available, this
+ : Since these images of the Ahikar project aren't publicly available, this
  : function cannot be tested by unit tests.
  :
  : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
@@ -185,10 +209,10 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/images/{$uri}")
+    %rest:path("/images/restricted/{$uri}")
     %rest:produces("image/jpeg")
     %output:method("binary")
-function tapi:endpoint-image($uri as xs:string)
+function tapi:endpoint-restricted-image($uri as xs:string)
 as item()+ {
     $commons:responseHeader200,
     hc:send-request(
