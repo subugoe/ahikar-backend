@@ -171,31 +171,6 @@ as item()+ {
     tapi-html:get-html($tei-xml-uri, $page)
 };
 
-
-(:~
- : Returns an image belonging to a given URI. This function doesn't work locally
- : unless you have all necessary login information filled in at ahikar.env.
- :
- : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
- : @return The image as binary
- :)
-declare
-    %rest:GET
-    %rest:HEAD
-    %rest:path("/images/public/{$uri}")
-    %rest:produces("image/jpeg")
-    %output:method("binary")
-function tapi:endpoint-public-image($uri as xs:string)
-as item()+ {
-    $commons:responseHeader200,
-    hc:send-request(
-        <hc:request method="GET"
-        href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri}/full/,2000/0/native.jpg"
-        />
-    )[2] => xs:base64Binary()
-};
-
-
 (:~
  : Returns an image belonging to a given URI. This function doesn't work locally
  : unless you have all necessary login information filled in at ahikar.env.
@@ -203,23 +178,20 @@ as item()+ {
  : Since these images of the Ahikar project aren't publicly available, this
  : function cannot be tested by unit tests.
  :
+ : @param $availability-flag either `public` or `restricted`
  : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
  : @return The image as binary
  :)
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/images/restricted/{$uri}")
+    %rest:path("/images/{$availability-flag}/{$uri}")
     %rest:produces("image/jpeg")
     %output:method("binary")
-function tapi:endpoint-restricted-image($uri as xs:string)
+function tapi:endpoint-restricted-image($availability-flag as xs:string,
+    $uri as xs:string)
 as item()+ {
-    $commons:responseHeader200,
-    hc:send-request(
-        <hc:request method="GET"
-        href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri};sid={environment-variable('TEXTGRID.SESSION')}/full/,2000/0/native.jpg"
-        />
-    )[2] => xs:base64Binary()
+    local:make-image-request($availability-flag, $uri, "")
 };
 
 (:~
@@ -231,6 +203,7 @@ as item()+ {
  : Since the images of the Ahikar project aren't publicly available, this
  : function cannot be tested by unit tests.
  :
+ : @param $availability-flag either `public` or `restricted`
  : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
  : @param $image-section Indicated the image section in percentage to be retured as defined by
  : the IIIF Image API
@@ -239,18 +212,14 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/images/{$uri}/{$image-section}")
+    %rest:path("/images/{$availability-flag}/{$uri}/{$image-section}")
     %rest:produces("image/jpeg")
     %output:method("binary")
-function tapi:endpoint-image($uri as xs:string,
+function tapi:endpoint-image($availability-flag as xs:string,
+    $uri as xs:string,
     $image-section as xs:string)
 as item()+ {
-    $commons:responseHeader200,
-    hc:send-request( 
-        <hc:request method="GET"
-        href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri};sid={environment-variable('TEXTGRID.SESSION')}/pct:{$image-section}/,2000/0/native.jpg"
-        />
-    )[2] => xs:base64Binary()
+    local:make-image-request($availability-flag, $uri, $image-section)
 };
 
 
@@ -299,4 +268,45 @@ function tapi:endpoint-zip() as item()+ {
     return
         $commons:responseHeader200,
         tapi-txt:compress-to-zip()
+};
+
+
+(:~
+ : Requests image data depending on the parameters passed.
+ : 
+ : Sample calls processed by this function include:
+ : * /image/public/12345
+ : * /image/restricted/6789/50.03,0.48,49.83,100.00
+ : 
+ :)
+declare function local:make-image-request($availability-flag as xs:string,
+    $uri as xs:string,
+    $image-section as xs:string?)
+as item()+ {
+    if ($availability-flag = ("public", "restricted")) then
+        let $sessionID :=
+            if ($availability-flag = "restricted") then
+                ";sid=" || environment-variable('TEXTGRID.SESSION')
+            else
+                ""
+        let $section :=
+            if ($image-section) then
+                "/pct:" || $image-section
+            else
+                "/full"
+        return
+            (
+                $commons:responseHeader200,
+                hc:send-request(
+                    <hc:request method="GET"
+                    href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri}{$sessionID}{$section}/,2000/0/native.jpg"
+                    />
+                )[2] => xs:base64Binary()
+            )
+    else
+        <rest:response>
+            <http:response xmlns:http="http://expath.org/ns/http-client" status="404">
+                <http:header name="Access-Control-Allow-Origin" value="*"/>
+            </http:response>
+        </rest:response>
 };
