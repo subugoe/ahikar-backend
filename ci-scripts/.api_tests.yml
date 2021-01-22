@@ -27,7 +27,7 @@ test_api_status-develop:
   only:
     - develop
   script: 
-    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/syriac/collection.json)
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
     - *check_HTTP_status
 
 test_api_status-main:
