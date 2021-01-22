@@ -128,14 +128,17 @@ as xs:boolean {
     let $request :=
         hc:send-request(
             <hc:request method="GET"
-            href="https://textgridlab.org/1.0/tgcrud-public/rest/textgrid:{$img-uri}/metadata"
+            href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
             />
         )
     let $request-header := $request[1]
     let $request-body := $request[2]
     return
         if ($request-header/@status = "200"
-        and $request-body//tgmd:availability = "public") then
+        and 
+            (contains(upper-case($request-body//tgmd:notes), "UNRESTRICTED")
+            or $request-body//tgmd:availability = "public")
+        ) then
             true()
         else
             false()
