@@ -80,7 +80,7 @@ load_frontend-all:
   script:
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
     - unzip frontend.zip
-    - mkdir frontend
+    - mkdir -p docker/frontend
     - mv Qviewer/dist/* docker/frontend/
   artifacts:
     paths:
