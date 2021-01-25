@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - a broken path in the CI config
+- faulty implementation of the Item Object's title key: Provides now a Title Object according to the
+TextAPI specs instead of a string.
 
 ## [2.5.0] - 2021-01-14
 
