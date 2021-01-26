@@ -82,6 +82,8 @@ load_frontend-all:
     - unzip frontend.zip
     - mkdir -p docker/frontend
     - mv Qviewer/dist/* docker/frontend/
+    - mkdir docker/frontend/test
+    - mv test.html docker/frontend/test
   artifacts:
     paths:
       - docker/frontend/
