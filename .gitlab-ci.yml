@@ -84,9 +84,9 @@ load_frontend-all:
     - cp Qviewer/dist/* docker/frontend/
     - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
     - cp Qviewer/dist/* docker/frontend/syriac
-    - sed 's/ahikar-dev.sub.uni-goettingen.de\/api\/textapi\/ahikar\/3r9ps/ahikar-test.sub.uni-goettingen.de\/api\/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
+    - sed -i 's/ahikar-dev.sub.uni-goettingen.de\/api\/textapi\/ahikar\/3r9ps/ahikar-test.sub.uni-goettingen.de\/api\/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
     - cp Qviewer/dist/* docker/frontend/arabic-karshuni
-    - sed 's/ahikar-dev.sub.uni-goettingen.de\/api\/textapi\/ahikar\/3r9ps/ahikar-test.sub.uni-goettingen.de\/api\/textapi\/ahikar\/arabic-karshuni/' docker/frontend/arabic-karshuni/index.html
+    - sed -i 's/ahikar-dev.sub.uni-goettingen.de\/api\/textapi\/ahikar\/3r9ps/ahikar-test.sub.uni-goettingen.de\/api\/textapi\/ahikar\/arabic-karshuni/' docker/frontend/arabic-karshuni/index.html
   artifacts:
     paths:
       - docker/frontend/
