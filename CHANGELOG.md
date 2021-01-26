@@ -13,11 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Callers have to choose between `syriac` or `arabic-karshuni` as `collection`.
 This satifies the requirement of having one separate endpoint for the TIDO instance serving the Syriac and the Arabic/Karshuni collections each.
 
+## [2.5.2] - 2021-01-25
+
+### Changed
+
+- added API health check for deploy API
+
 ## [2.5.1] - 2021-01-22
 
 ### Fixed
 
 - a broken path in the CI config
+- faulty implementation of the Item Object's title key: Provides now a Title Object according to the
+TextAPI specs instead of a string.
 
 ## [2.5.0] - 2021-01-14
 

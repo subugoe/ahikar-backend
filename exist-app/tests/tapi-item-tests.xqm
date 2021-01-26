@@ -44,19 +44,18 @@ as xs:string {
 
 
 declare
-    %test:args("sample_edition") %test:assertEquals("The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
-               king of Assyria and Nineveh")
-function titemt:make-title($manifest-uri as xs:string)
-as xs:string {
-    tapi-item:make-title($manifest-uri)
+    %test:args("sample_edition")  %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh'")
+function titemt:make-title-object($manifest-uri as xs:string)
+as element() {
+    tapi-item:make-title-object($manifest-uri)
 };
 
 
 declare
     %test:args("sample_main_edition", "sample_edition", "82a")
     (: checks if the correct file has been opened :)
-    %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh,
-               king of Assyria and Nineveh' ")
+    %test:assertXPath("$result//*[local-name(.) = 'title']/*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh' ")
+    %test:assertXPath("$result//*[local-name(.) = 'title']/*[local-name(.) = 'type'] = 'main' ")
     (: checks if language assembling works correctly :)
     %test:assertXPath("$result//*[local-name(.) = 'lang'] = 'syc' ")
     %test:assertXPath("$result//*[local-name(.) = 'langAlt'] = 'karshuni' ")
