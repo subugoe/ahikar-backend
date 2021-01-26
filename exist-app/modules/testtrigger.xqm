@@ -64,10 +64,10 @@ declare function testtrigger:execute-tests()
 as element()+ {
     let $test-results :=
     (
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/commons-tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests")),

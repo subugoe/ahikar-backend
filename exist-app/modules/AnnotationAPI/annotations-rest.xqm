@@ -35,7 +35,7 @@ declare variable $anno-rest:server :=
  : For retrieving annotation information about other collections cf. the endpoint
  : /annotations/ahikar/{$collection}/{$document}/annotationCollection.json
  : 
- : @param $collection The URI of the collection, e.g. '3r132'
+ : @param $collection The type of the collection. Can either be `syriac` or `arabic-karshuni`
  : @return An Annotation Collecion for the given collection
  :)
 declare
@@ -43,7 +43,8 @@ declare
     %rest:HEAD
     %rest:path("/annotations/ahikar/{$collection}/annotationCollection.json")
     %output:method("json")
-function anno-rest:collection-rest($collection as xs:string) {
+function anno-rest:collection-rest($collection as xs:string)
+as item()+ {
     if (anno:are-resources-available($collection)) then
         ($commons:responseHeader200,
         anno:make-annotationCollection($collection, (), $anno-rest:server))
@@ -58,7 +59,7 @@ function anno-rest:collection-rest($collection as xs:string) {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of the Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of an aggregated Collection or Manifest Object
  :)
 declare
@@ -67,7 +68,8 @@ declare
     %rest:path("/annotations/ahikar/{$collection}/{$document}/annotationPage.json")
     %output:method("json")
 function anno-rest:annotationPage-for-collection-rest($collection as xs:string, 
-$document as xs:string) {
+    $document as xs:string)
+as item()+ {
     if (anno:are-resources-available(($collection, $document))) then
         ($commons:responseHeader200,
         anno:make-annotationPage($collection, $document, $anno-rest:server))
@@ -87,7 +89,7 @@ $document as xs:string) {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of the Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @return An Annotation Collecion for the given Collection or Manifest Object
  :)
@@ -118,7 +120,7 @@ as item()+ {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of the Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @param $page The page within an item, i.e. a tei:pb/@n within a TEI resource
  : @return An Annotation Collection for the given Collection or Manifest Object
@@ -151,7 +153,7 @@ as item()+ {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of the Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @param $page The page within an item, i.e. a tei:pb/@n within a TEI resource
  : @return An Annotation Page for the given Collection or Manifest Object

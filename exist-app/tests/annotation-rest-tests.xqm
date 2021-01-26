@@ -24,7 +24,7 @@ declare
     %test:assertTrue
 function art:is-collection-annotationCollection-endpoint-http200()
 as xs:boolean {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/annotationCollection.json"
+    let $url := $tc:server || "/annotations/ahikar/syriac/annotationCollection.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -43,7 +43,7 @@ declare
     %test:assertXPath("map:contains($result, 'id')")
 function art:endpoint-collection-annotationCollection()
 as item() {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/annotationCollection.json"
+    let $url := $tc:server || "/annotations/ahikar/syriac/annotationCollection.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -58,7 +58,7 @@ declare
     %test:assertTrue
 function art:is-document-annotationPage-endpoint-http200()
 as xs:boolean {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/sample_edition/annotationPage.json"
+    let $url := $tc:server || "/annotations/ahikar/arabic-karshuni/sample_edition/annotationPage.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -76,7 +76,7 @@ declare
     %test:assertXPath("map:contains($result, 'id')")
 function art:endpoint-document-annotationPage()
 as item() {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/sample_edition/annotationPage.json"
+    let $url := $tc:server || "/annotations/ahikar/syriac/sample_edition/annotationPage.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -90,7 +90,7 @@ declare
     %test:assertTrue
 function art:is-document-annotationCollection-endpoint-http200()
 as xs:boolean {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/sample_edition/annotationCollection.json"
+    let $url := $tc:server || "/annotations/ahikar/arabic-karshuni/sample_edition_karshuni/annotationCollection.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -108,7 +108,7 @@ declare
     %test:assertXPath("map:contains($result, 'id')")
 function art:endpoint-document-annotationCollection()
 as item() {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/sample_edition/annotationCollection.json"
+    let $url := $tc:server || "/annotations/ahikar/syriac/sample_edition/annotationCollection.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -123,7 +123,7 @@ declare
     %test:assertTrue
 function art:is-item-annotationCollection-endpoint-http200()
 as xs:boolean {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/sample_edition/83a/annotationCollection.json"
+    let $url := $tc:server || "/annotations/ahikar/arabic-karshuni/sample_edition_arabic/83a/annotationCollection.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -140,7 +140,7 @@ declare
     %test:assertXPath("map:contains($result, 'id')")
 function art:endpoint-item-annotationCollection()
 as item() {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/sample_edition/83a/annotationCollection.json"
+    let $url := $tc:server || "/annotations/ahikar/syriac/sample_edition/83a/annotationCollection.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -155,7 +155,7 @@ declare
     %test:assertTrue
 function art:is-item-annotationPage-endpoint-http200()
 as xs:boolean {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/sample_edition/83a/annotationPage.json"
+    let $url := $tc:server || "/annotations/ahikar/arabic-karshuni/sample_edition_karshuni/83a/annotationPage.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -172,7 +172,7 @@ declare
     %test:assertXPath("map:contains($result, 'id')")
 function art:endpoint-item-annotationPage()
 as item() {
-    let $url := $tc:server || "/annotations/ahikar/sample_lang_aggregation/sample_edition/83a/annotationPage.json"
+    let $url := $tc:server || "/annotations/ahikar/syriac/sample_edition/83a/annotationPage.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>

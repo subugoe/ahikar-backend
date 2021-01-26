@@ -87,18 +87,18 @@ declare function tapi:remove-whitespaces($doc as document-node()) as document-no
 (:~
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
- : @param $collection-uri The unprefixed TextGrid URI of a collection, e.g. '3r132'
+ : @param $collection-type The collection type. Can either be `syriac` or `arabic-karshuni`
  : @return A collection object as JSON
  :)
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection-uri}/collection.json")
+    %rest:path("/textapi/ahikar/{$collection-type}/collection.json")
     %output:method("json")
-function tapi:endpoint-collection($collection-uri as xs:string)
+function tapi:endpoint-collection($collection-type as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi-coll:get-json($collection-uri, $tapi:server)
+    tapi-coll:get-json($collection-type, $tapi:server)
 };
 
 
@@ -108,13 +108,13 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection-uri}/{$manifest-uri}/manifest.json")
+    %rest:path("/textapi/ahikar/{$collection-type}/{$manifest-uri}/manifest.json")
     %output:method("json")
-function tapi:endpoint-manifest($collection-uri as xs:string,
+function tapi:endpoint-manifest($collection-type as xs:string,
     $manifest-uri as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi-mani:get-json($collection-uri, $manifest-uri, $tapi:server)
+    tapi-mani:get-json($collection-type, $manifest-uri, $tapi:server)
 };
 
 
@@ -124,10 +124,10 @@ as item()+ {
  :  * the division number, 'n', is mandatory
  :  * 'image' is mandatory since every page has a facsimile
  :
- : Sample call to API: /api/textapi/ahikar/3r17c/3r1pq-147a/latest/item.json
+ : Sample call to API: /api/textapi/ahikar/syriac/3r1pq-147a/latest/item.json
  :
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#item
- : @param $collection-uri The unprefixed TextGrid URI of a collection, e.g. '3r17c'
+ : @param $collection-type The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $manifest-uri The unprefixed TextGrid URI of a document, e.g. '3r1pq'
  : @param $page A page number as encoded in a tei:pb/@n, e.g. '147a'
  : @return Information about a page
@@ -135,14 +135,14 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/textapi/ahikar/{$collection-uri}/{$manifest-uri}-{$page}/latest/item.json")
+    %rest:path("/textapi/ahikar/{$collection-type}/{$manifest-uri}-{$page}/latest/item.json")
     %output:method("json")
-function tapi:endpoint-item($collection-uri as xs:string,
+function tapi:endpoint-item($collection-type as xs:string,
     $manifest-uri as xs:string,
     $page as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi-item:get-json($collection-uri, $manifest-uri, $page, $tapi:server)
+    tapi-item:get-json($collection-type, $manifest-uri, $page, $tapi:server)
 };
 
 (:~
@@ -154,7 +154,7 @@ as item()+ {
  :
  : Sample call to API: /content/3rbmb-1a.html
  :
- : @param $document The unprefixed TextGrid URI of a TEI/XML, e.g. '3rbmb'
+ : @param $tei-xml-uri The unprefixed TextGrid URI of a TEI/XML, e.g. '3rbmb'
  : @param $page The page to be rendered. This has to be the string value of a tei:pb/@n in the given document, e.g. '1a'
  : @return A response header as well as the rendered HTML page
  :)
@@ -208,7 +208,7 @@ as item()+ {
  : function cannot be tested by unit tests.
  :
  : @param $uri The unprefixed TextGrid URI of an image, e.g. '3r1pr'
- : @param $image-section Indicated the image section in percentage to be retured as defined by
+ : @param $image-section Indicates the image section in percentage to be retured as defined by
  : the IIIF Image API
  : @return The image as binary
  :)
