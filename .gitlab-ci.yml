@@ -85,7 +85,7 @@ load_frontend-all:
     - cp Qviewer/dist/* docker/frontend/
     - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
     - cp Qviewer/dist/* docker/frontend/syriac
-    - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac' docker/frontend/syriac/index.html
+    - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
     - cp Qviewer/dist/* docker/frontend/arabic-karshuni
   artifacts:
     paths:
