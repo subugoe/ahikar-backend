@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - provide two instances of the viewer, one for Syriac and one for Arabic/Karshuni texts
 
+## [3.0.1] - 2021-01-27
+
+### Changed
+
+- `local:truncate` in `tapi-img.xqm` has been renamed to `local:round` to better grasp what the function does.
+
 ## [3.0.0] - 2021-01-18
 
 ### Changed
