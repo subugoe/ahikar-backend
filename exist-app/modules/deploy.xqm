@@ -36,8 +36,8 @@ declare
   %rest:query-param("token", "{$token}")
 function deploy:redeploy($token)
 as element()? {
-  if( $token ne environment-variable("APP_DEPLOY_TOKEN" ))
-    then error(QName("error://1", "deploy"), "deploy token incorrect.")
+  if(not($token = environment-variable("APP_DEPLOY_TOKEN" )))
+    then error(QName("error://1", "DEPLOY01"), "deploy token incorrect.")
   else
     let $pkgName := environment-variable("APP_NAME")
     let $name := 'https://ci.de.dariah.eu/exist-repo/find.zip?name=' || encode-for-uri($pkgName)
