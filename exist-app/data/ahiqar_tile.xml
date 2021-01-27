@@ -1,0 +1,38 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:exif="http://www.w3.org/2003/12/exif/ns#">
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title>Text-Image-Link Object</title>
+         </titleStmt>
+         <publicationStmt>
+            <p/>
+         </publicationStmt>
+         <sourceDesc>
+            <p/>
+         </sourceDesc>
+      </fileDesc>
+   </teiHeader>
+   <facsimile>
+      <svg:svg>
+            <svg:g id="textgrid-layer-1">
+         <svg:image width="3512" height="2480" xlink:href="textgrid:3r1nz.0"/>
+         <svg:rect x="50.02847380410023%" y="0.4838709677419355%" width="49.829157175398635%" height="100.0%" transform="rotate(0.0, 74.94305239179954%, 50.483870967741936%)" id="shape-1" class="0,â,255#255#255"/>
+         <svg:rect x="0.05694760820045558%" y="0.20161290322580644%" width="51.11047835990888%" height="102.90322580645162%" transform="rotate(0.0, 25.612186788154897%, 51.653225806451616%)" id="shape-2" class="0,â,255#255#255"/>
+         <svg:text id="text-1"/>
+         <svg:text id="text-2"/>
+      </svg:g>
+      </svg:svg>
+   </facsimile>
+   <text>
+      <body>
+         <ab>
+            <tei:linkGrp xml:id="text-image-links-1" type="text-image-links" facs="#textgrid-layer-1">
+               <tei:link targets="#shape-1 textgrid:ahiqar_sample.3#a1"/>
+               <tei:link targets="#text-1 textgrid:ahiqar_sample.3#a1"/>
+               <tei:link targets="#shape-2 textgrid:ahiqar_sample.3#a2"/>
+               <tei:link targets="#text-2 textgrid:ahiqar_sample.3#a2"/>
+            </tei:linkGrp>
+         </ab>
+      </body>
+   </text>
+</TEI>
