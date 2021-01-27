@@ -29,6 +29,18 @@ declare variable $anno:annotationElements :=
         "persName"
     );
 
+(:
+ : Determines the correct language aggregations.
+ : The ones starting with "sample_" are for testing only.
+ :)
+declare variable $anno:lang-aggs := 
+    map {
+        "syriac": if (doc-available($commons:agg || "3r84g.xml")) then "3r84g" else "sample_lang_aggregation_syriac",
+        "arabic-karshuni":
+            if (doc-available($commons:agg || "3r84h.xml")
+            and doc-available($commons:agg || "3r9ps.xml")) then ("3r84h", "3r9ps") else ("sample_lang_aggregation_arabic", "sample_lang_aggregation_karshuni")
+    };
+
 (: this variable holds a map with the complete project structure (excluding images) :)
 declare variable $anno:uris :=
     let $main-edition-object := 
@@ -38,14 +50,16 @@ declare variable $anno:uris :=
         else
             "sample_main_edition"
     
-    let $language-aggs := commons:get-available-aggregates($main-edition-object)
+    let $views := ("syriac", "arabic-karshuni")
     return
         map { $main-edition-object:
                 (: level 1: language aggregations :)
-                map:merge(for $lang in $language-aggs return
-                map:entry($lang, 
+                map:merge(for $view in $views return
+                map:entry($view, 
                     (: level 2 (key): editions associated to a language aggregation :)
                     map:merge(
+                        let $language-aggregates := anno:get-lang-aggregation-uris($view)
+                            for $lang in $language-aggregates return
                             let $editions := commons:get-available-aggregates($lang)
                             for $uri in $editions return
                                 (: level 2 (value): XML associated with edition :)
@@ -61,13 +75,18 @@ declare variable $anno:uris :=
         }
 ;
 
+declare function anno:get-lang-aggregation-uris($collection-type as xs:string)
+as xs:string+ {
+    $anno:lang-aggs?($collection-type)
+};
+
 (:~
  : A generic function for creating an W3C compliant Annotation Collection for a given resource.
  : 
  : @see https://www.w3.org/TR/annotation-model/#annotation-collection
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : 
- : @param $collection The URI of a Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of a Collection or Manifest Object. May be an empty sequence if only information about the $collection should be created
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
@@ -109,22 +128,30 @@ as map() {
  : @see https://www.w3.org/TR/annotation-model/#annotation-collection
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : 
- : @param $collectionURI The URI of the current Collection Object
+ : @param $collection-type The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
  :)
-declare function anno:get-information-for-collection-object($collectionURI as xs:string,
+declare function anno:get-information-for-collection-object($collection-type as xs:string,
     $server as xs:string)
 as map() {
-    let $child-keys := anno:find-in-map($anno:uris, $collectionURI) => map:keys()
+    let $child-keys := anno:find-in-map($anno:uris, $collection-type) => map:keys()
     let $first := $child-keys[1]
     let $last := $child-keys[last()]
-    let $title := anno:get-metadata-title($collectionURI)
-    let $first-entry := $server || "/api/annotations/ahikar/" || $collectionURI || "/" || $first || "/annotationPage.json"
-    let $last-entry := $server || "/api/annotations/ahikar/" || $collectionURI || "/" || $last || "/annotationPage.json"
+    let $title := anno:make-collection-object-title($collection-type)
+    let $first-entry := $server || "/api/annotations/ahikar/" || $collection-type || "/" || $first || "/annotationPage.json"
+    let $last-entry := $server || "/api/annotations/ahikar/" || $collection-type || "/" || $last || "/annotationPage.json"
 
     return
-        anno:make-annotationCollection-map($collectionURI, $title, $first-entry, $last-entry)
+        anno:make-annotationCollection-map($collection-type, $title, $first-entry, $last-entry)
+};
+
+declare function anno:make-collection-object-title($collection-type as xs:string)
+as xs:string {
+    switch ($collection-type)
+        case "syriac" return "The Syriac Collection"
+        case "arabic-karshuni" return "The Arabic and Karshuni Collections"
+        default return anno:get-metadata-title($collection-type)
 };
 
 
@@ -143,29 +170,38 @@ as xs:string {
 (:~
  : Creates a map containing all information necessary for a W3C compliant Annotation Collection.
  : 
- : @param $uri The resource's URI
+ : @param $collection Either the type of the collection (syriac or arabic-karshuni) or the collection URI of an edition.
  : @param $title The resource's title
  : @param $first-entry The IRI of the first Annotation Page that is included within the Collection
  : @param $last-entry The IRI of the last Annotation Page that is included within the Collection
  :)
-declare function anno:make-annotationCollection-map($uri as xs:string,
+declare function anno:make-annotationCollection-map($collection as xs:string,
     $title as xs:string,
     $first-entry as xs:string,
     $last-entry as xs:string)
 as map() {
-    map {
-        "annotationCollection":
-            map {
-                "@context": "http://www.w3.org/ns/anno.jsonld",
-                "id":       $anno:ns || "/annotationCollection/" || $uri,
-                "type":     "AnnotationCollection",
-                "label":    "Ahikar annotations for textgrid:" || $uri || ": " || $title,
-                "x-creator":  anno:get-creator($uri),
-                "total":    anno:get-total-no-of-annotations($uri),
-                "first":    $first-entry,
-                "last":     $last-entry
-            }
-    }
+        map {
+            "annotationCollection":
+                map {
+                    "@context": "http://www.w3.org/ns/anno.jsonld",
+                    "id":       $anno:ns || "/annotationCollection/" || $collection,
+                    "type":     "AnnotationCollection",
+                    "label":    "Ahikar annotations for textgrid:" || $collection || ": " || $title,
+                    "x-creator":  anno:get-creator($collection),
+                    "total":    anno:get-total-no-of-annotations($collection),
+                    "first":    $first-entry,
+                    "last":     $last-entry
+                }
+        }
+};
+
+
+declare function anno:determine-uris-for-collection($collection as xs:string)
+as xs:string+ {
+    switch ($collection)
+        case "syriac" return $anno:lang-aggs?($collection)
+        case "arabic-karshuni" return $anno:lang-aggs?($collection)
+        default return $collection
 };
 
 (:~
@@ -203,7 +239,7 @@ as xs:string {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of a Collection Object, e.g. '3r132'
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of a Collection or Manifest Object, e.g. '3r84g'
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
  : @return A map with all information necessary for the Annotation Collection
@@ -255,7 +291,7 @@ as map() {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of the Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @param $page The page within an item, i.e. a tei:pb/@n within a TEI resource
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
@@ -265,7 +301,7 @@ declare function anno:make-annotationCollection-for-manifest($collection as xs:s
     $page as xs:string,
     $server as xs:string)
 as map() {
-    let $title := anno:get-metadata-title($collection)
+    let $title := anno:get-metadata-title($document)
 
     return
         map {
@@ -292,7 +328,7 @@ as map() {
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#collection-object
  : @see https://subugoe.pages.gwdg.de/emo/text-api/page/specs/#manifest-object
  : 
- : @param $collection The URI of the Collection Object
+ : @param $collection The collection type. Can either be `syriac` or `arabic-karshuni`
  : @param $document The URI of an aggregated Collection or Manifest Object
  : @param $page The page within an item, i.e. a tei:pb/@n within a TEI resource
  : @param $server The server we are currently on. This mainly serves testing purposes and usually defaults to $anno:server
@@ -484,7 +520,11 @@ declare function anno:are-resources-available($resources as xs:string+)
 as xs:boolean {
     let $availability :=
         for $resource in $resources return
-            doc-available($commons:meta || $resource || ".xml")
+            if ($resource = ("syriac", "arabic-karshuni")) then
+                for $edition in $anno:lang-aggs?($resource) return
+                    doc-available($commons:meta || $edition || ".xml")
+            else
+                doc-available($commons:meta || $resource || ".xml")
     return
         not(functx:is-value-in-sequence(false(), $availability))
 };
@@ -588,7 +628,8 @@ as xs:string? {
  : @return true() if resources stated by $uri is a TEI/XML resource
  :)
 declare function anno:is-resource-xml($uri as xs:string) as xs:boolean {
-    commons:get-document($uri, "meta")//tgmd:format = "text/xml"
+    doc-available($commons:data || $uri || ".xml")
+    and commons:get-document($uri, "meta")//tgmd:format = "text/xml"
 };
 
 (:~ 

@@ -123,7 +123,7 @@ declare
      : the underlying function. :)
     %test:assertXPath("matches($result, '[\w]')")
 function tt:content-txt() as xs:string {
-    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_teixml.txt"
+    let $url := $tc:server || "/textapi/ahikar/syriac/sample_teixml.txt"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -141,7 +141,7 @@ as xs:boolean {
 };
 
 declare function tt:txt() {
-    let $url := $tc:server || "textapi/ahiqar/sample_main_edition/sample_teixml.txt"
+    let $url := $tc:server || "textapi/ahiqar/syriac/sample_teixml.txt"
     let $req := tc:make-request($url)
     return http:send-request($req)[2] => util:base64-decode()
 };
@@ -157,9 +157,8 @@ function tt:remove-whitespaces() as document-node() {
 
 declare
     %test:assertTrue
-function tt:is-collection-endpoint-http200()
-as xs:boolean {
-    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/collection.json"
+function tt:is-collection-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/arabic-karshuni/collection.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -175,7 +174,7 @@ declare
     %test:assertXPath("map:contains($result, 'sequence')")
 function tt:endpoint-collection()
 as item() {
-    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/collection.json"
+    let $url := $tc:server || "/textapi/ahikar/arabic-karshuni/collection.json"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
@@ -184,9 +183,8 @@ as item() {
 
 declare
     %test:assertTrue
-function tt:is-manifest-endpoint-http200()
-as xs:boolean {
-    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition/manifest.json"
+function tt:is-manifest-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/arabic-karshuni/sample_edition_arabic/manifest.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -207,7 +205,7 @@ declare
     %test:assertXPath("map:contains($result, 'sequence')")
 function tt:endpoint-manifest()
 as item() {
-    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition/manifest.json"
+    let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition/manifest.json"
     let $req := tc:make-request($url)
     return
         http:send-request($req)[2]
@@ -217,9 +215,8 @@ as item() {
 
 declare
     %test:assertTrue
-function tt:is-item-endpoint-http200()
-as xs:boolean {
-    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json"
+function tt:is-item-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition-82a/latest/item.json"
     return
         tc:is-endpoint-http200($url)
 };
@@ -238,7 +235,7 @@ declare
     %test:assertXPath("map:contains($result, 'langAlt')")
     %test:assertXPath("map:contains($result, 'image')")
 function tt:endpoint-item() as item() {
-    let $url := $tc:server || "/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json"
+    let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition-82a/latest/item.json"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]
         => util:base64-decode()

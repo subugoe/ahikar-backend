@@ -54,6 +54,7 @@ test_exist_app:
     - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
     - if [[ "$failures" -gt 0 || ! -f "exist-app/test/ahikar-test-results.xml" ]]; then exit 1; else exit 0; fi
   artifacts:
+    when: always
     paths:
       - exist-app/test/ahikar-test-results.xml
     reports:
@@ -173,6 +174,10 @@ deploy_app-dev:
   environment:
     name: ahikar-dev
   script:
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
 
 deploy_app-main:
@@ -184,6 +189,10 @@ deploy_app-main:
   environment:
     name: ahikar
   script:
+    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
 
 # when a git flow release is made, a tag will be pushed starting this job. it

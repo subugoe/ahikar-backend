@@ -2,12 +2,12 @@
     <object>
         <generic>
             <provided>
-                <title>Beispieldatei für Sprachenaggregation</title>
+                <title>Beispieldatei für Sprachenaggregation Syrisch</title>
                 <format>text/tg.aggregation+xml</format>
                 <notes/>
             </provided>
             <generated>
-              <textgridUri extRef="">textgrid:sample_lang_aggregation.0</textgridUri>
+              <textgridUri extRef="">textgrid:sample_lang_aggregation_syriac.0</textgridUri>
             </generated>
         </generic>
         <edition>
