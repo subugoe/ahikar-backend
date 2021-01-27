@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2021-01-27
+
+### Changed
+
+- The URLs for the images have changed depending on whether an image is accessible for the public
+or if it has restricted access due to license terms.
+Public images are available at `images/public/${uri}` plus image section.
+Restricted images are available at `images/restricted/${uri}` plus image section.
+
 ## [3.0.0] - 2021-01-18
 
 ### Changed
