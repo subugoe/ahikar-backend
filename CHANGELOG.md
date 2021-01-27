@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1] - 2021-01-27
+
+### Fixed
+
+- rename `master.build.properties` to `main.build.properties` to match the actual branch names.
+This is necessary to build a package and upload it to our package store (ci.de.dariah.eu).
+
+## [3.1.0] - 2021-01-27
+
+### Changed
+
+- provide two instances of the viewer, one for Syriac and one for Arabic/Karshuni texts
+
 ## [3.0.1] - 2021-01-27
 
 ### Changed
