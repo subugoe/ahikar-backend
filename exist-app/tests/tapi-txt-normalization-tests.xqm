@@ -62,7 +62,7 @@ declare function local:create-and-store-test-data() {
     
     let $mix :=
         for $iii in 1 to 10 return
-            insert-before(($norm:arabic-tashkil-and-combining-marks, $norm:syriac-vowels), $iii * 3, $txt-cps[$iii])
+            insert-before(($norm:syriac-vowels), $iii * 3, $txt-cps[$iii])
     let $mix-str := codepoints-to-string($mix)
     return
         xmldb:store-as-binary("/db/tmp", "test.txt", $mix-str)

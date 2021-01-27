@@ -5,6 +5,102 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2021-01-27
+
+### Changed
+
+- `local:truncate` in `tapi-img.xqm` has been renamed to `local:round` to better grasp what the function does.
+
+## [3.0.0] - 2021-01-18
+
+### Changed
+
+- The Text- and AnnotationAPI no longer accept URIs as `collection` parameter.
+Callers have to choose between `syriac` or `arabic-karshuni` as `collection`.
+This satifies the requirement of having one separate endpoint for the TIDO instance serving the Syriac and the Arabic/Karshuni collections each.
+
+## [2.5.2] - 2021-01-25
+
+### Changed
+
+- added API health check for deploy API
+
+## [2.5.1] - 2021-01-22
+
+### Fixed
+
+- a broken path in the CI config
+- faulty implementation of the Item Object's title key: Provides now a Title Object according to the
+TextAPI specs instead of a string.
+
+## [2.5.0] - 2021-01-14
+
+### Changed
+
+- switched from SADE to TextGrid Connect Standalone as a means to get data from TextGrid
+
+## [2.4.0] - 2021-01-13
+
+### Changed
+
+- updated the eXist application's name since it was misleading
+
+## [2.3.0] - 2021-01-13
+
+### Changed
+
+- Some parts of `annotation.xqm` have been refactored to improve the code and/or make it testable.
+- `test-runner.xq` now produces machine-readable output and only displays the tests that fail.
+
+### Added
+
+- Tests for the AnnotationAPI.
+
+## [2.2.2.] - 2021-01-11
+
+### Fixed
+
+- semantic errors that lead to the application not being installed properly.
+
+## [2.2.1] - 2020-11-16
+
+## Changed
+
+- When extracting the relevant plain text sections, the semantic divisions of the texts are now considered.
+Each semantic division, which is indicated in the texts by a tei:milestone, is now stored in a separate file.
+
+## [2.1.0] - 2020-11-12
+
+### Changed
+
+- prepared for changed endpoints at Text-API (document-page to document/page)
+
+### Fixed
+
+- wrong Annotation IDs
+
+## [2.0.0] - 2020-11-06
+
+### Changed
+
+- The AnnotationAPI is now served at `/api/annotations` instead of `/api/textapi`.
+
+## [1.13.1] - 2020-10-06
+
+### Fixed
+
+- Unit tests are executed again.
+
+### Changed
+
+- The CI tests if 1. the unit test API is available and 2. the XML file resulting from the test exists.
+
+## [1.13.0] - 2020-10-13
+
+### Added
+
+- exist application sets admin password from env var (optionally)
+
 ## [1.12.0] - 2020-10-01
 
 ### Added

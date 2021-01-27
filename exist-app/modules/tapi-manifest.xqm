@@ -3,7 +3,7 @@ xquery version "3.1";
 (: 
  : This module handles calls to the API on manifest level, e.g.
  : 
- : /textapi/ahikar/3r9ps/3rx15/manifest.json
+ : /textapi/ahikar/arabic-karshuni/3rx15/manifest.json
  :)
 
 module namespace tapi-mani="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest";
@@ -14,13 +14,13 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
 
 
-declare function tapi-mani:get-json($collection-uri as xs:string,
+declare function tapi-mani:get-json($collection-type as xs:string,
     $manifest-uri as xs:string,
     $server as xs:string)
 as element(object) {
     <object>
         <textapi>{$commons:version}</textapi>
-        <id>{$server || "/api/textapi/ahikar/" || $collection-uri || "/" || $manifest-uri || "/manifest.json"}</id>
+        <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
         <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
         { 
             tapi-mani:make-editors($manifest-uri),
@@ -29,20 +29,20 @@ as element(object) {
             tapi-mani:make-current-location($manifest-uri)
         }
         <license>CC0-1.0</license>
-        <annotationCollection>{$server}/api/textapi/ahikar/{$collection-uri}/{$manifest-uri}/annotationCollection.json</annotationCollection>
-        {tapi-mani:make-sequences($collection-uri, $manifest-uri, $server)}
+        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
+        {tapi-mani:make-sequences($collection-type, $manifest-uri, $server)}
     </object>
 };
 
 
-declare function tapi-mani:make-sequences($collection-uri as xs:string,
+declare function tapi-mani:make-sequences($collection-type as xs:string,
     $manifest-uri as xs:string,
     $server as xs:string)
 as element(sequence)+ {
     let $valid-pages := tapi-mani:get-valid-page-ids($manifest-uri)
     return
         for $page in $valid-pages
-        let $uri := "/api/textapi/ahikar/" || $collection-uri || "/" || $manifest-uri || "-" ||  $page || "/latest/item.json"
+        let $uri := "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "-" ||  $page || "/latest/item.json"
         return
             <sequence>
                 <id>{$server}{$uri}</id>
@@ -59,14 +59,9 @@ as xs:string+ {
 
 declare function tapi-mani:get-manifest-title($manifest-uri as xs:string)
 as xs:string {
-    let $metadata-file := tapi-mani:get-metadata-file($manifest-uri)
+    let $metadata-file := commons:get-metadata-file($manifest-uri)
     return
         $metadata-file//tgmd:title/string()
-};
-
-declare function tapi-mani:get-metadata-file($manifest-uri as xs:string)
-as document-node() {
-    doc($commons:tg-collection || "/meta/" || $manifest-uri || ".xml")
 };
 
 
@@ -138,5 +133,4 @@ element(x-location) {
             "unknown"
     return
         <x-location>{$string}</x-location>
-
 };

@@ -4,9 +4,12 @@ stages:
   - package
   - deploy_docker
   - deploy_app
-  - test
+  - api_tests
   - release
   - reassign_labels
+
+include: 
+  - '/ci-scripts/.api_tests.yml'
 
 ## TEMPLATES:
 .ssh-config: &ssh
@@ -17,7 +20,7 @@ stages:
 - chmod 700 ~/.ssh
 
 .env: &env
-- echo $SECRETS >> docker/ahikar.env
+- echo $SECRETS | sed "s#\s#\n#g" >> docker/ahikar.env
 - sh docker/set-env-for-docker-compose.sh
 
 # used for develop and main, see test for all other cases!
@@ -40,19 +43,24 @@ test_exist_app:
     - ant -f exist-app/build.xml test
     - bash exist-app/test/bin/startup.sh | tee output.log &
     - while [ $(curl --head --silent http://localhost:8080 | grep -c "200 OK") == 0 ]; do sleep 1s; done
+    - header=$(curl --head -s http://localhost:8080/exist/restxq/trigger-tests)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl http://localhost:8080/exist/restxq/trigger-tests
     - sleep 60
     - bash exist-app/test/bin/shutdown.sh
     - failures=$(./get-unit-test-failures-and-errors.sh)
     - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
-    - if [[ "$failures" -gt 0 ]]; then exit 1; else exit 0; fi
+    - if [[ "$failures" -gt 0 || ! -f "exist-app/test/ahikar-test-results.xml" ]]; then exit 1; else exit 0; fi
   artifacts:
+    when: always
     paths:
-      - exist-app/test/test-results.xml
+      - exist-app/test/ahikar-test-results.xml
     reports:
-      junit: exist-app/test/test-results.xml
+      junit: exist-app/test/ahikar-test-results.xml
 
-build_exist_app-all:
+build_exist_app:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
   script:
@@ -73,7 +81,7 @@ load_frontend-all:
   script:
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
     - unzip frontend.zip
-    - mkdir frontend
+    - mkdir -p docker/frontend
     - mv Qviewer/dist/* docker/frontend/
   artifacts:
     paths:
@@ -166,6 +174,10 @@ deploy_app-dev:
   environment:
     name: ahikar-dev
   script:
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
 
 deploy_app-main:
@@ -177,70 +189,11 @@ deploy_app-main:
   environment:
     name: ahikar
   script:
+    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy)
+    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $status."
+    - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
-
-# this serves for checking if a commit has accidentally broken the API
-test_api_status-test:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  except:
-    - main
-    - tags
-    - develop
-  script:
-    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
-    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
-    - echo "Current HTTP status is $status."
-    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
-
-test_api_status-develop:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  only:
-    - develop
-  script: 
-    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
-    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
-    - echo "Current HTTP status is $status."
-    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
-
-test_api_status-main:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  only:
-    - main
-  script: 
-    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/textapi/ahikar/3r9ps/collection.json)
-    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
-    - echo "Current HTTP status is $status."
-    - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
-  retry: 2
-
-full_plain_text_api_status-test:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  except:
-    - main
-    - tags
-    - develop
-  script:
-    - header=$(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
-
-full_plain_text_api_status-develop:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  only:
-    - develop
-  script:
-    - header=$(curl --head --silent https://ahikar-dev.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
-
-full_plain_text_api_status-main:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: test
-  only:
-    - main
-  script:
-    - header=$(curl --head --silent https://ahikar.sub.uni-goettingen.de/api/content/ahikar-plain-text.zip)
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a

@@ -351,7 +351,7 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
 
          <text xml:lang="karshuni" type="transcription">
             <body>
-               <pb facs="textgrid:3r1nz" n="82a"/>
+               <pb facs="textgrid:3r1nz" n="82a" xml:id="a1"/>
                <cb/>
                <!-- ### supplied text is text that modern editors have inserted.
                it is usually marked with square brackets (LC).
@@ -440,7 +440,7 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
 
                <!-- random facsimile for invented empty page -->
                <pb facs="textgrid:3r1p0" n="82b"/>
-               <pb facs="textgrid:3r1nz" n="83a"/>
+               <pb facs="textgrid:3r1nz" n="83a" xml:id="a2"/>
                <ab>ܐܠܟܠܐܝܩ ܟܠܗܐ.<quote>
                             <seg xml:lang="ara">كان كذلك ، لذا لم يكن كذلك.</seg>
                         </quote>
@@ -810,6 +810,10 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <!-- addition with unknown type -->
                <ab> ܘܗܦܟܬ ܛܥܢܬ ܐܰܒܵܪܐ ܘܠܐ ܐܝܼܩܰܪ ܥܠܝ <add place="sidelong">ܐܝܟ</add>
                </ab>
+               
+               <pb facs="textgrid:3r85r" n="84a"/>
+               <ab>some test text</ab>
+              <ab>some test<persName>ܢܕܢ܂</persName></ab>
             </body>
          </text>
       </group>
