@@ -14,6 +14,25 @@ or if it has restricted access due to license terms.
 Public images are available at `images/public/${uri}` plus image section.
 Restricted images are available at `images/restricted/${uri}` plus image section.
 
+## [3.1.1] - 2021-01-27
+
+### Fixed
+
+- rename `master.build.properties` to `main.build.properties` to match the actual branch names.
+This is necessary to build a package and upload it to our package store (ci.de.dariah.eu).
+
+## [3.1.0] - 2021-01-27
+
+### Changed
+
+- provide two instances of the viewer, one for Syriac and one for Arabic/Karshuni texts
+
+## [3.0.1] - 2021-01-27
+
+### Changed
+
+- `local:truncate` in `tapi-img.xqm` has been renamed to `local:round` to better grasp what the function does.
+
 ## [3.0.0] - 2021-01-18
 
 ### Changed
