@@ -64,6 +64,8 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://0.0.0.0:8080/exist/restxq/api/content/sample_teixml-82a.html' ")
     (: checks if images connected to underlying pages are identified :)
     %test:assertXPath("$result//*[local-name(.) = 'id'] = 'http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00' ")
+    %test:assertXPath("$result//*[local-name(.) = 'license']//*[local-name(.) = 'id']")
+    %test:assertXPath("$result//*[local-name(.) = 'license']//*[local-name(.) = 'notes']")
     %test:assertXPath("$result//*[local-name(.) = 'annotationCollection'] = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/sample_main_edition/sample_edition/82a/annotationCollection.json' ")
 function titemt:get-json($collection as xs:string,
     $document as xs:string,
