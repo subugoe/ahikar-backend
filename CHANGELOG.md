@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2021-02-04
+
+### Changed
+
+- the project specific metadata has been moved from separate items on manifest level to the Metadata Object on manifest level.
+This allows us to use the generic Metadata Object support in the viewer instead of having to add extra code that supports
+keys starting with 'x-'.
+
 ## [3.1.1] - 2021-01-27
 
 ### Fixed
