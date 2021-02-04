@@ -133,7 +133,8 @@ function tt:content-txt() as xs:string {
 
 declare
     %test:assertTrue
-function tt:is-txt-api-available() {
+function tt:is-txt-api-available()
+as xs:boolean {
     let $url := $tc:server || "/content/sample_teixml.txt"
     return
         tc:is-endpoint-http200($url)

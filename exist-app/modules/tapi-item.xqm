@@ -91,7 +91,7 @@ as xs:string {
 declare function tapi-item:make-url-for-single-page-image($facsimile-uri as xs:string,
     $server as xs:string)
 as xs:string {
-    $server || "/api/images/" || $facsimile-uri
+    tapi-item:make-img-url-prefix($facsimile-uri, $server)
 };
 
 declare function tapi-item:make-url-for-double-page-image($facsimile-uri as xs:string,
@@ -101,5 +101,19 @@ declare function tapi-item:make-url-for-double-page-image($facsimile-uri as xs:s
 as xs:string {
     let $image-section := tapi-img:get-relevant-image-section($manifest-uri, $page)
     return
-        $server || "/api/images/" || $facsimile-uri || "/" || $image-section
+        tapi-item:make-img-url-prefix($facsimile-uri, $server) || "/" || $image-section
+};
+
+declare function tapi-item:make-img-url-prefix($facsimile-uri as xs:string,
+    $server as xs:string)
+as xs:string {
+    $server || "/api/images/" || tapi-item:make-restricted-or-public-path-component($facsimile-uri) || $facsimile-uri
+};
+
+declare function tapi-item:make-restricted-or-public-path-component($facsimile-uri as xs:string)
+as xs:string {
+    if (tapi-img:is-image-public($facsimile-uri)) then
+        "public/"
+    else
+        "restricted/"
 };

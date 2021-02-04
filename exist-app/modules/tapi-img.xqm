@@ -112,6 +112,38 @@ as xs:string {
     => format-number("0.00") (: will round last number; converts to string :)
 };
 
+(:~
+ : Due to license restrictions we have to distinguish between publicly available
+ : images and restricted ones. We have introduced to different API endpoints for
+ : this:
+ : 
+ : * /images/public/{$uri}
+ : * /images/restricted/{$uri}
+ : 
+ : The information if an image is published can be obtain from tgmd:availability
+ : in the TextGrid metadata.
+ :)
+declare function tapi-img:is-image-public($img-uri as xs:string)
+as xs:boolean {
+    let $request :=
+        hc:send-request(
+            <hc:request method="GET"
+            href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
+            />
+        )
+    let $request-header := $request[1]
+    let $request-body := $request[2]
+    return
+        if ($request-header/@status = "200"
+        and 
+            (contains(upper-case($request-body//tgmd:notes), "UNRESTRICTED")
+            or $request-body//tgmd:availability = "public")
+        ) then
+            true()
+        else
+            false()
+};
+
 declare function tapi-img:get-relevant-image-section($manifest-uri as xs:string,
     $page-uri as xs:string)
 as xs:string {
