@@ -126,11 +126,16 @@ as xs:string {
 declare function tapi-img:is-image-public($img-uri as xs:string)
 as xs:boolean {
     let $request :=
-        hc:send-request(
-            <hc:request method="GET"
-            href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
-            />
-        )
+        try {
+            hc:send-request(
+                <hc:request method="GET"
+                href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
+                />
+            )
+        } catch * {
+            error(QName("http://ahikar.sub.uni-goettingen.de/ns/tapi/images", "IMG01"), "Requested image with the URI " || $img-uri || " could not be fetched from TextGrid.")
+        }
+
     let $request-header := $request[1]
     let $request-body := $request[2]
     return
