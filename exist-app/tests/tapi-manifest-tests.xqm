@@ -160,34 +160,34 @@ function tmt:get-manifest-title($manifest-uri as xs:string) {
 
 declare
     %test:args("sample_edition") %test:assertXPath("count($result) = 2")
-    %test:args("sample_edition") %test:assertXPath("$result//name = 'Simon Birol'")
-    %test:args("test-manifest1") %test:assertXPath("count($result) = 1")
-    %test:args("test-manifest1") %test:assertXPath("$result//name = 'none'")
+    %test:args("sample_edition") %test:assertXPath("$result[self::value]/string() = 'Simon Birol, Aly Elrefaei'")
+    %test:args("test-manifest1") %test:assertXPath("count($result) = 2")
+    %test:args("test-manifest1") %test:assertXPath("$result[self::value]/string() = 'none'")
 function tmt:make-editors($manifest-uri as xs:string) {
     tapi-mani:make-editors($manifest-uri)
 };
 
 declare
-    %test:args("sample_edition") %test:assertXPath("$result/string() = '18.10.1697'")
-    %test:args("test-manifest1") %test:assertXPath("$result/string() = 'unknown'")
+    %test:args("sample_edition") %test:assertXPath("$result[self::value]/string() = '18.10.1697'")
+    %test:args("test-manifest1") %test:assertXPath("$result[self::value]/string() = 'unknown'")
 function tmt:make-creation-date($manifest-uri as xs:string) {
     tapi-mani:make-creation-date($manifest-uri)
 };
 
 declare
-    %test:args("sample_edition") %test:assertXPath("$result/string() = 'Alqosh, Iraq'")
-    %test:args("test-manifest1") %test:assertXPath("$result/string() = 'unknown'")
-    %test:args("test-manifest2") %test:assertXPath("$result/string() = 'Iraq'")
-    %test:args("test-manifest3") %test:assertXPath("$result/string() = 'Alqosh'")
+    %test:args("sample_edition") %test:assertXPath("$result[self::value]/string() = 'Alqosh, Iraq'")
+    %test:args("test-manifest1") %test:assertXPath("$result[self::value]/string() = 'unknown'")
+    %test:args("test-manifest2") %test:assertXPath("$result[self::value]/string() = 'Iraq'")
+    %test:args("test-manifest3") %test:assertXPath("$result[self::value]/string() = 'Alqosh'")
 function tmt:make-origin($manifest-uri as xs:string) {
     tapi-mani:make-origin($manifest-uri)
 };
 
 declare
-    %test:args("sample_edition") %test:assertXPath("$result/string() = 'University of Cambridge - Cambridge University Library, Great Britain'")
-    %test:args("test-manifest1") %test:assertXPath("$result/string() = 'unknown'")
-    %test:args("test-manifest2") %test:assertXPath("$result/string() = 'University of Cambridge - Cambridge University Library'")
-    %test:args("test-manifest3") %test:assertXPath("$result/string() = 'Great Britain'")
+    %test:args("sample_edition") %test:assertXPath("$result[self::value]/string() = 'University of Cambridge - Cambridge University Library, Great Britain'")
+    %test:args("test-manifest1") %test:assertXPath("$result[self::value]/string() = 'unknown'")
+    %test:args("test-manifest2") %test:assertXPath("$result[self::value]/string() = 'University of Cambridge - Cambridge University Library'")
+    %test:args("test-manifest3") %test:assertXPath("$result[self::value]/string() = 'Great Britain'")
 function tmt:make-current-location($manifest-uri as xs:string) {
     tapi-mani:make-current-location($manifest-uri)
 };

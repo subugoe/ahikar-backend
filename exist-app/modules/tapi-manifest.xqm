@@ -22,18 +22,27 @@ as element(object) {
         <textapi>{$commons:version}</textapi>
         <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
         <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
-        { 
-            tapi-mani:make-editors($manifest-uri),
-            tapi-mani:make-creation-date($manifest-uri),
-            tapi-mani:make-origin($manifest-uri),
-            tapi-mani:make-current-location($manifest-uri)
-        }
         <license>CC0-1.0</license>
+        {tapi-mani:make-metadata-objects($manifest-uri)}
         <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
         {tapi-mani:make-sequences($collection-type, $manifest-uri, $server)}
     </object>
 };
 
+declare function tapi-mani:make-metadata-objects($manifest-uri as xs:string)
+as element(metadata)+ {
+    for $element in ("x-editor", "x-date", "x-origin", "x-location") return
+        <metadata>
+            {
+                switch ($element)
+                    case "x-editor" return tapi-mani:make-editors($manifest-uri)
+                    case "x-date" return tapi-mani:make-creation-date($manifest-uri)
+                    case "x-origin" return tapi-mani:make-origin($manifest-uri)
+                    case "x-location" return tapi-mani:make-current-location($manifest-uri)
+                    default return ()
+            }
+        </metadata>
+};
 
 declare function tapi-mani:make-sequences($collection-type as xs:string,
     $manifest-uri as xs:string,
@@ -66,26 +75,36 @@ as xs:string {
 
 
 declare function tapi-mani:make-editors($manifest-uri as xs:string)
-as element(x-editor)+ {
+as element()+ {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $editors := $tei-xml//tei:titleStmt//tei:editor
     return
         if (exists($editors)) then
-            for $editor in $editors
-            return
-                <x-editor>
-                    <role>editor</role>
-                    <name>{$editor/string()}</name>
-                </x-editor>
+            (
+                <key>Editors</key>,
+                <value>
+                    {
+                        let $value-strings :=
+                            for $editor in $editors return
+                                (
+                                    normalize-space($editor/string()),
+                                    if(not(index-of($editors, $editor) = count($editors))) then ", " else ()
+                                )
+                        return
+                            string-join($value-strings, "")
+                    }
+                </value>
+            )
         else
-            <x-editor>
-                <name>none</name>
-            </x-editor>
+                (
+                    <key>Editor</key>,
+                    <value>none</value>
+                )
 };
 
 
 declare function tapi-mani:make-creation-date($manifest-uri as xs:string)
-as element(x-date) {
+as element()+ {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $creation-date := $tei-xml//tei:history//tei:date
     let $string :=
@@ -94,12 +113,15 @@ as element(x-date) {
         else
             "unknown"
     return
-        <x-date>{$string}</x-date>
+        (
+            <key>Date of creation</key>,
+            <value>{$string}</value>
+        )
 };
 
 
 declare function tapi-mani:make-origin($manifest-uri as xs:string) as 
-element(x-origin) {
+element()+ {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $country := $tei-xml//tei:history//tei:country
     let $place := $tei-xml//tei:history//tei:placeName
@@ -113,12 +135,15 @@ element(x-origin) {
         else
             "unknown"
     return
-        <x-origin>{$string}</x-origin>
+        (
+            <key>Place of origin</key>,
+            <value>{$string}</value>
+        )
 };
 
 
 declare function tapi-mani:make-current-location($manifest-uri as xs:string) as
-element(x-location) {
+element()+ {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $institution := $tei-xml//tei:msIdentifier//tei:institution
     let $country := $tei-xml//tei:msIdentifier//tei:country
@@ -132,5 +157,8 @@ element(x-location) {
         else
             "unknown"
     return
-        <x-location>{$string}</x-location>
+        (
+            <key>Current location</key>,
+            <value>{$string}</value>
+        )
 };
