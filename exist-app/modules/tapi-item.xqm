@@ -31,7 +31,7 @@ as element(object) {
         <x-langString>{tapi-item:get-language-string($manifest-uri)}</x-langString>
         <image>
             <id>{tapi-item:make-facsimile-id($manifest-uri, $page, $server)}</id>
-            <license>{tapi-item:make-license-info-for-img($page)}</license>
+            <license>{tapi-item:make-license-info-for-img($manifest-uri, $page)}</license>
         </image>
         <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/{$page}/annotationCollection.json</annotationCollection>
     </object>
@@ -120,17 +120,22 @@ as xs:string {
         "restricted/"
 };
 
-declare function tapi-item:make-license-info-for-img($facsimile-uri as xs:string) {
+declare function tapi-item:make-license-info-for-img($manifest-uri as xs:string,
+    $page as xs:string) {
+    let $facsimile-uri := tapi-img:get-facsimile-uri-for-page($manifest-uri, $page)
     let $img-metadata := tapi-img:get-img-metadata($facsimile-uri)[2]
-    let $notes := $img-metadata//*[local-name(.) = "notes"]/string()
+    let $notes := $img-metadata//tgmd:notes
+        => substring-after("access. ")
     let $id :=
         if (matches($notes, "CC")) then
             substring-after($notes, "CC")
+        else if (matches($notes, "Public Domain")) then
+            "Public domain"
         else
             "Copyright"
     return
         (
             <id>{$id}</id>,
-            <notes>{$img-metadata//*[local-name(.) = "notes"]/string()}</notes>
+            <notes>{$notes}</notes>
         )
 };

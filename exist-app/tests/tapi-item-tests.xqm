@@ -64,8 +64,8 @@ declare
     %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://0.0.0.0:8080/exist/restxq/api/content/sample_teixml-82a.html' ")
     (: checks if images connected to underlying pages are identified :)
     %test:assertXPath("$result//*[local-name(.) = 'id'] = 'http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00' ")
-    %test:assertXPath("$result//*[local-name(.) = 'license']//*[local-name(.) = 'id']")
-    %test:assertXPath("$result//*[local-name(.) = 'license']//*[local-name(.) = 'notes']")
+    %test:assertXPath("$result//*[local-name(.) = 'license']//*[local-name(.) = 'id'] = 'Copyright' ")
+    %test:assertXPath("$result//*[local-name(.) = 'license']//*[local-name(.) = 'notes'] = 'Copyright Cadbury Research Library, University of Birmingham. No reuse allowed.' ")
     %test:assertXPath("$result//*[local-name(.) = 'annotationCollection'] = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/sample_main_edition/sample_edition/82a/annotationCollection.json' ")
 function titemt:get-json($collection as xs:string,
     $document as xs:string,
@@ -103,7 +103,7 @@ as xs:string {
 
 declare
     %test:args("3qzg5") %test:assertEquals("public/")
-    %test:args("3r85p") %test:assertEquals("restricted/")
+    %test:args("3r1nz") %test:assertEquals("restricted/")
     %test:assumeInternetAccess("https://textgridlab.org/1.0/tgcrud-public/rest/")
 function titemt:make-restricted-or-public-path-component($facsimile-uri as xs:string)
 as xs:string {
@@ -112,7 +112,7 @@ as xs:string {
 
 declare
     %test:args("3qzg5") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/public/3qzg5")
-    %test:args("3r85p") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r85p")
+    %test:args("3r1nz") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz")
     %test:assumeInternetAccess("https://textgridlab.org/1.0/tgcrud-public/rest/")
 function titemt:make-img-url-prefix($facsimile-uri as xs:string)
 as xs:string {
@@ -149,4 +149,3 @@ declare function local:remove-test-data() {
     xmldb:remove("/db/data/textgrid/meta", "ahiqar_sample_2.xml"),
     xmldb:remove("/db/data/textgrid/meta", "ahiqar_agg_wo_tile.xml")
 };
-
