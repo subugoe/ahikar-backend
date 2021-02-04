@@ -31,14 +31,14 @@ as element(object) {
 
 declare function tapi-mani:make-metadata-objects($manifest-uri as xs:string)
 as element(metadata)+ {
-    for $element in ("x-editor", "x-date", "x-origin", "x-location") return
+    for $element in ("editor", "date", "origin", "location") return
         <metadata>
             {
                 switch ($element)
-                    case "x-editor" return tapi-mani:make-editors($manifest-uri)
-                    case "x-date" return tapi-mani:make-creation-date($manifest-uri)
-                    case "x-origin" return tapi-mani:make-origin($manifest-uri)
-                    case "x-location" return tapi-mani:make-current-location($manifest-uri)
+                    case "editor" return tapi-mani:make-editors($manifest-uri)
+                    case "date" return tapi-mani:make-creation-date($manifest-uri)
+                    case "origin" return tapi-mani:make-origin($manifest-uri)
+                    case "location" return tapi-mani:make-current-location($manifest-uri)
                     default return ()
             }
         </metadata>
