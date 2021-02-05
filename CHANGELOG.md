@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.1.1] - 2021-02-04
+## [4.1.1] - 2021-02-05
 
 ### Fixed
 
 - introduced try/catch blocks with fitting error messages for all server requests.
+
+## [4.1.0] - 2021-02-05
+
+### Added
+
+- license information within the image field on item level. As a consequence, each image is now connected with an SPDX identifier (if possible) and further notes about the image's creator.
 
 ## [4.0.1] - 2021-02-04
 

@@ -125,17 +125,7 @@ as xs:string {
  :)
 declare function tapi-img:is-image-public($img-uri as xs:string)
 as xs:boolean {
-    let $request :=
-        try {
-            hc:send-request(
-                <hc:request method="GET"
-                href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
-                />
-            )
-        } catch * {
-            error(QName("http://ahikar.sub.uni-goettingen.de/ns/tapi/images", "IMG01"), "Requested image with the URI " || $img-uri || " could not be fetched from TextGrid.")
-        }
-
+    let $request := tapi-img:get-img-metadata($img-uri)
     let $request-header := $request[1]
     let $request-body := $request[2]
     return
@@ -147,6 +137,18 @@ as xs:boolean {
             true()
         else
             false()
+};
+
+declare function tapi-img:get-img-metadata($img-uri as xs:string) {
+    try {
+        hc:send-request(
+            <hc:request method="GET"
+            href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
+            />
+        )
+    } catch * {
+        error(QName("http://ahikar.sub.uni-goettingen.de/ns/tapi/images", "IMG01"), "Requested image with the URI " || $img-uri || " could not be fetched from TextGrid.")
+    }
 };
 
 declare function tapi-img:get-relevant-image-section($manifest-uri as xs:string,
