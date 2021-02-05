@@ -297,11 +297,15 @@ as item()+ {
         return
             (
                 $commons:responseHeader200,
-                hc:send-request(
-                    <hc:request method="GET"
-                    href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri}{$sessionID}{$section}/,2000/0/native.jpg"
-                    />
-                )[2] => xs:base64Binary()
+                try {
+                    hc:send-request(
+                        <hc:request method="GET"
+                        href="https://textgridlab.org/1.0/digilib/rest/IIIF/textgrid:{$uri}{$sessionID}{$section}/,2000/0/native.jpg"
+                        />
+                    )[2] => xs:base64Binary()
+                } catch * {
+                    error(QName("http://ahikar.sub.uni-goettingen.de/ns/tapi", "TAPI01"), "The requested image with the URI " || $uri || " could not be fetched.")
+                }
             )
     else
         <rest:response>
