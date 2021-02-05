@@ -9,8 +9,10 @@ xquery version "3.1";
 module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
+import module namespace functx="http://www.functx.com";
 import module namespace tapi-img="http://ahikar.sub.uni-goettingen.de/ns/tapi/images" at "tapi-img.xqm";
 
 
@@ -30,6 +32,7 @@ as element(object) {
         <x-langString>{tapi-item:get-language-string($manifest-uri)}</x-langString>
         <image>
             <id>{tapi-item:make-facsimile-id($manifest-uri, $page, $server)}</id>
+            <license>{tapi-item:make-license-info-for-img($manifest-uri, $page)}</license>
         </image>
         <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/{$page}/annotationCollection.json</annotationCollection>
     </object>
@@ -116,4 +119,25 @@ as xs:string {
         "public/"
     else
         "restricted/"
+};
+
+declare function tapi-item:make-license-info-for-img($manifest-uri as xs:string,
+    $page as xs:string) {
+    let $facsimile-uri := tapi-img:get-facsimile-uri-for-page($manifest-uri, $page)
+    let $img-metadata := tapi-img:get-img-metadata($facsimile-uri)[2]
+    let $notes := $img-metadata//tgmd:notes
+        => substring-after("access. ")
+    let $id :=
+        if (matches($notes, "CC")) then
+            functx:get-matches($notes, "CC.*?\.\d")
+            => replace(" ", "-")
+        else if (matches(lower-case($notes), "public domain")) then
+            "Public domain"
+        else
+            "Copyright"
+    return
+        (
+            <id>{$id}</id>,
+            <notes>{$notes}</notes>
+        )
 };

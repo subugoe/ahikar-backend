@@ -115,9 +115,9 @@ as xs:string {
 
 declare
     %test:args("textgrid:1234 textgrid:4365") %test:assertError
-function t:is-image-public($img-uri as xs:string)
+function t:get-img-metadata($img-uri as xs:string)
 as xs:boolean {
-    tapi-img:is-image-public($img-uri)
+    tapi-img:get-img-metadata($img-uri)
 };
 
 declare function local:create-and-store-test-data()
