@@ -45,7 +45,12 @@ as element()? {
         <hc:request
           method="GET"
           href="{$name}" />
-    let $package := hc:send-request($request)
+    let $package := 
+        try {
+            hc:send-request($request)
+        } catch * {
+            error(QName("http://ahikar.sub.uni-goettingen.de/ns/deploy", "DEPLOY1"), "Package " || $pkgName || " could not be fetched.")
+        }
     let $storeToDb := xmldb:store("/db", "ahikar-deployment.xar", $package[2], "application/zip")
     let $remove := repo:remove($pkgName)
     let $install := repo:install-and-deploy-from-db($storeToDb)
