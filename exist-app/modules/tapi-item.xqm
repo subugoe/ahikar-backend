@@ -12,6 +12,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
+import module namespace functx="http://www.functx.com";
 import module namespace tapi-img="http://ahikar.sub.uni-goettingen.de/ns/tapi/images" at "tapi-img.xqm";
 
 
@@ -128,8 +129,9 @@ declare function tapi-item:make-license-info-for-img($manifest-uri as xs:string,
         => substring-after("access. ")
     let $id :=
         if (matches($notes, "CC")) then
-            substring-after($notes, "CC")
-        else if (matches($notes, "Public Domain")) then
+            functx:get-matches($notes, "CC.*?\.\d")
+            => replace(" ", "-")
+        else if (matches(lower-case($notes), "public domain")) then
             "Public domain"
         else
             "Copyright"
