@@ -146,7 +146,7 @@ declare
     %test:args("sample_main_edition", "sample_edition")
     %test:assertXPath("$result//label = 'Beispieldatei zum Testen'")
     %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/sample_main_edition/sample_edition/manifest.json')]")
-    %test:assertXPath("$result//annotationCollection[matches(., '/api/annotations/ahikar/sample_main_edition/sample_edition-82a/annotationCollection.json')] ")
+    %test:assertXPath("$result//annotationCollection[matches(., '/api/annotations/ahikar/sample_main_edition/sample_edition/annotationCollection.json')] ")
 function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
@@ -159,44 +159,101 @@ function tmt:get-manifest-title($manifest-uri as xs:string) {
 };
 
 declare
-    %test:args("sample_edition") %test:assertXPath("count($result) = 2")
-    %test:args("sample_edition") %test:assertXPath("$result[self::value]/string() = 'Simon Birol, Aly Elrefaei'")
-    %test:args("test-manifest1") %test:assertXPath("count($result) = 2")
-    %test:args("test-manifest1") %test:assertXPath("$result[self::value]/string() = 'none'")
-function tmt:make-editors($manifest-uri as xs:string) {
-    tapi-mani:make-editors($manifest-uri)
+    %test:assertXPath("count($result) = 2")
+    %test:assertXPath("$result[self::value]/string() = 'Simon Birol, Aly Elrefaei'")
+function tmt:make-editors-present() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
+    return
+        tapi-mani:make-editors($tei-xml)
 };
 
 declare
-    %test:args("sample_edition") %test:assertXPath("$result[self::value]/string() = '18.10.1697'")
-    %test:args("test-manifest1") %test:assertXPath("$result[self::value]/string() = 'unknown'")
-function tmt:make-creation-date($manifest-uri as xs:string) {
-    tapi-mani:make-creation-date($manifest-uri)
+    %test:assertXPath("count($result) = 2")
+    %test:assertXPath("$result[self::value]/string() = 'none'")
+function tmt:make-editors-not-present() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
+    return
+        tapi-mani:make-editors($tei-xml)
 };
 
 declare
-    %test:args("sample_edition") %test:assertXPath("$result[self::value]/string() = 'Alqosh, Iraq'")
-    %test:args("test-manifest1") %test:assertXPath("$result[self::value]/string() = 'unknown'")
-    %test:args("test-manifest2") %test:assertXPath("$result[self::value]/string() = 'Iraq'")
-    %test:args("test-manifest3") %test:assertXPath("$result[self::value]/string() = 'Alqosh'")
-function tmt:make-origin($manifest-uri as xs:string) {
-    tapi-mani:make-origin($manifest-uri)
+    %test:assertXPath("$result[self::value]/string() = '18.10.1697'")
+function tmt:make-creation-date-present() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
+    return
+        tapi-mani:make-creation-date($tei-xml)
 };
 
 declare
-    %test:args("sample_edition") %test:assertXPath("$result[self::value]/string() = 'University of Cambridge - Cambridge University Library, Great Britain'")
-    %test:args("test-manifest1") %test:assertXPath("$result[self::value]/string() = 'unknown'")
-    %test:args("test-manifest2") %test:assertXPath("$result[self::value]/string() = 'University of Cambridge - Cambridge University Library'")
-    %test:args("test-manifest3") %test:assertXPath("$result[self::value]/string() = 'Great Britain'")
-function tmt:make-current-location($manifest-uri as xs:string) {
-    tapi-mani:make-current-location($manifest-uri)
+    %test:assertXPath("$result[self::value]/string() = 'unknown'")
+function tmt:make-creation-date-not-present() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
+    return
+        tapi-mani:make-creation-date($tei-xml)
 };
 
 declare
-     %test:args("sample_main_edition", "sample_edition") %test:assertExists
-function tmt:get-json($collection-uri as xs:string,
-    $manifest-uri as xs:string) {
-    tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
+    %test:assertXPath("$result[self::value]/string() = 'Alqosh, Iraq'")
+function tmt:make-origin-1() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
+    return
+        tapi-mani:make-origin($tei-xml)
+};
+
+declare
+    %test:assertXPath("$result[self::value]/string() = 'unknown'")
+function tmt:make-origin-2() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
+    return
+        tapi-mani:make-origin($tei-xml)
+};
+
+declare
+    %test:assertXPath("$result[self::value]/string() = 'Iraq'")
+function tmt:make-origin-3() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest2")
+    return
+        tapi-mani:make-origin($tei-xml)
+};
+
+declare
+    %test:assertXPath("$result[self::value]/string() = 'Alqosh'")
+function tmt:make-origin-4() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest3")
+    return
+        tapi-mani:make-origin($tei-xml)
+};
+
+declare
+    %test:assertXPath("$result[self::value]/string() = 'University of Cambridge - Cambridge University Library, Great Britain'")
+function tmt:make-current-location-1() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
+    return
+        tapi-mani:make-current-location($tei-xml)
+};
+
+declare
+    %test:assertXPath("$result[self::value]/string() = 'unknown'")
+function tmt:make-current-location-2() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
+    return
+        tapi-mani:make-current-location($tei-xml)
+};
+
+declare
+    %test:assertXPath("$result[self::value]/string() = 'University of Cambridge - Cambridge University Library'")
+function tmt:make-current-location-3() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest2")
+    return
+        tapi-mani:make-current-location($tei-xml)
+};
+
+declare
+    %test:assertXPath("$result[self::value]/string() = 'Great Britain'")
+function tmt:make-current-location-4() {
+    let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest3")
+    return
+        tapi-mani:make-current-location($tei-xml)
 };
 
 

@@ -18,27 +18,29 @@ declare function tapi-mani:get-json($collection-type as xs:string,
     $manifest-uri as xs:string,
     $server as xs:string)
 as element(object) {
-    <object>
-        <textapi>{$commons:version}</textapi>
-        <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
-        <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
-        <license>{tapi-mani:get-license-info($manifest-uri)}</license>
-        {tapi-mani:make-metadata-objects($manifest-uri)}
-        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
-        {tapi-mani:make-sequences($collection-type, $manifest-uri, $server)}
-    </object>
+    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
+    return
+        <object>
+            <textapi>{$commons:version}</textapi>
+            <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
+            <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
+            <license>{tapi-mani:get-license-info($tei-xml)}</license>
+            {tapi-mani:make-metadata-objects($tei-xml)}
+            <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
+            {tapi-mani:make-sequences($collection-type, $manifest-uri, $server)}
+        </object>
 };
 
-declare function tapi-mani:make-metadata-objects($manifest-uri as xs:string)
+declare function tapi-mani:make-metadata-objects($tei-xml as document-node())
 as element(metadata)+ {
     for $element in ("editor", "date", "origin", "location") return
         <metadata>
             {
                 switch ($element)
-                    case "editor" return tapi-mani:make-editors($manifest-uri)
-                    case "date" return tapi-mani:make-creation-date($manifest-uri)
-                    case "origin" return tapi-mani:make-origin($manifest-uri)
-                    case "location" return tapi-mani:make-current-location($manifest-uri)
+                    case "editor" return tapi-mani:make-editors($tei-xml)
+                    case "date" return tapi-mani:make-creation-date($tei-xml)
+                    case "origin" return tapi-mani:make-origin($tei-xml)
+                    case "location" return tapi-mani:make-current-location($tei-xml)
                     default return ()
             }
         </metadata>
@@ -74,9 +76,8 @@ as xs:string {
 };
 
 
-declare function tapi-mani:make-editors($manifest-uri as xs:string)
+declare function tapi-mani:make-editors($tei-xml as document-node())
 as element()+ {
-    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $editors := $tei-xml//tei:titleStmt//tei:editor
     return
         if (exists($editors)) then
@@ -103,9 +104,8 @@ as element()+ {
 };
 
 
-declare function tapi-mani:make-creation-date($manifest-uri as xs:string)
+declare function tapi-mani:make-creation-date($tei-xml as document-node())
 as element()+ {
-    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $creation-date := $tei-xml//tei:history//tei:date
     let $string :=
         if ($creation-date) then
@@ -120,9 +120,8 @@ as element()+ {
 };
 
 
-declare function tapi-mani:make-origin($manifest-uri as xs:string) as 
+declare function tapi-mani:make-origin($tei-xml as document-node()) as 
 element()+ {
-    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $country := $tei-xml//tei:history//tei:country
     let $place := $tei-xml//tei:history//tei:placeName
     let $string :=
@@ -142,9 +141,8 @@ element()+ {
 };
 
 
-declare function tapi-mani:make-current-location($manifest-uri as xs:string) as
+declare function tapi-mani:make-current-location($tei-xml as document-node()) as
 element()+ {
-    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $institution := $tei-xml//tei:msIdentifier//tei:institution
     let $country := $tei-xml//tei:msIdentifier//tei:country
     let $string :=
@@ -163,9 +161,8 @@ element()+ {
         )
 };
 
-declare function tapi-mani:get-license-info($manifest-uri as xs:string)
+declare function tapi-mani:get-license-info($tei-xml as document-node())
 as xs:string {
-    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $target := $tei-xml//tei:licence/@target
     return
         tapi-mani:get-spdx-for-license($target)
