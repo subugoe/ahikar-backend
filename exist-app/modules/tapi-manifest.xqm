@@ -22,7 +22,7 @@ as element(object) {
         <textapi>{$commons:version}</textapi>
         <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
         <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
-        <license>CC0-1.0</license>
+        <license>{tapi-mani:get-license-info($manifest-uri)}</license>
         {tapi-mani:make-metadata-objects($manifest-uri)}
         <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
         {tapi-mani:make-sequences($collection-type, $manifest-uri, $server)}
@@ -161,4 +161,19 @@ element()+ {
             <key>Current location</key>,
             <value>{$string}</value>
         )
+};
+
+declare function tapi-mani:get-license-info($manifest-uri as xs:string)
+as xs:string {
+    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
+    let $target := $tei-xml//tei:licence/@target
+    return
+        tapi-mani:get-spdx-for-license($target)
+};
+
+declare function tapi-mani:get-spdx-for-license($target as xs:string?)
+as xs:string {
+    switch ($target)
+        case "https://creativecommons.org/licenses/by-nc-sa/4.0/" return "CC-BY-NC-SA-4.0"
+        default return "no license provided"
 };

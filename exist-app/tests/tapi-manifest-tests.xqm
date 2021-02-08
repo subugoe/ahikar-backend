@@ -198,3 +198,14 @@ function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
 };
+
+
+declare
+    %test:args("https://creativecommons.org/licenses/by-sa/4.0/")
+    %test:assertEquals("no license provided")
+    %test:args("https://creativecommons.org/licenses/by-nc-sa/4.0/")
+    %test:assertEquals("CC-BY-NC-SA-4.0")
+function tmt:get-spdx-for-license($target as xs:string)
+as xs:string {
+    tapi-mani:get-spdx-for-license($target)
+};
