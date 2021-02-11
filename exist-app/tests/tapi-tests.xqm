@@ -200,6 +200,7 @@ declare
     %test:assertXPath("map:contains($result, 'license')")
     %test:assertXPath("map:contains($result, 'annotationCollection')")
     %test:assertXPath("map:contains($result, 'sequence')")
+    %test:assertXPath("map:contains($result, 'support')")
 function tt:endpoint-manifest()
 as item() {
     let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition/manifest.json"
