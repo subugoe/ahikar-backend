@@ -84,4 +84,9 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
         xmldb:move($target, "/db/apps/openapi", "openapi-config.xml"))
     else
         ()
+),
+
+(: get a SessionId on new installation: :)
+(
+    util:eval(xs:anyURI("sessionId.xq"))
 )
