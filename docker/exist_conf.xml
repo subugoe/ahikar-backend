@@ -673,9 +673,12 @@
             type="user"
             name="textgrid-sessionId" 
             xquery="/db/apps/ahikar/sessionId.xq"
-            cron-trigger="18 15 * * * ?"
+            period="85500000"
             unschedule-on-exception="no">
-            <!-- get a sessionId every 24h -->
+            <!-- get a sessionId every 23.75h, xquery needs setuid
+                look for all read instructions on /db/sid.txt to find
+                scripts taking advantage of this job.
+             -->
         </job>
 
     </scheduler>

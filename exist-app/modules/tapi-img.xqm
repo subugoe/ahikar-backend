@@ -141,9 +141,12 @@ as xs:boolean {
 
 declare function tapi-img:get-img-metadata($img-uri as xs:string) {
     try {
+        let $sessionId := (: sessionId set by scheduled sessionId.xq :)
+            util:binary-doc("/db/sid.txt") => util:binary-to-string()
+        return
         hc:send-request(
             <hc:request method="GET"
-            href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
+            href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={$sessionId}"
             />
         )
     } catch * {
