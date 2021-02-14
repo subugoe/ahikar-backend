@@ -77,8 +77,7 @@ mv docker/frontend/Qviewer/dist/spa/* docker/frontend && rm -rf docker/frontend/
 
 To pass credentials to the container, we use the file `ahikar.env` which is not part of this repository. For loading data from TextGrid, this file should contain the following parameters:
 
-- TGUSER
-- TGPASS
+- TGLOGIN with `username:password`
 
 For local development this file MUST be present but can be left empty. In this case, TextGrid Connect Standalone may be used to import data from TextGrid.
 
