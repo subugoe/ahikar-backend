@@ -4,5 +4,5 @@ FROM existdb/existdb:release
 COPY exist-app/build/*.xar /exist/autodeploy/
 COPY exist-app/build/dependencies/*.xar /exist/autodeploy/
 
-# copy custom config to enable scheduled jobs
-COPY docker/exist_conf.xml /exist/etc/conf.xml
+# copy custom config, e.g. to enable scheduled jobs
+# COPY docker/exist_conf.xml /exist/etc/conf.xml

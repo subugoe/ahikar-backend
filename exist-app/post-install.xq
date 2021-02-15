@@ -84,12 +84,4 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
         xmldb:move($target, "/db/apps/openapi", "openapi-config.xml"))
     else
         ()
-),
-
-(: get a SessionId on new installation, setuid for scheduler :)
-(
-    util:eval(xs:anyURI("sessionId.xq")),
-    sm:chown(xs:anyURI("/db/sid.txt"), "admin"),
-    sm:chmod(xs:anyURI($target || "/sessionId.xq"), "rwsrwxr-x"),
-    sm:chown(xs:anyURI($target || "/sessionId.xq"), "admin")
 )
