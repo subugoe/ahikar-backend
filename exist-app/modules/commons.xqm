@@ -178,7 +178,7 @@ declare %private function local:textgrid-session-new() {
     let $response := hc:send-request($request)
 
     let $sid :=
-        string($response[2]//html:meta[@name="rbac_sessionid"]/@content)
+        string($response[2]//*:meta[@name="rbac_sessionid"]/@content)
     
     let $sidTest :=
         if($sid = "")
