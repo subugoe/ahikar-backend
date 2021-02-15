@@ -171,6 +171,6 @@ as xs:string {
 declare function tapi-mani:get-spdx-for-license($target as xs:string?)
 as xs:string {
     switch ($target)
-        case "https://creativecommons.org/licenses/by-nc-sa/4.0/" return "CC-BY-NC-SA-4.0"
+        case "https://creativecommons.org/licenses/by-sa/4.0/" return "CC-BY-SA-4.0"
         default return "no license provided"
 };

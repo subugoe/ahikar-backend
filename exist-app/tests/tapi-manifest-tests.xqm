@@ -259,9 +259,9 @@ function tmt:make-current-location-4() {
 
 declare
     %test:args("https://creativecommons.org/licenses/by-sa/4.0/")
-    %test:assertEquals("no license provided")
+    %test:assertEquals("CC-BY-SA-4.0")
     %test:args("https://creativecommons.org/licenses/by-nc-sa/4.0/")
-    %test:assertEquals("CC-BY-NC-SA-4.0")
+    %test:assertEquals("no license provided")
 function tmt:get-spdx-for-license($target as xs:string)
 as xs:string {
     tapi-mani:get-spdx-for-license($target)
