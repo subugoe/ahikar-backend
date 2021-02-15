@@ -140,6 +140,10 @@ as document-node() {
     doc($commons:data || $tei-xml-uri || ".xml")
 };
 
+(:~
+ : Gets a currently valid or renewed session id from TextGrid
+ : @return Session Id
+:)
 declare function commons:textgrid-session()
 as xs:string {
     (: check if we have a session Id :)
@@ -156,6 +160,11 @@ as xs:string {
 
 };
 
+(:~
+ : Gets a new session id from TextGrids WebAuth service and stores it to
+ : binary /db/sid.txt
+ : @return Session Id
+:)
 declare %private function local:textgrid-session-new() {
     let $webauthUrl := "https://textgridlab.org/1.0/WebAuthN/TextGrid-WebAuth.php"
     let $authZinstance := "textgrid-esx2.gwdg.de"
