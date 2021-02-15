@@ -159,7 +159,7 @@ as xs:string {
 declare %private function local:textgrid-session-new() {
     let $webauthUrl := "https://textgridlab.org/1.0/WebAuthN/TextGrid-WebAuth.php"
     let $authZinstance := "textgrid-esx2.gwdg.de"
-    (: check if env var is present and contains some useful data :)
+    (: check if env var is present and contains teh required delimiter :)
     let $envVarTest :=
         if(not(contains(environment-variable("TGLOGIN"), ":")))
         then error(QName("auth", "error"), "missing env var TGLOGIN")
