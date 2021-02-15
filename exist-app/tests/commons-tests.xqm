@@ -85,3 +85,16 @@ function ct:get-metadata-file($uri as xs:string)
 as document-node() {
     commons:get-metadata-file($uri)
 };
+
+(:~
+ : Depending on the order of test execution, a session id is already available. In this case the
+ : test provided here will not cover the major part of the function, but they are tested by the
+ : preceding function call(s).
+:)
+declare
+    %test:assertXPath("string-length($result) lt 5")
+    %test:assertXPath("util:binary-doc-available('/db/sid.txt')")
+function ct:textgrid-session()
+as xs:string {
+    commons:textgrid-session()
+};
