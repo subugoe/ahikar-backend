@@ -286,7 +286,7 @@ as item()+ {
     if ($availability-flag = ("public", "restricted")) then
         let $sessionID :=
             if ($availability-flag = "restricted") then
-                ";sid=" || util:binary-doc("/db/sid.txt") => util:binary-to-string() (: sessionId set by scheduled sessionId.xq :)
+                ";sid=" || commons:textgrid-session()
             else
                 ""
         let $section :=

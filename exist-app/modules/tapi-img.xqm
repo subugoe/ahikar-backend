@@ -141,8 +141,7 @@ as xs:boolean {
 
 declare function tapi-img:get-img-metadata($img-uri as xs:string) {
     try {
-        let $sessionId := (: sessionId set by scheduled sessionId.xq :)
-            util:binary-doc("/db/sid.txt") => util:binary-to-string()
+        let $sessionId := commons:textgrid-session()
         return
         hc:send-request(
             <hc:request method="GET"
