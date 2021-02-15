@@ -2,20 +2,13 @@
 
 ## Summary
 
-This MR provides…
+This MR provides 
 
 ## Compliance to “Definition of Done”
 
 * [ ] Unit tests passed
 * [ ] Code reviewed
-* [ ] Acceptance criteria met
-* [ ] Functional tests passed
-* [ ] Non-Functional requirements met
 * [ ] Product Owner accepts the User Story
-
-## Use Cases
-
-If you can, please provide use cases for this feature.
 
 ## Documentation
 
@@ -39,13 +32,9 @@ Are we able to test this new feature?
 
 * [ ] I bumped the version number in `build.properties`.
 
-## Related Tickets
+## Closes
 
-Add all related issues and especially those to be closed.
-
-### Related
-
-### Closes
+Closes
 
 ## Logs and Screenshots
 
