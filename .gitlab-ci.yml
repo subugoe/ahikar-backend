@@ -40,6 +40,7 @@ test_exist_app:
   before_script:
     - apt install libxml2-utils
   script:
+    - *env
     - ant -f exist-app/build.xml test
     - bash exist-app/test/bin/startup.sh | tee output.log &
     - while [ $(curl --head --silent http://localhost:8080 | grep -c "200 OK") == 0 ]; do sleep 1s; done
