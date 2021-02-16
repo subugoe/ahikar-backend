@@ -286,7 +286,7 @@ as item()+ {
     if ($availability-flag = ("public", "restricted")) then
         let $sessionID :=
             if ($availability-flag = "restricted") then
-                ";sid=" || commons:textgrid-session()
+                ";sid=" || commons:get-textgrid-session-id()
             else
                 ""
         let $section :=

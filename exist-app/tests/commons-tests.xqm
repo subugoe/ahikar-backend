@@ -90,13 +90,13 @@ as document-node() {
  : Depending on the order of test execution, a session id is already available. In this case the
  : test provided here will not cover the major part of the function, but they are tested by the
  : preceding function call(s).
- : WARNING: failing test here will expose the result, what might is a valid session id.
+ : WARNING: failing test here will expose the result, which might be a valid session id.
 :)
 declare
     %test:assertXPath("string-length($result) gt 5")
     %test:assertXPath("matches($result, '[a-zA-Z0-9]+')")
     %test:assertXPath("util:binary-doc-available('/db/sid.txt')")
-function ct:textgrid-session()
+function ct:get-textgrid-session-id()
 as xs:string {
-    commons:textgrid-session()
+    commons:get-textgrid-session-id()
 };

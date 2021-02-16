@@ -144,40 +144,41 @@ as document-node() {
  : Gets a currently valid or renewed session id from TextGrid
  : @return Session Id
 :)
-declare function commons:textgrid-session()
+declare function commons:get-textgrid-session-id()
 as xs:string {
-    (: check if we have a session Id :)
-    if( util:binary-doc-available("/db/sid.txt") )
-    then
-        (: check if we have to renew the session Id :)
-        if( current-dateTime() - xs:dayTimeDuration("PT23H55M") lt xmldb:last-modified("/db", "sid.txt"))
-        then
+    (: check if we have a session id :)
+    if( util:binary-doc-available("/db/sid.txt") ) then
+        (: check if we have to renew the session id :)
+        if( current-dateTime() - xs:dayTimeDuration("PT23H55M") lt xmldb:last-modified("/db", "sid.txt")) then
             util:binary-doc("/db/sid.txt") => util:binary-to-string()
         else
-            local:textgrid-session-new()
-    else (: create a session initially :)
-        local:textgrid-session-new()
+            local:create-textgrid-session-id()
+    else
+        local:create-textgrid-session-id()
 
 };
 
 (:~
  : Gets a new session id from TextGrids WebAuth service and stores it to
  : binary /db/sid.txt
- : @return Session Id
+ : @return Session id
 :)
-declare %private function local:textgrid-session-new() {
+declare %private function local:create-textgrid-session-id() {
     let $webauthUrl := "https://textgridlab.org/1.0/WebAuthN/TextGrid-WebAuth.php"
     let $authZinstance := "textgrid-esx2.gwdg.de"
     (: check if env var is present and contains teh required delimiter :)
     let $envVarTest :=
-        if(not(contains(environment-variable("TGLOGIN"), ":")))
-        then error(QName("auth", "error"), "missing env var TGLOGIN")
+        if(not(contains(environment-variable("TGLOGIN"), ":"))) then
+            error(QName("auth", "error"), "missing env var TGLOGIN")
         else ()
 
     let $user :=        environment-variable("TGLOGIN") => substring-before(":")
     let $password :=    environment-variable("TGLOGIN") => substring-after(":")
 
-    let $pw := if(contains($password, '&amp;')) then replace($password, '&amp;', '%26') else $password
+    let $pw := 
+        if(contains($password, '&amp;')) then
+            replace($password, '&amp;', '%26')
+        else $password
     let $request :=
         <hc:request method="POST" href="{ $webauthUrl }" http-version="1.0">
             <hc:header name="Connection" value="close" />
@@ -196,8 +197,8 @@ declare %private function local:textgrid-session-new() {
         string($response[2]//*:meta[@name="rbac_sessionid"]/@content)
     
     let $sidTest :=
-        if($sid = "")
-        then error(QName("auth", "error"), $response[2])
+        if($sid = "") then
+            error(QName("auth", "error"), $response[2])
         else ()
 
     let $store := xmldb:store-as-binary("/db", "sid.txt", $sid) => sm:chmod("rwxrwx---")
