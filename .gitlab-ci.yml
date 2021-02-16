@@ -151,7 +151,7 @@ deploy_docker-main:
     - *deploy
 
 deploy_app-test:
-  image: curlimages/curl
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy_app
   except:
     - main
