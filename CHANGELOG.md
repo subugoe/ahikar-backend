@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.2.0] - 2021-02-11
+## [4.3.0] - 2021-02-16
 
 ### Added
 
 - the manifests now have a Support Object which holds the URL of the project specific CSS
+
+## [4.2.0] - 2021-02-15
+
+### Changed
+
+- U+073C and U+073F are sorted out during the normalization process.
 
 ## [4.1.1] - 2021-02-05
 
