@@ -6,9 +6,7 @@ xquery version "3.1";
  : 
  : The following Unicode code blocks are sorted out:
  : * Syriac
- :      * Syriac punctuation and signs
  :      * Syriac points (vowels)
- :      * Syriac marks
  : 
  : The vocalization of the Arabic text is kept.
  :
@@ -20,9 +18,7 @@ module namespace norm="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normaliza
 
 declare variable $norm:syriac-vowels :=
     (
-        1840 to 1851, (: decimal for unicode U+073A and following :)
-        1853,
-        1854
+        1840 to 1855 (: decimal for unicode U+073A and following :)
     );    
 
 declare function norm:get-txt-without-diacritics($txt as xs:string)

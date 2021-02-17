@@ -266,3 +266,11 @@ function tmt:get-spdx-for-license($target as xs:string)
 as xs:string {
     tapi-mani:get-spdx-for-license($target)
 };
+
+declare
+    %test:assertXPath("$result/type = 'css' ")
+    %test:assertXPath("$result/url = 'https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css' ")
+function tmt:make-support-object()
+as element() {
+    tapi-mani:make-support-object()
+};

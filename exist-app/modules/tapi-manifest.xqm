@@ -24,8 +24,9 @@ as element(object) {
             <textapi>{$commons:version}</textapi>
             <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
             <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
+            {tapi-mani:make-metadata-objects($manifest-uri)}
+            {tapi-mani:make-support-object()}
             <license>{tapi-mani:get-license-info($tei-xml)}</license>
-            {tapi-mani:make-metadata-objects($tei-xml)}
             <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
             {tapi-mani:make-sequences($collection-type, $manifest-uri, $server)}
         </object>
@@ -173,4 +174,13 @@ as xs:string {
     switch ($target)
         case "https://creativecommons.org/licenses/by-sa/4.0/" return "CC-BY-SA-4.0"
         default return "no license provided"
+};
+
+declare function tapi-mani:make-support-object()
+as element() {
+    <support>
+        <type>css</type>
+        <mime>text/css</mime>
+        <url>https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css</url>
+    </support>
 };
