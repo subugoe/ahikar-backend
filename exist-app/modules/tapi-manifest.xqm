@@ -24,7 +24,7 @@ as element(object) {
             <textapi>{$commons:version}</textapi>
             <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
             <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
-            {tapi-mani:make-metadata-objects($manifest-uri)}
+            {tapi-mani:make-metadata-objects($tei-xml)}
             {tapi-mani:make-support-object()}
             <license>{tapi-mani:get-license-info($tei-xml)}</license>
             <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
