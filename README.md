@@ -75,7 +75,7 @@ mv docker/frontend/Qviewer/dist/spa/* docker/frontend && rm -rf docker/frontend/
 
 ### Environment variables
 
-To pass credentials to the container, we use the file `ahikar.env` which is not part of this repository. For loading data from TextGrid, this file should contain the following parameters:
+To pass credentials to the container, we use the file `ahikar.env` which is not part of this repository. For loading data from TextGrid, this file MUST contain the following parameters:
 
 - TGLOGIN with `username:password`
 
