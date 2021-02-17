@@ -198,3 +198,11 @@ function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
 };
+
+declare
+    %test:assertXPath("$result/type = 'css' ")
+    %test:assertXPath("$result/url = 'https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css' ")
+function tmt:make-support-object()
+as element() {
+    tapi-mani:make-support-object()
+};

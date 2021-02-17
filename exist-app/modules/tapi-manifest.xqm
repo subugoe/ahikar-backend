@@ -22,8 +22,9 @@ as element(object) {
         <textapi>{$commons:version}</textapi>
         <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
         <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
-        <license>CC0-1.0</license>
         {tapi-mani:make-metadata-objects($manifest-uri)}
+        {tapi-mani:make-support-object()}
+        <license>CC0-1.0</license>
         <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
         {tapi-mani:make-sequences($collection-type, $manifest-uri, $server)}
     </object>
@@ -161,4 +162,13 @@ element()+ {
             <key>Current location</key>,
             <value>{$string}</value>
         )
+};
+
+declare function tapi-mani:make-support-object()
+as element() {
+    <support>
+        <type>css</type>
+        <mime>text/css</mime>
+        <url>https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css</url>
+    </support>
 };
