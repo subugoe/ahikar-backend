@@ -27,6 +27,7 @@ import module namespace ttnt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/no
 import module namespace ttt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests" at "../tests/tapi-txt-tests.xqm";
 import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" at "../tests/tei2html-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
+import module namespace tokt="http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" at "../tests/tokenize-tests.xqm";
 
 (:~
  : Triggers the tests for the Ahikar backend. Called by the CI.
@@ -76,7 +77,8 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests"))
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests"))
     )
 
     for $result in $test-results
@@ -109,5 +111,6 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" return "AnnotationAPI REST"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests" return "Image Sections"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" return "Tokenize"
         default return ()
 };
