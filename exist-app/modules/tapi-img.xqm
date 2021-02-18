@@ -96,20 +96,59 @@ as element(svg:rect) {
 
 declare function tapi-img:get-svg-section-dimensions-as-string($svg as element(svg:rect))
 as xs:string {
-    let $x-offset := local:truncate($svg/@x)
-    let $y-offset := local:truncate($svg/@y)
-    let $width := local:truncate($svg/@width)
-    let $height := local:truncate($svg/@height)
+    let $x-offset := local:round($svg/@x)
+    let $y-offset := local:round($svg/@y)
+    let $width := local:round($svg/@width)
+    let $height := local:round($svg/@height)
     return
         string-join(($x-offset, $y-offset, $width, $height), ",")
 };
 
-declare function local:truncate($number-as-string as attribute())
+declare function local:round($number-as-string as attribute())
 as xs:string {
   $number-as-string
     => substring-before("%")
     => xs:decimal()
     => format-number("0.00") (: will round last number; converts to string :)
+};
+
+(:~
+ : Due to license restrictions we have to distinguish between publicly available
+ : images and restricted ones. We have introduced to different API endpoints for
+ : this:
+ : 
+ : * /images/public/{$uri}
+ : * /images/restricted/{$uri}
+ : 
+ : The information if an image is published can be obtain from tgmd:availability
+ : in the TextGrid metadata.
+ :)
+declare function tapi-img:is-image-public($img-uri as xs:string)
+as xs:boolean {
+    let $request := tapi-img:get-img-metadata($img-uri)
+    let $request-header := $request[1]
+    let $request-body := $request[2]
+    return
+        if ($request-header/@status = "200"
+        and 
+            (contains(upper-case($request-body//tgmd:notes), "UNRESTRICTED")
+            or $request-body//tgmd:availability = "public")
+        ) then
+            true()
+        else
+            false()
+};
+
+declare function tapi-img:get-img-metadata($img-uri as xs:string) {
+    try {
+        hc:send-request(
+            <hc:request method="GET"
+            href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
+            />
+        )
+    } catch * {
+        error(QName("http://ahikar.sub.uni-goettingen.de/ns/tapi/images", "IMG01"), "Requested image with the URI " || $img-uri || " could not be fetched from TextGrid.")
+    }
 };
 
 declare function tapi-img:get-relevant-image-section($manifest-uri as xs:string,

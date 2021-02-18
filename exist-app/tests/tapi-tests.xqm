@@ -133,7 +133,8 @@ function tt:content-txt() as xs:string {
 
 declare
     %test:assertTrue
-function tt:is-txt-api-available() {
+function tt:is-txt-api-available()
+as xs:boolean {
     let $url := $tc:server || "/content/sample_teixml.txt"
     return
         tc:is-endpoint-http200($url)
@@ -195,13 +196,11 @@ declare
     %test:assertXPath("map:contains($result, 'textapi')")
     %test:assertXPath("map:contains($result, 'id')")
     %test:assertXPath("map:contains($result, 'label')")
-    %test:assertXPath("map:contains($result, 'x-editor')")
-    %test:assertXPath("map:contains($result, 'x-date')")
-    %test:assertXPath("map:contains($result, 'x-origin')")
-    %test:assertXPath("map:contains($result, 'x-location')")
+    %test:assertXPath("map:contains($result, 'metadata')")
     %test:assertXPath("map:contains($result, 'license')")
     %test:assertXPath("map:contains($result, 'annotationCollection')")
     %test:assertXPath("map:contains($result, 'sequence')")
+    %test:assertXPath("map:contains($result, 'support')")
 function tt:endpoint-manifest()
 as item() {
     let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition/manifest.json"
@@ -239,4 +238,21 @@ function tt:endpoint-item() as item() {
     return http:send-request($req)[2]
         => util:base64-decode()
         => parse-json()
+};
+
+declare
+    %test:assertTrue
+function tt:is-sample-collection-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/sample/collection.json"
+    return
+        tc:is-endpoint-http200($url)
+};
+
+
+declare
+    %test:assertTrue
+function tt:is-sample-manifest-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/sample/sample_edition_tbd/manifest.json"
+    return
+        tc:is-endpoint-http200($url)
 };

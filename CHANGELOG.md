@@ -5,6 +5,78 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.0] - 2021-02-18
+
+### Added
+
+- a separate endpoint for the sample file available at `/textapi/ahikar/sample/collection.json` for accessing the sample file
+
+## [4.3.0] - 2021-02-16
+
+### Added
+
+- the manifests now have a Support Object which holds the URL of the project specific CSS
+
+## [4.2.0] - 2021-02-15
+
+### Changed
+
+- U+073C and U+073F are sorted out during the normalization process.
+
+## [4.1.1] - 2021-02-05
+
+### Fixed
+
+- introduced try/catch blocks with fitting error messages for all server requests.
+
+## [4.1.0] - 2021-02-05
+
+### Added
+
+- license information within the image field on item level. As a consequence, each image is now connected with an SPDX identifier (if possible) and further notes about the image's creator.
+
+## [4.0.1] - 2021-02-04
+
+### Fixed
+
+- a proper error is thrown if an image URI cannot be found in TextGrid Rep
+
+## [4.0.0] - 2021-02-04
+
+### Changed
+
+- The URLs for the images have changed depending on whether an image is accessible for the public
+or if it has restricted access due to license terms.
+Public images are available at `images/public/${uri}` plus image section.
+Restricted images are available at `images/restricted/${uri}` plus image section.
+
+## [3.2.0] - 2021-02-04
+
+### Changed
+
+- the project specific metadata has been moved from separate items on manifest level to the Metadata Object on manifest level.
+This allows us to use the generic Metadata Object support in the viewer instead of having to add extra code that supports
+keys starting with 'x-'.
+
+## [3.1.1] - 2021-01-27
+
+### Fixed
+
+- rename `master.build.properties` to `main.build.properties` to match the actual branch names.
+This is necessary to build a package and upload it to our package store (ci.de.dariah.eu).
+
+## [3.1.0] - 2021-01-27
+
+### Changed
+
+- provide two instances of the viewer, one for Syriac and one for Arabic/Karshuni texts
+
+## [3.0.1] - 2021-01-27
+
+### Changed
+
+- `local:truncate` in `tapi-img.xqm` has been renamed to `local:round` to better grasp what the function does.
+
 ## [3.0.0] - 2021-01-18
 
 ### Changed

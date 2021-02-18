@@ -82,7 +82,11 @@ load_frontend-all:
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
     - unzip frontend.zip
     - mkdir -p docker/frontend
-    - mv Qviewer/dist/* docker/frontend/
+    - cp Qviewer/dist/* docker/frontend/
+    - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
+    - cp Qviewer/dist/* docker/frontend/syriac
+    - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
+    - cp Qviewer/dist/* docker/frontend/arabic-karshuni
   artifacts:
     paths:
       - docker/frontend/

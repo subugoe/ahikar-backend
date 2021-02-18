@@ -23,14 +23,14 @@ function t:_test-teardown() {
 declare
     %test:args("sample_edition")
     %test:assertTrue
-function t:has-manifest-tile($manifest-uri) as xs:boolean {
+function t:has-manifest-tile($manifest-uri as xs:string) as xs:boolean {
     tapi-img:has-manifest-tile($manifest-uri)
 };
 
 declare
     %test:args("sample_teixml") %test:assertFalse
     %test:args("ahiqar_tile") %test:assertTrue
-function t:is-resource-tile($uri) as xs:boolean {
+function t:is-resource-tile($uri as xs:string) as xs:boolean {
     tapi-img:is-resource-tile($uri)
 };
 
@@ -111,6 +111,13 @@ function t:get-relevant-image-section($manifest-uri as xs:string,
     $page-uri as xs:string)
 as xs:string {
     tapi-img:get-relevant-image-section($manifest-uri, $page-uri)
+};
+
+declare
+    %test:args("textgrid:1234 textgrid:4365") %test:assertError
+function t:get-img-metadata($img-uri as xs:string)
+as xs:boolean {
+    tapi-img:get-img-metadata($img-uri)
 };
 
 declare function local:create-and-store-test-data()
