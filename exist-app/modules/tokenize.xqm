@@ -81,15 +81,19 @@ as xs:boolean {
 
 declare function tokenize:add-id-to-text($text as text(),
     $id-prefix as xs:string)
-as element(tei:seg)+ {
+as element(tei:seg)* {
     let $texts := 
         normalize-space($text)
         => tokenize(" ")
     (: since we tokenize the text node we have to consider the position within
     the tokenized sequence for the ID creation :)
     for $iii in 1 to count($texts) return
-        element{QName("http://www.tei-c.org/ns/1.0", "seg")} {
-            attribute xml:id {$id-prefix || "_" || generate-id($text) || "_" || $iii},
-            $texts[$iii]
-        }
+        if (normalize-space($texts[$iii]) = "") then
+            ()
+        else
+            element{QName("http://www.tei-c.org/ns/1.0", "seg")} {
+                attribute xml:id {$id-prefix || "_" || generate-id($text) || "_" || $iii},
+                attribute type {"token"},
+                $texts[$iii]
+            }
 };
