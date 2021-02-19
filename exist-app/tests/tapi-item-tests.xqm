@@ -33,47 +33,11 @@ as xs:string {
 
 
 declare
-    %test:args("sample_edition", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00")
-    (: the following file is test data created by setUp :)
-    %test:args("ahiqar_agg_wo_tile", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz")
-function titemt:make-facsimile-id($manifest-uri as xs:string,
-    $page as xs:string)
-as xs:string {
-    tapi-item:make-facsimile-id($manifest-uri, $page, $tc:server)
-};
-
-
-declare
     %test:args("sample_edition")  %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh'")
 function titemt:make-title-object($manifest-uri as xs:string)
 as element() {
     tapi-item:make-title-object($manifest-uri)
 };
-
-
-declare
-    %test:args("sample_main_edition", "sample_edition", "82a")
-    (: checks if the correct file has been opened :)
-    %test:assertXPath("$result//*[local-name(.) = 'title']/*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh' ")
-    %test:assertXPath("$result//*[local-name(.) = 'title']/*[local-name(.) = 'type'] = 'main' ")
-    (: checks if language assembling works correctly :)
-    %test:assertXPath("$result//*[local-name(.) = 'lang'] = 'syc' ")
-    %test:assertXPath("$result//*[local-name(.) = 'langAlt'] = 'karshuni' ")
-    %test:assertXPath("$result//*[local-name(.) = 'x-langString'][matches(., 'Classical Syriac')]")
-    (: checks if underlying pages are identified :)
-    %test:assertXPath("$result//*[local-name(.) = 'content'] = 'http://0.0.0.0:8080/exist/restxq/api/content/sample_teixml-82a.html' ")
-    (: checks if images connected to underlying pages are identified :)
-    %test:assertXPath("$result//*[local-name(.) = 'id'] = 'http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00' ")
-    %test:assertXPath("$result//*[local-name(.) = 'license']//*[local-name(.) = 'id']")
-    %test:assertXPath("$result//*[local-name(.) = 'license']//*[local-name(.) = 'notes']")
-    %test:assertXPath("$result//*[local-name(.) = 'annotationCollection'] = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/sample_main_edition/sample_edition/82a/annotationCollection.json' ")
-function titemt:get-json($collection as xs:string,
-    $document as xs:string,
-    $page as xs:string) 
-as element(object){
-    tapi-item:get-json($collection, $document, $page, $tc:server)
-};
-
 
 declare
     %test:args("sample_edition") %test:assertXPath("count($result) = 5")
@@ -84,40 +48,6 @@ as element()+ {
     tapi-item:make-language-elements($manifest-uri)
 };
 
-
-declare
-    %test:args("3r1nz") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz")
-function titemt:make-url-for-single-page-image($facsimile-uri as xs:string)
-as xs:string {
-    tapi-item:make-url-for-single-page-image($facsimile-uri, $tc:server)
-};
-
-declare
-    %test:args("3r1nz", "sample_edition", "82a") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00")
-function titemt:make-url-for-double-page-image($facsimile-uri as xs:string,
-    $manifest-uri as xs:string,
-    $page as xs:string)
-as xs:string {
-    tapi-item:make-url-for-double-page-image($facsimile-uri, $manifest-uri, $page, $tc:server)
-};
-
-declare
-    %test:args("3qzg5") %test:assertEquals("public/")
-    %test:args("3r1nz") %test:assertEquals("restricted/")
-    %test:assumeInternetAccess("https://textgridlab.org/1.0/tgcrud-public/rest/")
-function titemt:make-restricted-or-public-path-component($facsimile-uri as xs:string)
-as xs:string {
-    tapi-item:make-restricted-or-public-path-component($facsimile-uri)
-};
-
-declare
-    %test:args("3qzg5") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/public/3qzg5")
-    %test:args("3r1nz") %test:assertEquals("http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz")
-    %test:assumeInternetAccess("https://textgridlab.org/1.0/tgcrud-public/rest/")
-function titemt:make-img-url-prefix($facsimile-uri as xs:string)
-as xs:string {
-    tapi-item:make-img-url-prefix($facsimile-uri, $tc:server)
-};
 
 declare function local:create-and-store-test-data()
 as xs:string+ {

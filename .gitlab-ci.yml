@@ -40,6 +40,11 @@ test_exist_app:
   before_script:
     - apt install libxml2-utils
   script:
+    # add tests that can only be executed with credentials present
+    - cat exist-app/tests/commons-tests-additions.txt >> commons-tests.xqm
+    - cat exist-app/tests/tapi-item-tests-additions.txt >> tapi-item-tests.xqm
+    - cat exist-app/tests/tapi-tests-additions.txt >> tapi-tests.xqm
+    # build database and execute tests
     - ant -f exist-app/build.xml test
     - bash exist-app/test/bin/startup.sh | tee output.log &
     - while [ $(curl --head --silent http://localhost:8080 | grep -c "200 OK") == 0 ]; do sleep 1s; done
