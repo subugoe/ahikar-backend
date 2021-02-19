@@ -200,6 +200,7 @@ declare
     %test:assertXPath("map:contains($result, 'license')")
     %test:assertXPath("map:contains($result, 'annotationCollection')")
     %test:assertXPath("map:contains($result, 'sequence')")
+    %test:assertXPath("map:contains($result, 'support')")
 function tt:endpoint-manifest()
 as item() {
     let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition/manifest.json"
@@ -237,4 +238,21 @@ function tt:endpoint-item() as item() {
     return http:send-request($req)[2]
         => util:base64-decode()
         => parse-json()
+};
+
+declare
+    %test:assertTrue
+function tt:is-sample-collection-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/sample/collection.json"
+    return
+        tc:is-endpoint-http200($url)
+};
+
+
+declare
+    %test:assertTrue
+function tt:is-sample-manifest-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/sample/sample_edition_tbd/manifest.json"
+    return
+        tc:is-endpoint-http200($url)
 };

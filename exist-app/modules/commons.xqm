@@ -141,3 +141,71 @@ declare function commons:open-tei-xml($tei-xml-uri as xs:string)
 as document-node() {
     doc($commons:data || $tei-xml-uri || ".xml")
 };
+
+(:~
+ : Gets a currently valid or renewed session id from TextGrid
+ : @return Session Id
+:)
+declare function commons:get-textgrid-session-id()
+as xs:string {
+    (: check if we have a session id :)
+    if( util:binary-doc-available("/db/sid.txt") ) then
+        (: check if we have to renew the session id :)
+        if( current-dateTime() - xs:dayTimeDuration("PT23H55M") lt xmldb:last-modified("/db", "sid.txt")) then
+            util:binary-doc("/db/sid.txt") => util:binary-to-string()
+        else
+            local:create-textgrid-session-id()
+    else
+        local:create-textgrid-session-id()
+
+};
+
+(:~
+ : Gets a new session id from TextGrids WebAuth service and stores it to
+ : binary /db/sid.txt
+ : @return Session id
+:)
+declare %private function local:create-textgrid-session-id() {
+    let $webauthUrl := "https://textgridlab.org/1.0/WebAuthN/TextGrid-WebAuth.php"
+    let $authZinstance := "textgrid-esx2.gwdg.de"
+    (: check if env var is present and contains the required delimiter :)
+    let $envVarTest :=
+        if(not(contains(environment-variable("TGLOGIN"), ":"))) then
+            error(QName("auth", "error"), "missing env var TGLOGIN")
+        else ()
+
+    let $user :=        environment-variable("TGLOGIN") => substring-before(":")
+    let $password :=    environment-variable("TGLOGIN") => substring-after(":")
+
+    let $pw := 
+        if(contains($password, '&amp;')) then
+            replace($password, '&amp;', '%26')
+        else $password
+    let $request :=
+        <hc:request method="POST" href="{ $webauthUrl }" http-version="1.0">
+            <hc:header name="Connection" value="close" />
+            <hc:multipart media-type="multipart/form-data" boundary="------------------------{current-dateTime() => util:hash("md5") => substring(0,17)}">
+                <hc:header name="Content-Disposition" value='form-data; name="authZinstance"'/>
+                <hc:body media-type="text/plain">{$authZinstance}</hc:body>
+                <hc:header name="Content-Disposition" value='form-data; name="loginname"'/>
+                <hc:body media-type="text/plain">{$user}</hc:body>
+                <hc:header name="Content-Disposition" value='form-data; name="password"'/>
+                <hc:body media-type="text/plain">{$pw}</hc:body>
+            </hc:multipart>
+        </hc:request>
+    let $response := hc:send-request($request)
+
+    let $sid :=
+        string($response[2]//*:meta[@name="rbac_sessionid"]/@content)
+    
+    let $sidTest :=
+        if($sid = "") then
+            error(QName("auth", "error"), $response[2])
+        else ()
+
+    let $store := xmldb:store-as-binary("/db", "sid.txt", $sid) => sm:chmod("rwxrwx---")
+
+    return
+        $sid
+
+};
