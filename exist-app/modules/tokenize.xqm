@@ -34,7 +34,7 @@ as element(tei:TEI) {
 
 declare function tokenize:get-id-prefix($TEI as element(tei:TEI))
 as xs:string {
-    let $idno := $TEI//tei:sourceDesc//tei:idno
+    let $idno := $TEI//tei:sourceDesc//ms:identifier/tei:idno
     return
         replace($idno, " ", "_")
         => replace("\.", "")
