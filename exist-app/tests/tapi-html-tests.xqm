@@ -19,9 +19,9 @@ declare
     (: if a div[@class = 'tei_body'] is present, the transformation has been successfull :)
     %test:assertXPath("$result[@class = 'tei_body']")
     (: this is some text on 82a (and thus should be part of the result) :)
-    %test:assertXPath("$result//* = 'ܘܬܥܐܠܝ ܕܟܪܗ ܐܠܝ ܐܠܐܒܕ. ܘܢܟܬܒ ܟܒܪ'") 
+    %test:assertXPath("$result//* = 'ܟܒܪ'") 
     (: this is some text on 83a which shouldn't be part of the result :)
-    %test:assertXPath("not($result//* = 'ܡܢ ܐܠܣܡܐ ܩܐܝܠܐ. ܒܚܝܬ ܐܬܟܠܬ ܐܘܠܐ ܥܠܝ ܐܠܐܨܢܐܡ' )")
+    %test:assertXPath("not($result//* = 'ܐܠܐܨܢܐܡ' )")
 function thtmlt:get-html($tei-xml-uri as xs:string,
     $page as xs:string)
 as element(div) {
