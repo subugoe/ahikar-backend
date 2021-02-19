@@ -12,6 +12,15 @@ import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokeniz
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
 declare
+    %test:assertTrue
+function t:main() {
+    let $src-TEI := local:get-sample-tei()
+    let $target-TEI := local:get-sample-result()
+    return
+        deep-equal(tokenize:main($src-TEI), $target-TEI)
+};
+
+declare
     %test:assertEquals("Add_2020")
 function t:get-id-prefix()
 as xs:string {
@@ -95,6 +104,75 @@ as element(tei:TEI) {
                         
                         <milestone unit="second_narrative_section"/>
                         <ab><catchwords>Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den</catchwords></ab> 
+                    </body>
+                </text>
+            </group>
+        </text>
+    </TEI>
+};
+
+declare function local:get-sample-result() {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <titleStmt>
+                    <title>Title</title>
+                </titleStmt>
+                <publicationStmt>
+                    <p>Publication Information</p>
+                </publicationStmt>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <institution>University of Cambridge - Cambridge University Library</institution>
+                            <idno>Add. 2020</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
+        <text>
+            <group>
+                <text xml:lang="ara" type="transliteration">
+                    <body>
+                        <milestone unit="first_narrative_section"/>
+                        <ab>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.2.1_1" type="token">Daß</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.2.1_2" type="token">alle</seg>
+                            <sic>unsere</sic>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.2.3_1" type="token">Erkenntnis</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.2.3_2" type="token">mit</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.2.3_3" type="token">der</seg>
+                            <surplus>einen</surplus>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.2.5_1" type="token">Erfahrung</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.2.5_2" type="token">anfange</seg>
+                            <supplied>,</supplied>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.2.7_1" type="token">daran</seg>
+                        </ab>
+                        <milestone unit="sayings"/>
+                        <ab>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.1_1" type="token">Wenn</seg>
+                            <unclear>aber</unclear>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_1" type="token">gleich</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_2" type="token">alle</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_3" type="token">unsere</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_4" type="token">Erkenntnis</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_5" type="token">mit</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_6" type="token">der</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_7" type="token">Erfahrung</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_8" type="token">anhebt</seg>
+                            <g>,</g>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.5_1" type="token">so</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.5_2" type="token">entspringt</seg>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.5_3" type="token">sie</seg>
+                            <note>die Erkenntnis</note>
+                            <seg xml:id="Add_2020_N1.2.1.1.3.4.7_1" type="token">darum</seg>
+                            <seg type="colophon">doch nicht eben</seg>
+                        </ab>
+                        <milestone unit="second_narrative_section"/>
+                        <ab>
+                            <catchwords>Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den</catchwords>
+                        </ab>
                     </body>
                 </text>
             </group>
