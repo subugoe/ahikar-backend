@@ -268,6 +268,24 @@ as xs:string {
 };
 
 declare
+    %test:assertEquals("CC-BY-SA-4.0")
+function tmt:get-license-info-provided()
+as xs:string {
+    let $tei-xml := doc("/db/data/textgrid/data/sample_teixml.xml")
+    return
+        tapi-mani:get-license-info($tei-xml)
+};
+
+declare
+    %test:assertEquals("no license provided")
+function tmt:get-license-info-not-provided()
+as xs:string {
+    let $tei-xml := doc("/db/data/textgrid/data/sample_3_teixml.xml")
+    return
+        tapi-mani:get-license-info($tei-xml)
+};
+
+declare
     %test:assertXPath("$result/type = 'css' ")
     %test:assertXPath("$result/url = 'https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css' ")
 function tmt:make-support-object()
