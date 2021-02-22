@@ -167,11 +167,11 @@ deploy_app-test:
   script:
     - VERSION=$(grep -E -o "project.version=[0-9]+\.[0-9]+\.[0.9]+" exist-app/build.properties | grep -E -o "[0-9]+\.[0-9]+\.[0.9]+")
     - echo $VERSION
-    - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy/$VERSION)
+    - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy)
+    #- HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy/$VERSION)
     - STATUS=$(echo $HEADER | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $STATUS."
     - if [[ "$STATUS" != "200" ]]; then exit 1; fi
-    - curl --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy/$VERSION
 
 deploy_app-dev:
   image: curlimages/curl
