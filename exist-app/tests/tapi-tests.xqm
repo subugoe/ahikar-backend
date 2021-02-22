@@ -83,12 +83,23 @@ function tt:api-info()  as item() {
 
 declare
     %test:assertTrue
-function tt:is-html-api-available()
+function tt:is-html-transcription-api-available()
 as xs:boolean {
-    let $url := $tc:server || "/content/sample_teixml-82a.html"
+    let $url := $tc:server || "/content/transcription/sample_teixml-82a.html"
     return
         tc:is-endpoint-http200($url)
 };
+
+
+declare
+    %test:assertTrue
+function tt:is-html-transliteration-api-available()
+as xs:boolean {
+    let $url := $tc:server || "/content/transliteration/sample_teixml-82a.html"
+    return
+        tc:is-endpoint-http200($url)
+};
+
 
 declare
     (: check if tei:div is present.
@@ -96,7 +107,7 @@ declare
      : the underlying function. :)
     %test:assertXPath("$result//*[@class = 'tei_body']")
 function tt:content-rest() as document-node() {
-    let $url := $tc:server || "/content/sample_teixml-82a.html"
+    let $url := $tc:server || "/content/transcription/sample_teixml-82a.html"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]
 };
@@ -228,7 +239,6 @@ declare
     %test:assertXPath("map:contains($result, 'type')")
     %test:assertXPath("map:contains($result, 'n')")
     %test:assertXPath("map:contains($result, 'content')")
-    %test:assertXPath("map:contains($result, 'content-type')")
     %test:assertXPath("map:contains($result, 'lang')")
     %test:assertXPath("map:contains($result, 'langAlt')")
     %test:assertXPath("map:contains($result, 'image')")

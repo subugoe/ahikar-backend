@@ -26,8 +26,7 @@ as element(object) {
         {tapi-item:make-title-object($manifest-uri)}
         <type>page</type>
         <n>{$page}</n>
-        <content>{$server}/api/content/{commons:get-xml-uri($manifest-uri)}-{$page}.html</content>
-        <content-type>application/xhtml+xml</content-type>
+        {tapi-item:make-content-objects($collection-type, $manifest-uri, $page, $server)}
         {tapi-item:make-language-elements($manifest-uri)}
         <x-langString>{tapi-item:get-language-string($manifest-uri)}</x-langString>
         <image>
@@ -51,6 +50,24 @@ as element() {
             <title>{$title}</title>
             <type>{$type}</type>
         </title>
+};
+
+declare function tapi-item:make-content-objects($collection-type as xs:string,
+    $manifest-uri as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as element()+ {
+    if ($collection-type = "syriac") then
+        <content>
+            <url>{$server}/api/content/transcription/{commons:get-xml-uri($manifest-uri)}-{$page}.html</url>
+            <type>application/xhtml+xml;type=transcription</type>
+        </content>
+    else
+        for $html-type in ("transcription", "transliteration") return
+            <content>
+                <url>{$server}/api/content/{$html-type}/{commons:get-xml-uri($manifest-uri)}-{$page}.html</url>
+                <type>application/xhtml+xml;type={$html-type}</type>
+            </content>
 };
 
 
