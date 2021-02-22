@@ -239,3 +239,20 @@ function tt:endpoint-item() as item() {
         => util:base64-decode()
         => parse-json()
 };
+
+declare
+    %test:assertTrue
+function tt:is-sample-collection-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/sample/collection.json"
+    return
+        tc:is-endpoint-http200($url)
+};
+
+
+declare
+    %test:assertTrue
+function tt:is-sample-manifest-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/sample/sample_edition_tbd/manifest.json"
+    return
+        tc:is-endpoint-http200($url)
+};
