@@ -467,8 +467,8 @@ as xs:string {
 declare function anno:get-annotation-type($annotation as node())
 as xs:string {
     switch ($annotation/local-name())
-        case "persName" return "person"
-        case "placeName" return "place"
+        case "persName" return "Person"
+        case "placeName" return "Place"
         default return ()
 };
 
