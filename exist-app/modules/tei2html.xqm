@@ -52,15 +52,12 @@ as node()* {
                 tei2html:transform($node/node())
             }
             
-        case element(tei:seg) return
-            if ($node/@type = "token") then
-                element xhtml:span {
-                    attribute id {$node/@xml:id},
-                    attribute class {"token"},
-                    tei2html:transform($node/node())
-                }
-            else
-                tei2html:make-default-return($node)
+        case element(tei:w) return
+            element xhtml:span {
+                attribute id {$node/@xml:id},
+                attribute class {"token"},
+                tei2html:transform($node/node())
+            }
             
         default return
             tei2html:make-default-return($node)
