@@ -398,7 +398,7 @@ as map()* {
             map {
                 "id": $anno:ns || "/" || $teixml-uri || "/annotation-" || $id,
                 "type": "Annotation",
-                "bodyValue": anno:get-bodyValue($annotation),
+                "body": anno:get-body-object($annotation),
                 "target": anno:get-target-information($annotation, $teixml-uri, $id)
             }
 };
@@ -417,6 +417,59 @@ as element(tei:TEI) {
     let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
     return
         commons:get-page-fragment($nodeURI, $page)
+};
+
+(:~
+ : Returns the Body Object for an annotation.
+ : 
+ : @see https://www.w3.org/TR/annotation-model/#embedded-textual-body
+ : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/annotation-api-specs/#body-object
+ : 
+ : @param $annotation The node which serves as a basis for the annotation
+ : @return A map representing the embedded textual body of the annotation.
+ :)
+declare function anno:get-body-object($annotation as node())
+as map() {
+    map {
+        "type": "TextualBody",
+        "value": anno:get-body-value($annotation),
+        "format": "text/plain",
+        "x-content-type": anno:get-annotation-type($annotation)
+    }
+};
+
+
+(:~
+ : Returns the body's value for an annotation.
+ : 
+ : @see https://www.w3.org/TR/annotation-model/#embedded-textual-body
+ : 
+ : @param $annotation The node which serves as a basis for the annotation
+ : @return The value of the annotation.
+ :)
+declare function anno:get-body-value($annotation as node())
+as xs:string {
+    switch ($annotation/local-name())
+        case "persName" return "A person's name."
+        case "placeName" return "A place's name."
+        default return ()
+};
+
+
+(:~
+ : Returns the type of an annotation.
+ : 
+ : @see https://www.w3.org/TR/annotation-model/#string-body
+ : 
+ : @param $annotation The node which serves as a basis for the annotation
+ : @return The content of bodyValue.
+ :)
+declare function anno:get-annotation-type($annotation as node())
+as xs:string {
+    switch ($annotation/local-name())
+        case "persName" return "person"
+        case "placeName" return "place"
+        default return ()
 };
 
 
@@ -490,23 +543,6 @@ as map(*) {
         "format": "text/xml",
         "language": $annotation/ancestor-or-self::*[@xml:lang][1]/@xml:lang/string()
     }
-};
-
-
-(:~
- : Returns the bodyValue's content for an annotation.
- : 
- : @see https://www.w3.org/TR/annotation-model/#string-body
- : 
- : @param $annotation The node which serves as a basis for the annotation
- : @return The content of bodyValue.
- :)
-declare function anno:get-bodyValue($annotation as node())
-as xs:string {
-    switch ($annotation/local-name())
-        case "persName" return "A person's name."
-        case "placeName" return "A place's name."
-        default return ()
 };
 
 

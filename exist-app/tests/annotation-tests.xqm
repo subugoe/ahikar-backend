@@ -86,11 +86,27 @@ as xs:string {
 
 declare
     %test:assertEquals("A place's name.")
-function at:anno-get-bodyValue()
+function at:anno-get-body-value()
 as xs:string {
     let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
     return
-        anno:get-bodyValue($annotation)
+        anno:get-body-value($annotation)
+};
+
+declare
+    %test:assertEquals("person")
+function at:get-annotation-type-person() {
+    let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:persName[1]
+    return
+        anno:get-annotation-type($annotation)
+};
+
+declare
+    %test:assertEquals("place")
+function at:get-annotation-type-place() {
+    let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
+    return
+        anno:get-annotation-type($annotation)
 };
 
 declare
@@ -259,12 +275,12 @@ as map()+ {
 
 declare
     %test:args("sample_teixml", "84a")
-    %test:assertXPath("$result = 'A person''s name.'")
-function at:get-annotations-detailed-bodyValue($teixml-uri as xs:string,
+    %test:assertXPath("map:get($result, 'value') = 'A person''s name.'")
+function at:get-annotations-detailed-body($teixml-uri as xs:string,
     $page as xs:string)
-as xs:string {
+as map() {
     let $result-map := anno:get-annotations($teixml-uri, $page)
-    let $bodyValue := map:get($result-map, "bodyValue")
+    let $bodyValue := map:get($result-map, "body")
     return
         $bodyValue
 };
