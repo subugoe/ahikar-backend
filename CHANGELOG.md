@@ -5,12 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.5.1] - 2021-02-19
+## [4.6.1] - 2021-02-22
 
 ### Fixed
 
 - restructered the tests in a way that developers can execute them locally even if they don't have the credentials necessary for getting data from TextGrid.
 These tests are stored in separate files and attached to the resp. testing modules in the CI pipeline.
+
+## [4.6.0] - 2021-02-22
+
+### Changed
+
+- Instead of having a simple string body in the annotations, we switched to a Body Object that holds a custom parameter, `x-content-type`, which enables us to easily distinguish the annotations of different types.
+Cf. <https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/annotation-api-specs/#body-object>.
 
 ## [4.5.0] - 2021-02-18
 
