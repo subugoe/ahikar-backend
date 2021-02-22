@@ -29,6 +29,9 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
          <publicationStmt>
             <authority>Georg-August Universität Göttingen, Theologische Fakultät, Seminar für Altes
                Testament</authority>
+            <availability>
+               <licence target="https://creativecommons.org/licenses/by-sa/4.0/">Distributed under a Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) License.</licence>
+            </availability>
          </publicationStmt>
          <sourceDesc>
             <msDesc>
