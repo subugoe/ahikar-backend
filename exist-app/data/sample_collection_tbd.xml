@@ -1,5 +1,6 @@
 <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <rdf:Description xmlns:tei="http://www.tei-c.org/ns/1.0" rdf:about="textgrid:sample_collection_tbd.0">
         <ore:aggregates rdf:resource="textgrid:sample_edition_tbd"/>
+        <ore:aggregates rdf:resource="textgrid:sample_edition_2_tbd"/>
     </rdf:Description>
 </rdf:RDF>

@@ -141,10 +141,12 @@ as xs:boolean {
 
 declare function tapi-img:get-img-metadata($img-uri as xs:string) {
     try {
-        hc:send-request(
-            <hc:request method="GET"
-            href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={environment-variable('TEXTGRID.SESSION')}"
-            />
+        let $sessionId := commons:get-textgrid-session-id()
+        return
+            hc:send-request(
+                <hc:request method="GET"
+                href="https://textgridlab.org/1.0/tgcrud/rest/textgrid:{$img-uri}/metadata?sessionId={$sessionId}"
+                />
         )
     } catch * {
         error(QName("http://ahikar.sub.uni-goettingen.de/ns/tapi/images", "IMG01"), "Requested image with the URI " || $img-uri || " could not be fetched from TextGrid.")

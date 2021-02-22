@@ -57,6 +57,7 @@ test_exist_app:
     when: always
     paths:
       - exist-app/test/ahikar-test-results.xml
+      - exist-app/test/logs/*.log
     reports:
       junit: exist-app/test/ahikar-test-results.xml
 
