@@ -59,11 +59,11 @@ as xs:boolean {
 
 declare
     %test:assertXPath("count($result) = 2 
-        and $result/local-name() = 'seg'
+        and $result/local-name() = 'w'
         and $result[1]/@xml:id = 'Add_2020_N1.1_1'
         and $result[2]/@xml:id = 'Add_2020_N1.1_2' ")
 function t:add-id-to-text()
-as element(tei:seg)+ {
+as element(tei:w)+ {
     let $node := <ab xmlns="http://www.tei-c.org/ns/1.0">some text </ab>
     let $id-prefix := "Add_2020"
     return
@@ -99,7 +99,7 @@ as element(tei:TEI) {
                         <ab>Daß alle <sic>unsere</sic> Erkenntnis mit der <surplus>einen</surplus> Erfahrung anfange<supplied>,</supplied> daran </ab>
                                 
                         <milestone unit="sayings"/>
-                        <ab>Wenn <unclear>aber</unclear> gleich alle unsere Erkenntnis mit der Erfahrung anhebt<g>,</g> so entspringt sie<note>die Erkenntnis</note> darum <seg type="colophon">doch nicht eben</seg></ab>
+                        <ab>Wenn <unclear>aber</unclear> gleich alle unsere Erkenntnis mit der Erfahrung anhebt<g>,</g> so entspringt sie<note>die Erkenntnis</note> darum <w type="colophon">doch nicht eben</w></ab>
                         
                         
                         <milestone unit="second_narrative_section"/>
@@ -137,37 +137,37 @@ declare function local:get-sample-result() {
                     <body>
                         <milestone unit="first_narrative_section"/>
                         <ab>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.2.1_1" type="token">Daß</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.2.1_2" type="token">alle</seg>
+                            <w xml:id="Add_2020_N1.2.1.1.3.2.1_1" type="token">Daß</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.2.1_2" type="token">alle</w>
                             <sic>unsere</sic>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.2.3_1" type="token">Erkenntnis</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.2.3_2" type="token">mit</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.2.3_3" type="token">der</seg>
+                            <w xml:id="Add_2020_N1.2.1.1.3.2.3_1" type="token">Erkenntnis</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.2.3_2" type="token">mit</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.2.3_3" type="token">der</w>
                             <surplus>einen</surplus>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.2.5_1" type="token">Erfahrung</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.2.5_2" type="token">anfange</seg>
+                            <w xml:id="Add_2020_N1.2.1.1.3.2.5_1" type="token">Erfahrung</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.2.5_2" type="token">anfange</w>
                             <supplied>,</supplied>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.2.7_1" type="token">daran</seg>
+                            <w xml:id="Add_2020_N1.2.1.1.3.2.7_1" type="token">daran</w>
                         </ab>
                         <milestone unit="sayings"/>
                         <ab>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.1_1" type="token">Wenn</seg>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.1_1" type="token">Wenn</w>
                             <unclear>aber</unclear>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_1" type="token">gleich</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_2" type="token">alle</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_3" type="token">unsere</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_4" type="token">Erkenntnis</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_5" type="token">mit</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_6" type="token">der</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_7" type="token">Erfahrung</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.3_8" type="token">anhebt</seg>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_1" type="token">gleich</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_2" type="token">alle</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_3" type="token">unsere</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_4" type="token">Erkenntnis</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_5" type="token">mit</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_6" type="token">der</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_7" type="token">Erfahrung</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_8" type="token">anhebt</w>
                             <g>,</g>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.5_1" type="token">so</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.5_2" type="token">entspringt</seg>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.5_3" type="token">sie</seg>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.5_1" type="token">so</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.5_2" type="token">entspringt</w>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.5_3" type="token">sie</w>
                             <note>die Erkenntnis</note>
-                            <seg xml:id="Add_2020_N1.2.1.1.3.4.7_1" type="token">darum</seg>
-                            <seg type="colophon">doch nicht eben</seg>
+                            <w xml:id="Add_2020_N1.2.1.1.3.4.7_1" type="token">darum</w>
+                            <w type="colophon">doch nicht eben</w>
                         </ab>
                         <milestone unit="second_narrative_section"/>
                         <ab>

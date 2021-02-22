@@ -2,8 +2,8 @@ xquery version "3.1";
 
 (: 
  : This module deals with the tokenization of the relevant text by identifying
- : the relevant words and wrapping them in a separate tei:seg.
- : This tei:seg is equipped with a unique ID which contains
+ : the relevant words and wrapping them in a separate tei:w.
+ : This tei:w is equipped with a unique ID which contains
  :      - the manuscript's IDNO
  :      - the node ID of the complete text node and
  :      -  the position of the word in focus within the text node
@@ -34,7 +34,7 @@ as element(tei:TEI) {
 
 declare function tokenize:get-id-prefix($TEI as element(tei:TEI))
 as xs:string {
-    let $idno := $TEI//tei:sourceDesc//ms:identifier/tei:idno
+    let $idno := $TEI//tei:sourceDesc//tei:msIdentifier/tei:idno
     return
         replace($idno, " ", "_")
         => replace("\.", "")
@@ -81,7 +81,7 @@ as xs:boolean {
 
 declare function tokenize:add-id-to-text($text as text(),
     $id-prefix as xs:string)
-as element(tei:seg)* {
+as element(tei:w)* {
     let $texts := 
         normalize-space($text)
         => tokenize(" ")
@@ -91,7 +91,7 @@ as element(tei:seg)* {
         if (normalize-space($texts[$iii]) = "") then
             ()
         else
-            element{QName("http://www.tei-c.org/ns/1.0", "seg")} {
+            element{QName("http://www.tei-c.org/ns/1.0", "w")} {
                 attribute xml:id {$id-prefix || "_" || generate-id($text) || "_" || $iii},
                 attribute type {"token"},
                 $texts[$iii]
