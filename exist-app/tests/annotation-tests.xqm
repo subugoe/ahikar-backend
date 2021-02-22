@@ -94,16 +94,18 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("person")
-function at:get-annotation-type-person() {
+    %test:assertEquals("Person")
+function at:get-annotation-type-person()
+as xs:string {
     let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:persName[1]
     return
         anno:get-annotation-type($annotation)
 };
 
 declare
-    %test:assertEquals("place")
-function at:get-annotation-type-place() {
+    %test:assertEquals("Place")
+function at:get-annotation-type-place()
+as xs:string {
     let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
     return
         anno:get-annotation-type($annotation)
