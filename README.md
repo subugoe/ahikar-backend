@@ -125,7 +125,7 @@ The frontend takes care of the data transfer as described in [TIDO's README](htt
 All functions are based on unit tests which are executed automatically as the first stage of this repo's pipelines.
 
 To enable local testing without credentials some tests that require access to TextGrid have been outsourced to separate files in `exist-app/tests`.
-These files have a `txt` file extension and are automatically attached to the other tests during the `unit_tests` stage.
+These are only executed by the `testtrigger.xqm` module if the respective environment variable, `TGLOGIN` is set in `ahikar.env`.
 
 This way, tests can be executed locally via the API endpoint `/trigger-tests` or the script `tests-runner.xq` without running into authentication problems.
 

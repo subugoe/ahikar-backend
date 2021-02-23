@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - restructered the tests in a way that developers can execute them locally even if they don't have the credentials necessary for getting data from TextGrid.
-These tests are stored in separate files and attached to the resp. testing modules in the CI pipeline.
+These tests are only executed if the respective environment variable, `TGLOGIN`, is available.
 
 ## [4.8.0] - 2021-02-22
 
