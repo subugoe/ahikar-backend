@@ -80,9 +80,9 @@ as element()? {
 declare
   %rest:GET
   %rest:HEAD
-  %rest:path("/deploy/{$version}")
+  %rest:path("/deploy/version/{$version}")
   %rest:query-param("token", "{$token}")
-function deploy:redeploy($version as xs:string,
+function deploy:redeploy-version($version as xs:string,
     $token)
 as item()+ {
     if(not($token = environment-variable("APP_DEPLOY_TOKEN" ))) then
