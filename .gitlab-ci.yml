@@ -21,7 +21,7 @@ include:
 
 .env: &env
 - echo $SECRETS | sed "s#\s#\n#g" >> docker/ahikar.env
-- echo $APP_DEPLOY_TOKEN | sed "s#\s#\n#g" >> docker/ahikar.env
+- echo "APP_DEPLOY_TOKEN=$APP_DEPLOY_TOKEN"  >> docker/ahikar.env
 - sh docker/set-env-for-docker-compose.sh
 
 # used for develop and main, see test for all other cases!
