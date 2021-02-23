@@ -13,14 +13,14 @@ import module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/i
 declare
     %test:setUp
 function titemt:_test-setup() {
-    local:create-and-store-test-data()
+    titemt:create-and-store-test-data()
 };
 
 
 declare
     %test:tearDown
 function titemt:_test-teardown() {
-    local:remove-test-data()
+    titemt:remove-test-data()
 };
 
 
@@ -49,7 +49,7 @@ as element()+ {
 };
 
 
-declare function local:create-and-store-test-data()
+declare function titemt:create-and-store-test-data()
 as xs:string+ {
     let $agg-wo-tile :=
         <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -73,7 +73,7 @@ as xs:string+ {
 };
 
 
-declare function local:remove-test-data() {
+declare function titemt:remove-test-data() {
     xmldb:remove("/db/data/textgrid/agg", "ahiqar_agg_wo_tile.xml"),
     xmldb:remove("/db/data/textgrid/data", "ahiqar_sample_2.xml"),
     xmldb:remove("/db/data/textgrid/meta", "ahiqar_sample_2.xml"),

@@ -1,3 +1,21 @@
+xquery version "3.1";
+
+(:~
+ : Test module for the RESTXQ endpoints of the Ahikar TextAPI.
+ : 
+ : @author Michelle Weidling
+ : @version 0.1.0
+ :)
+
+module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests/credentials";
+
+declare namespace http = "http://expath.org/ns/http-client";
+
+import module namespace map="http://www.w3.org/2005/xpath-functions/map";
+import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "test-commons.xqm";
+import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
+
+
 declare
     %test:assertTrue
 function tt:is-item-endpoint-http200() {
