@@ -29,6 +29,11 @@ import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-te
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
 import module namespace tokt="http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" at "../tests/tokenize-tests.xqm";
 
+(: modules that need credentials for the tests to work :)
+import module namespace titemtc="http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests/credentials" at "../tests/tapi-item-tests-credentials-needed.xqm";
+import module namespace ttc="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests/credentials" at "../tests/tapi-tests-credentials-needed.xqm";
+import module namespace ctc="http://ahikar.sub.uni-goettingen.de/ns/commons-tests/credentials" at "../tests/commons-tests-credentials-needed.xqm";
+
 (:~
  : Triggers the tests for the Ahikar backend. Called by the CI.
  : 
@@ -78,7 +83,16 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests"))
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests")),
+        (: tests with credentials needed :)
+        if (environment-variable("TGLOGIN")) then
+            (
+                test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests/credentials")),
+                test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/tests/credentials")),
+                test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/commons-tests/credentials"))
+            )
+        else
+            ()
     )
 
     for $result in $test-results
@@ -112,5 +126,8 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" return "AnnotationAPI REST"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests" return "Image Sections"
         case "http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" return "Tokenize"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests/credentials" return "TextAPI Items (credentials needed)"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/tests/credentials" return "TextAPI general (credentials needed)"
+        case "http://ahikar.sub.uni-goettingen.de/ns/commons-tests/credentials" return "Commons (credentials needed)"
         default return ()
 };

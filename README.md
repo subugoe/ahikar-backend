@@ -16,6 +16,7 @@ This aims to serve the complete backend for the Ahikar project.
 - [Architecture](#architecture)
   - [Internal Workings of the Backend](#internal-workings-of-the-backend)
 - [Connecting the Backend with the Frontend](#connecting-the-backend-with-the-frontend)
+- [Tests](#tests)
 - [API documentation](#api-documentation)
   - [Interplay of TextAPI and AnnotationAPI](#interplay-of-textapi-and-annotationapi)
 - [License](#license)
@@ -118,6 +119,15 @@ In order to connect the back end with the viewer, the former simply has to expos
 The specification of the project specific API can be found at the [API's documentation page](https://subugoe.pages.gwdg.de/ahiqar/api-documentation/).
 
 The frontend takes care of the data transfer as described in [TIDO's README](https://gitlab.gwdg.de/subugoe/emo/Qviewer/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
+
+## Tests
+
+All functions are based on unit tests which are executed automatically as the first stage of this repo's pipelines.
+
+To enable local testing without credentials some tests that require access to TextGrid have been outsourced to separate files in `exist-app/tests`.
+These are only executed by the `testtrigger.xqm` module if the respective environment variable, `TGLOGIN` is set in `ahikar.env`.
+
+This way, tests can be executed locally via the API endpoint `/trigger-tests` or the script `tests-runner.xq` without running into authentication problems.
 
 ## API documentation
 
