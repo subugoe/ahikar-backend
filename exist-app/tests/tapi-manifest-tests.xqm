@@ -130,7 +130,8 @@ function tmt:_test-teardown() {
 
 
 declare
-    %test:args("sample_main_edition", "sample_edition") %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json')]")
+    %test:args("sample_main_edition", "sample_edition")
+    %test:assertXPath("matches(map:get($result, 'id'), '/api/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json')")
 function tmt:make-sequences($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:make-sequences($collection-uri, $manifest-uri, $tc:server)
@@ -144,9 +145,9 @@ function tmt:get-valid-page-ids($manifest-uri as xs:string) {
 
 declare
     %test:args("sample_main_edition", "sample_edition")
-    %test:assertXPath("$result//label = 'Beispieldatei zum Testen'")
-    %test:assertXPath("$result//id[matches(., '/api/textapi/ahikar/sample_main_edition/sample_edition/manifest.json')]")
-    %test:assertXPath("$result//annotationCollection[matches(., '/api/annotations/ahikar/sample_main_edition/sample_edition/annotationCollection.json')] ")
+    %test:assertXPath("map:get($result, 'label') = 'Beispieldatei zum Testen'")
+    %test:assertXPath("matches(map:get($result, 'id'), '/api/textapi/ahikar/sample_main_edition/sample_edition/manifest.json')")
+    %test:assertXPath("matches(matches(map:get($result, 'annotationCollection'), '/api/annotations/ahikar/sample_main_edition/sample_edition/annotationCollection.json') ")
 function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
@@ -160,7 +161,7 @@ function tmt:get-manifest-title($manifest-uri as xs:string) {
 
 declare
     %test:assertXPath("count($result) = 2")
-    %test:assertXPath("$result[self::value]/string() = 'Simon Birol, Aly Elrefaei'")
+    %test:assertXPath("map:get($result, 'value') = 'Simon Birol, Aly Elrefaei'")
 function tmt:make-editors-present() {
     let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
     return
@@ -169,7 +170,7 @@ function tmt:make-editors-present() {
 
 declare
     %test:assertXPath("count($result) = 2")
-    %test:assertXPath("$result[self::value]/string() = 'none'")
+    %test:assertXPath("map:get($result, 'value') = 'none'")
 function tmt:make-editors-not-present() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
     return
@@ -177,7 +178,7 @@ function tmt:make-editors-not-present() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = '18.10.1697'")
+    %test:assertXPath("map:get($result, 'value') = '18.10.1697'")
 function tmt:make-creation-date-present() {
     let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
     return
@@ -185,7 +186,7 @@ function tmt:make-creation-date-present() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'unknown'")
+    %test:assertXPath("map:get($result, 'value') = 'unknown'")
 function tmt:make-creation-date-not-present() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
     return
@@ -193,7 +194,7 @@ function tmt:make-creation-date-not-present() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'Alqosh, Iraq'")
+    %test:assertXPath("map:get($result, 'value') = 'Alqosh, Iraq'")
 function tmt:make-origin-1() {
     let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
     return
@@ -201,7 +202,7 @@ function tmt:make-origin-1() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'unknown'")
+    %test:assertXPath("map:get($result, 'value') = 'unknown'")
 function tmt:make-origin-2() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
     return
@@ -209,7 +210,7 @@ function tmt:make-origin-2() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'Iraq'")
+    %test:assertXPath("map:get($result, 'value') = 'Iraq'")
 function tmt:make-origin-3() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest2")
     return
@@ -217,7 +218,7 @@ function tmt:make-origin-3() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'Alqosh'")
+    %test:assertXPath("map:get($result, 'value') = 'Alqosh'")
 function tmt:make-origin-4() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest3")
     return
@@ -225,7 +226,7 @@ function tmt:make-origin-4() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'University of Cambridge - Cambridge University Library, Great Britain'")
+    %test:assertXPath("map:get($result, 'value') = 'University of Cambridge - Cambridge University Library, Great Britain'")
 function tmt:make-current-location-1() {
     let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
     return
@@ -233,7 +234,7 @@ function tmt:make-current-location-1() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'unknown'")
+    %test:assertXPath("map:get($result, 'value') = 'unknown'")
 function tmt:make-current-location-2() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
     return
@@ -241,7 +242,7 @@ function tmt:make-current-location-2() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'University of Cambridge - Cambridge University Library'")
+    %test:assertXPath("map:get($result, 'value') = 'University of Cambridge - Cambridge University Library'")
 function tmt:make-current-location-3() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest2")
     return
@@ -249,7 +250,7 @@ function tmt:make-current-location-3() {
 };
 
 declare
-    %test:assertXPath("$result[self::value]/string() = 'Great Britain'")
+    %test:assertXPath("map:get($result, 'value') = 'Great Britain'")
 function tmt:make-current-location-4() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest3")
     return
@@ -268,27 +269,25 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("CC-BY-SA-4.0")
-function tmt:get-license-info-provided()
-as xs:string {
+    %test:assertXPath("array:get($result, 1) => map:get('id') = 'CC-BY-SA-4.0'")
+function tmt:get-license-info-provided() {
     let $tei-xml := doc("/db/data/textgrid/data/sample_teixml.xml")
     return
         tapi-mani:get-license-info($tei-xml)
 };
 
 declare
-    %test:assertEquals("no license provided")
-function tmt:get-license-info-not-provided()
-as xs:string {
+    %test:assertEquals("array:get($result, 1) => map:get('id') = 'no license provided'")
+function tmt:get-license-info-not-provided() {
     let $tei-xml := doc("/db/data/textgrid/data/sample_3_teixml.xml")
     return
         tapi-mani:get-license-info($tei-xml)
 };
 
 declare
-    %test:assertXPath("$result/type = 'css' ")
-    %test:assertXPath("$result/url = 'https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css' ")
+    %test:assertXPath("array:get($result, 1) => map:get('type') = 'css' ")
+    %test:assertXPath("array:get($result, 1) => map:get('url') = 'https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css' ")
 function tmt:make-support-object()
-as element() {
+as item() {
     tapi-mani:make-support-object()
 };
