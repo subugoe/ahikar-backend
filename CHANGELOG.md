@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.8.2] - 2021-02-23
+
+### Fixed
+
+- the variable $APP_DEPLOY_TOKEN which is expected in `deploy.xqm` is now part of Docker's environment and can actually be used for conditionals.
+Also, this variable has been added as a query parameter to the API call.
+
 ## [4.8.1] - 2021-02-23
 
 ### Fixed
