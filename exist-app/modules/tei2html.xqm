@@ -52,6 +52,13 @@ as node()* {
                 tei2html:transform($node/node())
             }
             
+        case element(tei:w) return
+            element xhtml:span {
+                attribute id {$node/@xml:id},
+                attribute class {"token"},
+                tei2html:transform($node/node())
+            }
+            
         default return
             tei2html:make-default-return($node)
 };
@@ -171,7 +178,7 @@ as xs:string? {
 
 declare function tei2html:find-referenced-node-id($element as element(),
     $xmlid as xs:string)
-as xs:string {
+as xs:string? {
     $element/root()//*[@xml:id = $xmlid]/@id
 };
 

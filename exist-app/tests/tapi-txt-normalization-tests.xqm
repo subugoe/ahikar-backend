@@ -22,9 +22,9 @@ function ttnt:_test-teardown() {
 
 
 declare
-    %test:args("ܬܟܼܫܪ") %test:assertXPath("$result != 1852")
+    %test:args("ܬܟܼܫܪ") %test:assertXPath("not($result = 1852)")
     %test:args("ܬܟܫܪ") %test:assertXPath("$result = 1823")
-    %test:args("ܕܩܿܐܡ") %test:assertXPath("$result != 1855")
+    %test:args("ܕܩܿܐܡ") %test:assertXPath("not($result = 1855)")
 function ttnt:remove-codepoints($string as xs:string)
 as xs:integer+ {
     let $codepoints := string-to-codepoints($string)

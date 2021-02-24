@@ -16,6 +16,7 @@ This aims to serve the complete backend for the Ahikar project.
 - [Architecture](#architecture)
   - [Internal Workings of the Backend](#internal-workings-of-the-backend)
 - [Connecting the Backend with the Frontend](#connecting-the-backend-with-the-frontend)
+- [Tests](#tests)
 - [API documentation](#api-documentation)
   - [Interplay of TextAPI and AnnotationAPI](#interplay-of-textapi-and-annotationapi)
 - [License](#license)
@@ -75,10 +76,9 @@ mv docker/frontend/Qviewer/dist/spa/* docker/frontend && rm -rf docker/frontend/
 
 ### Environment variables
 
-To pass credentials to the container, we use the file `ahikar.env` which is not part of this repository. For loading data from TextGrid, this file should contain the following parameters:
+To pass credentials to the container, we use the file `ahikar.env` which is not part of this repository. For loading data from TextGrid, this file MUST contain the following parameters:
 
-- TGUSER
-- TGPASS
+- TGLOGIN with `username:password`
 
 For local development this file MUST be present but can be left empty. In this case, TextGrid Connect Standalone may be used to import data from TextGrid.
 
@@ -119,6 +119,15 @@ In order to connect the back end with the viewer, the former simply has to expos
 The specification of the project specific API can be found at the [API's documentation page](https://subugoe.pages.gwdg.de/ahiqar/api-documentation/).
 
 The frontend takes care of the data transfer as described in [TIDO's README](https://gitlab.gwdg.de/subugoe/emo/Qviewer/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
+
+## Tests
+
+All functions are based on unit tests which are executed automatically as the first stage of this repo's pipelines.
+
+To enable local testing without credentials some tests that require access to TextGrid have been outsourced to separate files in `exist-app/tests`.
+These are only executed by the `testtrigger.xqm` module if the respective environment variable, `TGLOGIN` is set in `ahikar.env`.
+
+This way, tests can be executed locally via the API endpoint `/trigger-tests` or the script `tests-runner.xq` without running into authentication problems.
 
 ## API documentation
 

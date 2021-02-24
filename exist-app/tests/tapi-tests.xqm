@@ -133,7 +133,8 @@ function tt:content-txt() as xs:string {
 
 declare
     %test:assertTrue
-function tt:is-txt-api-available() {
+function tt:is-txt-api-available()
+as xs:boolean {
     let $url := $tc:server || "/content/sample_teixml.txt"
     return
         tc:is-endpoint-http200($url)
@@ -195,13 +196,11 @@ declare
     %test:assertXPath("map:contains($result, 'textapi')")
     %test:assertXPath("map:contains($result, 'id')")
     %test:assertXPath("map:contains($result, 'label')")
-    %test:assertXPath("map:contains($result, 'x-editor')")
-    %test:assertXPath("map:contains($result, 'x-date')")
-    %test:assertXPath("map:contains($result, 'x-origin')")
-    %test:assertXPath("map:contains($result, 'x-location')")
+    %test:assertXPath("map:contains($result, 'metadata')")
     %test:assertXPath("map:contains($result, 'license')")
     %test:assertXPath("map:contains($result, 'annotationCollection')")
     %test:assertXPath("map:contains($result, 'sequence')")
+    %test:assertXPath("map:contains($result, 'support')")
 function tt:endpoint-manifest()
 as item() {
     let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition/manifest.json"
@@ -214,29 +213,17 @@ as item() {
 
 declare
     %test:assertTrue
-function tt:is-item-endpoint-http200() {
-    let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition-82a/latest/item.json"
+function tt:is-sample-collection-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/sample/collection.json"
     return
         tc:is-endpoint-http200($url)
 };
 
+
 declare
-    (: check if all parts are present.
-     : no further tests are needed since the content has been tested while testing
-     : the underlying function. :)
-    %test:assertXPath("map:contains($result, 'textapi')")
-    %test:assertXPath("map:contains($result, 'title')")
-    %test:assertXPath("map:contains($result, 'type')")
-    %test:assertXPath("map:contains($result, 'n')")
-    %test:assertXPath("map:contains($result, 'content')")
-    %test:assertXPath("map:contains($result, 'content-type')")
-    %test:assertXPath("map:contains($result, 'lang')")
-    %test:assertXPath("map:contains($result, 'langAlt')")
-    %test:assertXPath("map:contains($result, 'image')")
-function tt:endpoint-item() as item() {
-    let $url := $tc:server || "/textapi/ahikar/syriac/sample_edition-82a/latest/item.json"
-    let $req := tc:make-request($url)
-    return http:send-request($req)[2]
-        => util:base64-decode()
-        => parse-json()
+    %test:assertTrue
+function tt:is-sample-manifest-endpoint-http200() {
+    let $url := $tc:server || "/textapi/ahikar/sample/sample_edition_tbd/manifest.json"
+    return
+        tc:is-endpoint-http200($url)
 };

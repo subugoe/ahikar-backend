@@ -5,6 +5,105 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.9.0] - 2021-02-23
+
+### Added
+
+- a word-level tokenization of the relevant text. words are wrapped in a `tei:seg` before further processing and equipped with a unique ID to address them.
+
+# [4.8.2] - 2021-02-23
+
+### Fixed
+
+- the variable $APP_DEPLOY_TOKEN which is expected in `deploy.xqm` is now part of Docker's environment and can actually be used for conditionals.
+Also, this variable has been added as a query parameter to the API call.
+
+## [4.8.1] - 2021-02-23
+
+### Fixed
+
+- restructered the tests in a way that developers can execute them locally even if they don't have the credentials necessary for getting data from TextGrid.
+These tests are only executed if the respective environment variable, `TGLOGIN`, is available.
+
+## [4.8.0] - 2021-02-22
+
+### Added
+
+- An endpoint `deploy/$VERSION` which allows for installing a specific version of the application.
+This is mainly relevant for the test server on which the application version aren't always installed in a chronological way.
+
+## [4.7.0] - 2021-02-22
+
+### Changed
+
+- The license information for texts is retrieved from the TEI/XML files instead of setting a generic one.
+
+## [4.6.0] - 2021-02-22
+
+### Changed
+
+- Instead of having a simple string body in the annotations, we switched to a Body Object that holds a custom parameter, `x-content-type`, which enables us to easily distinguish the annotations of different types.
+Cf. <https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/annotation-api-specs/#body-object>.
+
+## [4.5.0] - 2021-02-18
+
+### Fixed
+
+- move to dynamic sessionId
+
+## [4.4.0] - 2021-02-18
+
+### Added
+
+- a separate endpoint for the sample file available at `/textapi/ahikar/sample/collection.json` for accessing the sample file
+
+## [4.3.0] - 2021-02-16
+
+### Added
+
+- the manifests now have a Support Object which holds the URL of the project specific CSS
+
+## [4.2.0] - 2021-02-15
+
+### Changed
+
+- U+073C and U+073F are sorted out during the normalization process.
+
+## [4.1.1] - 2021-02-05
+
+### Fixed
+
+- introduced try/catch blocks with fitting error messages for all server requests.
+
+## [4.1.0] - 2021-02-05
+
+### Added
+
+- license information within the image field on item level. As a consequence, each image is now connected with an SPDX identifier (if possible) and further notes about the image's creator.
+
+## [4.0.1] - 2021-02-04
+
+### Fixed
+
+- a proper error is thrown if an image URI cannot be found in TextGrid Rep
+
+## [4.0.0] - 2021-02-04
+
+### Changed
+
+- The URLs for the images have changed depending on whether an image is accessible for the public
+or if it has restricted access due to license terms.
+Public images are available at `images/public/${uri}` plus image section.
+Restricted images are available at `images/restricted/${uri}` plus image section.
+
+## [3.2.0] - 2021-02-04
+
+### Changed
+
+- the project specific metadata has been moved from separate items on manifest level to the Metadata Object on manifest level.
+This allows us to use the generic Metadata Object support in the viewer instead of having to add extra code that supports
+keys starting with 'x-'.
+
 ## [3.1.1] - 2021-01-27
 
 ### Fixed

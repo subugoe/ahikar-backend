@@ -7,6 +7,7 @@ declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
+import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize" at "tokenize.xqm";
 
 declare variable $commons:expath-pkg := doc("../expath-pkg.xml");
 declare variable $commons:version := $commons:expath-pkg/*/@version;
@@ -75,8 +76,9 @@ as xs:string* {
 declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
     $page as xs:string)
 as element() {
-    let $node := doc($tei-xml-base-uri)/*
-        => commons:add-IDs(),
+    let $node := doc($tei-xml-base-uri)/tei:TEI
+        => commons:add-IDs()
+        => tokenize:main(),
         $start-node := $node//tei:pb[@n = $page and @facs],
         $end-node := commons:get-end-node($start-node),
         $wrap-in-first-common-ancestor-only := false(),
@@ -140,4 +142,70 @@ as document-node() {
     doc($commons:data || $tei-xml-uri || ".xml")
 };
 
+(:~
+ : Gets a currently valid or renewed session id from TextGrid
+ : @return Session Id
+:)
+declare function commons:get-textgrid-session-id()
+as xs:string {
+    (: check if we have a session id :)
+    if( util:binary-doc-available("/db/sid.txt") ) then
+        (: check if we have to renew the session id :)
+        if( current-dateTime() - xs:dayTimeDuration("PT23H55M") lt xmldb:last-modified("/db", "sid.txt")) then
+            util:binary-doc("/db/sid.txt") => util:binary-to-string()
+        else
+            local:create-textgrid-session-id()
+    else
+        local:create-textgrid-session-id()
 
+};
+
+(:~
+ : Gets a new session id from TextGrids WebAuth service and stores it to
+ : binary /db/sid.txt
+ : @return Session id
+:)
+declare %private function local:create-textgrid-session-id() {
+    let $webauthUrl := "https://textgridlab.org/1.0/WebAuthN/TextGrid-WebAuth.php"
+    let $authZinstance := "textgrid-esx2.gwdg.de"
+    (: check if env var is present and contains the required delimiter :)
+    let $envVarTest :=
+        if(not(contains(environment-variable("TGLOGIN"), ":"))) then
+            error(QName("auth", "error"), "missing env var TGLOGIN")
+        else ()
+
+    let $user :=        environment-variable("TGLOGIN") => substring-before(":")
+    let $password :=    environment-variable("TGLOGIN") => substring-after(":")
+
+    let $pw := 
+        if(contains($password, '&amp;')) then
+            replace($password, '&amp;', '%26')
+        else $password
+    let $request :=
+        <hc:request method="POST" href="{ $webauthUrl }" http-version="1.0">
+            <hc:header name="Connection" value="close" />
+            <hc:multipart media-type="multipart/form-data" boundary="------------------------{current-dateTime() => util:hash("md5") => substring(0,17)}">
+                <hc:header name="Content-Disposition" value='form-data; name="authZinstance"'/>
+                <hc:body media-type="text/plain">{$authZinstance}</hc:body>
+                <hc:header name="Content-Disposition" value='form-data; name="loginname"'/>
+                <hc:body media-type="text/plain">{$user}</hc:body>
+                <hc:header name="Content-Disposition" value='form-data; name="password"'/>
+                <hc:body media-type="text/plain">{$pw}</hc:body>
+            </hc:multipart>
+        </hc:request>
+    let $response := hc:send-request($request)
+
+    let $sid :=
+        string($response[2]//*:meta[@name="rbac_sessionid"]/@content)
+    
+    let $sidTest :=
+        if($sid = "") then
+            error(QName("auth", "error"), $response[2])
+        else ()
+
+    let $store := xmldb:store-as-binary("/db", "sid.txt", $sid) => sm:chmod("rwxrwx---")
+
+    return
+        $sid
+
+};
