@@ -16,6 +16,46 @@ Cf. <https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/27> on this topic.
 NOTE: Only the endpoint has been changed.
 The functionality is not implemented yet.
 
+## [4.9.0] - 2021-02-23
+
+### Added
+
+- a word-level tokenization of the relevant text. words are wrapped in a `tei:seg` before further processing and equipped with a unique ID to address them.
+
+# [4.8.2] - 2021-02-23
+
+### Fixed
+
+- the variable $APP_DEPLOY_TOKEN which is expected in `deploy.xqm` is now part of Docker's environment and can actually be used for conditionals.
+Also, this variable has been added as a query parameter to the API call.
+
+## [4.8.1] - 2021-02-23
+
+### Fixed
+
+- restructered the tests in a way that developers can execute them locally even if they don't have the credentials necessary for getting data from TextGrid.
+These tests are only executed if the respective environment variable, `TGLOGIN`, is available.
+
+## [4.8.0] - 2021-02-22
+
+### Added
+
+- An endpoint `deploy/$VERSION` which allows for installing a specific version of the application.
+This is mainly relevant for the test server on which the application version aren't always installed in a chronological way.
+
+## [4.7.0] - 2021-02-22
+
+### Changed
+
+- The license information for texts is retrieved from the TEI/XML files instead of setting a generic one.
+
+## [4.6.0] - 2021-02-22
+
+### Changed
+
+- Instead of having a simple string body in the annotations, we switched to a Body Object that holds a custom parameter, `x-content-type`, which enables us to easily distinguish the annotations of different types.
+Cf. <https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/annotation-api-specs/#body-object>.
+
 ## [4.5.0] - 2021-02-18
 
 ### Fixed

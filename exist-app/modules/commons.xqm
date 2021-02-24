@@ -7,6 +7,7 @@ declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
+import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize" at "tokenize.xqm";
 
 declare variable $commons:expath-pkg := doc("../expath-pkg.xml");
 declare variable $commons:version := $commons:expath-pkg/*/@version;
@@ -75,8 +76,9 @@ as xs:string* {
 declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
     $page as xs:string)
 as element() {
-    let $node := doc($tei-xml-base-uri)/*
-        => commons:add-IDs(),
+    let $node := doc($tei-xml-base-uri)/tei:TEI
+        => commons:add-IDs()
+        => tokenize:main(),
         $start-node := $node//tei:pb[@n = $page and @facs],
         $end-node := commons:get-end-node($start-node),
         $wrap-in-first-common-ancestor-only := false(),
@@ -166,7 +168,7 @@ as xs:string {
 declare %private function local:create-textgrid-session-id() {
     let $webauthUrl := "https://textgridlab.org/1.0/WebAuthN/TextGrid-WebAuth.php"
     let $authZinstance := "textgrid-esx2.gwdg.de"
-    (: check if env var is present and contains teh required delimiter :)
+    (: check if env var is present and contains the required delimiter :)
     let $envVarTest :=
         if(not(contains(environment-variable("TGLOGIN"), ":"))) then
             error(QName("auth", "error"), "missing env var TGLOGIN")

@@ -21,6 +21,7 @@ include:
 
 .env: &env
 - echo $SECRETS | sed "s#\s#\n#g" >> docker/ahikar.env
+- echo "APP_DEPLOY_TOKEN=$APP_DEPLOY_TOKEN"  >> docker/ahikar.env
 - sh docker/set-env-for-docker-compose.sh
 
 # used for develop and main, see test for all other cases!
@@ -156,7 +157,7 @@ deploy_docker-main:
     - *deploy
 
 deploy_app-test:
-  image: curlimages/curl
+  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: deploy_app
   except:
     - main
@@ -165,11 +166,14 @@ deploy_app-test:
   environment:
     name: ahikar-test
   script:
-    - header=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy)
-    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
-    - echo "Current HTTP status is $status."
-    - if [[ "$status" != "200" ]]; then exit 1; fi
-    - curl --get --silent https://ahikar-test.sub.uni-goettingen.de/api/deploy
+    - VERSION=$(grep -E -o "project.version=[0-9]+\.[0-9]+\.[0-9]+" exist-app/build.properties | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+    - echo $VERSION
+    # switch off per-version deployment. cf. https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/126
+    # - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy/version/$VERSION)
+    - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
+    - STATUS=$(echo $HEADER | head -n 1 | cut -d" " -f 2)
+    - echo "Current HTTP status is $STATUS."
+    - if [[ "$STATUS" != "200" ]]; then exit 1; fi
 
 deploy_app-dev:
   image: curlimages/curl
@@ -179,11 +183,10 @@ deploy_app-dev:
   environment:
     name: ahikar-dev
   script:
-    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy)
+    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
-    - curl --get --silent https://ahikar-dev.sub.uni-goettingen.de/api/deploy
 
 deploy_app-main:
   image: curlimages/curl
@@ -194,11 +197,10 @@ deploy_app-main:
   environment:
     name: ahikar
   script:
-    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy)
+    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
-    - curl --get --silent https://ahikar.sub.uni-goettingen.de/api/deploy
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
