@@ -58,7 +58,7 @@ as map()+ {
             let $uri := "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "-" ||  $page || "/latest/item.json"
             return
                 map {
-                    "id": ($server, $uri),
+                    "id": $server || $uri,
                     "type": "item"
                 }
 };
@@ -77,26 +77,10 @@ declare function tapi-mani:make-editors($tei-xml as document-node())
 as map() {
     let $editors := $tei-xml//tei:titleStmt//tei:editor
     return
-        if (exists($editors)) then
-            map {
-                "key": "Editors",
-                "value":
-                    (
-                        let $value-strings :=
-                            for $editor in $editors return
-                                (
-                                    normalize-space($editor/string()),
-                                    if(not(index-of($editors, $editor) = count($editors))) then ", " else ()
-                                )
-                        return
-                            string-join($value-strings, "")
-                    )
-            }
-        else
-            map {
-                "key": "Editor",
-                "value": "none"
-            }
+        map {
+            "key": "Editors",
+            "value": if (exists($editors)) then string-join($editors, ", ") else "none"
+        }
 };
 
 
@@ -161,16 +145,15 @@ declare function tapi-mani:get-license-info($tei-xml as document-node())
 as item() {
     array {
         map {
-            "id": tapi-mani:get-spdx-for-license($tei-xml//tei:licence/@target)
+            "id": 
+                    let $target := $tei-xml//tei:licence/@target
+                    return
+                        if ($target = "https://creativecommons.org/licenses/by-sa/4.0/") then
+                            "CC-BY-SA-4.0"
+                        else
+                            "no license provided"
         }
     }
-};
-
-declare function tapi-mani:get-spdx-for-license($target as xs:string?)
-as xs:string {
-    switch ($target)
-        case "https://creativecommons.org/licenses/by-sa/4.0/" return "CC-BY-SA-4.0"
-        default return "no license provided"
 };
 
 declare function tapi-mani:make-support-object()

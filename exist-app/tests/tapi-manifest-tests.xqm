@@ -131,7 +131,7 @@ function tmt:_test-teardown() {
 
 declare
     %test:args("sample_main_edition", "sample_edition")
-    %test:assertXPath("matches(map:get($result, 'id'), '/api/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json')")
+    %test:assertXPath("matches(map:get($result[1], 'id'), '/api/textapi/ahikar/sample_main_edition/sample_edition-82a/latest/item.json')")
 function tmt:make-sequences($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:make-sequences($collection-uri, $manifest-uri, $tc:server)
@@ -147,7 +147,7 @@ declare
     %test:args("sample_main_edition", "sample_edition")
     %test:assertXPath("map:get($result, 'label') = 'Beispieldatei zum Testen'")
     %test:assertXPath("matches(map:get($result, 'id'), '/api/textapi/ahikar/sample_main_edition/sample_edition/manifest.json')")
-    %test:assertXPath("matches(matches(map:get($result, 'annotationCollection'), '/api/annotations/ahikar/sample_main_edition/sample_edition/annotationCollection.json') ")
+    %test:assertXPath("matches(map:get($result, 'annotationCollection'), '/api/annotations/ahikar/sample_main_edition/sample_edition/annotationCollection.json') ")
 function tmt:get-json($collection-uri as xs:string,
     $manifest-uri as xs:string) {
     tapi-mani:get-json($collection-uri, $manifest-uri, $tc:server)
@@ -160,7 +160,6 @@ function tmt:get-manifest-title($manifest-uri as xs:string) {
 };
 
 declare
-    %test:assertXPath("count($result) = 2")
     %test:assertXPath("map:get($result, 'value') = 'Simon Birol, Aly Elrefaei'")
 function tmt:make-editors-present() {
     let $tei-xml := commons:get-tei-xml-for-manifest("sample_edition")
@@ -169,7 +168,6 @@ function tmt:make-editors-present() {
 };
 
 declare
-    %test:assertXPath("count($result) = 2")
     %test:assertXPath("map:get($result, 'value') = 'none'")
 function tmt:make-editors-not-present() {
     let $tei-xml := commons:get-tei-xml-for-manifest("test-manifest1")
@@ -259,16 +257,6 @@ function tmt:make-current-location-4() {
 
 
 declare
-    %test:args("https://creativecommons.org/licenses/by-sa/4.0/")
-    %test:assertEquals("CC-BY-SA-4.0")
-    %test:args("https://creativecommons.org/licenses/by-nc-sa/4.0/")
-    %test:assertEquals("no license provided")
-function tmt:get-spdx-for-license($target as xs:string)
-as xs:string {
-    tapi-mani:get-spdx-for-license($target)
-};
-
-declare
     %test:assertXPath("array:get($result, 1) => map:get('id') = 'CC-BY-SA-4.0'")
 function tmt:get-license-info-provided() {
     let $tei-xml := doc("/db/data/textgrid/data/sample_teixml.xml")
@@ -277,7 +265,7 @@ function tmt:get-license-info-provided() {
 };
 
 declare
-    %test:assertEquals("array:get($result, 1) => map:get('id') = 'no license provided'")
+    %test:assertXPath("array:get($result, 1) => map:get('id') = 'no license provided'")
 function tmt:get-license-info-not-provided() {
     let $tei-xml := doc("/db/data/textgrid/data/sample_3_teixml.xml")
     return
