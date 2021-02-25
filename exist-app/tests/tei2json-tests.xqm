@@ -13,3 +13,11 @@ declare
 function t:main() {
     tei2json:main()
 };
+
+declare
+    %test:assertTrue
+function t:create-json-collection-if-not-available() {
+    let $create-collection := tei2json:create-json-collection-if-not-available()
+    return
+        xmldb:collection-available("/db/data/textgrid/json")
+};

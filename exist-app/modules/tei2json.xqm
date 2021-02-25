@@ -27,7 +27,20 @@ module namespace tei2json="http://ahikar.sub.uni-goettingen.de/ns/tei2json";
 (:}:)
 
 
+declare variable $tei2json:textgrid := "/db/data/textgrid";
+declare variable $tei2json:data := $tei2json:textgrid || "/data";
+declare variable $tei2json:json := $tei2json:textgrid || "/json";
+
 declare function tei2json:main()
 as xs:string {
+    tei2json:create-json-collection-if-not-available(),
     "works"
+};
+
+declare function tei2json:create-json-collection-if-not-available()
+as xs:string? {
+    if (xmldb:collection-available($tei2json:json)) then
+        ()
+    else
+        xmldb:create-collection($tei2json:textgrid, "json")
 };
