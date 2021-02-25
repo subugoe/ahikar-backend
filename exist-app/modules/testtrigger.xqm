@@ -26,6 +26,7 @@ import module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" a
 import module namespace ttnt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" at "../tests/tapi-txt-normalization-tests.xqm";
 import module namespace ttt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests" at "../tests/tapi-txt-tests.xqm";
 import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" at "../tests/tei2html-tests.xqm";
+import module namespace t2jt="http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests" at "../tests/tei2json-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
 import module namespace tokt="http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" at "../tests/tokenize-tests.xqm";
 
@@ -84,6 +85,7 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests")),
         (: tests with credentials needed :)
         if (environment-variable("TGLOGIN")) then
             (
@@ -120,6 +122,7 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests" return "TextAPI Items"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests" return "HTML creation"
         case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" return "TEI2HTML transformation"
+        case "http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests" return "TEI2JSON transformation"
         case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" return "TEI2HTML text processing"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" return "TXT normalization"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"

@@ -103,13 +103,27 @@ function tt:content-rest() as document-node() {
 
 
 declare
-    (: check if ZIP is present.
+    (: check if ZIP of the plain text is present.
      : no further tests are needed since the content has been tested while testing
      : the underlying function. :)
     %test:assertExists
     %test:pending
 function tt:content-zip() as xs:base64Binary {
     let $url := $tc:server || "/content/ahikar-plain-text.zip"
+    let $req := <http:request href="{$url}" method="get">
+                        <http:header name="Connection" value="close"/>
+                   </http:request>
+    return http:send-request($req)[2]
+};
+
+declare
+    (: check if ZIP of the JSON files is present.
+     : no further tests are needed since the content has been tested while testing
+     : the underlying function. :)
+    %test:assertExists
+    %test:pending
+function tt:content-json() as xs:base64Binary {
+    let $url := $tc:server || "/content/ahikar-json.zip"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
