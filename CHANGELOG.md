@@ -16,6 +16,13 @@ Cf. <https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/27> on this topic.
 NOTE: Only the endpoint has been changed.
 The functionality is not implemented yet.
 
+## [4.9.1] - 2021-02-24
+
+### Fixed
+
+- the HTTP request to TextGrid for public images now has a sessionID.
+While we won't need it once the images have been published in the TextGrid Repository, the sessionID is still needed in the meantime for requesting images.
+
 ## [4.9.0] - 2021-02-23
 
 ### Added
