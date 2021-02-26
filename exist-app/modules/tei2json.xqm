@@ -54,22 +54,27 @@ declare function tei2json:get-teis() {
 declare function tei2json:make-collation-per-section($tokenized-teis as element(tei:TEI)+)
 as xs:string+ {
     for $milestone-type in $tei2json:milestone-types return
-        let $json := map {
-            "witnesses":
-                array {
-                    for $text in tei2json:get-transcriptions-and-transliterations($tokenized-teis) return
-                        tei2json:make-json-per-section($text, $milestone-type)
-                }
-        }
+        for $language in ("syr", "ara", "karshuni") return
+            let $json := map {
+                "witnesses":
+                    array {
+                        for $text in tei2json:get-texts-per-language($tokenized-teis, $language) return
+                            tei2json:make-json-per-section($text, $milestone-type)
+                    }
+            }
         let $json-string := serialize($json, map{ "method": "json" })
         return
-            xmldb:store-as-binary($tei2json:json, concat($milestone-type, ".json"), $json-string)
+            xmldb:store-as-binary($tei2json:json, concat($language, "_", $milestone-type, ".json"), $json-string)
 };
 
-
-declare function tei2json:get-transcriptions-and-transliterations($tokenized-teis as element(tei:TEI)+)
-as element(tei:text)+ {
-    $tokenized-teis//tei:text[@type = ("transcription", "transliteration")][tei2json:has-text-milestone(.)]
+declare function tei2json:get-texts-per-language($tokenized-teis as element(tei:TEI)+,
+    $language as xs:string)
+as element(tei:text)* {
+    switch ($language)
+        case "karshuni" return
+            $tokenized-teis//tei:text[@xml:lang = "ara" and @type = "transliteration"][tei2json:has-text-milestone(.)]
+        default return
+            $tokenized-teis//tei:text[@xml:lang = $language and @type = "transcription"][tei2json:has-text-milestone(.)]
 };
 
 
