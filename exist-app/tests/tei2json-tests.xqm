@@ -132,12 +132,11 @@ as xs:boolean {
 
 declare
     %test:assertXPath("map:get($result, 'id') = 'Borg. ar. 201'")
-function t:make-map-per-witness() {
-    let $text := local:get-tokenized-tei-sample()
-    let $tokens := $text//tei:w
-    let $witness-id := $text/ancestor::tei:TEI//tei:msIdentifier/tei:idno/string()
+function t:make-json-per-section() {
+    let $text := local:get-tokenized-tei-sample()//tei:text[@xml:lang = "ara" and @type = "transcription"]
+    let $milestone-type := "first_narrative_section"
     return
-        tei2json:make-map-per-witness("", $tokens)
+        tei2json:make-json-per-section($text, $milestone-type)
 };
 
 declare
@@ -201,29 +200,6 @@ as element(tei:TEI) {
                 </text>
                 
                 <text xml:lang="karshuni" type="transcription">
-                    <body>
-                        <milestone unit="first_narrative_section"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
-                        </ab>
-                        <milestone unit="sayings"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
-                        </ab>
-                        <milestone unit="second_narrative_section"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
-                        </ab>
-                    </body>
-                </text>
-                
-                <text xml:lang="ara" type="transcription">
                     <body>
                         <milestone unit="first_narrative_section"/>
                         <ab>
