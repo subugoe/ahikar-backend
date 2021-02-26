@@ -21,11 +21,13 @@ function t:main() {
 };
 
 declare
-    %test:assertEquals("Add_2020")
+    %test:assertXPath("$result = 'Add_2020'")
+    %test:assertXPath("$result = 'Sachau_290_Sachau_339'")
+    %test:assertXPath("$result = 'Mingana_ar_christ_93_84'")
 function t:get-id-prefix()
-as xs:string {
-    let $TEI := local:get-sample-tei()
-    return
+as xs:string+ {
+    let $TEIs := (local:get-sample-tei(), local:get-tei-header-1(), local:get-tei-header-2())
+    for $TEI in $TEIs return
         tokenize:get-id-prefix($TEI)
 };
 
@@ -108,6 +110,42 @@ as element(tei:TEI) {
                 </text>
             </group>
         </text>
+    </TEI>
+};
+
+declare function local:get-tei-header-1()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <institution>University of Cambridge - Cambridge University Library</institution>
+                            <idno>Sachau 290 (=Sachau 339)</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
+    </TEI>
+};
+
+declare function local:get-tei-header-2()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <institution>University of Cambridge - Cambridge University Library</institution>
+                            <idno>Mingana ar. christ. 93[84]</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
     </TEI>
 };
 
