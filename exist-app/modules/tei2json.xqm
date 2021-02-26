@@ -167,30 +167,29 @@ declare function tei2json:make-json-per-section($text as element(tei:text),
     (: only the relevant next nodes have been tokenized, so no need for filtering
     them again. :)
     let $tokens := $chunk//tei:w
+    let $witness-id := $text/ancestor::tei:TEI//tei:msIdentifier/tei:idno/string()
     return
-        tei2json:make-map-per-witness($tokens)
+        tei2json:make-map-per-witness($witness-id, $tokens)
 };
 
 
-declare function tei2json:make-map-per-witness($tokens as element(tei:w)*)
+declare function tei2json:make-map-per-witness($witness-id as xs:string,
+    $tokens as element(tei:w)*)
 as map() {
-    let $witness-id := $text/ancestor::tei:TEI//tei:msIdentifier/tei:idno/string()
-    
-    return
-        map {
-            "id": $witness-id,
-            "tokens":
-                array {
-                    if ($tokens) then
-                        for $t in $tokens return
-                            map {
-                                "t": $t/string(),
-                                "id": $t/@xml:id/string()
-                            }
-                    else
+    map {
+        "id": $witness-id,
+        "tokens":
+            array {
+                if ($tokens) then
+                    for $t in $tokens return
                         map {
-                            "t": "omisit"
+                            "t": $t/string(),
+                            "id": $t/@xml:id/string()
                         }
-                }
-        }
+                else
+                    map {
+                        "t": "omisit"
+                    }
+            }
+    }
 };

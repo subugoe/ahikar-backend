@@ -131,11 +131,13 @@ as xs:boolean {
 };
 
 declare
-    %test:assertXPath("map:get($result, 'id') = 'Borg ar 201'")
+    %test:assertXPath("map:get($result, 'id') = 'Borg. ar. 201'")
 function t:make-map-per-witness() {
-    let $tokens := local:get-tokenized-tei-sample()//tei:w
+    let $text := local:get-tokenized-tei-sample()
+    let $tokens := $text//tei:w
+    let $witness-id := $text/ancestor::tei:TEI//tei:msIdentifier/tei:idno/string()
     return
-        tei2json:make-map-per-witness($tokens)
+        tei2json:make-map-per-witness("", $tokens)
 };
 
 declare
@@ -153,7 +155,21 @@ as element(tei:text)+ {
 declare function local:get-tokenized-tei-sample()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
-        <teiHeader/>
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <settlement>
+                                <country>Vatican</country>
+                            </settlement>
+                            <institution>Vatican Library</institution>
+                            <idno>Borg. ar. 201</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
         <text>
             <group>
                 <text xml:lang="eng" type="translation">
