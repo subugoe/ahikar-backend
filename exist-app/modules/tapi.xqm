@@ -258,7 +258,11 @@ as item()+ {
             if ($availability-flag = "restricted") then
                 ";sid=" || commons:get-textgrid-session-id()
             else
-                ""
+                (: as soon as the public images have been published in the
+                TextGrid Repository, we won't need a session ID for them. In
+                the meantime the session ID is still necessary. :)
+(:                "":)
+                ";sid=" || commons:get-textgrid-session-id()
         let $section :=
             if ($image-section) then
                 "/pct:" || $image-section

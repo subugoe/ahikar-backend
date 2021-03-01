@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - from this version on we use JSON as an input for CollateX.
 As a consequence, the TXT API has become obsolete and has been removed.
 
+## [4.9.1] - 2021-02-24
+
+### Fixed
+
+- the HTTP request to TextGrid for public images now has a sessionID.
+While we won't need it once the images have been published in the TextGrid Repository, the sessionID is still needed in the meantime for requesting images.
+
 ## [4.9.0] - 2021-02-23
 
 ### Added
