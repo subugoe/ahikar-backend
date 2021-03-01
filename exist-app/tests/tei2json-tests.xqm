@@ -143,11 +143,11 @@ declare
     %test:args("ara") %test:assertXPath("$result/@type = 'transcription'")
     %test:args("syr") %test:assertXPath("$result/@type = 'transcription'")
     %test:args("karshuni") %test:assertXPath("$result/@type = 'transliteration'")
-function t:get-texts-per-language($language as xs:string)
+function t:get-relevant-text($language as xs:string)
 as element(tei:text)+ {
     let $tokenized-teis := local:get-tokenized-tei-sample()
     return
-        tei2json:get-texts-per-language($tokenized-teis, $language)
+        tei2json:get-relevant-text($tokenized-teis, $language, "Borg. ar. 201")
 };
 
 

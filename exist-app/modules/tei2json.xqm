@@ -21,11 +21,11 @@ declare variable $tei2json:milestone-types :=
     "third_narrative_section");
 declare variable $tei2json:lines-of-transmission :=
     [
-        (
+        [
             "Sachau 336",
             "433"
-        ),
-        (
+        ],
+        [
             "Ar 7/229",
             "Sachau 162", 
             "162",
@@ -35,15 +35,46 @@ declare variable $tei2json:lines-of-transmission :=
             "Sado no. 9",
             "Manuscrit 4122",
             "Syr 80"
-        ),
-        (
+        ],
+        [
             "syr. 434",
             "syr. 422",
             "430",
             "syr. 612", 
             "syr. 611",
             "Unknown"
-        )
+        ],
+        [
+            "Sbath 25",
+            "Vat. sir. 424", 
+            "Vat. sir. 199"
+        ],
+        [
+            "Vat. ar. 74 (Scandar 40)"
+        ],
+        [
+            "Brit. Mus. Add. 7209", 
+            "Vat. sir. 159", 
+            "Mingana Syr. 258", 
+            "Cod. Arab. 236", 
+            "DFM 00614", 
+            "Sachau 290 (=Sachau 339)", 
+            "Brit. Libr. Or. 9321"
+        ],
+        [
+            "Paris. Arabe 3637", 
+            "Paris Arabe 3656", 
+            "Camb. Add. 2886", 
+            "Mingana ar. christ. 93[84]", 
+            "Mingana syr. 133", 
+            "Vat. ar. 2054", 
+            "GCAA 00486", 
+            "Salhani", 
+            "Borg. ar. 201", 
+            "Or. 1292b", 
+            "Gotha 2652", 
+            "Cambrigde Add. 3497"
+        ]
     ];
 
 declare function tei2json:main()
@@ -78,28 +109,55 @@ declare function tei2json:get-teis() {
 
 declare function tei2json:make-collation-per-section($tokenized-teis as element(tei:TEI)+)
 as xs:string+ {
-    for $milestone-type in $tei2json:milestone-types return
-        for $language in ("syc", "ara", "karshuni") return
+    let $no-of-lines-of-transmission := array:size($tei2json:lines-of-transmission)
+    for $iii in 1 to $no-of-lines-of-transmission return
+        let $language :=
+            if ($iii lt 4) then
+                "syc"
+            else
+                "ara-karshuni"
+        for $milestone-type in $tei2json:milestone-types return
             let $json := map {
                 "witnesses":
                     array {
-                        for $text in tei2json:get-texts-per-language($tokenized-teis, $language) return
-                            tei2json:make-json-per-section($text, $milestone-type)
+                        let $manuscripts-of-line := array:get($tei2json:lines-of-transmission, $iii)
+                        let $no-of-manuscripts := array:size($manuscripts-of-line)
+                        for $jjj in 1 to $no-of-manuscripts return
+                            let $manuscript-id := array:get($manuscripts-of-line, $jjj)
+                        
+                            for $text in tei2json:get-relevant-text($tokenized-teis, $language, $manuscript-id) return
+                                tei2json:make-json-per-section($text, $milestone-type)
                     }
             }
-        let $json-string := serialize($json, map{ "method": "json" })
-        return
-            xmldb:store-as-binary($tei2json:json, concat($language, "_", $milestone-type, ".json"), $json-string)
+            
+            let $json-string := serialize($json, map{ "method": "json" })
+            let $transmission-string := 
+                array:get($tei2json:lines-of-transmission, $iii)
+                => string-join("_")
+                => replace(" ", "-")
+                => replace("[\(\)=\[\]]", "")
+            let $filename := concat($language, "_", $transmission-string, "_", $milestone-type, ".json")
+            return
+                xmldb:store-as-binary($tei2json:json, $filename, $json-string)
 };
 
-declare function tei2json:get-texts-per-language($tokenized-teis as element(tei:TEI)+,
-    $language as xs:string)
+declare function tei2json:get-relevant-text($tokenized-teis as element(tei:TEI)+,
+    $language as xs:string,
+    $id as xs:string)
 as element(tei:text)* {
-    switch ($language)
-        case "karshuni" return
-            $tokenized-teis//tei:text[@xml:lang = "ara" and @type = "transliteration"][tei2json:has-text-milestone(.)]
-        default return
-            $tokenized-teis//tei:text[@xml:lang = $language and @type = "transcription"][tei2json:has-text-milestone(.)]
+    let $relevant-text := $tokenized-teis[descendant::tei:msIdentifier/tei:idno = $id or matches(descendant::tei:editor, $id)]
+    let $texts-with-milestone := $relevant-text//tei:text[tei2json:has-text-milestone(.)]
+    return
+        switch ($language)
+            case "syc" return
+                $texts-with-milestone[@xml:lang = $language and @type = "transcription"]
+            default return
+                (: karshuni :)
+                if ($texts-with-milestone[@xml:lang = "ara" and @type = "transliteration"]) then
+                    $texts-with-milestone[@xml:lang = "ara" and @type = "transliteration"]
+                (: arabic :)
+                else
+                    $texts-with-milestone[@type = "transcription"]
 };
 
 declare function tei2json:get-texts-per-line-of-transmission($tokenized-teis as element(tei:TEI)+,
