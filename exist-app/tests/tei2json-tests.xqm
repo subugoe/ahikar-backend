@@ -140,8 +140,7 @@ function t:make-json-per-section() {
 };
 
 declare
-    %test:args("ara") %test:assertXPath("$result/@type = 'transcription'")
-    %test:args("syr") %test:assertXPath("$result/@type = 'transcription'")
+    %test:args("syc") %test:assertXPath("$result/@type = 'transcription'")
     %test:args("karshuni") %test:assertXPath("$result/@type = 'transliteration'")
 function t:get-relevant-text($language as xs:string)
 as element(tei:text)+ {
@@ -245,7 +244,7 @@ as element(tei:TEI) {
                     </body>
                 </text>
                 
-                <text xml:lang="syr" type="transcription">
+                <text xml:lang="syc" type="transcription">
                     <body>
                         <milestone unit="first_narrative_section"/>
                         <ab>
