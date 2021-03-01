@@ -7,6 +7,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
 import module namespace functx="http://www.functx.com";
+import module namespace norm="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization" at "tapi-txt-normalization.xqm";
 import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize" at "tokenize.xqm";
 
 
@@ -241,7 +242,7 @@ as map() {
                 if ($tokens) then
                     for $t in $tokens return
                         map {
-                            "t": $t/string(),
+                            "t": norm:get-txt-without-diacritics($t/string()),
                             "id": $t/@xml:id/string()
                         }
                 else
