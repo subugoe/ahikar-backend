@@ -97,7 +97,7 @@ as xs:string? {
 
 
 declare function tei2json:tokenize-teis()
-as element(tei:TEI) {
+as element(tei:TEI)+ {
     let $teis := tei2json:get-teis()
     for $tei in $teis return
         tokenize:main($tei)
@@ -230,7 +230,7 @@ as map() {
                     for $t in $tokens return
                         map {
                             "t": norm:get-txt-without-diacritics($t/string())
-                                => replace("[^a-zA-Z0-9]", "_")
+                                => replace("[\.,\?]", "_")
                                 => replace("[_]+", "_"),
                             "id": $t/@xml:id/string()
                         }
