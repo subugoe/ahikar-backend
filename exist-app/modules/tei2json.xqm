@@ -229,7 +229,9 @@ as map() {
                 if ($tokens) then
                     for $t in $tokens return
                         map {
-                            "t": norm:get-txt-without-diacritics($t/string()),
+                            "t": norm:get-txt-without-diacritics($t/string())
+                                => replace("[^a-zA-Z0-9]", "_")
+                                => replace("[_]+", "_"),
                             "id": $t/@xml:id/string()
                         }
                 else
