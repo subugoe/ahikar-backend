@@ -1,5 +1,34 @@
 xquery version "3.1";
 
+(:~
+ : This module is responsible for creating the JSON files we need for collating.
+ : For this, the different lines of transmission as well as the semantic sections of the texts are considered:
+ : For each line of transmission 5 files (one for each semantic section/milestone type) is generated.
+ :
+ : The end result has the following form:
+ :
+ :{
+ :  "witnesses" : [
+ :    {
+ :      "id" : "A",
+ :      "tokens" : [
+ :          { "t" : "A", "id" : "x1" },
+ :          { "t" : "black" , "id" : "x2" },
+ :          { "t" : "cat", "id" : "x3" }
+ :      ]
+ :    },
+ :    {
+ :      "id" : "B",
+ :      "tokens" : [
+ :          { "t" : "A", "id": "y1" },
+ :          { "t" : "white" , "id" : "y2 },
+ :          { "t" : "kitten.", "id" : "y3" }
+ :      ]
+ :    }
+ :  ]
+ :}
+ :)
+
 module namespace tei2json="http://ahikar.sub.uni-goettingen.de/ns/tei2json";
 
 declare namespace map = "http://www.w3.org/2005/xpath-functions/map";
