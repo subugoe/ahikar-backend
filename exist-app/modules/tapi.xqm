@@ -281,12 +281,12 @@ declare
     %rest:GET
     %rest:HEAD
     %rest:path("/content/ahikar-json.zip")
-(:    %output:method("binary"):)
+    %output:method("binary")
 function tapi:endpoint-json() as item()+ {
     let $prepare := tei2json:main()
     return
-        $commons:responseHeader200
-(:        tapi-txt:compress-to-zip():)
+        $commons:responseHeader200,
+        tei2json:compress-to-zip()
 };
 
 
