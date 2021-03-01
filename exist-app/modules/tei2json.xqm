@@ -83,7 +83,7 @@ as xs:string+ {
     let $prepare := tei2json:create-json-collection-if-not-available()
     let $tokenized-teis := tei2json:tokenize-teis()
     return
-        tei2json:make-collation-per-section($tokenized-teis)
+        tei2json:make-jsons-per-section-and-transmission-line($tokenized-teis)
 };
 
 
@@ -96,7 +96,8 @@ as xs:string? {
 };
 
 
-declare function tei2json:tokenize-teis() {
+declare function tei2json:tokenize-teis()
+as element(tei:TEI) {
     let $teis := tei2json:get-teis()
     for $tei in $teis return
         tokenize:main($tei)
@@ -109,7 +110,7 @@ as element(tei:TEI)* {
 };
 
 
-declare function tei2json:make-collation-per-section($tokenized-teis as element(tei:TEI)+)
+declare function tei2json:make-jsons-per-section-and-transmission-line($tokenized-teis as element(tei:TEI)+)
 as xs:string+ {
     let $no-of-lines-of-transmission := array:size($tei2json:lines-of-transmission)
     for $iii in 1 to $no-of-lines-of-transmission return
@@ -127,7 +128,7 @@ as xs:string+ {
                         for $jjj in 1 to $no-of-manuscripts return
                             let $manuscript-id := array:get($manuscripts-of-line, $jjj)
                         
-                            for $text in tei2json:get-relevant-text($tokenized-teis, $language, $manuscript-id) return
+                            for $text in tei2json:get-relevant-text($tokenized-teis, $manuscript-id) return
                                 tei2json:make-json-per-section($text, $milestone-type)
                     }
             }
@@ -144,33 +145,17 @@ as xs:string+ {
 };
 
 declare function tei2json:get-relevant-text($tokenized-teis as element(tei:TEI)+,
-    $language as xs:string,
     $id as xs:string)
 as element(tei:text)* {
     let $relevant-text := $tokenized-teis[descendant::tei:msIdentifier/tei:idno = $id or matches(descendant::tei:editor, $id)]
     let $texts-with-milestone := $relevant-text//tei:text[tei2json:has-text-milestone(.)]
     return
-        switch ($language)
-            case "syc" return
-                $texts-with-milestone[@xml:lang = $language and @type = "transcription"]
-            default return
-                (: karshuni :)
-                if ($texts-with-milestone[@xml:lang = "ara" and @type = "transliteration"]) then
-                    $texts-with-milestone[@xml:lang = "ara" and @type = "transliteration"]
-                (: arabic :)
-                else
-                    $texts-with-milestone[@type = "transcription"]
-};
-
-declare function tei2json:get-texts-per-line-of-transmission($tokenized-teis as element(tei:TEI)+,
-    $language as xs:string,
-    $line as xs:string+)
-as element(tei:text) {
-    switch ($language)
-        case "karshuni" return
-            $tokenized-teis[descendant::tei:msIdentifier/tei:idno = $line]//tei:text[@xml:lang = "ara" and @type = "transliteration"][tei2json:has-text-milestone(.)]
-        default return
-            $tokenized-teis[descendant::tei:msIdentifier/tei:idno = $line]//tei:text[@xml:lang = $language and @type = "transcription"][tei2json:has-text-milestone(.)]
+        (: karshuni :)
+        if ($texts-with-milestone[@xml:lang = "ara" and @type = "transliteration"]) then
+            $texts-with-milestone[@xml:lang = "ara" and @type = "transliteration"]
+        (: arabic + syriac :)
+        else
+            $texts-with-milestone[@type = "transcription"]
 };
 
 
@@ -222,7 +207,8 @@ as element(tei:milestone)? {
 };
 
 declare function tei2json:make-json-per-section($text as element(tei:text),
-    $milestone-type as xs:string) {
+    $milestone-type as xs:string)
+as map() {
     let $chunk := tei2json:get-chunk($text, $milestone-type)
     (: only the relevant next nodes have been tokenized, so no need for filtering
     them again. :)
