@@ -103,7 +103,8 @@ declare function tei2json:tokenize-teis() {
 };
 
 
-declare function tei2json:get-teis() {
+declare function tei2json:get-teis()
+as element(tei:TEI)* {
     collection($tei2json:data)//tei:TEI
 };
 
