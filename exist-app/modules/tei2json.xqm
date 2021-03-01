@@ -253,3 +253,8 @@ as map() {
             }
     }
 };
+
+declare function tei2json:compress-to-zip()
+as xs:base64Binary* {
+    compression:zip(xs:anyURI($tei2json:json), false())
+};

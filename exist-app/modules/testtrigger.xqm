@@ -24,7 +24,6 @@ import module namespace titemt="http://ahikar.sub.uni-goettingen.de/ns/tapi/item
 import module namespace tmt="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" at "../tests/tapi-manifest-tests.xqm";
 import module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" at "../tests/tapi-tests.xqm";
 import module namespace ttnt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" at "../tests/tapi-txt-normalization-tests.xqm";
-import module namespace ttt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests" at "../tests/tapi-txt-tests.xqm";
 import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" at "../tests/tei2html-tests.xqm";
 import module namespace t2jt="http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests" at "../tests/tei2json-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
@@ -73,7 +72,6 @@ as element()+ {
     (
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/commons-tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests")),
@@ -115,7 +113,6 @@ declare function local:get-human-readable-pkg-name($package as xs:string)
 as xs:string? {
     switch ($package)
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" return "TextAPI general"
-        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/tests" return "TXT creation"
         case "http://ahikar.sub.uni-goettingen.de/ns/commons-tests" return "Commons"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests" return "TextAPI Collections"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" return "TextAPI Manifests"
