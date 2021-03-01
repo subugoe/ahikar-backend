@@ -69,7 +69,8 @@ as element(tei:TEI) {
 
 declare
     %test:assertXPath("$result[self::*[local-name(.) = 'milestone']]")
-function t:get-end-of-chunk-milestone() {
+function t:get-end-of-chunk-milestone()
+as element(tei:milestone) {
     let $milestone := $t:sample-transliteration//tei:milestone[1]
     return
         tei2json:get-end-of-chunk($milestone)
@@ -77,7 +78,8 @@ function t:get-end-of-chunk-milestone() {
 
 declare
     %test:assertXPath("$result[self::*[local-name(.) = 'ab']]")
-function t:get-end-of-chunk-end-of-text() {
+function t:get-end-of-chunk-end-of-text()
+as element(tei:ab) {
     let $milestone := $t:sample-transliteration//tei:milestone[2]
     return
         tei2json:get-end-of-chunk($milestone)
@@ -86,7 +88,8 @@ function t:get-end-of-chunk-end-of-text() {
 
 declare
     %test:assertXPath("$result[self::*/string() = 'the end text']")
-function t:get-end-of-chunk-end-of-text-2() {
+function t:get-end-of-chunk-end-of-text-2()
+as element(tei:ab) {
     let $TEI :=
         <TEI xmlns="http://www.tei-c.org/ns/1.0">
             <text>
@@ -132,25 +135,171 @@ as xs:boolean {
 
 declare
     %test:assertXPath("map:get($result, 'id') = 'Borg. ar. 201'")
-function t:make-json-per-section() {
-    let $text := local:get-tokenized-tei-sample()//tei:text[@xml:lang = "ara" and @type = "transcription"]
+function t:make-json-per-section()
+as map() {
+    let $text := local:get-tokenized-tei-sample-arabic()//tei:text[@xml:lang = "ara" and @type = "transcription"]
     let $milestone-type := "first_narrative_section"
     return
         tei2json:make-json-per-section($text, $milestone-type)
 };
 
 declare
-    %test:args("syc") %test:assertXPath("$result/@type = 'transcription'")
-    %test:args("karshuni") %test:assertXPath("$result/@type = 'transliteration'")
-function t:get-relevant-text($language as xs:string)
+    %test:args("Borg. ar. 201") %test:assertXPath("$result/@type = 'transcription'")
+function t:get-relevant-text-arabic($id as xs:string)
 as element(tei:text)+ {
-    let $tokenized-teis := local:get-tokenized-tei-sample()
+    let $tokenized-teis := local:get-tokenized-tei-sample-arabic()
     return
-        tei2json:get-relevant-text($tokenized-teis, $language, "Borg. ar. 201")
+        tei2json:get-relevant-text($tokenized-teis, $id)
+};
+
+declare
+    %test:args("Borg. ar. 201") %test:assertXPath("$result/@type = 'transcription'")
+function t:get-relevant-text-syriac($id as xs:string)
+as element(tei:text)+ {
+    let $tokenized-teis := local:get-tokenized-tei-sample-syriac()
+    return
+        tei2json:get-relevant-text($tokenized-teis, $id)
+};
+
+declare
+    %test:args("Borg. ar. 201") %test:assertXPath("$result/@type = 'transliteration'")
+function t:get-relevant-text-karshuni($id as xs:string)
+as element(tei:text)+ {
+    let $tokenized-teis := local:get-tokenized-tei-sample-karshuni()
+    return
+        tei2json:get-relevant-text($tokenized-teis, $id)
 };
 
 
-declare function local:get-tokenized-tei-sample()
+declare function local:get-tokenized-tei-sample-karshuni()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <settlement>
+                                <country>Vatican</country>
+                            </settlement>
+                            <institution>Vatican Library</institution>
+                            <idno>Borg. ar. 201</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
+        <text>
+            <group>
+                <text xml:lang="eng" type="translation">
+                    <body>
+                        <ab/>
+                    </body>
+                </text>
+                <text xml:lang="karshuni" type="transcription">
+                    <body>
+                        <milestone unit="first_narrative_section"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
+                        </ab>
+                        <milestone unit="sayings"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
+                        </ab>
+                        <milestone unit="second_narrative_section"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
+                        </ab>
+                    </body>
+                </text>
+                
+                <text xml:lang="ara" type="transliteration">
+                    <body>
+                        <milestone unit="first_narrative_section"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
+                        </ab>
+                        <milestone unit="sayings"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
+                        </ab>
+                        <milestone unit="second_narrative_section"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
+                        </ab>
+                    </body>
+                </text>
+            </group>
+        </text>
+    </TEI>
+};
+
+declare function local:get-tokenized-tei-sample-syriac()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <settlement>
+                                <country>Vatican</country>
+                            </settlement>
+                            <institution>Vatican Library</institution>
+                            <idno>Borg. ar. 201</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
+        <text>
+            <group>
+                <text xml:lang="eng" type="translation">
+                    <body>
+                        <ab/>
+                    </body>
+                </text>
+                <text xml:lang="syc" type="transcription">
+                    <body>
+                        <milestone unit="first_narrative_section"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
+                        </ab>
+                        <milestone unit="sayings"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
+                        </ab>
+                        <milestone unit="second_narrative_section"/>
+                        <ab>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
+                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
+                        </ab>
+                    </body>
+                </text>
+                
+            </group>
+        </text>
+    </TEI>
+};
+
+declare function local:get-tokenized-tei-sample-arabic()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
@@ -197,76 +346,6 @@ as element(tei:TEI) {
                         </ab>
                     </body>
                 </text>
-                
-                <text xml:lang="karshuni" type="transcription">
-                    <body>
-                        <milestone unit="first_narrative_section"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
-                        </ab>
-                        <milestone unit="sayings"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
-                        </ab>
-                        <milestone unit="second_narrative_section"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
-                        </ab>
-                    </body>
-                </text>
-                
-                <text xml:lang="ara" type="transliteration">
-                    <body>
-                        <milestone unit="first_narrative_section"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
-                        </ab>
-                        <milestone unit="sayings"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
-                        </ab>
-                        <milestone unit="second_narrative_section"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
-                        </ab>
-                    </body>
-                </text>
-                
-                <text xml:lang="syc" type="transcription">
-                    <body>
-                        <milestone unit="first_narrative_section"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
-                        </ab>
-                        <milestone unit="sayings"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
-                        </ab>
-                        <milestone unit="second_narrative_section"/>
-                        <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
-                        </ab>
-                    </body>
-                </text>
-                
             </group>
         </text>
     </TEI>
