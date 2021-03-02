@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.9.1] - 2021-02-24
+## [4.9.3] - 2021-03-02
 
 ### Fixed
 
@@ -13,11 +13,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 To achieve this, the XML based structure of the manifest data has been moved to maps.
 Additionally, the module has been slightly refactored.
 
+## [4.9.2] - 2021-03-02
+
+### Fixed
+
+- during the HTML serialization, a white space is set after each token
+Not having set this let to the text nodes being displayed as one long text node.
+
+## [4.9.1] - 2021-02-24
+
+### Fixed
+
+- the HTTP request to TextGrid for public images now has a sessionID.
+While we won't need it once the images have been published in the TextGrid Repository, the sessionID is still needed in the meantime for requesting images.
+
 ## [4.9.0] - 2021-02-23
 
 ### Added
 
-- a word-level tokenization of the relevant text. words are wrapped in a `tei:seg` before further processing and equipped with a unique ID to address them.
+- a word-level tokenization of the relevant text. words are wrapped in a `tei:w` before further processing and equipped with a unique ID to address them.
 
 # [4.8.2] - 2021-02-23
 
