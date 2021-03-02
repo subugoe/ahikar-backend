@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.9.2] - 2021-01-02
+
+### Fixed
+
+- during the HTML serialization, a white space is set after each token
+Not having set this let to the text nodes being displayed as one long text node.
+
 ## [4.9.1] - 2021-02-24
 
 ### Fixed
@@ -16,7 +23,7 @@ While we won't need it once the images have been published in the TextGrid Repos
 
 ### Added
 
-- a word-level tokenization of the relevant text. words are wrapped in a `tei:seg` before further processing and equipped with a unique ID to address them.
+- a word-level tokenization of the relevant text. words are wrapped in a `tei:w` before further processing and equipped with a unique ID to address them.
 
 # [4.8.2] - 2021-02-23
 
