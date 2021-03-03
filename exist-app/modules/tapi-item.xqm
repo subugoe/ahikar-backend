@@ -40,7 +40,7 @@ as map() {
 
 
 declare function tapi-item:make-title-object($manifest-uri as xs:string)
-as item() {
+as array(*) {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $title :=
         $tei-xml//tei:title[@type = "main"]/string()
@@ -57,7 +57,7 @@ as item() {
 
 
 declare function tapi-item:make-language-array($manifest-uri as xs:string)
-as item() {
+as array(*) {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $languages := $tei-xml//tei:language[@xml:base = "https://iso639-3.sil.org/code/"]
     return
@@ -68,7 +68,7 @@ as item() {
 };
 
 declare function tapi-item:make-langAlt-array($manifest-uri as xs:string)
-as item() {
+as array(*) {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $languages := $tei-xml//tei:language[not(@xml:base = "https://iso639-3.sil.org/code/")]
     return
