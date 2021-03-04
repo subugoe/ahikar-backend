@@ -141,7 +141,7 @@ as map() {
 };
 
 declare function tapi-mani:get-license-info($tei-xml as document-node())
-as item() {
+as array(*) {
     array {
         map {
             "id": 
@@ -156,7 +156,7 @@ as item() {
 };
 
 declare function tapi-mani:make-support-object()
-as item() {
+as array(*) {
     array {
         map {
             "type": "css",
