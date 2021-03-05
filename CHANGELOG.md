@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0] - 2021-03-05
+
+### Changed
+
+- The API has been adjusted to the generic TextAPI's change that allows for several Content Objects instead of one content item.
+- As a result of said API change, `content/some_page.html` has been changed to `content/${html-type}/some_page.html`.
+This way the two relevant HTML serialization of the Ahiqar material, `transcription` and `transliteration` can easily be distinguised.
+Cf. <https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/27> on this topic.
+NOTE: Only the endpoint has been changed.
+The functionality is not implemented yet.
+
 ## [4.9.4] - 2021-03-05
 
 ### Fixed

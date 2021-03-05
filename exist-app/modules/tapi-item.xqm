@@ -26,8 +26,7 @@ as map() {
         "title": tapi-item:make-title-object($manifest-uri),
         "type": "page",
         "n": $page,
-        "content": $server || "/api/content/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
-        "content-type": "application/xhtml+xml",
+        "content": tapi-item:make-content-array($collection-type, $manifest-uri, $page, $server),
         "lang": tapi-item:make-language-array($manifest-uri),
         "langAlt": tapi-item:make-langAlt-array($manifest-uri),
         "x-langString": tapi-item:get-language-string($manifest-uri),
@@ -52,6 +51,28 @@ as array(*) {
                 "title": $title,
                 "type": $type
             }
+        }
+};
+
+declare function tapi-item:make-content-array($collection-type as xs:string,
+    $manifest-uri as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as array(*) {
+    if ($collection-type = "syriac") then
+        array {
+            map {
+                "url": $server || "/api/content/transcription/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
+                "type": "application/xhtml+xml;type=transcription"
+            }
+        }
+    else
+        array {
+            for $html-type in ("transcription", "transliteration") return
+                map {
+                    "url": $server || "/api/content/" || $html-type || "/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
+                    "type": "application/xhtml+xml;type=" || $html-type
+                }
         }
 };
 

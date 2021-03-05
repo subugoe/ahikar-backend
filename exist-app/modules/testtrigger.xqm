@@ -95,8 +95,7 @@ as element()+ {
             ()
     )
 
-    for $result in $test-results
-    order by $result//@package return
+    let $results := for $result in $test-results return
         if ($result//@failures = 0
         and $result//@errors = 0) then
             <OK name="{local:get-human-readable-pkg-name($result//@package)}" package="{$result//@package}"/>
@@ -107,6 +106,10 @@ as element()+ {
                 failures="{$result//@failures}">
                 {$result//testcase[child::*[self::failure or self::error]]}
             </PROBLEM>
+            
+    for $result in $results
+    order by $result/name() descending return
+        $result
 };
 
 declare function local:get-human-readable-pkg-name($package as xs:string)
