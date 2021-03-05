@@ -12,7 +12,6 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
-import module namespace map="http://www.w3.org/2005/xpath-functions/map";
 
 
 declare function tapi-mani:get-json($collection-type as xs:string,
@@ -142,7 +141,7 @@ as map() {
 };
 
 declare function tapi-mani:get-license-info($tei-xml as document-node())
-as item() {
+as array(*) {
     array {
         map {
             "id": 
@@ -157,7 +156,7 @@ as item() {
 };
 
 declare function tapi-mani:make-support-object()
-as item() {
+as array(*) {
     array {
         map {
             "type": "css",
