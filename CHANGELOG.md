@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [5.0.0] - 2021-02-22
+## [5.0.0] - 2021-03-05
 
 ### Changed
 
@@ -16,7 +16,22 @@ Cf. <https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/27> on this topic.
 NOTE: Only the endpoint has been changed.
 The functionality is not implemented yet.
 
-## [4.9.2] - 2021-01-02
+## [4.9.4] - 2021-03-05
+
+### Fixed
+
+- the license key on Manifest level now provides an array of License Objects instead of a simple string.
+To achieve this, the XML based structure of the manifest data has been moved to maps.
+Additionally, the module has been slightly refactored.
+
+## [4.9.3] - 2021-03-02
+
+### Fixed
+
+- the title on Item level now provides an array of Title Objects instead of a single one.
+To achieve this, we changed the XML based structure of the `tapi-item.xqm` module to a map based one.
+
+## [4.9.2] - 2021-03-02
 
 ### Fixed
 

@@ -33,9 +33,10 @@ as xs:string {
 
 
 declare
-    %test:args("sample_edition")  %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh'")
+    %test:args("sample_edition") 
+    %test:assertXPath("array:get($result, 1) => map:get('title') = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh'")
 function titemt:make-title-object($manifest-uri as xs:string)
-as element() {
+as item() {
     tapi-item:make-title-object($manifest-uri)
 };
 
@@ -66,12 +67,19 @@ as element(object){
 
 
 declare
-    %test:args("sample_edition") %test:assertXPath("count($result) = 5")
-    %test:args("sample_edition") %test:assertXPath("$result[local-name(.) = ('lang', 'langAlt')]")
-    %test:args("sample_edition") %test:assertXPath("count($result[local-name(.) = 'lang']) = 2")
-function titemt:make-language-elements($manifest-uri as xs:string)
-as element()+ {
-    tapi-item:make-language-elements($manifest-uri)
+    %test:args("sample_edition") %test:assertXPath("array:size($result) = 2")
+    %test:args("sample_edition") %test:assertExists
+function titemt:make-language-array($manifest-uri as xs:string)
+as item() {
+    tapi-item:make-language-array($manifest-uri)
+};
+
+declare
+    %test:args("sample_edition") %test:assertXPath("array:size($result) = 3")
+    %test:args("sample_edition") %test:assertExists
+function titemt:make-langAlt-array($manifest-uri as xs:string)
+as item() {
+    tapi-item:make-langAlt-array($manifest-uri)
 };
 
 
