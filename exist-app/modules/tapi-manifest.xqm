@@ -161,7 +161,7 @@ as array(*) {
         map {
             "type": "css",
             "mime": "text/css",
-            "url": "https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css"
+            "url": "https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/raw/develop/ahikar.css"
         }
     }
 };
