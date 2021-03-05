@@ -416,7 +416,7 @@ declare function anno:get-page-fragment($documentURI as xs:string,
 as element(tei:TEI) {
     let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
     return
-        commons:get-page-fragment($nodeURI, $page)
+        commons:get-page-fragment($nodeURI, $page, "transcription")
 };
 
 (:~

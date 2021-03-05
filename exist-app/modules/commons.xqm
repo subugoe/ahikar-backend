@@ -74,12 +74,13 @@ as xs:string* {
 };
 
 declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
-    $page as xs:string)
+    $page as xs:string,
+    $text-type as xs:string)
 as element() {
     let $node := doc($tei-xml-base-uri)/tei:TEI
         => commons:add-IDs()
         => tokenize:main(),
-        $start-node := $node//tei:pb[@n = $page and @facs],
+        $start-node := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
         $end-node := commons:get-end-node($start-node),
         $wrap-in-first-common-ancestor-only := false(),
         $include-start-and-end-nodes := true(),
