@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.9.2] - 2021-01-02
+## [4.9.3] - 2021-03-02
+
+### Fixed
+
+- the title on Item level now provides an array of Title Objects instead of a single one.
+To achieve this, we changed the XML based structure of the `tapi-item.xqm` module to a map based one.
+
+## [4.9.2] - 2021-03-02
 
 ### Fixed
 
