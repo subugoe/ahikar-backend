@@ -17,56 +17,19 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
 declare function tapi-mani:get-json($collection-type as xs:string,
     $manifest-uri as xs:string,
     $server as xs:string)
-as element(object) {
+as map() {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     return
-        <object>
-            <textapi>{$commons:version}</textapi>
-            <id>{$server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json"}</id>
-            <label>{tapi-mani:get-manifest-title($manifest-uri)}</label>
-            {tapi-mani:make-metadata-objects($tei-xml)}
-            {tapi-mani:make-support-object()}
-            <license>{tapi-mani:get-license-info($tei-xml)}</license>
-            <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/annotationCollection.json</annotationCollection>
-            {tapi-mani:make-sequences($collection-type, $manifest-uri, $server)}
-        </object>
-};
-
-declare function tapi-mani:make-metadata-objects($tei-xml as document-node())
-as element(metadata)+ {
-    for $element in ("editor", "date", "origin", "location") return
-        <metadata>
-            {
-                switch ($element)
-                    case "editor" return tapi-mani:make-editors($tei-xml)
-                    case "date" return tapi-mani:make-creation-date($tei-xml)
-                    case "origin" return tapi-mani:make-origin($tei-xml)
-                    case "location" return tapi-mani:make-current-location($tei-xml)
-                    default return ()
-            }
-        </metadata>
-};
-
-declare function tapi-mani:make-sequences($collection-type as xs:string,
-    $manifest-uri as xs:string,
-    $server as xs:string)
-as element(sequence)+ {
-    let $valid-pages := tapi-mani:get-valid-page-ids($manifest-uri)
-    return
-        for $page in $valid-pages
-        let $uri := "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "-" ||  $page || "/latest/item.json"
-        return
-            <sequence>
-                <id>{$server}{$uri}</id>
-                <type>item</type>
-            </sequence>
-};
-
-declare function tapi-mani:get-valid-page-ids($manifest-uri as xs:string)
-as xs:string+ {
-    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
-    return
-        $tei-xml//tei:pb[@facs]/string(@n)
+        map {
+            "textapi": $commons:version/string(),
+            "id": $server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json",
+            "label": tapi-mani:get-manifest-title($manifest-uri),
+            "metadata": tapi-mani:make-metadata-objects($tei-xml),
+            "support": tapi-mani:make-support-object($server),
+            "license": tapi-mani:get-license-info($tei-xml),
+            "annotationCollection": $server || "/api/annotations/ahikar/" || $collection-type || "/" || $manifest-uri || "/annotationCollection.json",
+            "sequence": tapi-mani:make-sequences($collection-type, $manifest-uri, $server) 
+        }
 };
 
 declare function tapi-mani:get-manifest-title($manifest-uri as xs:string)
@@ -76,37 +39,52 @@ as xs:string {
         $metadata-file//tgmd:title/string()
 };
 
+declare function tapi-mani:make-metadata-objects($tei-xml as document-node())
+as map()+ {
+    tapi-mani:make-editors($tei-xml),
+    tapi-mani:make-creation-date($tei-xml),
+    tapi-mani:make-origin($tei-xml),
+    tapi-mani:make-current-location($tei-xml)
+};
+
+declare function tapi-mani:make-sequences($collection-type as xs:string,
+    $manifest-uri as xs:string,
+    $server as xs:string)
+as map()+ {
+    let $valid-pages := tapi-mani:get-valid-page-ids($manifest-uri)
+    return
+            for $page in $valid-pages
+            let $uri := "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "-" ||  $page || "/latest/item.json"
+            return
+                map {
+                    "id": $server || $uri,
+                    "type": "item"
+                }
+};
+
+declare function tapi-mani:get-valid-page-ids($manifest-uri as xs:string)
+as xs:string+ {
+    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
+    return
+        $tei-xml//tei:pb[@facs]/string(@n)
+};
+
+
+
 
 declare function tapi-mani:make-editors($tei-xml as document-node())
-as element()+ {
+as map() {
     let $editors := $tei-xml//tei:titleStmt//tei:editor
     return
-        if (exists($editors)) then
-            (
-                <key>Editors</key>,
-                <value>
-                    {
-                        let $value-strings :=
-                            for $editor in $editors return
-                                (
-                                    normalize-space($editor/string()),
-                                    if(not(index-of($editors, $editor) = count($editors))) then ", " else ()
-                                )
-                        return
-                            string-join($value-strings, "")
-                    }
-                </value>
-            )
-        else
-                (
-                    <key>Editor</key>,
-                    <value>none</value>
-                )
+        map {
+            "key": "Editors",
+            "value": if (exists($editors)) then string-join($editors, ", ") else "none"
+        }
 };
 
 
 declare function tapi-mani:make-creation-date($tei-xml as document-node())
-as element()+ {
+as map() {
     let $creation-date := $tei-xml//tei:history//tei:date
     let $string :=
         if ($creation-date) then
@@ -114,15 +92,15 @@ as element()+ {
         else
             "unknown"
     return
-        (
-            <key>Date of creation</key>,
-            <value>{$string}</value>
-        )
+        map {
+            "key": "Date of creation",
+            "value": $string
+        }
 };
 
 
-declare function tapi-mani:make-origin($tei-xml as document-node()) as 
-element()+ {
+declare function tapi-mani:make-origin($tei-xml as document-node()) 
+as map() {
     let $country := $tei-xml//tei:history//tei:country
     let $place := $tei-xml//tei:history//tei:placeName
     let $string :=
@@ -135,15 +113,15 @@ element()+ {
         else
             "unknown"
     return
-        (
-            <key>Place of origin</key>,
-            <value>{$string}</value>
-        )
+        map {
+            "key": "Place of origin",
+            "value": $string
+        }
 };
 
 
-declare function tapi-mani:make-current-location($tei-xml as document-node()) as
-element()+ {
+declare function tapi-mani:make-current-location($tei-xml as document-node())
+as map() {
     let $institution := $tei-xml//tei:msIdentifier//tei:institution
     let $country := $tei-xml//tei:msIdentifier//tei:country
     let $string :=
@@ -156,31 +134,34 @@ element()+ {
         else
             "unknown"
     return
-        (
-            <key>Current location</key>,
-            <value>{$string}</value>
-        )
+        map {
+            "key": "Current location",
+            "value": $string
+        }
 };
 
 declare function tapi-mani:get-license-info($tei-xml as document-node())
-as xs:string {
-    let $target := $tei-xml//tei:licence/@target
-    return
-        tapi-mani:get-spdx-for-license($target)
+as array(*) {
+    array {
+        map {
+            "id": 
+                    let $target := $tei-xml//tei:licence/@target
+                    return
+                        if ($target = "https://creativecommons.org/licenses/by-sa/4.0/") then
+                            "CC-BY-SA-4.0"
+                        else
+                            "no license provided"
+        }
+    }
 };
 
-declare function tapi-mani:get-spdx-for-license($target as xs:string?)
-as xs:string {
-    switch ($target)
-        case "https://creativecommons.org/licenses/by-sa/4.0/" return "CC-BY-SA-4.0"
-        default return "no license provided"
-};
-
-declare function tapi-mani:make-support-object()
-as element() {
-    <support>
-        <type>css</type>
-        <mime>text/css</mime>
-        <url>https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/blob/develop/ahikar.css</url>
-    </support>
+declare function tapi-mani:make-support-object($server as xs:string)
+as array(*) {
+    array {
+        map {
+            "type": "css",
+            "mime": "text/css",
+            "url": $server || "/api/content/ahikar.css"
+        }
+    }
 };

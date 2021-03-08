@@ -161,10 +161,11 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/content/{$tei-xml-uri}-{$page}.html")
+    %rest:path("/content/{$html-type}/{$tei-xml-uri}-{$page}.html")
     %output:method("xml")
     %output:indent("no")
 function tapi:endpoint-html($tei-xml-uri as xs:string,
+    $html-type as xs:string,
     $page as xs:string)
 as item()+ {
     $commons:responseHeader200,
@@ -238,6 +239,19 @@ function tapi:endpoint-json() as item()+ {
     return
         $commons:responseHeader200,
         tei2json:compress-to-zip()
+};
+
+
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/content/ahikar.css")
+    %output:method("text")
+    %output:media-type("text/css")
+function tapi:endpoint-css() as item()+ {
+    $commons:responseHeader200,
+    util:binary-doc("/db/data/resources/css/ahikar.css")
+    => util:base64-decode()
 };
 
 

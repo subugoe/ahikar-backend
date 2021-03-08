@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [5.0.0] - 2021-03-01
+## [5.2.0] - 2021-03-08
 
 ### Added
 
@@ -16,7 +16,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - from this version on we use JSON as an input for CollateX.
 As a consequence, the TXT API has become obsolete and has been removed.
 
-## [4.9.2] - 2021-01-02
+## [5.1.0] - 2021-03-08
+
+### Added
+
+- a separate endpoint for the project specific CSS at `/content/ahikar.css`.
+
+### Changed
+
+- the Support Object no longer relies on GitLab but references the CSS stored in the database.
+
+## [5.0.1] - 2021-03-05
+
+### Fixed
+
+- the CSS file in the Support Object now points to the raw CSS file in GitLab.
+This way it is fully parsable.
+
+## [5.0.0] - 2021-03-05
+
+### Changed
+
+- The API has been adjusted to the generic TextAPI's change that allows for several Content Objects instead of one content item.
+- As a result of said API change, `content/some_page.html` has been changed to `content/${html-type}/some_page.html`.
+This way the two relevant HTML serialization of the Ahiqar material, `transcription` and `transliteration` can easily be distinguised.
+Cf. <https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/27> on this topic.
+NOTE: Only the endpoint has been changed.
+The functionality is not implemented yet.
+
+## [4.9.4] - 2021-03-05
+
+### Fixed
+
+- the license key on Manifest level now provides an array of License Objects instead of a simple string.
+To achieve this, the XML based structure of the manifest data has been moved to maps.
+Additionally, the module has been slightly refactored.
+
+## [4.9.3] - 2021-03-02
+
+### Fixed
+
+- the title on Item level now provides an array of Title Objects instead of a single one.
+To achieve this, we changed the XML based structure of the `tapi-item.xqm` module to a map based one.
+
+## [4.9.2] - 2021-03-02
 
 ### Fixed
 
