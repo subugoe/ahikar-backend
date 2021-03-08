@@ -25,7 +25,7 @@ as map() {
             "id": $server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json",
             "label": tapi-mani:get-manifest-title($manifest-uri),
             "metadata": tapi-mani:make-metadata-objects($tei-xml),
-            "support": tapi-mani:make-support-object(),
+            "support": tapi-mani:make-support-object($server),
             "license": tapi-mani:get-license-info($tei-xml),
             "annotationCollection": $server || "/api/annotations/ahikar/" || $collection-type || "/" || $manifest-uri || "/annotationCollection.json",
             "sequence": tapi-mani:make-sequences($collection-type, $manifest-uri, $server) 
@@ -155,13 +155,13 @@ as array(*) {
     }
 };
 
-declare function tapi-mani:make-support-object()
+declare function tapi-mani:make-support-object($server as xs:string)
 as array(*) {
     array {
         map {
             "type": "css",
             "mime": "text/css",
-            "url": "https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/raw/develop/ahikar.css"
+            "url": $server || "/content/ahikar.css"
         }
     }
 };

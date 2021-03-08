@@ -272,6 +272,19 @@ function tapi:endpoint-zip() as item()+ {
 };
 
 
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/content/ahikar.css")
+    %output:method("text")
+    %output:media-type("text/css")
+function tapi:endpoint-css() as item()+ {
+    $commons:responseHeader200,
+    util:binary-doc("/db/data/resources/css/ahikar.css")
+    => util:base64-decode()
+};
+
+
 (:~
  : Requests image data depending on the parameters passed.
  : 
