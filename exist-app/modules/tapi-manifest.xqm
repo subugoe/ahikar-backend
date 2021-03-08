@@ -161,7 +161,7 @@ as array(*) {
         map {
             "type": "css",
             "mime": "text/css",
-            "url": $server || "/content/ahikar.css"
+            "url": $server || "/api/content/ahikar.css"
         }
     }
 };

@@ -274,7 +274,7 @@ function tmt:get-license-info-not-provided() {
 
 declare
     %test:assertXPath("array:get($result, 1) => map:get('type') = 'css' ")
-    %test:assertXPath("array:get($result, 1) => map:get('url') = 'http://0.0.0.0:8080/exist/restxq/content/ahikar.css' ")
+    %test:assertXPath("array:get($result, 1) => map:get('url') = 'http://0.0.0.0:8080/exist/restxq/api/content/ahikar.css' ")
 function tmt:make-support-object()
 as item() {
     tapi-mani:make-support-object($tc:server)
