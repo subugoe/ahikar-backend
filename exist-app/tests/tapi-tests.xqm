@@ -83,12 +83,23 @@ function tt:api-info()  as item() {
 
 declare
     %test:assertTrue
-function tt:is-html-api-available()
+function tt:is-html-transcription-api-available()
 as xs:boolean {
-    let $url := $tc:server || "/content/sample_teixml-82a.html"
+    let $url := $tc:server || "/content/transcription/sample_teixml-82a.html"
     return
         tc:is-endpoint-http200($url)
 };
+
+
+declare
+    %test:assertTrue
+function tt:is-html-transliteration-api-available()
+as xs:boolean {
+    let $url := $tc:server || "/content/transliteration/sample_teixml-82a.html"
+    return
+        tc:is-endpoint-http200($url)
+};
+
 
 declare
     (: check if tei:div is present.
@@ -96,7 +107,7 @@ declare
      : the underlying function. :)
     %test:assertXPath("$result//*[@class = 'tei_body']")
 function tt:content-rest() as document-node() {
-    let $url := $tc:server || "/content/sample_teixml-82a.html"
+    let $url := $tc:server || "/content/transcription/sample_teixml-82a.html"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]
 };
@@ -209,4 +220,12 @@ as item() {
         http:send-request($req)[2]
         => util:base64-decode()
         => parse-json()
+};
+
+declare
+    %test:assertTrue
+function tt:is-css-endpoint-http200() {
+    let $url := $tc:server || "/content/ahikar.css"
+    return
+        tc:is-endpoint-http200($url)
 };

@@ -33,7 +33,6 @@ declare
     %test:assertXPath("map:contains($result, 'type')")
     %test:assertXPath("map:contains($result, 'n')")
     %test:assertXPath("map:contains($result, 'content')")
-    %test:assertXPath("map:contains($result, 'content-type')")
     %test:assertXPath("map:contains($result, 'lang')")
     %test:assertXPath("map:contains($result, 'langAlt')")
     %test:assertXPath("map:contains($result, 'image')")

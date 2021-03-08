@@ -20,50 +20,83 @@ declare function tapi-item:get-json($collection-type as xs:string,
     $manifest-uri as xs:string,
     $page as xs:string,
     $server as xs:string)
-as element(object) {
-    <object>
-        <textapi>{$commons:version}</textapi>
-        {tapi-item:make-title-object($manifest-uri)}
-        <type>page</type>
-        <n>{$page}</n>
-        <content>{$server}/api/content/{commons:get-xml-uri($manifest-uri)}-{$page}.html</content>
-        <content-type>application/xhtml+xml</content-type>
-        {tapi-item:make-language-elements($manifest-uri)}
-        <x-langString>{tapi-item:get-language-string($manifest-uri)}</x-langString>
-        <image>
-            <id>{tapi-item:make-facsimile-id($manifest-uri, $page, $server)}</id>
-            <license>{tapi-item:make-license-info-for-img($manifest-uri, $page)}</license>
-        </image>
-        <annotationCollection>{$server}/api/annotations/ahikar/{$collection-type}/{$manifest-uri}/{$page}/annotationCollection.json</annotationCollection>
-    </object>
+as map() {
+    map {
+        "textapi": $commons:version/string(),
+        "title": tapi-item:make-title-object($manifest-uri),
+        "type": "page",
+        "n": $page,
+        "content": tapi-item:make-content-array($collection-type, $manifest-uri, $page, $server),
+        "lang": tapi-item:make-language-array($manifest-uri),
+        "langAlt": tapi-item:make-langAlt-array($manifest-uri),
+        "x-langString": tapi-item:get-language-string($manifest-uri),
+        "image": tapi-item:make-image-info($manifest-uri, $page, $server),
+        "annotationCollection": 
+            $server || "/api/annotations/ahikar/" || $collection-type || "/" || 
+            $manifest-uri || "/" || $page || "/annotationCollection.json"
+    } 
 };
 
 
 declare function tapi-item:make-title-object($manifest-uri as xs:string)
-as element() {
+as array(*) {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $title :=
         $tei-xml//tei:title[@type = "main"]/string()
         => normalize-space()
     let $type := $tei-xml//tei:title/@type/string()
     return
-        <title>
-            <title>{$title}</title>
-            <type>{$type}</type>
-        </title>
+        array {
+            map {
+                "title": $title,
+                "type": $type
+            }
+        }
+};
+
+declare function tapi-item:make-content-array($collection-type as xs:string,
+    $manifest-uri as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as array(*) {
+    if ($collection-type = "syriac") then
+        array {
+            map {
+                "url": $server || "/api/content/transcription/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
+                "type": "application/xhtml+xml;type=transcription"
+            }
+        }
+    else
+        array {
+            for $html-type in ("transcription", "transliteration") return
+                map {
+                    "url": $server || "/api/content/" || $html-type || "/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
+                    "type": "application/xhtml+xml;type=" || $html-type
+                }
+        }
 };
 
 
-declare function tapi-item:make-language-elements($manifest-uri as xs:string)
-as element()+ {
+declare function tapi-item:make-language-array($manifest-uri as xs:string)
+as array(*) {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
-    let $languages := $tei-xml//tei:language
+    let $languages := $tei-xml//tei:language[@xml:base = "https://iso639-3.sil.org/code/"]
     return
-        for $lang in $languages return
-            if ($lang[@xml:base = "https://iso639-3.sil.org/code/"]) then
-                element lang {$lang/@ident/string()}
-            else
-                element langAlt {$lang/@ident/string()}
+        array {
+            for $lang in $languages return
+                $lang/@ident/string()
+        }
+};
+
+declare function tapi-item:make-langAlt-array($manifest-uri as xs:string)
+as array(*) {
+    let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
+    let $languages := $tei-xml//tei:language[not(@xml:base = "https://iso639-3.sil.org/code/")]
+    return
+        array {
+            for $lang in $languages return
+                $lang/@ident/string()
+        }
 };
 
 
@@ -76,6 +109,16 @@ as xs:string {
         return $lang
     return
         string-join($langString, ", ")
+};
+
+declare function tapi-item:make-image-info($manifest-uri as xs:string,
+    $page as xs:string,
+    $server as xs:string)
+as map() {
+    map {
+        "id": tapi-item:make-facsimile-id($manifest-uri, $page, $server),
+        "license": tapi-item:make-license-info-for-img($manifest-uri, $page)
+    }
 };
 
 
@@ -122,7 +165,8 @@ as xs:string {
 };
 
 declare function tapi-item:make-license-info-for-img($manifest-uri as xs:string,
-    $page as xs:string) {
+    $page as xs:string)
+as map() {
     let $facsimile-uri := tapi-img:get-facsimile-uri-for-page($manifest-uri, $page)
     let $img-metadata := tapi-img:get-img-metadata($facsimile-uri)[2]
     let $notes := $img-metadata//tgmd:notes
@@ -136,8 +180,8 @@ declare function tapi-item:make-license-info-for-img($manifest-uri as xs:string,
         else
             "Copyright"
     return
-        (
-            <id>{$id}</id>,
-            <notes>{$notes}</notes>
-        )
+        map {
+            "id": $id,
+            "notes": $notes
+        }
 };
