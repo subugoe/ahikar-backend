@@ -279,3 +279,11 @@ function tmt:make-support-object()
 as item() {
     tapi-mani:make-support-object($tc:server)
 };
+
+declare
+    %test:assertXPath("count($result) = 4")
+    %test:assertXPath("$result[1] => map:get('url') = 'http://0.0.0.0:8080/exist/restxq/api/content/SyrCOMJerusalemOutline.otf' ")
+function tmt:make-fonts()
+as item()+ {
+    tapi-mani:make-fonts($tc:server)
+};
