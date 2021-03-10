@@ -259,3 +259,11 @@ function tt:is-css-endpoint-http200() {
     return
         tc:is-endpoint-http200($url)
 };
+
+declare
+    %test:assertTrue
+function tt:is-css-endpoint-http200() {
+    let $url := $tc:server || "/content/SyrCOMJerusalemOutline.otf"
+    return
+        tc:is-endpoint-http200($url)
+};
