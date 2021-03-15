@@ -386,11 +386,14 @@ as map() {
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
-    let $pageChunk := anno:get-page-fragment($teixml-uri, $page)
+    let $pageChunks := 
+        (anno:get-page-fragment($teixml-uri, $page, "transcription"),
+        anno:get-page-fragment($teixml-uri, $page, "transliteration"))
     
     let $annotation-elements := 
-        for $name in $anno:annotationElements return
-            $pageChunk//*[name(.) = $name]
+        for $chunk in $pageChunks return
+            for $name in $anno:annotationElements return
+                $chunk//*[name(.) = $name]
     
     for $annotation in $annotation-elements return
         let $id := string( $annotation/@id ) (: get the predefined ID from the in-memory TEI with IDs :)
@@ -412,11 +415,12 @@ as map()* {
  : @param $page The page to be returned as tei:pb/@n/string()
  :)
 declare function anno:get-page-fragment($documentURI as xs:string,
-    $page as xs:string)
-as element(tei:TEI) {
+    $page as xs:string,
+    $text-type as xs:string)
+as element(tei:TEI)? {
     let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
     return
-        commons:get-page-fragment($nodeURI, $page, "transcription")
+        commons:get-page-fragment($nodeURI, $page, $text-type)
 };
 
 (:~

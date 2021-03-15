@@ -76,24 +76,36 @@ as xs:string* {
 declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
     $page as xs:string,
     $text-type as xs:string)
-as element() {
-    let $node := doc($tei-xml-base-uri)/tei:TEI
-        => commons:add-IDs()
-        => tokenize:main(),
-        $start-node := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
-        $end-node := commons:get-end-node($start-node),
-        $wrap-in-first-common-ancestor-only := false(),
-        $include-start-and-end-nodes := true(),
-        $empty-ancestor-elements-to-include := ("")
-        
-    return
-        fragment:get-fragment-from-doc(
-            $node,
-            $start-node,
-            $end-node,
-            $wrap-in-first-common-ancestor-only,
-            $include-start-and-end-nodes,
-            $empty-ancestor-elements-to-include)
+as element()? {
+    (: in some cases there are empty tei:text elements which haven't been cleaned
+    up yet. we cannot retrieve a page fragment from them. :)
+    if (local:has-text-content($tei-xml-base-uri, $page, $text-type)) then
+        let $node := doc($tei-xml-base-uri)/tei:TEI
+            => commons:add-IDs()
+            => tokenize:main(),
+            $start-node := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
+            $end-node := commons:get-end-node($start-node),
+            $wrap-in-first-common-ancestor-only := false(),
+            $include-start-and-end-nodes := true(),
+            $empty-ancestor-elements-to-include := ("")
+            
+        return
+            fragment:get-fragment-from-doc(
+                $node,
+                $start-node,
+                $end-node,
+                $wrap-in-first-common-ancestor-only,
+                $include-start-and-end-nodes,
+                $empty-ancestor-elements-to-include)
+    else
+        ()
+};
+
+declare function local:has-text-content($tei-xml-base-uri as xs:string,
+    $page as xs:string,
+    $text-type as xs:string)
+as xs:boolean {
+    exists(doc($tei-xml-base-uri)/tei:TEI//tei:text[@type = $text-type]/descendant::tei:pb[@n = $page])
 };
 
 declare function commons:add-IDs($nodes as node()*)
