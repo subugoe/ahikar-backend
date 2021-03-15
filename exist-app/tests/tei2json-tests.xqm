@@ -5,6 +5,7 @@ module namespace t="http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests";
 declare namespace map = "http://www.w3.org/2005/xpath-functions/map";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
 import module namespace tei2json="http://ahikar.sub.uni-goettingen.de/ns/tei2json" at "../modules/tei2json.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
@@ -44,7 +45,7 @@ function t:has-text-milestone() {
 
 declare function local:open-file($uri as xs:string)
 as document-node() {
-    doc($tei2json:data || "/" || $uri || ".xml")
+    doc($commons:data || "/" || $uri || ".xml")
 };
 
 declare

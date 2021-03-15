@@ -238,7 +238,7 @@ function tapi:endpoint-json() as item()+ {
     let $prepare := tei2json:main()
     return
         $commons:responseHeader200,
-        tei2json:compress-to-zip()
+        commons:compress-to-zip($commons:json)
 };
 
 

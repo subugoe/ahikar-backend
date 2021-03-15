@@ -34,15 +34,12 @@ module namespace tei2json="http://ahikar.sub.uni-goettingen.de/ns/tei2json";
 declare namespace map = "http://www.w3.org/2005/xpath-functions/map";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
-import module namespace functx="http://www.functx.com";
 import module namespace norm="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization" at "tapi-txt-normalization.xqm";
 import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize" at "tokenize.xqm";
 
 
-declare variable $tei2json:textgrid := "/db/data/textgrid";
-declare variable $tei2json:data := $tei2json:textgrid || "/data";
-declare variable $tei2json:json := $tei2json:textgrid || "/json";
 declare variable $tei2json:milestone-types :=
     ("first_narrative_section",
     "sayings",
@@ -109,19 +106,18 @@ declare variable $tei2json:lines-of-transmission :=
 
 declare function tei2json:main()
 as xs:string+ {
-    let $prepare := tei2json:create-json-collection-if-not-available()
-    let $tokenized-teis := tei2json:tokenize-teis()
-    return
-        tei2json:make-jsons-per-section-and-transmission-line($tokenized-teis)
+    tei2json:create-json-collection-if-not-available(),
+    tei2json:tokenize-teis()
+    => tei2json:make-jsons-per-section-and-transmission-line()
 };
 
 
 declare function tei2json:create-json-collection-if-not-available()
-as xs:string? {
-    if (xmldb:collection-available($tei2json:json)) then
-        ()
+as xs:string {
+    if (xmldb:collection-available($commons:json)) then
+        $commons:json
     else
-        xmldb:create-collection($tei2json:textgrid, "json")
+        xmldb:create-collection($commons:tg-collection, "json")
 };
 
 
@@ -135,10 +131,23 @@ as element(tei:TEI)+ {
 
 declare function tei2json:get-teis()
 as element(tei:TEI)* {
-    collection($tei2json:data)//tei:TEI
+    collection($commons:data)//tei:TEI
 };
 
 
+(:~
+ : Since we don't collate the complete texts due to performance reasons, we
+ : consider the narrative chunks specified by the milestones separately. This
+ : consideration is the reason for the outmost loop.
+ : 
+ : Within a language we distinguish between different lines of transmission.
+ : From a philological point of view it is sufficient to compare only the
+ : manuscripts of a line of transmission while leaving out the rest. This is 
+ : handled by the second loop.
+ : 
+ : The third loop retrieves the relevant text within a manuscript of the line of
+ : transmission. 
+ :)
 declare function tei2json:make-jsons-per-section-and-transmission-line($tokenized-teis as element(tei:TEI)+)
 as xs:string+ {
     let $no-of-lines-of-transmission := array:size($tei2json:lines-of-transmission)
@@ -170,7 +179,7 @@ as xs:string+ {
                 => replace("[^a-zA-Z0-9-_]", "")
             let $filename := concat($language, "_", $transmission-string, "_", $milestone-type, ".json")
             return
-                xmldb:store-as-binary($tei2json:json, $filename, $json-string)
+                xmldb:store-as-binary($commons:json, $filename, $json-string)
 };
 
 declare function tei2json:get-relevant-text($tokenized-teis as element(tei:TEI)+,
@@ -239,8 +248,8 @@ declare function tei2json:make-json-per-section($text as element(tei:text),
     $milestone-type as xs:string)
 as map() {
     let $chunk := tei2json:get-chunk($text, $milestone-type)
-    (: only the relevant next nodes have been tokenized, so no need for filtering
-    them again. :)
+    (: only the relevant next nodes have been tokenized and enclosed by a tei:w,
+     : so no need for filtering them again. :)
     let $tokens := $chunk//tei:w
     let $witness-id := $text/ancestor::tei:TEI//tei:msIdentifier/tei:idno/string()
     return
@@ -269,9 +278,4 @@ as map() {
                     }
             }
     }
-};
-
-declare function tei2json:compress-to-zip()
-as xs:base64Binary* {
-    compression:zip(xs:anyURI($tei2json:json), false())
 };
