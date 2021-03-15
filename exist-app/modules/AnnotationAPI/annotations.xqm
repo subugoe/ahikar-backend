@@ -376,7 +376,8 @@ as map() {
 
 
 (:~
- : Gets the annotations for a given page.
+ : Gets the annotations for a given page for both possible text types
+ : (transcription and transliteration, if present).
  : 
  : At this stage, TEI files are scraped for person and place names.
  : 

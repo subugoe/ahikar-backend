@@ -73,12 +73,20 @@ as xs:string* {
                 ()
 };
 
+(:~
+ : Returns a given page from a requested TEI document and from the requested text type.
+ : In some cases the requested text type isn't available or doesn't have any text, so that
+ : no page fragment can be retrieved.
+ :
+ : @param $tei-xml-base-uri The base URI of the requested TEI document
+ : @param $page The page as given in tei:pb/@n
+ : @param $text-type Either "transcription" or "transliteration"
+ : @return The requested page in the resp. text type if available
+ :)
 declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
     $page as xs:string,
     $text-type as xs:string)
 as element()? {
-    (: in some cases there are empty tei:text elements which haven't been cleaned
-    up yet. we cannot retrieve a page fragment from them. :)
     if (local:has-text-content($tei-xml-base-uri, $page, $text-type)) then
         let $node := doc($tei-xml-base-uri)/tei:TEI
             => commons:add-IDs()
