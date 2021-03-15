@@ -36,8 +36,10 @@ declare function tokenize:get-id-prefix($TEI as element(tei:TEI))
 as xs:string {
     let $idno := $TEI//tei:sourceDesc//tei:msIdentifier/tei:idno
     return
-        replace($idno, " ", "_")
-        => replace("\.", "")
+        replace($idno, "\.", "")
+        => replace("[\(\)=\[\]]", " ")
+        => normalize-space()
+        => replace(" ", "_")
 };
 
 declare function tokenize:add-ids($nodes as node()*,

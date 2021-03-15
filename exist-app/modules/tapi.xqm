@@ -21,11 +21,11 @@ declare namespace xhtml="http://www.w3.org/1999/xhtml";
 import module namespace tapi-coll="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection" at "tapi-collection.xqm";
 import module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item" at "tapi-item.xqm";
 import module namespace tapi-mani="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest" at "tapi-manifest.xqm";
-import module namespace tapi-txt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt" at "tapi-txt.xqm";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
 import module namespace requestr="http://exquery.org/ns/request";
 import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tei2html="http://ahikar.sub.uni-goettingen.de/ns/tei2html" at "tei2html.xqm";
+import module namespace tei2json="http://ahikar.sub.uni-goettingen.de/ns/tei2json" at "tei2json.xqm";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
 
 declare variable $tapi:server :=
@@ -223,38 +223,8 @@ as item()+ {
     local:make-image-request($availability-flag, $uri, $image-section)
 };
 
-
 (:~
- : Endpoint to deliver a single plain text version of the
- : tei:text[@type = "transcription"] section a given document.
- :
- : Sample call to API: /content/3r671.txt
- :
- : @deprecated This function doesn't work properly and has been replaced with 
- : tapi:zip-text.
- :)
-declare
-    %rest:GET
-    %rest:HEAD
-    %rest:path("/content/{$document-uri}.txt")
-    %rest:query-param("type", "{$type}", "transcription")
-    %output:method("text")
-function tapi:endpoint-txt($document-uri as xs:string,
-    $type)
-as item()+ {
-    let $pseudo-chunk :=
-        element tei:TEI {
-            tapi-txt:get-TEI-text($document-uri, $type)
-        }
-    return
-        ( 
-            $commons:responseHeader200,
-            tapi-txt:make-plain-text-from-chunk($pseudo-chunk)
-        )
-};
-
-(:~
- : Endpoint to deliver all plain texts in a zip container. This comes in handy
+ : Endpoint to deliver all texts as JSON in a zip container. This comes in handy
  : e.g. for applications doing text analysis.
  :
  : @return The response header as well as a xs:base64Binary (the ZIP file)
@@ -262,13 +232,13 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/content/ahikar-plain-text.zip")
+    %rest:path("/content/ahikar-json.zip")
     %output:method("binary")
-function tapi:endpoint-zip() as item()+ {
-    let $prepare := tapi-txt:main()
+function tapi:endpoint-json() as item()+ {
+    let $prepare := tei2json:main()
     return
         $commons:responseHeader200,
-        tapi-txt:compress-to-zip()
+        commons:compress-to-zip($commons:json)
 };
 
 

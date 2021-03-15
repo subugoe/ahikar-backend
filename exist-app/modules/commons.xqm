@@ -16,6 +16,7 @@ declare variable $commons:data := $commons:tg-collection || "/data/";
 declare variable $commons:meta := $commons:tg-collection || "/meta/";
 declare variable $commons:agg := $commons:tg-collection || "/agg/";
 declare variable $commons:tile := $commons:tg-collection || "/tile/";
+declare variable $commons:json := $commons:tg-collection || "/json/";
 declare variable $commons:appHome := "/db/apps/ahikar";
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
@@ -208,4 +209,9 @@ declare %private function local:create-textgrid-session-id() {
     return
         $sid
 
+};
+
+declare function commons:compress-to-zip($uri as xs:string)
+as xs:base64Binary* {
+    compression:zip(xs:anyURI($uri), false())
 };
