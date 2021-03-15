@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.0] - 2021-03-15
+
+- the different text types, transcription and transliteration, are now considered for the HTML creation and the annotations.
+The HTML endpoint now not only has a key word to distinguish the two types, but also provides the different texts now.
+The AnnotationAPI now consideres both the transcription and the transliteration (where present) for the Annotation Pages so that annotations can be shown for both text types in TIDO.
+
 ## [5.2.0] - 2021-03-09
 
 ### Added
