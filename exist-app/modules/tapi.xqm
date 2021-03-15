@@ -272,6 +272,31 @@ function tapi:endpoint-zip() as item()+ {
 };
 
 
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/content/{$font}.otf")
+    %output:method("text")
+    %output:media-type("font/otf")
+function tapi:endpoint-fonts($font as xs:string) as item()+ {
+    $commons:responseHeader200,
+    util:binary-doc(concat("/db/data/resources/css/", $font, ".css"))
+    => util:base64-decode()
+};
+
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/content/ahikar.css")
+    %output:method("text")
+    %output:media-type("text/css")
+function tapi:endpoint-css() as item()+ {
+    $commons:responseHeader200,
+    util:binary-doc("/db/data/resources/css/ahikar.css")
+    => util:base64-decode()
+};
+
+
 (:~
  : Requests image data depending on the parameters passed.
  : 

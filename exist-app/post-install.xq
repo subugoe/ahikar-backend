@@ -77,6 +77,18 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
     ! local:move-and-rename(.)
 ),
 
+(: move CSS to /db/data/resources/css :)
+(
+    xmldb:create-collection("/db/data/", "resources/css"),
+    xmldb:move($target || "/data", "/db/data/resources/css", "ahikar.css")
+),
+
+(: move fonts to /db/data/resources/fonts :)
+(
+    xmldb:move($target || "/resources/fonts", "/db/data/resources/"),
+    xmldb:remove($target || "/resources")
+),
+
 (: make Ahikar specific OpenAPI config available to the OpenAPI app :)
 ( 
     if (xmldb:collection-available("/db/apps/openapi")) then

@@ -12,6 +12,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
+import module namespace functx="http://www.functx.com";
 
 
 declare function tapi-mani:get-json($collection-type as xs:string,
@@ -25,7 +26,7 @@ as map() {
             "id": $server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json",
             "label": tapi-mani:get-manifest-title($manifest-uri),
             "metadata": tapi-mani:make-metadata-objects($tei-xml),
-            "support": tapi-mani:make-support-object(),
+            "support": tapi-mani:make-support-object($server),
             "license": tapi-mani:get-license-info($tei-xml),
             "annotationCollection": $server || "/api/annotations/ahikar/" || $collection-type || "/" || $manifest-uri || "/annotationCollection.json",
             "sequence": tapi-mani:make-sequences($collection-type, $manifest-uri, $server) 
@@ -155,13 +156,24 @@ as array(*) {
     }
 };
 
-declare function tapi-mani:make-support-object()
+declare function tapi-mani:make-support-object($server as xs:string)
 as array(*) {
     array {
         map {
             "type": "css",
             "mime": "text/css",
-            "url": "https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/raw/develop/ahikar.css"
-        }
+            "url": $server || "/api/content/ahikar.css"
+        },
+        tapi-mani:make-fonts($server)
     }
+};
+
+declare function tapi-mani:make-fonts($server as xs:string)
+as map(*)+ {
+    for $doc in collection("/db/data/resources/fonts") return
+        map {
+            "type": "font",
+            "mime": "font/otf",
+            "url": $server || "/api/content/" || functx:substring-after-last(base-uri($doc), "/")
+        }
 };

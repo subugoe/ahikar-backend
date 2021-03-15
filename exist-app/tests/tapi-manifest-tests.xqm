@@ -274,8 +274,16 @@ function tmt:get-license-info-not-provided() {
 
 declare
     %test:assertXPath("array:get($result, 1) => map:get('type') = 'css' ")
-    %test:assertXPath("array:get($result, 1) => map:get('url') = 'https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido/-/raw/develop/ahikar.css' ")
+    %test:assertXPath("array:get($result, 1) => map:get('url') = 'http://0.0.0.0:8080/exist/restxq/api/content/ahikar.css' ")
 function tmt:make-support-object()
 as item() {
-    tapi-mani:make-support-object()
+    tapi-mani:make-support-object($tc:server)
+};
+
+declare
+    %test:assertXPath("count($result) = 4")
+    %test:assertXPath("contains(map:get($result[1], 'url'), '/api/content/SyrCOMJerusalem') ")
+function tmt:make-fonts()
+as item()+ {
+    tapi-mani:make-fonts($tc:server)
 };
