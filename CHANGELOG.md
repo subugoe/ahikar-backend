@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [5.3.0] - 2021-03-08
+## [5.4.0] - 2021-03-15
 
 ### Added
 
@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - from this version on we use JSON as an input for CollateX.
 As a consequence, the TXT API has become obsolete and has been removed.
+
+## [5.3.0] - 2021-03-08
+
+### Removed
+
+- the changes made in [4.4.0](#440-2021-02-18)
 
 ## [5.2.0] - 2021-03-09
 
@@ -85,7 +91,7 @@ While we won't need it once the images have been published in the TextGrid Repos
 
 - a word-level tokenization of the relevant text. words are wrapped in a `tei:w` before further processing and equipped with a unique ID to address them.
 
-# [4.8.2] - 2021-02-23
+## [4.8.2] - 2021-02-23
 
 ### Fixed
 

@@ -19,8 +19,7 @@ declare variable $tapi-coll:uris :=
         "syriac": if (doc-available($commons:agg || "3r84g.xml")) then "3r84g" else "sample_lang_aggregation_syriac",
         "arabic-karshuni": (
             if (doc-available($commons:agg || "3r9ps.xml")) then "3r9ps" else "sample_lang_aggregation_arabic",
-            if (doc-available($commons:agg || "3r84h.xml")) then "3r84h" else "sample_lang_aggregation_karshuni"),
-        "sample": "sample_collection_tbd"
+            if (doc-available($commons:agg || "3r84h.xml")) then "3r84h" else "sample_lang_aggregation_karshuni")
     };
     
 declare function tapi-coll:get-uris($collection-type as xs:string)
@@ -79,7 +78,6 @@ as xs:string {
     switch ($collection-type)
         case "syriac" return "Syriac"
         case "arabic-karshuni" return "Arabic/Karshuni"
-        case "sample" return "Sample Collection"
         default return error("D001", "Unknown collection type " || $collection-type)
 };
 
