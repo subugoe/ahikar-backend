@@ -146,9 +146,9 @@ as element(tei:TEI) {
 };
 
 declare
-    %test:args("sample_main_edition") %test:assertEquals("426")
-    %test:args("syriac") %test:assertEquals("142")
-    %test:args("arabic-karshuni") %test:assertEquals("284")
+    %test:args("sample_main_edition") %test:assertEquals("435")
+    %test:args("syriac") %test:assertEquals("145")
+    %test:args("arabic-karshuni") %test:assertEquals("290")
 function at:get-total-no-of-annotations($uri as xs:string) {
     anno:get-total-no-of-annotations($uri)
 };
@@ -268,7 +268,7 @@ as map() {
 };
 
 declare
-    %test:args("sample_teixml", "83b") %test:assertXPath("count($result) = 61")
+    %test:args("sample_teixml", "83b") %test:assertXPath("count($result) = 62")
 function at:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()+ {
@@ -313,7 +313,7 @@ as map() {
 
 declare
     %test:args("sample_edition", "82a") %test:assertEquals("0")
-    %test:args("sample_edition", "82b") %test:assertEquals("21")
+    %test:args("sample_edition", "82b") %test:assertEquals("22")
 function at:determine-start-index-for-page($uri as xs:string,
     $page as xs:string)
 as xs:integer {

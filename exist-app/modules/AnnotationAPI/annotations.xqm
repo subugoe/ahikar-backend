@@ -31,7 +31,9 @@ declare variable $anno:annotationElements :=
         "del",
         "damage",
         "choice",
-        "unclear"
+        "unclear",
+        "cit",
+        "surplus"
     );
 
 (:
@@ -493,6 +495,15 @@ as xs:string {
                 else
                     "a passage where the writing cannot be fully deciphered. text: " || $annotation
             
+            case "cit" return
+                if ($annotation/@type = 'verbatim') then
+                    $annotation || ": a quote of " || $annotation/tei:bibl
+                else
+                    $annotation || ": a reference to " || $annotation/tei:bibl || ". original phrase: " || $annotation/tei:note
+            
+            case "surplus" return
+                $annotation || ": surplus text"
+            
             default return ()
         return
             normalize-space($value)
@@ -512,6 +523,7 @@ as xs:string {
     switch ($annotation/local-name())
         case "persName" return "Person"
         case "placeName" return "Place"
+        case "cit" return "Reference"
         default return "Editorial Comment"
 };
 
