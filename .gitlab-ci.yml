@@ -6,7 +6,6 @@ stages:
   - deploy_app
   - api_tests
   - release
-  - reassign_labels
 
 include: 
   - '/ci-scripts/.api_tests.yml'
@@ -234,37 +233,3 @@ deploy_app-main:
     paths:
       - gitlab-release.json
 
-
-# although relabelling issues works perfectly on a technical level, the GitLab
-# GUI displays them in the wrong list ("Open" instead of "In Review"). furhter
-# investigation has to be done before this works properly.
-.reassign_labels:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: reassign_labels
-  only:
-    - merge_requests
-  #rules:
-  #  - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_TITLE =~ /^Merge.+?into ''develop''/'
-  #    when: always
-  script:
-    # declare variables for general usability
-    - project_id=$CI_PROJECT_ID
-    # get the IID of the issue to be closed.
-    # the first (= .[0]) entry of the JSON retrieved via
-    # /api/v4/projects/$project_id/merge_requests?state=merged is always the
-    # most recent merged MR.
-    # ATTENTION: This assumes some kind of template in the MR description where
-    # the last issue mentioned via #${iid} is the issue to be closed.
-    - 'curl --output merges.json --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/merge_requests?state=merged"'
-    - issue_iid=$(jq -r ".[0].description" merges.json | grep "#[0-9]\+" | tail -1 | grep -o "[0-9]\+")
-    # return the issue last mentioned, i.e. the one to be closed
-    - 'curl --output issue_id.txt --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/issues/${issue_iid}"'
-    # return all the issue's labels WITHOUT "Doing"
-    - former_labels=$(cat issue_id.txt | jq .labels[] | grep -v "Doing")
-    # adds the label "In Review"
-    - new_labels="${former_labels} \"In Review\""
-    # encode the parameters with URL encoding (white spaces are replaced with %20)
-    - new_labels=$(echo $new_labels | sed -e 's/" "/,/g' -e 's/"//g' -e 's/ /%20/g')
-    # set new labels for the issue to be closed.
-    # ATTENTION: $API_TOKEN has to be a token with read/write access to the API
-    - 'curl --request PUT --header "PRIVATE-TOKEN: $API_TOKEN" https://gitlab.gwdg.de/api/v4/projects/{$project_id}/issues/${issue_iid}?labels=${new_labels}'
