@@ -49,7 +49,7 @@ test_exist_app:
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl http://localhost:8080/exist/restxq/trigger-tests
-    - sleep 60
+    - sleep 30
     - bash exist-app/test/bin/shutdown.sh
     - failures=$(./get-unit-test-failures-and-errors.sh)
     - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
