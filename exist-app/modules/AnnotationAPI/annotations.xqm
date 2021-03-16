@@ -26,7 +26,12 @@ declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations
 declare variable $anno:annotationElements := 
     (
         "placeName",
-        "persName"
+        "persName",
+        "add",
+        "del",
+        "damage",
+        "choice",
+        "unclear"
     );
 
 (:
@@ -449,10 +454,48 @@ as map() {
  :)
 declare function anno:get-body-value($annotation as node())
 as xs:string {
-    switch ($annotation/local-name())
-        case "persName" return "A person's name."
-        case "placeName" return "A place's name."
-        default return ()
+    let $value :=
+        switch ($annotation/local-name())
+            case "persName" return "A person's name."
+            
+            case "placeName" return "A place's name."
+            
+            case "add" return "an addition. text: " || $annotation || ", place: " || $annotation/@place
+            
+            case "del" return   "text deleted by the scribe: " || $annotation
+            
+            case "damage" return
+                if ($annotation/tei:choice/tei:orig and $annotation/tei:choice/tei:supplied) then
+                    "a damaged passage. original: " || $annotation/tei:orig || ", supplied text: " || $annotation/tei:supplied
+                else if ($annotation/tei:choice/tei:orig and $annotation/tei:choice/tei:corr) then
+                    "a damaged passage. original: " || $annotation/tei:orig || ", corrected text: " || $annotation/tei:corr
+                else if ($annotation/text()[matches(., "[\w]")]) then
+                    "a damaged passage. legible text: " || $annotation
+                else if ($annotation/tei:g) then
+                    if ($annotation/tei:g[@type = "quotation-mark"]) then
+                        "a damaged passage. legible text: quotation mark"
+                    else
+                        ()
+                else
+                    let $text := string-join($annotation/descendant::text(), " ")
+                    return
+                        "a damaged passage. legible text: " || $text
+            
+            case "choice" return 
+                if($annotation/tei:sic) then 
+                    "correction of faulty text. original: " || $annotation/tei:sic || ", corrected text: " || $annotation/tei:corr 
+                else
+                    "an abbreviation. original: " || $annotation/tei:abbr || ", expanded text: " || $annotation/tei:expan 
+            
+            case "unclear" return
+                if ($annotation/@reason) then
+                    "a passage where the writing cannot be fully deciphered. text: " || $annotation || ", reason: " || replace($annotation/@reason, "_", " ")
+                else
+                    "a passage where the writing cannot be fully deciphered. text: " || $annotation
+            
+            default return ()
+        return
+            normalize-space($value)
 };
 
 
@@ -469,7 +512,7 @@ as xs:string {
     switch ($annotation/local-name())
         case "persName" return "Person"
         case "placeName" return "Place"
-        default return ()
+        default return "Editorial Comment"
 };
 
 
