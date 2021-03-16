@@ -1,12 +1,12 @@
 stages:
   - unit_tests
+  - collation
   - build
   - package
   - deploy_docker
   - deploy_app
   - api_tests
   - release
-  - collation
 
 include: 
   - '/ci-scripts/.api_tests.yml'
