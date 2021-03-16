@@ -1,12 +1,12 @@
 stages:
   - unit_tests
+  - collation
   - build
   - package
   - deploy_docker
   - deploy_app
   - api_tests
   - release
-  - collation
 
 include: 
   - '/ci-scripts/.api_tests.yml'
@@ -49,7 +49,7 @@ test_exist_app:
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl http://localhost:8080/exist/restxq/trigger-tests
-    - sleep 60
+    - sleep 30
     - bash exist-app/test/bin/shutdown.sh
     - failures=$(./get-unit-test-failures-and-errors.sh)
     - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
@@ -240,6 +240,13 @@ get-collation-results:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
     - if: '$JOB_ID'
+  variables:
+    COLLATEX-REPO-ID: "10514"
   script:
-    - 'curl --output artifacts.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/10514/jobs/$JOB_ID/artifacts"'
+    - 'curl --output artifacts.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$COLLATEX-REPO-ID/jobs/$JOB_ID/artifacts"'
+    - make dir results
+    - unzip -d results artifacts.zip
+  artifacts:
+    paths:
+      - results/
   
