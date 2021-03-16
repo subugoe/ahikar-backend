@@ -6,6 +6,7 @@ stages:
   - deploy_app
   - api_tests
   - release
+  - collation
 
 include: 
   - '/ci-scripts/.api_tests.yml'
@@ -233,3 +234,12 @@ deploy_app-main:
     paths:
       - gitlab-release.json
 
+get-collation-results:
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine
+  stage: collation
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$JOB_ID'
+  script:
+    - 'curl --output artifacts.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/10514/jobs/$JOB_ID/artifacts"'
+  
