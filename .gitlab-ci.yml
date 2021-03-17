@@ -248,6 +248,8 @@ get-collation-results:
     - ls
     - unzip -d results artifacts.zip
   artifacts:
+    when: always
     paths:
+      - artifacts.zip
       - results/
   
