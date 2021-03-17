@@ -235,10 +235,12 @@ declare
     %rest:path("/content/ahikar-json.zip")
     %output:method("binary")
 function tapi:endpoint-json() as item()+ {
-    let $prepare := tei2json:main()
+    let $prepare := 
+        (tei2json:main(),
+        commons:compress-to-zip($commons:json))
     return
         $commons:responseHeader200,
-        commons:compress-to-zip($commons:json)
+        util:binary-doc("/db/data/ahikar-json.zip")
 };
 
 
