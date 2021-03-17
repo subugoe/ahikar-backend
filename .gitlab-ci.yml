@@ -245,6 +245,7 @@ get-collation-results:
   script:
     - 'curl --output artifacts.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$COLLATEX-REPO-ID/jobs/$JOB_ID/artifacts"'
     - mkdir results
+    - ls
     - unzip -d results artifacts.zip
   artifacts:
     paths:
