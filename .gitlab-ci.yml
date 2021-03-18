@@ -256,11 +256,13 @@ get-collation-results:
   rules:
     - if: '$UPDATE == "true"'
     - if: '$UPSTREAM_COMMIT_SHA'
-    - if: '$JOB_ID'
+    - if: '$PIPELINE_ID'
   variables:
     COLLATEX_REPO_ID: "10514"
   script:
-    - 'curl --output artifacts.zip "$CI_API_V4_URL/projects/$COLLATEX_REPO_ID/jobs/$JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
+    - 'curl --output jobs.json "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/pipelines/$PIPELINE_ID/jobs?private_token=$GITLAB_TOKEN"'
+    - RELEVANT_JOB_ID=$(jq ".[]|select(.stage==\"summarize\")" < jobs.json | jq .id)
+    - 'curl --output collation-results.zip "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/jobs/$RELEVANT_JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
     - mkdir results
     - ls
     - unzip -d results artifacts.zip
