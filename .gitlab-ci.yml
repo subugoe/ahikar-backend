@@ -60,6 +60,12 @@ test_exist_app:
       - exist-app/test/logs/*.log
     reports:
       junit: exist-app/test/ahikar-test-results.xml
+  cache:
+    key: exist-dependencies
+    paths:
+      - exist-app/build/dependencies/openapi-latest.xar
+      - exist-app/build/dependencies/tg-connect-standalone.xar
+      - exist-app/build/dependencies/eXist*.xar
 
 build_exist_app:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
