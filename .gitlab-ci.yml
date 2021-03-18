@@ -253,6 +253,8 @@ deploy_app-main:
 get-collation-results:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine
   stage: collation
+  before_script:
+    - apk add jq
   rules:
     - if: '$UPDATE == "true"'
     - if: '$UPSTREAM_COMMIT_SHA'
