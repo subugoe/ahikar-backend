@@ -245,10 +245,10 @@ get-collation-results:
   variables:
     COLLATEX_REPO_ID: "10514"
   script:
-    - 'curl --output artifacts.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$COLLATEX_REPO_ID/jobs/$JOB_ID/artifacts"'
+    - 'curl --output artifacts.zip "$CI_API_V4_URL/projects/$COLLATEX_REPO_ID/jobs/$JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
     - mkdir results
     - ls
-    #- unzip -d results artifacts.zip
+    - unzip -d results artifacts.zip
   artifacts:
     when: always
     paths:
