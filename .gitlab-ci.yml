@@ -114,7 +114,8 @@ build_docker-all:
   except:
     - tags
   timeout: 5m
-  dependencies: []
+  dependencies:
+    - build_exist_app
 
 deploy_docker-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
