@@ -65,7 +65,7 @@ test_exist_app:
     paths:
       - exist-app/build/dependencies/openapi-latest.xar
       - exist-app/build/dependencies/tg-connect-standalone.xar
-      - exist-app/build/dependencies/eXist*.xar
+      - exist-app/build/eXist*.xar
 
 build_exist_app:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
