@@ -239,8 +239,9 @@ get-collation-results:
   stage: collation
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
-    - if: '$JOB_ID'
     - if: '$UPDATE == "true"'
+    - if: '$UPSTREAM_COMMIT_SHA'
+    - if: '$JOB_ID'
   variables:
     COLLATEX_REPO_ID: "10514"
   script:
