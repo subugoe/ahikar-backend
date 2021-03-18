@@ -74,6 +74,7 @@ build_exist_app:
     paths:
       - exist-app/build/*.xar
       - exist-app/build/dependencies/*.xar
+  dependencies: []
   
 load_frontend-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -92,6 +93,7 @@ load_frontend-all:
   artifacts:
     paths:
       - docker/frontend/
+  dependencies: []
 
 build_docker-all:
   image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker
@@ -112,6 +114,7 @@ build_docker-all:
   except:
     - tags
   timeout: 5m
+  dependencies: []
 
 deploy_docker-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -131,6 +134,7 @@ deploy_docker-test:
     - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/.env
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
+  dependencies: []
 
 deploy_docker-dev:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -143,6 +147,7 @@ deploy_docker-dev:
     - *ssh
     - *env
     - *deploy
+  dependencies: []
 
 deploy_docker-main:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -155,6 +160,7 @@ deploy_docker-main:
     - *ssh
     - *env
     - *deploy
+  dependencies: []
 
 deploy_app-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -174,6 +180,7 @@ deploy_app-test:
     - STATUS=$(echo $HEADER | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $STATUS."
     - if [[ "$STATUS" != "200" ]]; then exit 1; fi
+  dependencies: []
 
 deploy_app-dev:
   image: curlimages/curl
@@ -187,6 +194,7 @@ deploy_app-dev:
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
+  dependencies: []
 
 deploy_app-main:
   image: curlimages/curl
@@ -201,6 +209,7 @@ deploy_app-main:
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
+  dependencies: []
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
