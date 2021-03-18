@@ -3,6 +3,7 @@
 .job_definition: &job_definition
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: api_tests
+  dependencies: []
 
 .check_HTTP_status: &check_HTTP_status
   - status=$(echo $header | head -n 1 | cut -d" " -f 2)
