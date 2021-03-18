@@ -267,10 +267,10 @@ get-collation-results:
     - 'curl --output collation-results.zip "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/jobs/$RELEVANT_JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
     - mkdir results
     - ls
-    - unzip -d results artifacts.zip
+    - unzip -d results collation-results.zip
   artifacts:
     when: always
     paths:
-      - artifacts.zip
+      - collation-results.zip
       - results/
   
