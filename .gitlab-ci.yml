@@ -254,7 +254,6 @@ get-collation-results:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine
   stage: collation
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
     - if: '$UPDATE == "true"'
     - if: '$UPSTREAM_COMMIT_SHA'
     - if: '$JOB_ID'
