@@ -268,6 +268,8 @@ get-collation-results:
     - 'curl --output collation-results.zip "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/jobs/$RELEVANT_JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
     - mkdir exist-app/data/collation-results
     - unzip -d exist-app/data/collation-results collation-results.zip
+    - git config --global user.email "ahiqar-backend@gitlab.gwdg.de"
+    - git config --global user.name "Gitlab CI"
     - git add exist-app/data/collation-results/* && git commit -m "update collation results [skip ci]" && git push
   artifacts:
     when: always
