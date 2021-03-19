@@ -88,7 +88,7 @@ as xs:string* {
 declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
     $page as xs:string,
     $text-type as xs:string)
-as element()? {
+as element() {
     if (local:has-text-content($tei-xml-base-uri, $page, $text-type)) then
         let $node := doc($tei-xml-base-uri)/tei:TEI
             => commons:add-IDs()

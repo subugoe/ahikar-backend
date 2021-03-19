@@ -13,8 +13,6 @@ xquery version "3.1";
 module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
-declare namespace ore="http://www.openarchives.org/ore/terms/";
-declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
@@ -387,9 +385,15 @@ as map() {
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
+    let $xml-doc := commons:open-tei-xml($teixml-uri)
+    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
     let $pageChunks := 
-        (anno:get-page-fragment($teixml-uri, $page, "transcription"),
-        anno:get-page-fragment($teixml-uri, $page, "transliteration"))
+        if ($langs = "karshuni") then
+            (anno:get-page-fragment($teixml-uri, $page, "transcription"),
+            anno:get-page-fragment($teixml-uri, $page, "transliteration"))
+        else
+            anno:get-page-fragment($teixml-uri, $page, "transcription")
+
     
     let $annotation-elements := 
         for $chunk in $pageChunks return
