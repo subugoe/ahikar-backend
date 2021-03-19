@@ -256,6 +256,13 @@ get-collation-results:
   before_script:
     - apk add jq
     - apk add git
+    - eval $(ssh-agent -s)
+    - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan gitlab.gwdg.de  >> ~/.ssh/known_hosts
+    - git config --global user.email "ahiqar-backend@gitlab.gwdg.de"
+    - git config --global user.name "Gitlab CI"
   rules:
     - if: '$UPDATE == "true"'
     - if: '$UPSTREAM_COMMIT_SHA'
@@ -268,7 +275,9 @@ get-collation-results:
     - 'curl --output collation-results.zip "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/jobs/$RELEVANT_JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
     - mkdir exist-app/data/collation-results
     - unzip -d exist-app/data/collation-results collation-results.zip
-    - git add exist-app/data/collation-results/* && git commit -m "update collation results [skip ci]" && git push
+    - wkdir=$(pwd)
+    - cd /tmp && git@gitlab.gwdg.de:subugoe/ahiqar/backend.git this && cd this
+    - git add exist-app/data/collation-results/* && git commit -m "update collation results [skip ci]" && git push && cd ${wkdir}
   artifacts:
     when: always
     paths:
