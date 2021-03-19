@@ -5,6 +5,7 @@ module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons";
 declare namespace ore="http://www.openarchives.org/ore/terms/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
 import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize" at "tokenize.xqm";
@@ -233,6 +234,53 @@ declare %private function local:create-textgrid-session-id() {
 };
 
 declare function commons:compress-to-zip($uri as xs:string)
-as xs:base64Binary* {
-    compression:zip(xs:anyURI($uri), false())
+as xs:string* {
+    if (commons:does-zip-need-update()) then
+        let $zip := compression:zip(xs:anyURI($uri), false())
+        return
+            ( 
+                commons:make-last-zip-created(),
+                xmldb:store-as-binary("/db/data", "ahikar-json.zip", $zip)
+            )
+    else
+        ()
+};
+
+declare function commons:does-zip-need-update()
+as xs:boolean {
+    let $last-zip-created := commons:get-last-zip-created()
+    let $latest-last-modified := commons:get-latest-lastModified()
+            
+    return
+        if (not(exists($last-zip-created))
+        or ($last-zip-created lt $latest-last-modified)) then
+            true()
+        else
+            false()
+};
+
+declare function commons:make-last-zip-created() {
+    let $contents :=
+        <last-created>
+            {current-dateTime()}
+        </last-created>
+    return
+        xmldb:store("/db/data", "last-zip-created.xml", $contents)
+};
+
+declare function commons:get-last-zip-created()
+as xs:dateTime? {
+    xs:dateTime(doc("/db/data/last-zip-created.xml")/last-created)
+};
+
+declare function commons:get-latest-lastModified()
+as xs:dateTime {
+    let $last-modifieds := collection($commons:meta)//tgmd:lastModified
+    let $sorted-modifieds :=
+        for $date in $last-modifieds
+        order by $date descending
+        return
+            $date
+    return
+        $sorted-modifieds[1]
 };

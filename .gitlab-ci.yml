@@ -1,12 +1,12 @@
 stages:
   - unit_tests
+  - collation
   - build
   - package
   - deploy_docker
   - deploy_app
   - api_tests
   - release
-  - reassign_labels
 
 include: 
   - '/ci-scripts/.api_tests.yml'
@@ -49,7 +49,6 @@ test_exist_app:
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl http://localhost:8080/exist/restxq/trigger-tests
-    - sleep 60
     - bash exist-app/test/bin/shutdown.sh
     - failures=$(./get-unit-test-failures-and-errors.sh)
     - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
@@ -61,6 +60,12 @@ test_exist_app:
       - exist-app/test/logs/*.log
     reports:
       junit: exist-app/test/ahikar-test-results.xml
+  cache:
+    key: exist-dependencies
+    paths:
+      - exist-app/build/dependencies/openapi-latest.xar
+      - exist-app/build/dependencies/tg-connect-standalone.xar
+      - exist-app/build/eXist*.xar
 
 build_exist_app:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -74,6 +79,7 @@ build_exist_app:
     paths:
       - exist-app/build/*.xar
       - exist-app/build/dependencies/*.xar
+  dependencies: []
   
 load_frontend-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -92,6 +98,7 @@ load_frontend-all:
   artifacts:
     paths:
       - docker/frontend/
+  dependencies: []
 
 build_docker-all:
   image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker
@@ -112,6 +119,9 @@ build_docker-all:
   except:
     - tags
   timeout: 5m
+  dependencies:
+    - build_exist_app
+    - load_frontend-all
 
 deploy_docker-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -131,6 +141,7 @@ deploy_docker-test:
     - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/.env
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
+  dependencies: []
 
 deploy_docker-dev:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -143,6 +154,7 @@ deploy_docker-dev:
     - *ssh
     - *env
     - *deploy
+  dependencies: []
 
 deploy_docker-main:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -155,6 +167,7 @@ deploy_docker-main:
     - *ssh
     - *env
     - *deploy
+  dependencies: []
 
 deploy_app-test:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
@@ -174,6 +187,7 @@ deploy_app-test:
     - STATUS=$(echo $HEADER | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $STATUS."
     - if [[ "$STATUS" != "200" ]]; then exit 1; fi
+  dependencies: []
 
 deploy_app-dev:
   image: curlimages/curl
@@ -187,6 +201,7 @@ deploy_app-dev:
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
+  dependencies: []
 
 deploy_app-main:
   image: curlimages/curl
@@ -201,6 +216,7 @@ deploy_app-main:
     - status=$(echo $header | head -n 1 | cut -d" " -f 2)
     - echo "Current HTTP status is $status."
     - if [[ "$status" != "200" ]]; then exit 1; fi
+  dependencies: []
 
 # when a git flow release is made, a tag will be pushed starting this job. it
 # will keep the resulting artifact from job number one and it will set up a
@@ -234,37 +250,28 @@ deploy_app-main:
     paths:
       - gitlab-release.json
 
-
-# although relabelling issues works perfectly on a technical level, the GitLab
-# GUI displays them in the wrong list ("Open" instead of "In Review"). furhter
-# investigation has to be done before this works properly.
-.reassign_labels:
-  image: docker.gitlab.gwdg.de/mrodzis/test
-  stage: reassign_labels
-  only:
-    - merge_requests
-  #rules:
-  #  - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_COMMIT_TITLE =~ /^Merge.+?into ''develop''/'
-  #    when: always
+get-collation-results:
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine
+  stage: collation
+  before_script:
+    - apk add jq
+    - apk add git
+  rules:
+    - if: '$UPDATE == "true"'
+    - if: '$UPSTREAM_COMMIT_SHA'
+    - if: '$PIPELINE_ID'
+  variables:
+    COLLATEX_REPO_ID: "10514"
   script:
-    # declare variables for general usability
-    - project_id=$CI_PROJECT_ID
-    # get the IID of the issue to be closed.
-    # the first (= .[0]) entry of the JSON retrieved via
-    # /api/v4/projects/$project_id/merge_requests?state=merged is always the
-    # most recent merged MR.
-    # ATTENTION: This assumes some kind of template in the MR description where
-    # the last issue mentioned via #${iid} is the issue to be closed.
-    - 'curl --output merges.json --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/merge_requests?state=merged"'
-    - issue_iid=$(jq -r ".[0].description" merges.json | grep "#[0-9]\+" | tail -1 | grep -o "[0-9]\+")
-    # return the issue last mentioned, i.e. the one to be closed
-    - 'curl --output issue_id.txt --request GET --header "PRIVATE-TOKEN: $API_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/$project_id/issues/${issue_iid}"'
-    # return all the issue's labels WITHOUT "Doing"
-    - former_labels=$(cat issue_id.txt | jq .labels[] | grep -v "Doing")
-    # adds the label "In Review"
-    - new_labels="${former_labels} \"In Review\""
-    # encode the parameters with URL encoding (white spaces are replaced with %20)
-    - new_labels=$(echo $new_labels | sed -e 's/" "/,/g' -e 's/"//g' -e 's/ /%20/g')
-    # set new labels for the issue to be closed.
-    # ATTENTION: $API_TOKEN has to be a token with read/write access to the API
-    - 'curl --request PUT --header "PRIVATE-TOKEN: $API_TOKEN" https://gitlab.gwdg.de/api/v4/projects/{$project_id}/issues/${issue_iid}?labels=${new_labels}'
+    - 'curl --output jobs.json "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/pipelines/$PIPELINE_ID/jobs?private_token=$GITLAB_TOKEN"'
+    - RELEVANT_JOB_ID=$(jq ".[]|select(.stage==\"summarize\")" < jobs.json | jq .id)
+    - 'curl --output collation-results.zip "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/jobs/$RELEVANT_JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
+    - mkdir exist-app/data/collation-results
+    - unzip -d exist-app/data/collation-results collation-results.zip
+    - git add exist-app/data/collation-results/* && git commit -m "update collation results [skip ci]" && git push
+  artifacts:
+    when: always
+    paths:
+      - collation-results.zip
+      - exist-app/data/collation-results/
+  
