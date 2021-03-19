@@ -73,10 +73,11 @@ as item()+ {
 
 
 declare
-    %test:args("82a") %test:assertXPath("$result//*[local-name(.) = 'add'][@place = 'margin'] = 'حقًا'")
-function ct:get-page-fragment($page as xs:string)
+    %test:args("82a", "transcription") %test:assertXPath("$result//*[local-name(.) = 'add'][@place = 'margin'] = 'حقًا'")
+function ct:get-page-fragment($page as xs:string,
+    $text-type as xs:string)
 as element() {
-    commons:get-page-fragment($ct:base-uri, $page)
+    commons:get-page-fragment($ct:base-uri, $page, $text-type)
 };
 
 declare

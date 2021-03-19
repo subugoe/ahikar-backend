@@ -169,7 +169,7 @@ function tapi:endpoint-html($tei-xml-uri as xs:string,
     $page as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi-html:get-html($tei-xml-uri, $page)
+    tapi-html:get-html($tei-xml-uri, $page, $html-type)
 };
 
 (:~
