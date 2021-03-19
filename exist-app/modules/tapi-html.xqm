@@ -16,12 +16,13 @@ import module namespace tei2html="http://ahikar.sub.uni-goettingen.de/ns/tei2htm
  : @return A div wrapper containing the rendered page
  :)
 declare function tapi-html:get-html($tei-xml-uri as xs:string,
-    $page as xs:string)
+    $page as xs:string,
+    $text-type as xs:string)
 as element(div) {
     let $tei-xml-base-uri := $commons:data || $tei-xml-uri || ".xml"
     let $fragment :=
         if ($page) then
-            commons:get-page-fragment($tei-xml-base-uri, $page)
+            commons:get-page-fragment($tei-xml-base-uri, $page, $text-type)
         else
             doc($tei-xml-base-uri)/*
     return

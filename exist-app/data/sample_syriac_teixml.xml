@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="textgrid:3r6zm" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="textgrid:3r8f2" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-stylesheet type="text/css" href="textgrid:3r148" title="Ahikar CSS" alternate="no"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title type="main">From the Story and Proverbs of Ahiqar</title>
+            <editor>Simon Birol</editor>
+            <editor>Aly Elrefaei</editor>
+         </titleStmt>
+         <publicationStmt>
+            <authority>Georg-August Universität Göttingen, Theologische Fakultät, Seminar für Altes Testament</authority>
+            <availability>
+               <licence target="https://creativecommons.org/licenses/by-sa/4.0/">Distributed under a Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) License.</licence>
+            </availability>
+         </publicationStmt>
+         <sourceDesc>
+            <msDesc>
+               <msIdentifier>
+                  <settlement>
+                     <country>Germany</country>
+                  </settlement>
+                  <institution>Staatsbibliothek in Berlin</institution>
+                  <idno>Sachau 162</idno>
+                  <altIdentifier>
+                     <idno>Sachau 165 (according to the Catalogue of Sachau)</idno>
+                  </altIdentifier>
+                  <altIdentifier>
+                     <idno>https://digital.staatsbibliothek-berlin.de/werkansicht?PPN=PPN862950937&amp;PHYSID=PHYS_0173&amp;DMDID=DMDLOG_0001</idno>
+                  </altIdentifier>
+                 </msIdentifier>
+               <msContents>
+                  <msItem>
+                     <textLang>Classical Syriac</textLang>
+                     <respStmt>
+                        <resp>Scribe</resp>
+                        <persName>unknown</persName>
+                     </respStmt>
+                  </msItem>
+                  <msItem>
+                     <colophon sameAs="#xpath(//ab[@type='colophon'])"/>
+                  </msItem>
+               </msContents>
+               <history>
+                  <origin>
+                     <objectType>codex</objectType>
+                     <placeName>Tur 'abdin[?]</placeName>
+                     <date notAfter="1583" notBefore="1400" precision="medium">unknown</date>
+                  </origin>
+               </history>
+            </msDesc>
+            <listBibl>
+               <bibl>Sachau, Eduard: Verzeichniss der syrischen Handschriften der Königlichen Bibliothek zu Berlin, vol. 2, Berlin 1899, 514-519.</bibl> 
+                  <bibl>Metadata (with a link to the digitized images)
+                  viewable under: http://orient-digital.staatsbibliothek-berlin.de/receive/SBBMSBook_islamhs_00010205</bibl>
+                  <bibl>Vööbus, Arthur: Handschriftliche Überlieferung der Mēmrē-Dichtung des Ja‘qōb von Serūg. Sammlungen: Die Handschriften, Corpus scriptorum Christianorum Orientalium 344, Subsidia 39, Louvain 1973, 62-63.</bibl> 
+                  <bibl>Vööbus, Arthur: Handschriftliche Überlieferung der Mēmrē-Dichtung des Ja‘qōb von Serūg. Sammlungen: Der Bestand, Corpus scriptorum Christianorum Orientalium 345, Subsidia 40, Louvain 1973b, 24-27.</bibl>
+            </listBibl>
+         </sourceDesc>      
+      </fileDesc>
+      <profileDesc>
+         <abstract>
+            <p n="general">fol. 86v-92r</p>
+            <p n="script">West Syriac script</p>
+            <p n="codicology">
+               The manuscript is heavily damaged at its margins and the text is incomplete.
+            </p>
+         </abstract>
+         <textClass>
+            <keywords>
+               <term>proverbs</term>
+               <term>prose</term>
+            </keywords>
+         </textClass>
+         <langUsage>
+            <language ident="ara" xml:base="https://iso639-3.sil.org/code/" xml:id="ara">Arabic</language>
+            <language ident="syc" xml:base="https://iso639-3.sil.org/code/" xml:id="syr">Classical Syriac</language>
+            <language ident="eng" xml:base="https://iso639-3.sil.org/code/" xml:id="eng">English</language>
+            <language ident="lat" xml:base="https://iso639-3.sil.org/code/" xml:id="lat">Latin</language>
+            <language ident="karshuni">Karshuni</language>          
+            <language ident="syc-syrj" xml:base="https://glottolog.org/resource/languoid/id/" xml:id="west2764">Western Syriac</language>
+            <language ident="syc-syrn" xml:base="https://glottolog.org/resource/languoid/id/" xml:id="east2681">Eastern Syriac</language>
+         </langUsage>
+      </profileDesc>
+      <encodingDesc>
+         <tagsDecl>
+            <rendition xml:id="red" scheme="css">color: red;</rendition>
+            <rendition xml:id="font" scheme="free">Serto Jerusalem</rendition>
+         </tagsDecl>
+      </encodingDesc>
+      <revisionDesc>
+         <listChange>
+            <change>
+               <ab>Covertion to specified TEI by SUB Göttingen</ab>
+            </change>
+         </listChange>
+      </revisionDesc>
+   </teiHeader>          
+   <text xmlns:tei="http://www.tei-c.org/ns/1.0"
+      xmlns:map="http://www.w3.org/2005/xpath-functions/map">  
+      <group>
+         <text type="translation" xml:lang="eng">
+            <body>
+               <ab/>
+            </body>
+         </text>
+         <text type="transliteration" xml:lang="syc">
+            <body>
+               <ab/>
+            </body>
+         </text>
+         <text type="transcription" xml:lang="syc">
+            <body xmlns:tei="http://www.tei-c.org/ns/1.0">
+               <tei:milestone unit="first_narrative_section"/>
+               <pb n="86r" facs="textgrid:3r13n"/>
+               <head>
+                  <hi rend="color(dark red)"> ܥܠ ܚܝܠܐ ܕܐܠܗܐ ܟܬܒܝܢܢ ܬܫܥܝܬܐ <persName>ܕܚܝܩܪ</persName>
+                     ܣܦܪܐ ܘܡ̈ܬܠܘܗܝ <damage>ܫܦܝܪ̈ܐ</damage>
+                  </hi>
+               </head>
+               <ab> ܒܫ̈ܢܝ <persName>ܣܢܚܪܝܒ</persName> ܡܠܟܐ <placeName>ܕܐܬܘܪ</placeName>
+                  <damage>
+                     <orig>ܘܕܢ</orig>
+                     <supplied>
+                        <placeName>ܘܕܢܝܢܘܐ</placeName>
+                     </supplied>
+                  </damage>
+               </ab>
+               <ab> ܐܝܼܬܝ ܗܘܿܝܬ ܐܢܐ <persName>ܚܝܩܪ</persName> ܣܿܦܪܐ <damage>
+                     <orig>ܕܡܠܟ</orig>
+                     <supplied>ܕܡܠܟܐ</supplied>
+                  </damage>
+               </ab>
+               <ab>ܐܬܼܐܡܪ ܠܝܼ ܒܚܙܘܐ ܕܒܪܐ ܠܐ ܗܿܘܐ ܠܝ</ab>
+               <ab>ܐܠܐ ܥܘܬܪܐ ܣܓ̈ܝܐܐ ܬܹܩܢܸܐ܂ ܐܫ̈ܬܝܢ ܢܹܫ̈ܐܹ</ab>
+               <ab>ܢܿܣܒܬܼ܂ ܘܒܪ ܐܫ̈ܬܝܢ ܫܢ̈ܝܢ ܗܘܿܝܬ</ab>
+               <ab> ܘܒܪܐ ܠܐ ܗܘܼܐ ܠܝ <add place="above">ܡܢ ܚܕܐ</add> ܡܢܗܝܢ܂ ܘܗܝܕܝܢ </ab>
+               <ab>ܒܢܝܿܬܼ ܠܝ ܥܠܬܼܐ ܚܕܐ ܪܒܬܼܐ܂
+                  <?oxy_comment_start author="simon" timestamp="20200829T182848+0200" comment="loyal_obligation_gods"?>ܘܣܿܡܬܼ</ab>
+               <ab>ܥܠܝܗ ܨܘܪܐ ܛܒܐ܂ ܘܐܣܩܿܬܼ ܕܒܚ̈ܐ</ab>
+               <ab>ܠܡܪܝܐ܂<?oxy_comment_end?> ܘܐܡܿܪܬ܂ ܐܝܢ ܡܪܝܐ ܐܠܗܐ</ab>
+               <ab>ܢܗܘܐ ܠܝ ܒܪܐ܂ ܕܐܡܬܝ ܕܡܵܝܸܬܼ ܐܢܐ ܢܗܼܘܐ</ab>
+               <ab>ܝܪܬܐ ܡܢ ܒܬܪ܂ ܘܗܘܼ ܐܠܗܐ ܥܢܼܢܝ</ab>
+               <pb n="86v" facs="textgrid:3r13p"/>
+               <ab>
+                  <damage>ܠܝܼ</damage> ܐܡܼܪ ܠܝܼ܂ ܚܝܩܪ ܟܠܡܕܡ ܕܒܥܝܼܬ </ab>
+               <ab>
+                  <damage>ܡܢܝ</damage> ܝܗܿܒܬ ܠܟ܂ ܘܟܠܡܕܡ ܦܫܝܼܩ </ab>
+               <ab>ܒܐܝܕ̈ܝ ܠܡܥܒܕ ܠܟ ܘܳܠܼܐ ܒܢܝ̈ܐ</ab>
+               <ab>ܫܒܩܬܟ ܣܿܦܩ ܠܟ܂ ܠܐ ܬܬܼܬܿܥܝܼܩ</ab>
+               <ab> ܐܘ ܬܬܼܛܲܪܦ܂ ܐܠܐ ܗܐ <persName>ܢܵܕܵܢ</persName> ܒܪ ܚܬܟ </ab>
+               <ab>ܥܒܕܝܗܝ ܠܟ ܒܪܐ܂
+                  <?oxy_comment_start author="simon" timestamp="20200829T182930+0200" comment="loyal_obligation_gods"?>ܟܕ
+                  ܗܠܝܢ ܫܡܿܥܬܼ</ab>
+               <ab> ܦܘܩܕܢܐ ܥܒܿܕܬܼ܂ ܘܢܿܣܒܬ <persName>ܠܢܕܢ</persName> ܒܪ </ab>
+               <ab>
+                  <damage>ܚܵܬܝ܂<?oxy_comment_end?></damage> ܐܫܠܡܬܗ ܠܡܝ̈ܩܢܬܐ ܬܡ̈ܢܐ܂ </ab>
+               <ab>ܘܫܲܡܢܬܗ ܒܫܘܡܢܐ ܘܕܒܫܐ ܘܚܹܘܬܼܐ܂</ab>
+               <ab>ܘܐܠܒܫܬܳܗ ܒܘܨܐ ܘܐܪܓܘܢܐ܂ ܘܪܒܐ ܘܫܘܼܚ</ab>
+               <ab>
+                  <damage>ܐܝܟ</damage>ܐܪܙܐ܂ ܘܟܕ ܪܒܐ ܐܰܠܦܬܗ ܣܦܪܐ</ab>
+               <ab>ܘܚܟܼܡܬܐ܂ ܒܚܕ ܡܢ ܝܘ̈ܡܝܢ ܩܼܪܢܝ܂</ab>
+               <ab> ܡܠܟܐ <persName>ܣܢܚܪܝܒ</persName> ܘܐܼܡܪ ܠܝ܂ <persName>ܚܝܼܩܪ</persName>
+               </ab>
+               <ab>ܣܦܪܐ ܚܟܝܼܡܐ܂ ܣܓܝ ܣܹܐܒܬ܂ ܡܢ</ab>
+               <ab>ܒܬܪܟ ܡܢܘ ܢܫܲܡܫܢܝ ܐܘ ܢܹܦܠܚܲܢܝ܂</ab>
+               <ab>ܘܥܢܝܿܬܼ ܘܐܡܿܪܬ܂
+                  <?oxy_comment_start author="simon" timestamp="20200829T184753+0200" comment="caution_against_powerful"?>ܠܥܠܡ
+                  ܬܗܘܐ <choice>
+                     <abbr>ܡܠ܏ܟܘܟ܇</abbr>
+                     <expan>ܡܠܟܘܬܟ܇<?oxy_comment_end?></expan>
+                  </choice>
+               </ab>
+               <ab>ܐܝܬ ܠܝ ܒܪܐ ܕܐܟܘܬܼܝ ܚܲܟܝܼܡ ܘܝܿܕܥ</ab>
+               <ab> ܣܹܦܪܐ܂ ܘܐܡܼܪ ܠܝ ܙܹܠ <choice>
+                     <abbr>ܐܝܬ܏ܝܘ</abbr>
+                     <expan>ܐܝܬܘܗܝ</expan>
+                  </choice> ܨܝܕܝ </ab>
+               <pb n="87r" facs="textgrid:3r13q"/>
+               <ab>ܕܐܚܿܙܝܘܝܗܝ܂ ܐܢ ܡܫܟܿܚ ܢܫܲܡܫܢܝ</ab>
+               <ab> ܘܢܩܘܼܡ ܒܕܘܟܬܟ܂ <add place="above">ܘܐܢܬ ܙܹܠ ܐܬܢܝܚ</add> ܘܟܕ ܕܒܪܬܗ <damage>
+                     <orig>ܠܢܵ</orig>
+                     <supplied><persName>ܠܢܵܕܢ</persName></supplied>
+                  </damage>
+               </ab>
+               <ab>ܘܐܩܝܼܡܬܗ <choice>
+                     <abbr>ܩܕܡ܏ܘ</abbr>
+                     <expan>ܩܕܡܘܗܝ</expan>
+                  </choice> ܟܕ ܚܙܝܼܗܝ <damage>
+                     <orig>ܡܠܟ</orig>
+                     <supplied>ܡܠܟܐ</supplied>
+                  </damage>
+               </ab>
+               <ab>ܘܐܡܼܪ ܠܝ܂ ܢܗܘܐ ܒܪܝܟ ܝܘܡܐ ܗܢܐ܂ ܐܝܟ</ab>
+               <ab> ܕܦܠܚܼܬ ܘܫܲܡܫܬ ܩܕܡܝ ܘܩܕܡ <damage>
+                     <orig>ܐܒ</orig>
+                     <supplied>ܐܒܝ</supplied>
+                  </damage>
+               </ab>
+               <ab> ܐܢܐ <choice>
+                     <abbr>ܐܦܿܪܥܝ܏ܘ</abbr>
+                     <expan>ܐܦܪܥܝܘܗܝ</expan>
+                  </choice> ܠܒܪܟ <persName>ܢܵܕܵܢ܂</persName> ܘܐܢܬ <damage>ܙܹܠ</damage>
+               </ab>
+               <ab> ܐܬܼܬܿܢܝܼܚ܂ ܘܗܘܼ <persName>ܢܵܕܵܢ</persName>
+                  <add place="above">ܢܗܘܐ</add> ܡܫܡܫ ܠܝ܂ <damage>
+                     <orig>ܘ</orig>
+                     <supplied>ܘܐܢܬ</supplied>
+                  </damage>
+               </ab>
+               <ab>
+                  <persName>ܚܝܩܪ</persName>
+                  <?oxy_comment_start author="simon" timestamp="20200829T184721+0200" comment="caution_against_powerful"?>ܣܓܼܳܕܬ
+                  ܠܡܠܟܐ ܘܐܡܿܪܬ܂ <damage>
+                     <orig>ܠܥܠ</orig>
+                     <supplied>ܠܥܠܡ</supplied>
+                  </damage>
+               </ab>
+               <ab> ܬܗܘܐ ܡܠܟܘܬܟ܂<?oxy_comment_end?> ܐܢܬ ܝܿܕܥ ܐܢܬ <damage>
+                     <orig>ܕܦܿܠܚ</orig>
+                     <supplied>ܕܦܿܠܚܬ</supplied>
+                  </damage>
+               </ab>
+               <ab> ܣܓܝ ܩܕܡܝܟ ܘܩܕܡ ܐܒܘܟ܂ ܐܦ ܐܢܬ <damage>ܐܓܪ</damage>
+               </ab>
+               <ab>ܪܘܚܟ ܥܡ ܒܪܝ܂ ܕܥܦܝܦܐܝܬ <damage>
+                     <orig>ܬܫܬܲܟ</orig>
+                     <supplied>ܬܫܬܲܟܐ</supplied>
+                  </damage>
+               </ab>
+               <ab>ܛܝܒܘܬܟ ܠܘܬܝ܂ ܘܗܼܘ
+                  <?oxy_comment_start author="simon" timestamp="20200829T184830+0200" comment="caution_against_powerful"?>ܡܠܟܐ
+                  ܝܡܝܢܐ</ab>
+               <ab>ܝܗܼܒܠܝ ܘܐܫܬܘܕܝ ܟܠ ܕܫܦܝܪ<?oxy_comment_end?>܂ ܗܝܿ</ab>
+               <ab> ܕܝܢ ܐܢܐ ܠܐ ܫܳܠܐ ܗܘܿܝܬ ܠܐ ܠܠܝܐ ܘܠܐ <damage>
+                     <orig>ܐܝܡܿ</orig>
+                     <supplied>ܐܝܡܿܡܐ</supplied>
+                  </damage>
+               </ab>
+               <ab> ܡܢ ܕܠܡܠܦܘ ܠܒܪܝ <persName>ܢܕܢ܂</persName> ܥܕܡܐ <g type="quotation-mark"/>
+               </ab>
+               <ab>ܕܣܒܥܬܗ ܝܘܼܠܦܢܐ ܣܲܓܿܝܼ ܡܢ ܠܚܡܐ</ab>
+               <ab>ܘܡܢ ܡܝ̈ܐ܂ ܘܗܟܼܢܐ ܐܡܿܪ ܗܘܿܝܬܼ ܠܗ܂ <tei:milestone unit="sayings"/> ܫܡܼܥ</ab>
+               <ab><tei:quote> ܒܪܝ ܘܬܐ ܠܬܪܥܝܬܼܝ܂ ܘܬܗܼܘܐ ܥܿܗܕ ܠܡ̈ܠܝ ܐܝܼܟ <add place="below">ܡܐܡܪ
+                        ܐ̈ܠܗܝܢ܂ </add>
+                  </tei:quote></ab>
+            </body>
+         </text>
+      </group>
+   </text>
+</TEI>

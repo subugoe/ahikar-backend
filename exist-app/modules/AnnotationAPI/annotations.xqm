@@ -13,8 +13,6 @@ xquery version "3.1";
 module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
-declare namespace ore="http://www.openarchives.org/ore/terms/";
-declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
@@ -376,7 +374,8 @@ as map() {
 
 
 (:~
- : Gets the annotations for a given page.
+ : Gets the annotations for a given page for both possible text types
+ : (transcription and transliteration, if present).
  : 
  : At this stage, TEI files are scraped for person and place names.
  : 
@@ -386,11 +385,20 @@ as map() {
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
-    let $pageChunk := anno:get-page-fragment($teixml-uri, $page)
+    let $xml-doc := commons:open-tei-xml($teixml-uri)
+    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
+    let $pageChunks := 
+        if ($langs = "karshuni") then
+            (anno:get-page-fragment($teixml-uri, $page, "transcription"),
+            anno:get-page-fragment($teixml-uri, $page, "transliteration"))
+        else
+            anno:get-page-fragment($teixml-uri, $page, "transcription")
+
     
     let $annotation-elements := 
-        for $name in $anno:annotationElements return
-            $pageChunk//*[name(.) = $name]
+        for $chunk in $pageChunks return
+            for $name in $anno:annotationElements return
+                $chunk//*[name(.) = $name]
     
     for $annotation in $annotation-elements return
         let $id := string( $annotation/@id ) (: get the predefined ID from the in-memory TEI with IDs :)
@@ -412,11 +420,12 @@ as map()* {
  : @param $page The page to be returned as tei:pb/@n/string()
  :)
 declare function anno:get-page-fragment($documentURI as xs:string,
-    $page as xs:string)
-as element(tei:TEI) {
+    $page as xs:string,
+    $text-type as xs:string)
+as element(tei:TEI)? {
     let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
     return
-        commons:get-page-fragment($nodeURI, $page)
+        commons:get-page-fragment($nodeURI, $page, $text-type)
 };
 
 (:~
