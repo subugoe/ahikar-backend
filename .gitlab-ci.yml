@@ -251,7 +251,7 @@ deploy_app-main:
       - gitlab-release.json
 
 get-collation-results:
-  image: bullseye-slim:latest
+  image: jessie-slim
   stage: collation
   before_script:
     - apt install jq
