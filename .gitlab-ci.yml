@@ -251,11 +251,15 @@ deploy_app-main:
       - gitlab-release.json
 
 get-collation-results:
-  image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine
+  image: bullseye-slim:latest
   stage: collation
   before_script:
-    - apk add jq
-    - apk add git
+    - apt install jq
+    - apt install git
+    - apt install curl
+    - apt install unzip
+    - apt install eval
+    - apt install ssh-keyscan
     - eval $(ssh-agent -s)
     - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - mkdir -p ~/.ssh
