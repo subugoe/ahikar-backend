@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.5.1] - 2021-03-22
+
+### Fixed
+
+- an item of an Arabic manuscript now only has the transscription in its Content Object.
+
 ## [5.5.0] - 2021-03-15
+
+### Changed
 
 - the different text types, transcription and transliteration, are now considered for the HTML creation and the annotations.
 The HTML endpoint now not only has a key word to distinguish the two types, but also provides the different texts now.
