@@ -251,15 +251,9 @@ deploy_app-main:
       - gitlab-release.json
 
 get-collation-results:
-  image: jessie-slim
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: collation
   before_script:
-    - apt install jq
-    - apt install git
-    - apt install curl
-    - apt install unzip
-    - apt install eval
-    - apt install ssh-keyscan
     - eval $(ssh-agent -s)
     - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - mkdir -p ~/.ssh
@@ -274,17 +268,15 @@ get-collation-results:
   variables:
     COLLATEX_REPO_ID: "10514"
   script:
+    - wkdir=$(pwd)
+    - mkdir -p /tmp/this && cd /tmp/this
+    - git clone git@gitlab.gwdg.de:subugoe/ahiqar/backend.git
     - 'curl --output jobs.json "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/pipelines/$PIPELINE_ID/jobs?private_token=$GITLAB_TOKEN"'
     - RELEVANT_JOB_ID=$(jq ".[]|select(.stage==\"summarize\")" < jobs.json | jq .id)
     - 'curl --output collation-results.zip "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/jobs/$RELEVANT_JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
-    - mkdir exist-app/data/collation-results
-    - unzip -d exist-app/data/collation-results collation-results.zip
-    - wkdir=$(pwd)
-    - cd /tmp && git@gitlab.gwdg.de:subugoe/ahiqar/backend.git this && cd this
-    - git add exist-app/data/collation-results/* && git commit -m "update collation results [skip ci]" && git push && cd ${wkdir}
-  artifacts:
-    when: always
-    paths:
-      - collation-results.zip
-      - exist-app/data/collation-results/
+    - mkdir backend/exist-app/data/collation-results
+    - unzip -d backend/exist-app/data/collation-results collation-results.zip
+    - cd backend
+    - git add exist-app/data/collation-results/* && git commit -m "update collation results" && git push
+  dependencies: []
   
