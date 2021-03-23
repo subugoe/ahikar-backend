@@ -116,6 +116,7 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                         <add place="margin">حقًا</add>حيث تبدأ القصة
                   <g>✓</g>
                     </head>
+                <ab>الحاسوب</ab>
                <ab>نبتدي بعون الباري<add place="interlinear">اختبار</add> تعالى جل اسمه</ab>
                <!-- ### tei:lb[@break = 'no'] describes that a word has begun in the line before and is continued in the current line.
                this mostly lacks hyphenation.
@@ -349,6 +350,9 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <ab>منزلك وايضا قال اكابره بالغد</ab>
                <ab>البسوا كلكم ثياب احمر وتجوا</ab>
                <ab>...</ab>
+               <pb n="84a"/>
+               <ab>some test text</ab>
+               <ab>some test<persName>ܢܕܢ܂</persName></ab>
             </body>
          </text>
 
@@ -816,7 +820,8 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                
                <pb facs="textgrid:3r85r" n="84a"/>
                <ab>some test text</ab>
-              <ab>some test<persName>ܢܕܢ܂</persName></ab>
+              <ab>some test<persName>ܢܕܢ܂</persName>
+                    </ab>
             </body>
          </text>
       </group>

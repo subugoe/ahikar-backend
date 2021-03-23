@@ -83,11 +83,33 @@ function tt:api-info()  as item() {
 
 declare
     %test:assertTrue
-function tt:is-html-api-available()
+function tt:is-html-transcription-api-available()
 as xs:boolean {
-    let $url := $tc:server || "/content/sample_teixml-82a.html"
+    let $url := $tc:server || "/content/transcription/sample_teixml-82a.html"
     return
         tc:is-endpoint-http200($url)
+};
+
+
+declare
+    %test:assertTrue
+function tt:is-html-transliteration-api-available()
+as xs:boolean {
+    let $url := $tc:server || "/content/transliteration/sample_teixml-82a.html"
+    return
+        tc:is-endpoint-http200($url)
+};
+
+
+declare
+    (: check if tei:div is present.
+     : no further tests are needed since the content has been tested while testing
+     : the underlying function. :)
+    %test:assertXPath("$result//*[@class = 'tei_body']")
+function tt:content-transliteration-rest() as document-node() {
+    let $url := $tc:server || "/content/transliteration/sample_teixml-82a.html"
+    let $req := tc:make-request($url)
+    return http:send-request($req)[2]
 };
 
 declare
@@ -95,55 +117,25 @@ declare
      : no further tests are needed since the content has been tested while testing
      : the underlying function. :)
     %test:assertXPath("$result//*[@class = 'tei_body']")
-function tt:content-rest() as document-node() {
-    let $url := $tc:server || "/content/sample_teixml-82a.html"
+function tt:content-transcription-rest() as document-node() {
+    let $url := $tc:server || "/content/transcription/sample_teixml-82a.html"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]
 };
 
 
 declare
-    (: check if ZIP is present.
+    (: check if ZIP of the JSON files is present.
      : no further tests are needed since the content has been tested while testing
      : the underlying function. :)
     %test:assertExists
     %test:pending
-function tt:content-zip() as xs:base64Binary {
-    let $url := $tc:server || "/content/ahikar-plain-text.zip"
+function tt:content-json() as xs:base64Binary {
+    let $url := $tc:server || "/content/ahikar-json.zip"
     let $req := <http:request href="{$url}" method="get">
                         <http:header name="Connection" value="close"/>
                    </http:request>
     return http:send-request($req)[2]
-};
-
-
-declare
-    (: check if txt is present.
-     : no further tests are needed since the content has been tested while testing
-     : the underlying function. :)
-    %test:assertXPath("matches($result, '[\w]')")
-function tt:content-txt() as xs:string {
-    let $url := $tc:server || "/textapi/ahikar/syriac/sample_teixml.txt"
-    let $req := <http:request href="{$url}" method="get">
-                        <http:header name="Connection" value="close"/>
-                   </http:request>
-    return http:send-request($req)[2]
-};
-
-
-declare
-    %test:assertTrue
-function tt:is-txt-api-available()
-as xs:boolean {
-    let $url := $tc:server || "/content/sample_teixml.txt"
-    return
-        tc:is-endpoint-http200($url)
-};
-
-declare function tt:txt() {
-    let $url := $tc:server || "textapi/ahiqar/syriac/sample_teixml.txt"
-    let $req := tc:make-request($url)
-    return http:send-request($req)[2] => util:base64-decode()
 };
 
 
@@ -213,17 +205,16 @@ as item() {
 
 declare
     %test:assertTrue
-function tt:is-sample-collection-endpoint-http200() {
-    let $url := $tc:server || "/textapi/ahikar/sample/collection.json"
+function tt:is-css-endpoint-http200() {
+    let $url := $tc:server || "/content/ahikar.css"
     return
         tc:is-endpoint-http200($url)
 };
 
-
 declare
     %test:assertTrue
-function tt:is-sample-manifest-endpoint-http200() {
-    let $url := $tc:server || "/textapi/ahikar/sample/sample_edition_tbd/manifest.json"
+function tt:is-css-endpoint-http200() {
+    let $url := $tc:server || "/content/SyrCOMJerusalemOutline.otf"
     return
         tc:is-endpoint-http200($url)
 };

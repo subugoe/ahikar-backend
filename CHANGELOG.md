@@ -5,13 +5,107 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.5.1] - 2021-03-22
+
+### Fixed
+
+- an item of an Arabic manuscript now only has the transscription in its Content Object.
+
+## [5.5.0] - 2021-03-15
+
+### Changed
+
+- the different text types, transcription and transliteration, are now considered for the HTML creation and the annotations.
+The HTML endpoint now not only has a key word to distinguish the two types, but also provides the different texts now.
+The AnnotationAPI now consideres both the transcription and the transliteration (where present) for the Annotation Pages so that annotations can be shown for both text types in TIDO.
+
+## [5.4.0] - 2021-03-15
+
+### Added
+
+- the API endpoint `content/ahikar-json.zip` which returns a JSON file per line of transmission and semantic section.
+
+### Removed
+
+- from this version on we use JSON as an input for CollateX.
+As a consequence, the TXT API has become obsolete and has been removed.
+
+## [5.3.0] - 2021-03-08
+
+### Removed
+
+- the changes made in [4.4.0](#440-2021-02-18)
+
+## [5.2.0] - 2021-03-09
+
+### Added
+
+- the fonts needed for the edition as well as an endpoint to deliver them.
+
+## [5.1.0] - 2021-03-08
+
+### Added
+
+- a separate endpoint for the project specific CSS at `/content/ahikar.css`.
+
+### Changed
+
+- the Support Object no longer relies on GitLab but references the CSS stored in the database.
+
+## [5.0.1] - 2021-03-05
+
+### Fixed
+
+- the CSS file in the Support Object now points to the raw CSS file in GitLab.
+This way it is fully parsable.
+
+## [5.0.0] - 2021-03-05
+
+### Changed
+
+- The API has been adjusted to the generic TextAPI's change that allows for several Content Objects instead of one content item.
+- As a result of said API change, `content/some_page.html` has been changed to `content/${html-type}/some_page.html`.
+This way the two relevant HTML serialization of the Ahiqar material, `transcription` and `transliteration` can easily be distinguised.
+Cf. <https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/27> on this topic.
+NOTE: Only the endpoint has been changed.
+The functionality is not implemented yet.
+
+## [4.9.4] - 2021-03-05
+
+### Fixed
+
+- the license key on Manifest level now provides an array of License Objects instead of a simple string.
+To achieve this, the XML based structure of the manifest data has been moved to maps.
+Additionally, the module has been slightly refactored.
+
+## [4.9.3] - 2021-03-02
+
+### Fixed
+
+- the title on Item level now provides an array of Title Objects instead of a single one.
+To achieve this, we changed the XML based structure of the `tapi-item.xqm` module to a map based one.
+
+## [4.9.2] - 2021-03-02
+
+### Fixed
+
+- during the HTML serialization, a white space is set after each token
+Not having set this let to the text nodes being displayed as one long text node.
+
+## [4.9.1] - 2021-02-24
+
+### Fixed
+
+- the HTTP request to TextGrid for public images now has a sessionID.
+While we won't need it once the images have been published in the TextGrid Repository, the sessionID is still needed in the meantime for requesting images.
+
 ## [4.9.0] - 2021-02-23
 
 ### Added
 
-- a word-level tokenization of the relevant text. words are wrapped in a `tei:seg` before further processing and equipped with a unique ID to address them.
+- a word-level tokenization of the relevant text. words are wrapped in a `tei:w` before further processing and equipped with a unique ID to address them.
 
-# [4.8.2] - 2021-02-23
+## [4.8.2] - 2021-02-23
 
 ### Fixed
 

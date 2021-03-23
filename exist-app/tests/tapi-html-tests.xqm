@@ -12,8 +12,9 @@ import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/h
 
 
 declare
-    %test:args("sample_teixml", "82a") %test:assertXPath("$result//text()[matches(., 'حقًا')]")
-    %test:args("sample_teixml", "82a")
+    %test:args("sample_teixml", "82a", "transcription") %test:assertXPath("$result//text()[matches(., 'حقًا')]")
+    %test:args("sample_teixml", "82a", "transliteration") %test:assertXPath("$result//text()[matches(., 'الحاسوب')]")
+    %test:args("sample_teixml", "82a", "transcription")
     (: checks if there is text at all in the result :)
     %test:assertXPath("$result//text()[matches(., '[\w]')]")
     (: if a div[@class = 'tei_body'] is present, the transformation has been successfull :)
@@ -23,7 +24,8 @@ declare
     (: this is some text on 83a which shouldn't be part of the result :)
     %test:assertXPath("not($result//* = 'ܐܠܐܨܢܐܡ' )")
 function thtmlt:get-html($tei-xml-uri as xs:string,
-    $page as xs:string)
+    $page as xs:string,
+    $text-type as xs:string)
 as element(div) {
-    tapi-html:get-html($tei-xml-uri, $page)
+    tapi-html:get-html($tei-xml-uri, $page, $text-type)
 };

@@ -33,19 +33,53 @@ as xs:string {
 
 
 declare
-    %test:args("sample_edition")  %test:assertXPath("$result//*[local-name(.) = 'title'] = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh'")
+    %test:args("sample_edition") 
+    %test:assertXPath("array:get($result, 1) => map:get('title') = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh'")
 function titemt:make-title-object($manifest-uri as xs:string)
-as element() {
+as item() {
     tapi-item:make-title-object($manifest-uri)
 };
 
+
 declare
-    %test:args("sample_edition") %test:assertXPath("count($result) = 5")
-    %test:args("sample_edition") %test:assertXPath("$result[local-name(.) = ('lang', 'langAlt')]")
-    %test:args("sample_edition") %test:assertXPath("count($result[local-name(.) = 'lang']) = 2")
-function titemt:make-language-elements($manifest-uri as xs:string)
-as element()+ {
-    tapi-item:make-language-elements($manifest-uri)
+    %test:args("syriac", "sample_edition", "82a")
+    (: checks if the correct file has been opened :)
+    %test:assertXPath("map:get($result, 'title') => array:get(1) => map:get('title') = 'The Proverbs or History of Aḥīḳar the wise, the scribe of Sanḥērībh, king of Assyria and Nineveh' ")
+    %test:assertXPath("map:get($result, 'title') => array:get(1) => map:get('type') = 'main' ")
+    (: checks if language assembling works correctly :)
+    %test:assertXPath("map:get($result, 'lang') => array:get(2) = 'syc' ")
+    %test:assertXPath("map:get($result, 'langAlt') => array:get(1) = 'karshuni' ")
+    %test:assertXPath("map:get($result, 'x-langString') => matches('Classical Syriac')")
+    (: checks if underlying pages are identified :)
+    %test:assertXPath("map:get($result, 'content') => array:get(1) => map:get('url') = 'http://0.0.0.0:8080/exist/restxq/api/content/transcription/sample_teixml-82a.html' ")
+    %test:assertXPath("map:get($result, 'content') => array:get(1) => map:get('type') = 'application/xhtml+xml;type=transcription' ")
+    (: checks if images connected to underlying pages are identified :)
+    %test:assertXPath("map:get($result, 'image') => map:get('id') = 'http://0.0.0.0:8080/exist/restxq/api/images/restricted/3r1nz/50.03,0.48,49.83,100.00' ")
+    %test:assertXPath("map:get($result, 'image') => map:get('license') => map:get('id')")
+    %test:assertXPath("map:get($result, 'image') => map:get('license') => map:get('notes')")
+    %test:assertXPath("map:get($result, 'annotationCollection') = 'http://0.0.0.0:8080/exist/restxq/api/annotations/ahikar/syriac/sample_edition/82a/annotationCollection.json' ")
+function titemt:get-json($collection as xs:string,
+    $document as xs:string,
+    $page as xs:string) 
+as map(*) {
+    tapi-item:get-json($collection, $document, $page, $tc:server)
+};
+
+
+declare
+    %test:args("sample_edition") %test:assertXPath("array:size($result) = 2")
+    %test:args("sample_edition") %test:assertExists
+function titemt:make-language-array($manifest-uri as xs:string)
+as item() {
+    tapi-item:make-language-array($manifest-uri)
+};
+
+declare
+    %test:args("sample_edition") %test:assertXPath("array:size($result) = 3")
+    %test:args("sample_edition") %test:assertExists
+function titemt:make-langAlt-array($manifest-uri as xs:string)
+as item() {
+    tapi-item:make-langAlt-array($manifest-uri)
 };
 
 

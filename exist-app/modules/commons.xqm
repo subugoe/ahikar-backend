@@ -5,6 +5,7 @@ module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons";
 declare namespace ore="http://www.openarchives.org/ore/terms/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
 import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize" at "tokenize.xqm";
@@ -16,6 +17,7 @@ declare variable $commons:data := $commons:tg-collection || "/data/";
 declare variable $commons:meta := $commons:tg-collection || "/meta/";
 declare variable $commons:agg := $commons:tg-collection || "/agg/";
 declare variable $commons:tile := $commons:tg-collection || "/tile/";
+declare variable $commons:json := $commons:tg-collection || "/json/";
 declare variable $commons:appHome := "/db/apps/ahikar";
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
@@ -73,26 +75,47 @@ as xs:string* {
                 ()
 };
 
+(:~
+ : Returns a given page from a requested TEI document and from the requested text type.
+ : In some cases the requested text type isn't available or doesn't have any text, so that
+ : no page fragment can be retrieved.
+ :
+ : @param $tei-xml-base-uri The base URI of the requested TEI document
+ : @param $page The page as given in tei:pb/@n
+ : @param $text-type Either "transcription" or "transliteration"
+ : @return The requested page in the resp. text type if available
+ :)
 declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
-    $page as xs:string)
+    $page as xs:string,
+    $text-type as xs:string)
 as element() {
-    let $node := doc($tei-xml-base-uri)/tei:TEI
-        => commons:add-IDs()
-        => tokenize:main(),
-        $start-node := $node//tei:pb[@n = $page and @facs],
-        $end-node := commons:get-end-node($start-node),
-        $wrap-in-first-common-ancestor-only := false(),
-        $include-start-and-end-nodes := true(),
-        $empty-ancestor-elements-to-include := ("")
-        
-    return
-        fragment:get-fragment-from-doc(
-            $node,
-            $start-node,
-            $end-node,
-            $wrap-in-first-common-ancestor-only,
-            $include-start-and-end-nodes,
-            $empty-ancestor-elements-to-include)
+    if (local:has-text-content($tei-xml-base-uri, $page, $text-type)) then
+        let $node := doc($tei-xml-base-uri)/tei:TEI
+            => commons:add-IDs()
+            => tokenize:main(),
+            $start-node := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
+            $end-node := commons:get-end-node($start-node),
+            $wrap-in-first-common-ancestor-only := false(),
+            $include-start-and-end-nodes := true(),
+            $empty-ancestor-elements-to-include := ("")
+            
+        return
+            fragment:get-fragment-from-doc(
+                $node,
+                $start-node,
+                $end-node,
+                $wrap-in-first-common-ancestor-only,
+                $include-start-and-end-nodes,
+                $empty-ancestor-elements-to-include)
+    else
+        ()
+};
+
+declare function local:has-text-content($tei-xml-base-uri as xs:string,
+    $page as xs:string,
+    $text-type as xs:string)
+as xs:boolean {
+    exists(doc($tei-xml-base-uri)/tei:TEI//tei:text[@type = $text-type]/descendant::tei:pb[@n = $page])
 };
 
 declare function commons:add-IDs($nodes as node()*)
@@ -208,4 +231,56 @@ declare %private function local:create-textgrid-session-id() {
     return
         $sid
 
+};
+
+declare function commons:compress-to-zip($uri as xs:string)
+as xs:string* {
+    if (commons:does-zip-need-update()) then
+        let $zip := compression:zip(xs:anyURI($uri), false())
+        return
+            ( 
+                commons:make-last-zip-created(),
+                xmldb:store-as-binary("/db/data", "ahikar-json.zip", $zip)
+            )
+    else
+        ()
+};
+
+declare function commons:does-zip-need-update()
+as xs:boolean {
+    let $last-zip-created := commons:get-last-zip-created()
+    let $latest-last-modified := commons:get-latest-lastModified()
+            
+    return
+        if (not(exists($last-zip-created))
+        or ($last-zip-created lt $latest-last-modified)) then
+            true()
+        else
+            false()
+};
+
+declare function commons:make-last-zip-created() {
+    let $contents :=
+        <last-created>
+            {current-dateTime()}
+        </last-created>
+    return
+        xmldb:store("/db/data", "last-zip-created.xml", $contents)
+};
+
+declare function commons:get-last-zip-created()
+as xs:dateTime? {
+    xs:dateTime(doc("/db/data/last-zip-created.xml")/last-created)
+};
+
+declare function commons:get-latest-lastModified()
+as xs:dateTime {
+    let $last-modifieds := collection($commons:meta)//tgmd:lastModified
+    let $sorted-modifieds :=
+        for $date in $last-modifieds
+        order by $date descending
+        return
+            $date
+    return
+        $sorted-modifieds[1]
 };
