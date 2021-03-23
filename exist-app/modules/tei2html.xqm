@@ -126,7 +126,7 @@ as xs:string {
     let $element-name := $element/local-name()
     let $attribute-values :=
         for $attr in $element/(@* except @id) return
-            if ($attr = "color(red)") then
+            if (contains($attr, "red")) then
                 "red"
             else
                 $attr
