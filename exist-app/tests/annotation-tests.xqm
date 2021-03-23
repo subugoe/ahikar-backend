@@ -138,17 +138,19 @@ as map() {
 };
 
 declare
-    %test:args("sample_teixml", "82a") %test:assertXPath("$result//* = 'حقًا'")
+    %test:args("sample_teixml", "82a", "transcription") %test:assertXPath("$result//* = 'حقًا'")
+    %test:args("sample_teixml", "82a", "transliteration") %test:assertXPath("$result//* = 'الحاسوب'")
 function at:get-page-fragment($documentURI as xs:string,
-    $page as xs:string)
+    $page as xs:string,
+    $text-type as xs:string)
 as element(tei:TEI) {
-    anno:get-page-fragment($documentURI, $page)
+    anno:get-page-fragment($documentURI, $page, $text-type)
 };
 
 declare
-    %test:args("sample_main_edition") %test:assertEquals("435")
-    %test:args("syriac") %test:assertEquals("145")
-    %test:args("arabic-karshuni") %test:assertEquals("290")
+    %test:args("sample_main_edition") %test:assertEquals("214")
+    %test:args("syriac") %test:assertEquals("81")
+    %test:args("arabic-karshuni") %test:assertEquals("133")
 function at:get-total-no-of-annotations($uri as xs:string) {
     anno:get-total-no-of-annotations($uri)
 };
@@ -268,7 +270,8 @@ as map() {
 };
 
 declare
-    %test:args("sample_teixml", "83b") %test:assertXPath("count($result) = 62")
+    %test:args("sample_teixml", "83b") %test:assertXPath("count($result) = 25")
+    %test:args("sample_syriac_teixml", "86r") %test:assertXPath("count($result) = 5")
 function at:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()+ {
@@ -281,7 +284,7 @@ declare
 function at:get-annotations-detailed-body($teixml-uri as xs:string,
     $page as xs:string)
 as map() {
-    let $result-map := anno:get-annotations($teixml-uri, $page)
+    let $result-map := anno:get-annotations($teixml-uri, $page)[1]
     let $bodyValue := map:get($result-map, "body")
     return
         $bodyValue
@@ -293,7 +296,7 @@ declare
 function at:get-annotations-detailed-id($teixml-uri as xs:string,
     $page as xs:string)
 as xs:string {
-    let $result-map := anno:get-annotations($teixml-uri, $page)
+    let $result-map := anno:get-annotations($teixml-uri, $page)[1]
     let $id := map:get($result-map, "id")
     return
         $id
@@ -305,7 +308,7 @@ declare
 function at:get-annotations-detailed-target($teixml-uri as xs:string,
     $page as xs:string)
 as map() {
-    let $result-map := anno:get-annotations($teixml-uri, $page)
+    let $result-map := anno:get-annotations($teixml-uri, $page)[1]
     let $target := map:get($result-map, "target")
     return
         $target

@@ -106,7 +106,18 @@ declare
      : no further tests are needed since the content has been tested while testing
      : the underlying function. :)
     %test:assertXPath("$result//*[@class = 'tei_body']")
-function tt:content-rest() as document-node() {
+function tt:content-transliteration-rest() as document-node() {
+    let $url := $tc:server || "/content/transliteration/sample_teixml-82a.html"
+    let $req := tc:make-request($url)
+    return http:send-request($req)[2]
+};
+
+declare
+    (: check if tei:div is present.
+     : no further tests are needed since the content has been tested while testing
+     : the underlying function. :)
+    %test:assertXPath("$result//*[@class = 'tei_body']")
+function tt:content-transcription-rest() as document-node() {
     let $url := $tc:server || "/content/transcription/sample_teixml-82a.html"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]

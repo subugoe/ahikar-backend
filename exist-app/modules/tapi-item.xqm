@@ -59,21 +59,24 @@ declare function tapi-item:make-content-array($collection-type as xs:string,
     $page as xs:string,
     $server as xs:string)
 as array(*) {
-    if ($collection-type = "syriac") then
-        array {
-            map {
-                "url": $server || "/api/content/transcription/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
-                "type": "application/xhtml+xml;type=transcription"
+    let $xml-doc := commons:get-tei-xml-for-manifest($manifest-uri)
+    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
+    return
+        if ($langs = "karshuni") then
+            array {
+                for $html-type in ("transcription", "transliteration") return
+                    map {
+                        "url": $server || "/api/content/" || $html-type || "/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
+                        "type": "application/xhtml+xml;type=" || $html-type
+                    }
             }
-        }
-    else
-        array {
-            for $html-type in ("transcription", "transliteration") return
+        else
+            array {
                 map {
-                    "url": $server || "/api/content/" || $html-type || "/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
-                    "type": "application/xhtml+xml;type=" || $html-type
+                    "url": $server || "/api/content/transcription/" || commons:get-xml-uri($manifest-uri) || "-" || $page || ".html",
+                    "type": "application/xhtml+xml;type=transcription"
                 }
-        }
+            }
 };
 
 
