@@ -91,8 +91,9 @@ declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
 as element() {
     if (local:has-text-content($tei-xml-base-uri, $page, $text-type)) then
         let $node := doc($tei-xml-base-uri)/tei:TEI
+            => tokenize:main()
             => commons:add-IDs()
-            => tokenize:main(),
+            ,
             $start-node := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
             $end-node := commons:get-end-node($start-node),
             $wrap-in-first-common-ancestor-only := false(),
