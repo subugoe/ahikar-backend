@@ -233,10 +233,16 @@ declare %private function local:create-textgrid-session-id() {
 
 };
 
-declare function commons:compress-to-zip($uri as xs:string)
+declare function commons:compress-to-zip($collection-uri as xs:string)
 as xs:string* {
     if (commons:does-zip-need-update()) then
-        let $zip := compression:zip(xs:anyURI($uri), false())
+        let $valid-uris := 
+            for $doc in collection($collection-uri) return
+                if (contains(base-uri($doc), "sample")) then
+                    ()
+                else
+                    xs:anyURI(base-uri($doc))
+        let $zip := compression:zip($valid-uris, false())
         return
             ( 
                 commons:make-last-zip-created(),
