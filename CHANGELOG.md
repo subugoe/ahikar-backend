@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- sample data is no longer considered when creating the JSOn files needed for the collation.
+- sample data is no longer considered when creating the JSON files needed for the collation.
 
 ## [5.5.2] - 2021-03-23
 
