@@ -29,8 +29,7 @@ function t:create-json-collection-if-not-available() {
 };
 
 declare
-    %test:assertXPath("count($result) gt 1")
-    %test:assertXPath("$result/local-name() = 'TEI'")
+    %test:assertXPath("count($result) = 0") (: in the test environment we only have sample data which should be excluded :)
 function t:get-teis() {
     tei2json:get-teis()
 };
