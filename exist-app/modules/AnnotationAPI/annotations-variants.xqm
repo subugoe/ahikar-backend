@@ -11,6 +11,7 @@ declare function vars:get-variants($teixml-uri as xs:string,
 as map()* {
     let $tokens-on-page := vars:get-token-ids-on-page($teixml-uri, $page)
     let $idno := vars:determine-idno($teixml-uri)
+    let $sigil := map:get($commons:idno-to-sigils-map, $idno)
     return
         ()
 };
@@ -25,7 +26,7 @@ as xs:string+ {
 
 declare function vars:determine-idno($teixml-uri as xs:string)
 as xs:string {
-    let $TEI := commons:open-tei-xml($tei-xml-uri)//tei:TEI
+    let $TEI := commons:open-tei-xml($teixml-uri)//tei:TEI
     return
         commons:make-id-from-idno($TEI)
 };
