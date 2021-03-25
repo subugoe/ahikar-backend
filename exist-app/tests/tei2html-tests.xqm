@@ -106,6 +106,34 @@ as xs:string {
 };
 
 declare
+    %test:assertFalse
+function t2ht:make-class-attributes-reds()
+as xs:boolean {
+    let $element1 :=
+        <ab xmlns="http://www.tei-c.org/ns/1.0">
+            <hi rend="color(red)">
+                a line
+            </hi>
+        </ab>
+    let $element2 :=
+        <ab xmlns="http://www.tei-c.org/ns/1.0">
+            <hi rend="#red">
+                a line
+            </hi>
+        </ab>
+    let $element3 :=
+        <ab xmlns="http://www.tei-c.org/ns/1.0">
+            <hi rendition="#red">
+                a line
+            </hi>
+        </ab>
+    let $values := for $e in ($element1, $element2, $element3) return
+        tei2html:make-class-attribute-values($e/tei:hi)
+    return
+        $values != "hi red"
+};
+
+declare
     %test:assertXPath("$result[local-name(.) = 'div']")
     %test:assertXPath("$result/text() = 'a line'")
 function t2ht:ab()

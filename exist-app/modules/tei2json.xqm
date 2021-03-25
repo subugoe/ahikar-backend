@@ -131,7 +131,7 @@ as element(tei:TEI)+ {
 
 declare function tei2json:get-teis()
 as element(tei:TEI)* {
-    collection($commons:data)//tei:TEI
+    collection($commons:data)[not(contains(base-uri(.), "sample"))]//tei:TEI
 };
 
 
