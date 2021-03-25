@@ -385,15 +385,7 @@ as map() {
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
-    let $xml-doc := commons:open-tei-xml($teixml-uri)
-    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
-    let $pageChunks := 
-        if ($langs = "karshuni") then
-            (commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription"),
-            commons:get-page-fragment-from-uri($teixml-uri, $page, "transliteration"))
-        else
-            commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription")
-
+    let $pageChunks := commons:get-transcription-and-transliteration-per-page($teixml-uri, $page)
     
     let $annotation-elements := 
         for $chunk in $pageChunks return

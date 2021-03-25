@@ -75,6 +75,19 @@ as xs:string* {
                 ()
 };
 
+declare function commons:get-transcription-and-transliteration-per-page($teixml-uri as xs:string,
+    $page as xs:string)
+as element(tei:TEI)+ {
+    let $xml-doc := commons:open-tei-xml($teixml-uri)
+    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
+    return
+        if ($langs = "karshuni") then
+            (commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription"),
+            commons:get-page-fragment-from-uri($teixml-uri, $page, "transliteration"))
+        else
+            commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription")
+};
+
 (:~
  : Returns a single page from a TEI resource, i.e. all content from the given $page
  : up to the next page break.

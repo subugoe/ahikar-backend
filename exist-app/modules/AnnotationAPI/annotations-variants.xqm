@@ -17,22 +17,9 @@ as map()* {
 declare function vars:get-token-ids-on-page($teixml-uri as xs:string,
     $page as xs:string)
 as xs:string+ {
-    let $page-chunks := vars:get-page-chunks($teixml-uri, $page)
+    let $page-chunks := commons:get-transcription-and-transliteration-per-page($teixml-uri, $page)
     return
         $page-chunks//tei:w/@id
-};
-
-declare function vars:get-page-chunks($teixml-uri as xs:string,
-    $page as xs:string)
-as element(tei:TEI)+ {
-    let $xml-doc := commons:open-tei-xml($teixml-uri)
-    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
-    return
-        if ($langs = "karshuni") then
-            (commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription"),
-            commons:get-page-fragment-from-uri($teixml-uri, $page, "transliteration"))
-        else
-            commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription")
 };
 
 declare function vars:determine-sigil-position($sigil as xs:string,
