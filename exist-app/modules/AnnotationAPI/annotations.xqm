@@ -389,10 +389,10 @@ as map()* {
     let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
     let $pageChunks := 
         if ($langs = "karshuni") then
-            (anno:get-page-fragment($teixml-uri, $page, "transcription"),
-            anno:get-page-fragment($teixml-uri, $page, "transliteration"))
+            (commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription"),
+            commons:get-page-fragment-from-uri($teixml-uri, $page, "transliteration"))
         else
-            anno:get-page-fragment($teixml-uri, $page, "transcription")
+            commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription")
 
     
     let $annotation-elements := 
@@ -409,23 +409,6 @@ as map()* {
                 "body": anno:get-body-object($annotation),
                 "target": anno:get-target-information($annotation, $teixml-uri, $id)
             }
-};
-
-
-(:~
- : Returns a single page from a TEI resource, i.e. all content from the given $page
- : up to the next page break.
- : 
- : @param $documentURI The resource's URI. Attention: This refers to the TEI file itself!
- : @param $page The page to be returned as tei:pb/@n/string()
- :)
-declare function anno:get-page-fragment($documentURI as xs:string,
-    $page as xs:string,
-    $text-type as xs:string)
-as element(tei:TEI)? {
-    let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
-    return
-        commons:get-page-fragment($nodeURI, $page, $text-type)
 };
 
 (:~

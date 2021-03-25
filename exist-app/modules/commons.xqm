@@ -76,6 +76,22 @@ as xs:string* {
 };
 
 (:~
+ : Returns a single page from a TEI resource, i.e. all content from the given $page
+ : up to the next page break.
+ : 
+ : @param $documentURI The resource's URI
+ : @param $page The page to be returned as tei:pb/@n/string()
+ :)
+declare function commons:get-page-fragment-from-uri($documentURI as xs:string,
+    $page as xs:string,
+    $text-type as xs:string)
+as element(tei:TEI)? {
+    let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
+    return
+        commons:get-page-fragment($nodeURI, $page, $text-type)
+};
+
+(:~
  : Returns a given page from a requested TEI document and from the requested text type.
  : In some cases the requested text type isn't available or doesn't have any text, so that
  : no page fragment can be retrieved.
