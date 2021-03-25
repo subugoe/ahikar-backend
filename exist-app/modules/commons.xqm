@@ -22,6 +22,49 @@ declare variable $commons:appHome := "/db/apps/ahikar";
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
 
+declare variable $commons:idno-to-sigils-map :=
+    map {
+        "Borg_ar_201": "Borg. ar. 201",
+        "Add_2020": "C",
+        "Sachau_162": "S",
+        "syr_611": "K",
+        "syr_612": "I",
+        "syr_434": "B",
+        "Add_7200": "L",
+        "Brit_Mus_Add_7209": "Brit. Add. 7209",
+        "Brit_Libr_Or_9321": "Brit. Or. 9321",
+        "Cambrigde_Add_3497": "Cam. Add. 3497",
+        "Camb_Add_2886": "Cam. Add. 2886",
+        "Cod_Arab_236": "Cod. Arab. 236",
+        "Paris_Arabe_3637": "Paris. ar. 3637",
+        "Sachau_290_Sachau_339": "Sach. 339",
+        "DFM_00614": "DFM 614",
+        "GCAA_00486": "GCAA 486",
+        "Mingana_syr_133": "Ming. syr. 133",
+        "Mingana_ar_christ_93_84": "Ming. ar. 93",
+        "Mingana_Syr_258": "Ming. syr. 258",
+        "433": "M",
+        "Ms_orient_A_2652": "Gotha 2652",
+        "430": "D",
+        "Or_1292b": "Leiden Or. 1292",
+        "Paris_Arabe_3656": "Paris. ar. 3656",
+        "syr_422": "N",
+        "Sado_no_9": "P",
+        "Salhani": "Salhani",
+        "Sbath_25": "Sbath 25",
+        "Ar_7/229": "A",
+        "Manuscrit_4122": "T",
+        "Or_2313": "O",
+        "Syr_80": "H",
+        "162": "J",
+        "Sachau_336": "U",
+        "Vat_ar_74_Scandar_40": "Vat. ar. 74",
+        "Vat_ar_2054": "Vat. ar. 2054",
+        "Vat_sir_159": "Vat. syr. 159",
+        "Vat_sir_199": "Vat. syr. 199",
+        "Vat_sir_424": "Vat. syr. 424"
+    };
+
 declare variable $commons:responseHeader200 :=
     <rest:response>
         <http:response xmlns:http="http://expath.org/ns/http-client" status="200">
