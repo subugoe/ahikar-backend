@@ -8,12 +8,13 @@ import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons"
 
 declare function vars:get-variants($teixml-uri as xs:string,
     $page as xs:string)
-as map()* {
+(:as map()* {:)
+{
     let $tokens-on-page := vars:get-token-ids-on-page($teixml-uri, $page)
     let $idno := vars:determine-idno($teixml-uri)
     let $sigil := map:get($commons:idno-to-sigils-map, $idno)
     return
-        ()
+        $tokens-on-page
 };
 
 declare function vars:get-token-ids-on-page($teixml-uri as xs:string,
@@ -21,7 +22,7 @@ declare function vars:get-token-ids-on-page($teixml-uri as xs:string,
 as xs:string+ {
     let $page-chunks := commons:get-transcription-and-transliteration-per-page($teixml-uri, $page)
     return
-        $page-chunks//tei:w/@id
+        $page-chunks//tei:w/@xml:id
 };
 
 declare function vars:determine-idno($teixml-uri as xs:string)
