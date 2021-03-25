@@ -17,3 +17,11 @@ function t:get-token-ids-on-page($teixml-uri as xs:string,
 as xs:string+ {
     vars:get-token-ids-on-page($teixml-uri, $page)
 };
+
+
+declare
+    %test:args("sample_teixml") %test:assertEquals("Add_2020")
+function t:determine-idno($teixml-uri as xs:string)
+as xs:string {
+    vars:determine-idno($teixml-uri)
+};

@@ -10,6 +10,7 @@ declare function vars:get-variants($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
     let $tokens-on-page := vars:get-token-ids-on-page($teixml-uri, $page)
+    let $idno := vars:determine-idno($teixml-uri)
     return
         ()
 };
@@ -20,6 +21,13 @@ as xs:string+ {
     let $page-chunks := commons:get-transcription-and-transliteration-per-page($teixml-uri, $page)
     return
         $page-chunks//tei:w/@id
+};
+
+declare function vars:determine-idno($teixml-uri as xs:string)
+as xs:string {
+    let $TEI := commons:open-tei-xml($tei-xml-uri)//tei:TEI
+    return
+        commons:make-id-from-idno($TEI)
 };
 
 declare function vars:determine-sigil-position($sigil as xs:string,

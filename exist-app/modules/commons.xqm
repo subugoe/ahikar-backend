@@ -363,3 +363,13 @@ as xs:dateTime {
     return
         $sorted-modifieds[1]
 };
+
+declare function commons:make-id-from-idno($TEI as element(tei:TEI))
+as xs:string {
+    let $idno := $TEI//tei:sourceDesc//tei:msIdentifier/tei:idno
+    return
+        replace($idno, "\.", "")
+        => replace("[\(\)=\[\]]", " ")
+        => normalize-space()
+        => replace(" ", "_")
+};
