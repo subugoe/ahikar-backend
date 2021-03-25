@@ -185,7 +185,14 @@ as xs:string+ {
 declare function tei2json:get-relevant-text($tokenized-teis as element(tei:TEI)+,
     $id as xs:string)
 as element(tei:text)* {
-    let $relevant-text := $tokenized-teis[descendant::tei:msIdentifier/tei:idno = $id or matches(descendant::tei:editor, $id)]
+    let $relevant-text := 
+        for $tei in $tokenized-teis return
+            let $idno := commons:make-id-from-idno($tei)
+            return
+                if ($idno = $id or matches($tei/descendant::tei:editor, $id)) then
+                    $tei
+                else
+                    ()
     let $texts-with-milestone := $relevant-text//tei:text[tei2json:has-text-milestone(.)]
     return
         (: karshuni :)
@@ -251,7 +258,7 @@ as map() {
     (: only the relevant next nodes have been tokenized and enclosed by a tei:w,
      : so no need for filtering them again. :)
     let $tokens := $chunk//tei:w
-    let $witness-id := $text/ancestor::tei:TEI//tei:msIdentifier/tei:idno/string()
+    let $witness-id := commons:make-id-from-idno($text/ancestor::tei:TEI)
     return
         tei2json:make-map-per-witness($witness-id, $tokens)
 };
