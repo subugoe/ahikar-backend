@@ -117,7 +117,6 @@ as xs:string+ {
         commons:make-id-from-idno($TEI)
 };
 
-
 declare function local:get-sample-tei()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
@@ -194,4 +193,3 @@ as element(tei:TEI) {
         </teiHeader>
     </TEI>
 };
-
