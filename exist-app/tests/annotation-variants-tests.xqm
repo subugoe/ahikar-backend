@@ -25,3 +25,19 @@ function t:determine-idno($teixml-uri as xs:string)
 as xs:string {
     vars:determine-idno($teixml-uri)
 };
+
+declare 
+    %test:args("Sachau_336") %test:assertXPath("count($result) = 5")
+function t:get-relevant-files($idno as xs:string)
+as item()+ {
+    vars:get-relevant-files($idno)
+};
+
+declare
+    %test:args("Ar_7229") %test:assertEquals("9")
+function t:determine-id-position($idno as xs:string)
+as xs:string {
+    let $json := vars:get-relevant-files($idno)
+    return
+        vars:determine-id-position($idno, $json[1])
+};
