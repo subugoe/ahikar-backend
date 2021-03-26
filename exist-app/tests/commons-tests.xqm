@@ -86,3 +86,91 @@ function ct:get-metadata-file($uri as xs:string)
 as document-node() {
     commons:get-metadata-file($uri)
 };
+
+declare
+    %test:assertXPath("$result = 'Add_2020'")
+    %test:assertXPath("$result = 'Sachau_290_Sachau_339'")
+    %test:assertXPath("$result = 'Mingana_ar_christ_93_84'")
+function ct:make-id-from-idno()
+as xs:string+ {
+    let $TEIs := (local:get-sample-tei(), local:get-tei-header-1(), local:get-tei-header-2())
+    for $TEI in $TEIs return
+        commons:make-id-from-idno($TEI)
+};
+
+declare function local:get-sample-tei()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <titleStmt>
+                    <title>Title</title>
+                </titleStmt>
+                <publicationStmt>
+                    <p>Publication Information</p>
+                </publicationStmt>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <institution>University of Cambridge - Cambridge University Library</institution>
+                            <idno>Add. 2020</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
+       <text>
+            <group>
+                <text xml:lang="ara" type="transliteration">
+                    <body>
+                        <milestone unit="first_narrative_section"/>
+                        <ab>Daß alle <sic>unsere</sic> Erkenntnis mit der <surplus>einen</surplus> Erfahrung anfange<supplied>,</supplied> daran </ab>
+                                
+                        <milestone unit="sayings"/>
+                        <ab>Wenn <unclear>aber</unclear> gleich alle unsere Erkenntnis mit der Erfahrung anhebt<g>,</g> so entspringt sie<note>die Erkenntnis</note> darum <w type="colophon">doch nicht eben</w></ab>
+                        
+                        
+                        <milestone unit="second_narrative_section"/>
+                        <ab><catchwords>Es ist also wenigstens eine der näheren Untersuchung noch benötigte und nicht auf den</catchwords></ab> 
+                    </body>
+                </text>
+            </group>
+        </text>
+    </TEI>
+};
+
+declare function local:get-tei-header-1()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <institution>University of Cambridge - Cambridge University Library</institution>
+                            <idno>Sachau 290 (=Sachau 339)</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
+    </TEI>
+};
+
+declare function local:get-tei-header-2()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <institution>University of Cambridge - Cambridge University Library</institution>
+                            <idno>Mingana ar. christ. 93[84]</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
+    </TEI>
+};
