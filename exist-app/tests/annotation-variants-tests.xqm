@@ -34,6 +34,7 @@ as item()+ {
 };
 
 declare
+    %test:pending
     %test:args("Ar_7229") %test:assertEquals("9")
 function t:determine-id-position($idno as xs:string)
 as xs:string {
