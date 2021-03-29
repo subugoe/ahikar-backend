@@ -274,6 +274,7 @@ get-collation-results:
     - 'curl --output jobs.json "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/pipelines/$PIPELINE_ID/jobs?private_token=$GITLAB_TOKEN"'
     - RELEVANT_JOB_ID=$(jq ".[]|select(.stage==\"summarize\")" < jobs.json | jq .id)
     - 'curl --output collation-results.zip "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/jobs/$RELEVANT_JOB_ID/artifacts?private_token=$GITLAB_TOKEN"'
+    - rm -rf backend/exist-app/data/collation-results
     - unzip -u -d backend/exist-app/data/collation-results collation-results.zip
     - cd backend
     - git add exist-app/data/collation-results/* && git commit -m "update collation results" && git push
