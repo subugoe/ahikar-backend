@@ -113,7 +113,7 @@ as xs:string+ {
 };
 
 declare function tei2json:remove-old-jsons()
-as xs:string {
+as item() {
     xmldb:remove($commons:tg-collection || "/json")
 };
 
