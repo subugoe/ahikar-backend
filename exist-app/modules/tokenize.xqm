@@ -13,11 +13,13 @@ xquery version "3.1";
 
 module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize";
 
+import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
+
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 declare function tokenize:main($TEI as element(tei:TEI))
 as element(tei:TEI) {
-    let $id-prefix := tokenize:get-id-prefix($TEI)
+    let $id-prefix := commons:make-id-from-idno($TEI)
     let $enhanced-texts :=
         for $text in $TEI//tei:group/tei:text return
             tokenize:add-ids($text, $id-prefix)
@@ -30,16 +32,6 @@ as element(tei:TEI) {
                 }
             }
         }
-};
-
-declare function tokenize:get-id-prefix($TEI as element(tei:TEI))
-as xs:string {
-    let $idno := $TEI//tei:sourceDesc//tei:msIdentifier/tei:idno
-    return
-        replace($idno, "\.", "")
-        => replace("[\(\)=\[\]]", " ")
-        => normalize-space()
-        => replace(" ", "_")
 };
 
 declare function tokenize:add-ids($nodes as node()*,
@@ -75,7 +67,8 @@ as xs:boolean {
             [not(ancestor::tei:g)]
             [not(ancestor::tei:unclear)]
             [not(ancestor::tei:catchwords)]
-            [not(ancestor::tei:note)]) then
+            [not(ancestor::tei:bibl)]
+            [not(ancestor::tei:note) or ancestor::tei:quote]) then
         true()
     else
         false()
