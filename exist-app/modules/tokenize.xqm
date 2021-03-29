@@ -67,7 +67,8 @@ as xs:boolean {
             [not(ancestor::tei:g)]
             [not(ancestor::tei:unclear)]
             [not(ancestor::tei:catchwords)]
-            [not(ancestor::tei:note)]) then
+            [not(ancestor::tei:bibl)]
+            [not(ancestor::tei:note) or ancestor::tei:quote]) then
         true()
     else
         false()
