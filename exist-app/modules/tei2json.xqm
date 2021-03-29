@@ -53,7 +53,7 @@ declare variable $tei2json:lines-of-transmission :=
             "433"
         ],
         [
-            "Ar_7229",
+            "Ar_7/229",
             "Sachau_162", 
             "162",
             "Or_2313", 
