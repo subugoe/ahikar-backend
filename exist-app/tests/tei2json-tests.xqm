@@ -22,8 +22,8 @@ function t:main() {
 
 declare
     %test:assertTrue
-function t:create-json-collection-if-not-available() {
-    let $create-collection := tei2json:create-json-collection-if-not-available()
+function t:create-json-collection() {
+    let $create-collection := tei2json:create-json-collection()
     return
         xmldb:collection-available("/db/data/textgrid/json")
 };
