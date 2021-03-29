@@ -107,7 +107,7 @@ declare variable $tei2json:lines-of-transmission :=
 declare function tei2json:main()
 as xs:string+ {
     tei2json:remove-old-jsons(),
-    tei2json:create-json-collection,
+    tei2json:create-json-collection(),
     tei2json:tokenize-teis()
     => tei2json:make-jsons-per-section-and-transmission-line()
 };
