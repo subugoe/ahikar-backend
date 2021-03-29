@@ -308,21 +308,21 @@ declare %private function local:create-textgrid-session-id() {
 
 declare function commons:compress-to-zip($collection-uri as xs:string)
 as xs:string* {
-    if (commons:does-zip-need-update()) then
-        let $valid-uris := 
-            for $doc in collection($collection-uri) return
-                if (contains(base-uri($doc), "sample")) then
-                    ()
-                else
-                    xs:anyURI(base-uri($doc))
+(:    if (commons:does-zip-need-update()) then:)
+(:        let $valid-uris := :)
+(:            for $doc in collection($collection-uri) return:)
+(:                if (contains(base-uri($doc), "sample")) then:)
+(:                    ():)
+(:                else:)
+(:                    xs:anyURI(base-uri($doc)):)
         let $zip := compression:zip($valid-uris, false())
         return
             ( 
-                commons:make-last-zip-created(),
+(:                commons:make-last-zip-created(),:)
                 xmldb:store-as-binary("/db/data", "ahikar-json.zip", $zip)
             )
-    else
-        ()
+(:    else:)
+(:        ():)
 };
 
 declare function commons:does-zip-need-update()
