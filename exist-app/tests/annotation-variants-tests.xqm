@@ -34,10 +34,9 @@ as item()+ {
 };
 
 declare
-    %test:pending
-    %test:args("Ar_7229") %test:assertEquals("9")
+    %test:args("Ar_7/229") %test:assertEquals("4")
 function t:determine-id-position($idno as xs:string)
-as xs:string {
+as xs:integer {
     let $json := vars:get-relevant-files($idno)
     return
         vars:determine-id-position($idno, $json[1])

@@ -35,7 +35,8 @@ as xs:string {
 };
 
 declare function vars:determine-id-position($idno as xs:string,
-    $json as map(*)) {
+    $json as map(*))
+as xs:integer {
     let $witnesses := map:get($json, "witnesses")
     return
         index-of($witnesses?*, $idno)
@@ -46,7 +47,7 @@ as item()+ {
     let $collation-collection := collection("/db/apps/ahikar/data/collation-results")
     let $relevant-base-uris :=
         for $doc in $collation-collection return
-            if(matches(base-uri($doc), $idno) 
+            if(matches(base-uri($doc), replace($idno, "/", "")) 
             and matches(base-uri($doc), "json")) then
                 base-uri($doc)
             else
