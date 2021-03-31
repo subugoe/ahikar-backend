@@ -68,13 +68,6 @@ as item()+ {
         => parse-json()
 };
 
-declare function vars:determine-files-relevant-for-tokens($idno as xs:string,
-    $tokens as xs:string+) {
-    let $files-relevant-for-idno := vars:get-relevant-files($idno)
-    for $file in $files-relevant-for-idno return
-        for $t in $tokens return
-            commons:find-in-map($file, $t)
-};
 
 declare function vars:get-files-relevant-for-page($relevant-files-for-idno as map()+,
     $idno-position as xs:integer,
