@@ -138,9 +138,19 @@ as map() {
 };
 
 declare
-    %test:args("sample_main_edition") %test:assertEquals("214")
-    %test:args("syriac") %test:assertEquals("81")
-    %test:args("arabic-karshuni") %test:assertEquals("133")
+    %test:args("sample_teixml", "82a", "transcription") %test:assertXPath("$result//* = 'حقًا'")
+    %test:args("sample_teixml", "82a", "transliteration") %test:assertXPath("$result//* = 'الحاسوب'")
+function at:get-page-fragment($documentURI as xs:string,
+    $page as xs:string,
+    $text-type as xs:string)
+as element(tei:TEI) {
+    anno:get-page-fragment($documentURI, $page, $text-type)
+};
+
+declare
+    %test:args("sample_main_edition") %test:assertEquals("476")
+    %test:args("syriac") %test:assertEquals("185")
+    %test:args("arabic-karshuni") %test:assertEquals("291")
 function at:get-total-no-of-annotations($uri as xs:string) {
     anno:get-total-no-of-annotations($uri)
 };
@@ -260,8 +270,8 @@ as map() {
 };
 
 declare
-    %test:args("sample_teixml", "83b") %test:assertXPath("count($result) = 25")
-    %test:args("sample_syriac_teixml", "86r") %test:assertXPath("count($result) = 5")
+    %test:args("sample_teixml", "83b") %test:assertXPath("count($result) = 80")
+    %test:args("sample_syriac_teixml", "86r") %test:assertXPath("count($result) = 9")
 function at:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()+ {
@@ -306,7 +316,7 @@ as map() {
 
 declare
     %test:args("sample_edition", "82a") %test:assertEquals("0")
-    %test:args("sample_edition", "82b") %test:assertEquals("11")
+    %test:args("sample_edition", "82b") %test:assertEquals("22")
 function at:determine-start-index-for-page($uri as xs:string,
     $page as xs:string)
 as xs:integer {
