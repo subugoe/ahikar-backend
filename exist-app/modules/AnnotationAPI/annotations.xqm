@@ -264,11 +264,8 @@ as map() {
             anno:find-in-map($anno:uris, $document) => anno:get-all-xml-uris-for-submap()
     let $annotations :=
         for $xml in $xmls return
-            for $page in anno:get-pages-in-TEI($xml)return
-                (
-                    anno:get-annotations($xml, $page),
-                    vars:get-variants($xml, $page)
-                )
+            for $page in anno:get-pages-in-TEI($xml) return
+                anno:make-complete-annotations($xml, $page)
     
     return
         map {
@@ -378,7 +375,7 @@ as map() {
                     "next":         $nextPageURL,
                     "prev":         $prevPageURL,
                     "startIndex":   anno:determine-start-index-for-page($document, $page),
-                    "items":        (anno:get-annotations($xml, $page), vars:get-variants($xml, $page))
+                    "items":        anno:make-complete-annotations($xml, $page)
                 }
         }
 };
@@ -896,4 +893,23 @@ as xs:integer {
             count($doc//*[name(.) = $name][.[ancestor::tei:text[1] = $currentPb/ancestor::tei:text[1]] << $currentPb])
     return
         sum($noOfAnnotationsPerElement)
+};
+
+(:~
+ : Gets a complete list of all relevant annotations per page.
+ : 
+ : @param $teixml-uri The current document's URI, e.g. "12345"
+ : @param $page The current page
+ : @return A sequence of maps containing the annotations
+ :)
+declare function anno:make-complete-annotations($teixml-uri as xs:string,
+    $page as xs:string)
+as map(*)* {
+    anno:get-annotations($teixml-uri, $page),
+    (: the sample data has to be excluded here since it doesn't have any variants
+    and no CollateX output. :)
+    if (starts-with(map:get($anno:lang-aggs, "syriac"), "sample")) then
+        ()
+    else
+        vars:get-variants($teixml-uri, $page)
 };

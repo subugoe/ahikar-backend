@@ -190,7 +190,7 @@ declare function vars:get-indices-relevant-for-page($table as array(*),
     $sequence-no as xs:integer,
     $ms-id-position as xs:integer,
     $tokens as xs:string+)
-as xs:integer* {
+as xs:integer+ {
     for $iii in 1 to $sequence-no return
         let $sequence-entry := $table?($iii)
         let $ms-id-entry := $sequence-entry?($ms-id-position)
