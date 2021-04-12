@@ -18,6 +18,7 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
 import module namespace functx = "http://www.functx.com";
+import module namespace vars="http://ahikar.sub.uni-goettingen.de/ns/annotations/variants" at "annotations-variants.xqm";
 
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
@@ -264,7 +265,10 @@ as map() {
     let $annotations :=
         for $xml in $xmls return
             for $page in anno:get-pages-in-TEI($xml)return
-                anno:get-annotations($xml, $page)
+                (
+                    anno:get-annotations($xml, $page),
+                    vars:get-variants($xml, $page)
+                )
     
     return
         map {
@@ -374,7 +378,7 @@ as map() {
                     "next":         $nextPageURL,
                     "prev":         $prevPageURL,
                     "startIndex":   anno:determine-start-index-for-page($document, $page),
-                    "items":        anno:get-annotations($xml, $page)
+                    "items":        (anno:get-annotations($xml, $page), vars:get-variants($xml, $page))
                 }
         }
 };

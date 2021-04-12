@@ -7,7 +7,66 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
 import module namespace functx = "http://www.functx.com";
 
+declare variable $vars:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
+
 declare function vars:get-variants($teixml-uri as xs:string,
+    $page as xs:string) {
+    let $variants-per-page-as-maps := vars:get-maps-for-variants-on-page($teixml-uri, $page)
+    
+    for $map in $variants-per-page-as-maps
+        let $id := map:get($map, "current") => map:get("id")
+        return
+            (map {
+                "id": $vars:ns || "/" || $teixml-uri || "/annotation-variants-" || $id,
+                "type": "Annotation",
+                "body": vars:get-body-object($map),
+                "target": vars:get-target-information($map, $teixml-uri, $id)
+            },
+            $map)
+};
+
+declare function vars:get-body-object($map as map(*))
+as map() {
+    map {
+        "type": "TextualBody",
+        "value": vars:make-annotation-value($map),
+        "format": "text/plain",
+        "x-content-type": "Variant"
+    }
+};
+
+declare function vars:make-annotation-value($map as map(*))
+as map(*)+ {
+    for $variant in map:get($map, "variants") return
+        let $entry := map:get($variant, "entry") 
+        let $witness := map:get($variant, "witness")
+        return
+            map {
+                "entry": if ($entry instance of xs:string) then $entry else "omisit",
+                "witness": map:get($commons:idno-to-sigils-map, $witness)
+            }
+};
+
+declare function vars:get-target-information($map as map(*),
+    $teixml-uri as xs:string,
+    $id as xs:string)
+as map(*) {
+    map {
+        "id": $vars:ns || "/" || $teixml-uri || "/"|| $id,
+        "format": "text/xml",
+        "language": vars:get-target-language($teixml-uri)
+    }
+};
+
+declare function vars:get-target-language($teixml-uri as xs:string)
+as xs:string {
+    let $doc := commons:open-tei-xml($teixml-uri)
+    let $language := $doc//tei:text[@xml:lang][matches(descendant::text(), "[\w]")]/@xml:lang
+    return
+        $language
+};
+
+declare function vars:get-maps-for-variants-on-page($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
     let $tokens := vars:get-token-ids-on-page($teixml-uri, $page)
