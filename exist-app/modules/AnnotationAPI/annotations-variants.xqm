@@ -10,19 +10,19 @@ import module namespace functx = "http://www.functx.com";
 declare variable $vars:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
 declare function vars:get-variants($teixml-uri as xs:string,
-    $page as xs:string) {
-    let $variants-per-page-as-maps := vars:get-maps-for-variants-on-page($teixml-uri, $page)
+    $page as xs:string)
+as map(*)* {
+    let $variants := vars:get-variants-on-page-as-maps($teixml-uri, $page)
     
-    for $map in $variants-per-page-as-maps
+    for $map in $variants
         let $id := map:get($map, "current") => map:get("id")
         return
-            (map {
+            map {
                 "id": $vars:ns || "/" || $teixml-uri || "/annotation-variants-" || $id,
                 "type": "Annotation",
                 "body": vars:get-body-object($map),
                 "target": vars:get-target-information($map, $teixml-uri, $id)
-            },
-            $map)
+            }
 };
 
 declare function vars:get-body-object($map as map(*))
@@ -66,26 +66,23 @@ as xs:string {
         $language
 };
 
-declare function vars:get-maps-for-variants-on-page($teixml-uri as xs:string,
+declare function vars:get-variants-on-page-as-maps($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
-    let $tokens := vars:get-token-ids-on-page($teixml-uri, $page)
-    
     let $ms-id := vars:get-ms-id-from-idno($teixml-uri)
     let $relevant-files-for-ms-id := vars:get-relevant-files($ms-id)
-    
     let $ms-id-position := vars:determine-id-position($ms-id, $relevant-files-for-ms-id[1])
-    
+    let $tokens := vars:get-token-ids-on-page($teixml-uri, $page)
     let $files-relevant-for-page := vars:get-files-relevant-for-page($relevant-files-for-ms-id, $ms-id-position, $tokens)
     
     for $file in $files-relevant-for-page return
         let $table := map:get($file, "table")
-        let $sequence-no := array:size($table)
-        let $indices-relevant-for-page := vars:get-indices-relevant-for-page($table, $sequence-no, $ms-id-position, $tokens)
+        let $no-of-sequence := array:size($table)
+        let $indices-relevant-for-page := vars:get-indices-relevant-for-page($table, $no-of-sequence, $ms-id-position, $tokens)
         let $non-ms-id-positions := vars:get-non-ms-id-positions-in-array($file, $ms-id-position)
         
         for $iii in $indices-relevant-for-page return
-            vars:make-map-for-token($file, $table, $iii, $sequence-no, $ms-id-position, $non-ms-id-positions)
+            vars:make-map-for-token($file, $table, $iii, $no-of-sequence, $ms-id-position, $non-ms-id-positions)
 };
 
 
