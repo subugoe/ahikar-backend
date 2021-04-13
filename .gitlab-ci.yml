@@ -103,10 +103,7 @@ load_frontend-all:
     - cp Qviewer/dist/* docker/frontend/syriac
     - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
     - cp Qviewer/dist/* docker/frontend/arabic-karshuni
-    # check if the CSS has been updated
-    - MD5OLD=$(md5sum exist-app/data/ahikar.css | cut -d ' ' -f 1)
-    - MD5NEW=$(md5sum ahikar.css | cut -d ' ' -f 1)
-    - if [ "$MD5OLD" != "MD5NEW" ]; then echo "CSS needs to be updated"; else echo "CSS doesn't need to be updated"; fi
+    - bash ci-scripts/update-css.sh
   artifacts:
     paths:
       - docker/frontend/
