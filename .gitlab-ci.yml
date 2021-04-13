@@ -42,6 +42,11 @@ include:
 - git config --global user.email "ahiqar-backend@gitlab.gwdg.de"
 - git config --global user.name "Gitlab CI"
 
+.http-status: &http-status
+- STATUS=$(echo $HEADER | head -n 1 | cut -d" " -f 2)
+- echo "Current HTTP status is $STATUS."
+- if [[ "$STATUS" != "200" ]]; then exit 1; fi
+
 ## JOBS
 
 test_exist_app:
@@ -195,9 +200,7 @@ deploy_app-test:
     # switch off per-version deployment. cf. https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/126
     # - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy/version/$VERSION)
     - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
-    - STATUS=$(echo $HEADER | head -n 1 | cut -d" " -f 2)
-    - echo "Current HTTP status is $STATUS."
-    - if [[ "$STATUS" != "200" ]]; then exit 1; fi
+    - *http-status
   dependencies: []
 
 deploy_app-dev:
@@ -209,9 +212,7 @@ deploy_app-dev:
     name: ahikar-dev
   script:
     - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
-    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
-    - echo "Current HTTP status is $status."
-    - if [[ "$status" != "200" ]]; then exit 1; fi
+    - *http-status
   dependencies: []
 
 deploy_app-main:
@@ -224,9 +225,7 @@ deploy_app-main:
     name: ahikar
   script:
     - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
-    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
-    - echo "Current HTTP status is $status."
-    - if [[ "$status" != "200" ]]; then exit 1; fi
+    - *http-status
   dependencies: []
 
 # when a git flow release is made, a tag will be pushed starting this job. it
