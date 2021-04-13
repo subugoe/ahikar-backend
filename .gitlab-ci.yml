@@ -33,6 +33,15 @@ include:
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
 
+.git: &git
+- eval $(ssh-agent -s)
+- echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
+- mkdir -p ~/.ssh
+- chmod 700 ~/.ssh
+- ssh-keyscan gitlab.gwdg.de  >> ~/.ssh/known_hosts
+- git config --global user.email "ahiqar-backend@gitlab.gwdg.de"
+- git config --global user.name "Gitlab CI"
+
 ## JOBS
 
 test_exist_app:
@@ -84,17 +93,10 @@ build_exist_app:
 load_frontend-all:
   image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
   stage: build
-  before_script:
-    - eval $(ssh-agent -s)
-    - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - ssh-keyscan gitlab.gwdg.de  >> ~/.ssh/known_hosts
-    - git config --global user.email "ahiqar-backend@gitlab.gwdg.de"
-    - git config --global user.name "Gitlab CI"
   variables:
     FRONTEND_REPO_ID: "9882"
   script:
+    - *git
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
     - unzip frontend.zip
     - mkdir -p docker/frontend
@@ -262,14 +264,6 @@ deploy_app-main:
 get-collation-results:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: collation
-  before_script:
-    - eval $(ssh-agent -s)
-    - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - ssh-keyscan gitlab.gwdg.de  >> ~/.ssh/known_hosts
-    - git config --global user.email "ahiqar-backend@gitlab.gwdg.de"
-    - git config --global user.name "Gitlab CI"
   rules:
     - if: '$UPDATE == "true"'
     - if: '$UPSTREAM_COMMIT_SHA'
@@ -277,6 +271,7 @@ get-collation-results:
   variables:
     COLLATEX_REPO_ID: "10514"
   script:
+    - *git
     - mkdir -p /tmp/this && cd /tmp/this
     - git clone git@gitlab.gwdg.de:subugoe/ahiqar/backend.git
     - 'curl --output jobs.json "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/pipelines/$PIPELINE_ID/jobs?private_token=$GITLAB_TOKEN"'
