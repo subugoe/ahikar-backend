@@ -211,7 +211,7 @@ deploy_app-dev:
   environment:
     name: ahikar-dev
   script:
-    - header=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
+    - HEADER=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
     - *http-status
   dependencies: []
 
@@ -224,7 +224,7 @@ deploy_app-main:
   environment:
     name: ahikar
   script:
-    - header=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
+    - HEADER=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
     - *http-status
   dependencies: []
 
