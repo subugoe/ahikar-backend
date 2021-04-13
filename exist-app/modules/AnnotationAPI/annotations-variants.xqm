@@ -66,11 +66,22 @@ as xs:string {
         $language
 };
 
+(:~
+ : Returns a map holding the current token as well as all its resp. variants per
+ : page. The exact value of the current token depends on the manuscript we are
+ : currently looking at.
+ : 
+ : @param $teixml-uri The current TEI document's base URI, e.g. "12345"
+ : @param $page The page as given in tei:pb/@n
+ : @return A map with information about the current token and its variants 
+ :)
 declare function vars:get-variants-on-page-as-maps($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
     let $ms-id := vars:get-ms-id-from-idno($teixml-uri)
     let $relevant-files-for-ms-id := vars:get-relevant-files($ms-id)
+    (: the MS identifier position is the same in all relevant files, so we simply
+    choose the first for looking it up :)
     let $ms-id-position := vars:determine-id-position($ms-id, $relevant-files-for-ms-id[1])
     let $tokens := vars:get-token-ids-on-page($teixml-uri, $page)
     let $files-relevant-for-page := vars:get-files-relevant-for-page($relevant-files-for-ms-id, $ms-id-position, $tokens)
@@ -82,11 +93,13 @@ as map()* {
         let $non-ms-id-positions := vars:get-non-ms-id-positions-in-array($file, $ms-id-position)
         
         for $iii in $indices-relevant-for-page return
-            vars:make-map-for-token($file, $table, $iii, $no-of-sequence, $ms-id-position, $non-ms-id-positions)
+            vars:make-map-for-token($file, $table, $iii, $ms-id-position, $non-ms-id-positions)
 };
 
 
-(:~ Each token is encoded in a tei:w which has an @xml:id attribute.
+(:~ 
+ : Each token (= relevant word) is encoded in a tei:w which has an @xml:id
+ : attribute.
  : 
  : @param $teixml-uri The base URI of the document, e.g. "12345"
  : @param $page The current page as provided in tei:pb/@n
@@ -106,6 +119,16 @@ as xs:string {
         commons:make-id-from-idno($TEI)
 };
 
+(:~
+ : In the CollateX results, we first have an aray of witnesses before the result
+ : of the collation is given in the JSON file. The position of a MS identifier
+ : in this array is reflected in the collation result; The witness on position 2
+ : will always have its tokens in the second position of the result.
+ : 
+ : @param $ms-id The MS identifier as given in the array of witnesses
+ : @param $json The collation result as JSON
+ : @return The position of the current MS identifier in the witnesses array
+ :)
 declare function vars:determine-id-position($ms-id as xs:string,
     $json as map(*))
 as xs:integer {
@@ -139,8 +162,8 @@ as map()+ {
     let $last-token := $tokens[last()]
     for $file in $relevant-files-for-ms-id return
         let $table := map:get($file, "table")
-        let $sequence-no := array:size($table)
-        for $iii in 1 to $sequence-no return
+        let $no-of-sequences := array:size($table)
+        for $iii in 1 to $no-of-sequences return
             let $sequence-entry := $table?($iii)
             let $ms-id-entry := $sequence-entry?($ms-id-position)
             let $this-manuscripts-ids :=
@@ -183,12 +206,22 @@ as array(*) {
         $sequence-entry?($witness-position)
 };
 
+(:~
+ : Returns a sequence of index positions that are relevant for the current witness.
+ : If a witness doesn't have an entry in the collation result or if the entry is
+ : not on the current page, no index position is returned.
+ : 
+ : @param $table The CollateX results
+ : @param $no-of-sequences The number of result sequences in $table
+ : @param $ms-id-position An integer determining which position within the result entry is relevant for the current witness
+ : @param $tokens A list of tokens relevant for the current page
+ :)
 declare function vars:get-indices-relevant-for-page($table as array(*),
-    $sequence-no as xs:integer,
+    $no-of-sequences as xs:integer,
     $ms-id-position as xs:integer,
     $tokens as xs:string+)
 as xs:integer+ {
-    for $iii in 1 to $sequence-no return
+    for $iii in 1 to $no-of-sequences return
         let $sequence-entry := $table?($iii)
         let $ms-id-entry := $sequence-entry?($ms-id-position)
         return
@@ -199,10 +232,17 @@ as xs:integer+ {
                 ()
 };
 
+(:~
+ : Creates a map in for every token on a page in which all variants are listed.
+ :
+ : @param $table The CollateX results
+ : @param $no-of-sequences The number of result sequences in $table
+ : @param $ms-id-position An integer determining which position within the result entry is relevant for the current witness
+ : @param $tokens A list of tokens relevant for the current page
+ :)
 declare function vars:make-map-for-token($file as map(),
     $table as array(*),
     $entry-pos as xs:integer,
-    $sequence-no as xs:integer,
     $ms-id-position as xs:integer,
     $non-ms-id-positions as xs:integer*)
 as map(*) {
