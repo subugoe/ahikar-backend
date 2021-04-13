@@ -50,7 +50,7 @@ test_exist_app:
     - if [[ "$status" != "200" ]]; then exit 1; fi
     - curl http://localhost:8080/exist/restxq/trigger-tests
     - bash exist-app/test/bin/shutdown.sh
-    - failures=$(./get-unit-test-failures-and-errors.sh)
+    - failures=$(.bash ci-scripts/get-unit-test-failures-and-errors.sh)
     - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
     - if [[ "$failures" -gt 0 || ! -f "exist-app/test/ahikar-test-results.xml" ]]; then exit 1; else exit 0; fi
   artifacts:
@@ -277,7 +277,6 @@ get-collation-results:
   variables:
     COLLATEX_REPO_ID: "10514"
   script:
-    - wkdir=$(pwd)
     - mkdir -p /tmp/this && cd /tmp/this
     - git clone git@gitlab.gwdg.de:subugoe/ahiqar/backend.git
     - 'curl --output jobs.json "https://gitlab.gwdg.de/api/v4/projects/$COLLATEX_REPO_ID/pipelines/$PIPELINE_ID/jobs?private_token=$GITLAB_TOKEN"'
