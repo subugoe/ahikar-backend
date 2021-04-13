@@ -106,7 +106,7 @@ load_frontend-all:
     # check if the CSS has been updated
     - MD5OLD=$(md5sum exist-app/data/ahikar.css | cut -d ' ' -f 1)
     - MD5NEW=$(md5sum ahikar.css | cut -d ' ' -f 1)
-    - if [ "$MD5OLD" != "MD5NEW" ]; then echo "CSS needs to be updated"; else echo "CSS doesn't need to be updated"; if
+    - if [ "$MD5OLD" != "MD5NEW" ]; then echo "CSS needs to be updated"; else echo "CSS doesn't need to be updated"; fi
   artifacts:
     paths:
       - docker/frontend/
