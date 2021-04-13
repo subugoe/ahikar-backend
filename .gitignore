@@ -16,6 +16,7 @@ docker/frontend
 # exclude local scripts
 *.sh
 !get-unit-test-failures-and-errors.sh
+!ci-scripts/update-css.sh
 
 # exlude data for commitizen
 node_modules
