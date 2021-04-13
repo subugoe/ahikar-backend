@@ -9,6 +9,8 @@ if [ "$MD5OLD" != "$MD5NEW" ]; then
     mkdir -p /tmp/this && cd /tmp/this || exit
     git clone git@gitlab.gwdg.de:subugoe/ahiqar/backend.git
     ls "$WKDIR"
+    echo "current dir"
+    ls
     mv "$WKDIR"/ahikar.css exist-app/data/ahikar.css
     git add exist-app/data/ahikar.css && git commit -m "update CSS" && git push
 else
