@@ -1,5 +1,35 @@
 xquery version "3.1";
 
+(:~
+ : This module is responsible for retrieving the variants of a given text on a
+ : given page. For this, it leverages the tokenization of the text that takes
+ : place during commons:get-page-fragment.
+ : 
+ : The output of the main function, vars:get-variants, is a sequence of maps of
+ : the following format:
+ : 
+ : map {
+ :  "body" 
+ :  map {
+ :      "x-content-type" : "Variant",
+ :      "value" : [ map {
+ :          "entry" : "${text-of-respective-witness}",
+ :          "witness" : "${ms-id}"
+ :      }],
+ :      "format" : "text/plain",
+ :      "type" : "TextualBody"
+ :    },
+ :    "target" : map {
+ :      "format" : "text/xml",
+ :      "language" : "syc",
+ :      "id" : "http://ahikar.sub.uni-goettingen.de/ns/annotations/${teixml-uri}/${token-id}"
+ :    },
+ :    "type" : "Annotation",
+ :    "id" : "http://ahikar.sub.uni-goettingen.de/ns/annotations/${teixml-uri}/annotation-variants-${token-id}"
+ : }
+ : 
+ :)
+
 module namespace vars="http://ahikar.sub.uni-goettingen.de/ns/annotations/variants";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
