@@ -257,7 +257,7 @@ function tmt:make-current-location-4() {
 
 
 declare
-    %test:assertXPath("array:get($result, 1) => map:get('id') = 'CC-BY-SA-4.0'")
+    %test:assertXPath("array:get($result, 1) => map:get('id') = 'CC-BY-SA-4.0 (https://creativecommons.org/licenses/by-sa/4.0/legalcode)'")
 function tmt:get-license-info-provided() {
     let $tei-xml := doc("/db/data/textgrid/data/sample_teixml.xml")
     return
