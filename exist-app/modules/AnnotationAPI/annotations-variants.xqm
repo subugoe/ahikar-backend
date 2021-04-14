@@ -198,8 +198,8 @@ as xs:integer+ {
 };
 
 declare function vars:get-witness-entry($table as array(*),
-    $entry-no as xs:string,
-    $witness-position as xs:string)
+    $entry-no as xs:integer,
+    $witness-position as xs:integer)
 as array(*) {
     let $sequence-entry := $table?($entry-no)
     return
