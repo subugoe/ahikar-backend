@@ -352,5 +352,6 @@ as item()+ {
         <http:response xmlns:http="http://expath.org/ns/http-client" status="{$http-status}">
             <http:header name="Access-Control-Allow-Origin" value="*"/>
         </http:response>
-    </rest:response>
+    </rest:response>,
+    "This is the end point for the status code " || $http-status
 };
