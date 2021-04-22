@@ -28,7 +28,6 @@ import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-te
 import module namespace t2jt="http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests" at "../tests/tei2json-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
 import module namespace tokt="http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" at "../tests/tokenize-tests.xqm";
-import module namespace ht="http://ahikar.sub.uni-goettingen.de/ns/http-headers/tests" at "../tests/http-headers-tests.xqm";
 
 (: modules that need credentials for the tests to work :)
 import module namespace titemtc="http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests/credentials" at "../tests/tapi-item-tests-credentials-needed.xqm";
@@ -85,7 +84,6 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/http-headers/tests")),
         (: tests with credentials needed :)
         if (environment-variable("TGLOGIN")) then
             (
@@ -117,7 +115,6 @@ as element()+ {
 declare function local:get-human-readable-pkg-name($package as xs:string)
 as xs:string? {
     switch ($package)
-        case "http://ahikar.sub.uni-goettingen.de/ns/http-headers/tests" return "HTTP Headers"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" return "TextAPI general"
         case "http://ahikar.sub.uni-goettingen.de/ns/commons-tests" return "Commons"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests" return "TextAPI Collections"
