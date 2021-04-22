@@ -468,10 +468,10 @@ as xs:string {
     let $value :=
         typeswitch ( $annotation )
         case element(tei:persName) return
-            "A person's name."
+            $annotation/string()
             
         case element(tei:placeName) return
-            "A place's name."
+            $annotation/string()
             
         case element(tei:add) return
             "an addition. text: " || $annotation || ", place: " || $annotation/@place
