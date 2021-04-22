@@ -17,6 +17,7 @@ declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace test="http://exist-db.org/xquery/xqsuite";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
+declare namespace http = "http://expath.org/ns/http-client";
 
 import module namespace tapi-coll="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection" at "tapi-collection.xqm";
 import module namespace tapi-item="http://ahikar.sub.uni-goettingen.de/ns/tapi/item" at "tapi-item.xqm";
@@ -27,6 +28,7 @@ import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace tei2html="http://ahikar.sub.uni-goettingen.de/ns/tei2html" at "tei2html.xqm";
 import module namespace tei2json="http://ahikar.sub.uni-goettingen.de/ns/tei2json" at "tei2json.xqm";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "tapi-html.xqm";
+import module namespace head="http://ahikar.sub.uni-goettingen.de/ns/http-headers" at "/db/apps/ahikar/modules/http-headers.xqm";
 
 declare variable $tapi:server :=
     if(requestr:hostname() = "existdb") then
@@ -315,4 +317,40 @@ as item()+ {
                 <http:header name="Access-Control-Allow-Origin" value="*"/>
             </http:response>
         </rest:response>
+};
+
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/textapi/http-status-test/collection/collection.json")
+    %output:method("json")
+function tapi:http-endpoint-collection()
+as item()+ {
+    $commons:responseHeader200,
+    head:get-collection()
+};
+
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/textapi/http-status-test/collection/manifest/manifest.json")
+    %output:method("json")
+function tapi:http-endpoint-manifest()
+as item()+ {
+    $commons:responseHeader200,
+    head:get-manifest()
+};
+
+declare
+    %rest:GET
+    %rest:HEAD
+    %rest:path("/textapi/http-status-test/collection/manifest/{$http-status}/latest/item.json")
+    %output:method("json")
+function tapi:http-endpoint-item($http-status as xs:string)
+as item()+ {
+    <rest:response>
+        <http:response xmlns:http="http://expath.org/ns/http-client" status="{$http-status}">
+            <http:header name="Access-Control-Allow-Origin" value="*"/>
+        </http:response>
+    </rest:response>
 };
