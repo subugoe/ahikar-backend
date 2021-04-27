@@ -85,7 +85,7 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("A place's name.")
+    %test:assertEquals("ܐܬܘܪ")
 function at:anno-get-body-value()
 as xs:string {
     let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
@@ -271,7 +271,7 @@ as map()+ {
 
 declare
     %test:args("sample_teixml", "84a")
-    %test:assertXPath("map:get($result, 'value') = 'A person''s name.'")
+    %test:assertXPath("map:get($result, 'value') = 'ܢܕܢ܂'")
 function at:get-annotations-detailed-body($teixml-uri as xs:string,
     $page as xs:string)
 as map() {
