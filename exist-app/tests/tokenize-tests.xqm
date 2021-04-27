@@ -20,6 +20,7 @@ function t:main() {
         deep-equal(tokenize:main($src-TEI), $target-TEI)
 };
 
+
 declare
     %test:assertXPath("$result/local-name() = 'ab' and count($result//text()) = 2 ")
 function t:add-ids-single-node()
@@ -99,6 +100,42 @@ as element(tei:TEI) {
                 </text>
             </group>
         </text>
+    </TEI>
+};
+
+declare function local:get-tei-header-1()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <institution>University of Cambridge - Cambridge University Library</institution>
+                            <idno>Sachau 290 (=Sachau 339)</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
+    </TEI>
+};
+
+declare function local:get-tei-header-2()
+as element(tei:TEI) {
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <sourceDesc>
+                    <msDesc>
+                        <msIdentifier>
+                            <institution>University of Cambridge - Cambridge University Library</institution>
+                            <idno>Mingana ar. christ. 93[84]</idno>
+                        </msIdentifier>
+                    </msDesc>
+                </sourceDesc>
+            </fileDesc>
+        </teiHeader>
     </TEI>
 };
 

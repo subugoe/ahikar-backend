@@ -106,23 +106,18 @@ declare variable $tei2json:lines-of-transmission :=
 
 declare function tei2json:main()
 as xs:string+ {
-    tei2json:remove-old-jsons(),
-    tei2json:create-json-collection(),
+    tei2json:create-json-collection-if-not-available(),
     tei2json:tokenize-teis()
     => tei2json:make-jsons-per-section-and-transmission-line()
 };
 
-declare function tei2json:remove-old-jsons()
-as item()? {
-    if (xmldb:collection-available($commons:tg-collection || "/json")) then
-        xmldb:remove($commons:tg-collection || "/json")
-    else
-        ()
-};
 
-declare function tei2json:create-json-collection()
+declare function tei2json:create-json-collection-if-not-available()
 as xs:string {
-    xmldb:create-collection($commons:tg-collection, "json")
+    if (xmldb:collection-available($commons:json)) then
+        $commons:json
+    else
+        xmldb:create-collection($commons:tg-collection, "json")
 };
 
 
