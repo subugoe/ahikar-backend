@@ -15,7 +15,6 @@ import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
 import module namespace at="http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" at "../tests/annotation-tests.xqm";
-import module namespace av="http://ahikar.sub.uni-goettingen.de/ns/annotations/variants/tests" at "../tests/annotation-variants-tests.xqm";
 import module namespace art="http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" at "../tests/annotation-rest-tests.xqm";
 import module namespace ct="http://ahikar.sub.uni-goettingen.de/ns/commons-tests" at "../tests/commons-tests.xqm";
 import module namespace tct="http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests" at "../tests/tapi-collection-tests.xqm";
@@ -80,7 +79,6 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/variants/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests")),
@@ -128,7 +126,6 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" return "TEI2HTML text processing"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" return "TXT normalization"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"
-        case "http://ahikar.sub.uni-goettingen.de/ns/annotations/variants/tests" return "Annotation variants"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" return "AnnotationAPI REST"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests" return "Image Sections"
         case "http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" return "Tokenize"

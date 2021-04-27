@@ -22,49 +22,6 @@ declare variable $commons:appHome := "/db/apps/ahikar";
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
 
-declare variable $commons:idno-to-sigils-map :=
-    map {
-        "Borg_ar_201": "Borg. ar. 201",
-        "Add_2020": "C",
-        "Sachau_162": "S",
-        "syr_611": "K",
-        "syr_612": "I",
-        "syr_434": "B",
-        "Add_7200": "L",
-        "Brit_Mus_Add_7209": "Brit. Add. 7209",
-        "Brit_Libr_Or_9321": "Brit. Or. 9321",
-        "Cambrigde_Add_3497": "Cam. Add. 3497",
-        "Camb_Add_2886": "Cam. Add. 2886",
-        "Cod_Arab_236": "Cod. Arab. 236",
-        "Paris_Arabe_3637": "Paris. ar. 3637",
-        "Sachau_290_Sachau_339": "Sach. 339",
-        "DFM_00614": "DFM 614",
-        "GCAA_00486": "GCAA 486",
-        "Mingana_syr_133": "Ming. syr. 133",
-        "Mingana_ar_christ_93_84": "Ming. ar. 93",
-        "Mingana_Syr_258": "Ming. syr. 258",
-        "433": "M",
-        "Ms_orient_A_2652": "Gotha 2652",
-        "430": "D",
-        "Or_1292b": "Leiden Or. 1292",
-        "Paris_Arabe_3656": "Paris. ar. 3656",
-        "syr_422": "N",
-        "Sado_no_9": "P",
-        "Salhani": "Salhani",
-        "Sbath_25": "Sbath 25",
-        "Ar_7/229": "A",
-        "Manuscrit_4122": "T",
-        "Or_2313": "O",
-        "Syr_80": "H",
-        "162": "J",
-        "Sachau_336": "U",
-        "Vat_ar_74_Scandar_40": "Vat. ar. 74",
-        "Vat_ar_2054": "Vat. ar. 2054",
-        "Vat_sir_159": "Vat. syr. 159",
-        "Vat_sir_199": "Vat. syr. 199",
-        "Vat_sir_424": "Vat. syr. 424"
-    };
-
 declare variable $commons:responseHeader200 :=
     <rest:response>
         <http:response xmlns:http="http://expath.org/ns/http-client" status="200">
@@ -118,35 +75,6 @@ as xs:string* {
                 ()
 };
 
-declare function commons:get-transcription-and-transliteration-per-page($teixml-uri as xs:string,
-    $page as xs:string)
-as element(tei:TEI)+ {
-    let $xml-doc := commons:open-tei-xml($teixml-uri)
-    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
-    return
-        if ($langs = "karshuni") then
-            (commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription"),
-            commons:get-page-fragment-from-uri($teixml-uri, $page, "transliteration"))
-        else
-            commons:get-page-fragment-from-uri($teixml-uri, $page, "transcription")
-};
-
-(:~
- : Returns a single page from a TEI resource, i.e. all content from the given $page
- : up to the next page break.
- : 
- : @param $documentURI The resource's URI
- : @param $page The page to be returned as tei:pb/@n/string()
- :)
-declare function commons:get-page-fragment-from-uri($documentURI as xs:string,
-    $page as xs:string,
-    $text-type as xs:string)
-as element(tei:TEI)? {
-    let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
-    return
-        commons:get-page-fragment($nodeURI, $page, $text-type)
-};
-
 (:~
  : Returns a given page from a requested TEI document and from the requested text type.
  : In some cases the requested text type isn't available or doesn't have any text, so that
@@ -163,9 +91,8 @@ declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
 as element() {
     if (local:has-text-content($tei-xml-base-uri, $page, $text-type)) then
         let $node := doc($tei-xml-base-uri)/tei:TEI
-            => tokenize:main()
             => commons:add-IDs()
-            ,
+            => tokenize:main(),
             $start-node := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
             $end-node := commons:get-end-node($start-node),
             $wrap-in-first-common-ancestor-only := false(),
@@ -308,7 +235,7 @@ declare %private function local:create-textgrid-session-id() {
 
 declare function commons:compress-to-zip($collection-uri as xs:string)
 as xs:string* {
-(:    if (commons:does-zip-need-update()) then:)
+    if (commons:does-zip-need-update()) then
         let $valid-uris := 
             for $doc in collection($collection-uri) return
                 if (contains(base-uri($doc), "sample")) then
@@ -318,11 +245,11 @@ as xs:string* {
         let $zip := compression:zip($valid-uris, false())
         return
             ( 
-(:                commons:make-last-zip-created(),:)
+                commons:make-last-zip-created(),
                 xmldb:store-as-binary("/db/data", "ahikar-json.zip", $zip)
             )
-(:    else:)
-(:        ():)
+    else
+        ()
 };
 
 declare function commons:does-zip-need-update()
