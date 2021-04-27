@@ -18,6 +18,7 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
 import module namespace functx = "http://www.functx.com";
+import module namespace vars="http://ahikar.sub.uni-goettingen.de/ns/annotations/variants" at "annotations-variants.xqm";
 
 declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
@@ -263,8 +264,8 @@ as map() {
             anno:find-in-map($anno:uris, $document) => anno:get-all-xml-uris-for-submap()
     let $annotations :=
         for $xml in $xmls return
-            for $page in anno:get-pages-in-TEI($xml)return
-                anno:get-annotations($xml, $page)
+            for $page in anno:get-pages-in-TEI($xml) return
+                anno:make-complete-annotations($xml, $page)
     
     return
         map {
@@ -374,7 +375,7 @@ as map() {
                     "next":         $nextPageURL,
                     "prev":         $prevPageURL,
                     "startIndex":   anno:determine-start-index-for-page($document, $page),
-                    "items":        anno:get-annotations($xml, $page)
+                    "items":        anno:make-complete-annotations($xml, $page)
                 }
         }
 };
@@ -392,15 +393,7 @@ as map() {
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
-    let $xml-doc := commons:open-tei-xml($teixml-uri)
-    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
-    let $pageChunks := 
-        if ($langs = "karshuni") then
-            (anno:get-page-fragment($teixml-uri, $page, "transcription"),
-            anno:get-page-fragment($teixml-uri, $page, "transliteration"))
-        else
-            anno:get-page-fragment($teixml-uri, $page, "transcription")
-
+    let $pageChunks := commons:get-transcription-and-transliteration-per-page($teixml-uri, $page)
     
     let $annotation-elements := 
         for $chunk in $pageChunks return
@@ -416,23 +409,6 @@ as map()* {
                 "body": anno:get-body-object($annotation),
                 "target": anno:get-target-information($annotation, $teixml-uri, $id)
             }
-};
-
-
-(:~
- : Returns a single page from a TEI resource, i.e. all content from the given $page
- : up to the next page break.
- : 
- : @param $documentURI The resource's URI. Attention: This refers to the TEI file itself!
- : @param $page The page to be returned as tei:pb/@n/string()
- :)
-declare function anno:get-page-fragment($documentURI as xs:string,
-    $page as xs:string,
-    $text-type as xs:string)
-as element(tei:TEI)? {
-    let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
-    return
-        commons:get-page-fragment($nodeURI, $page, $text-type)
 };
 
 (:~
@@ -917,4 +893,23 @@ as xs:integer {
             count($doc//*[name(.) = $name][.[ancestor::tei:text[1] = $currentPb/ancestor::tei:text[1]] << $currentPb])
     return
         sum($noOfAnnotationsPerElement)
+};
+
+(:~
+ : Gets a complete list of all relevant annotations per page.
+ : 
+ : @param $teixml-uri The current document's URI, e.g. "12345"
+ : @param $page The current page
+ : @return A sequence of maps containing the annotations
+ :)
+declare function anno:make-complete-annotations($teixml-uri as xs:string,
+    $page as xs:string)
+as map(*)* {
+    anno:get-annotations($teixml-uri, $page),
+    (: the sample data has to be excluded here since it doesn't have any variants
+    and no CollateX output. :)
+    if (starts-with(map:get($anno:lang-aggs, "syriac"), "sample")) then
+        ()
+    else
+        vars:get-variants($teixml-uri, $page)
 };

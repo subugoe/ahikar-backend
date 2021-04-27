@@ -137,15 +137,6 @@ as map() {
     anno:make-annotationCollection-for-manifest($collection, $document, $page, $server)
 };
 
-declare
-    %test:args("sample_teixml", "82a", "transcription") %test:assertXPath("$result//* = 'حقًا'")
-    %test:args("sample_teixml", "82a", "transliteration") %test:assertXPath("$result//* = 'الحاسوب'")
-function at:get-page-fragment($documentURI as xs:string,
-    $page as xs:string,
-    $text-type as xs:string)
-as element(tei:TEI) {
-    anno:get-page-fragment($documentURI, $page, $text-type)
-};
 
 declare
     %test:args("sample_main_edition") %test:assertEquals("476")
@@ -292,7 +283,7 @@ as map() {
 
 declare
     %test:args("sample_teixml", "84a")
-    %test:assertXPath("$result = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/annotation-N4.4.2.4.4.354.2'")
+    %test:assertXPath("$result = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/annotation-N1.2.1.2.3.100.3'")
 function at:get-annotations-detailed-id($teixml-uri as xs:string,
     $page as xs:string)
 as xs:string {

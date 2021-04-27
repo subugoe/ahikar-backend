@@ -88,6 +88,25 @@ as document-node() {
 };
 
 declare
+    %test:args("sample_teixml", "82a", "transcription") %test:assertXPath("$result//* = 'حقًا'")
+    %test:args("sample_teixml", "82a", "transliteration") %test:assertXPath("$result//* = 'الحاسوب'")
+function ct:get-page-fragment($documentURI as xs:string,
+    $page as xs:string,
+    $text-type as xs:string)
+as element(tei:TEI) {
+    commons:get-page-fragment-from-uri($documentURI, $page, $text-type)
+};
+
+declare
+    %test:args("sample_teixml", "82a") %test:assertXPath("count($result) = 2")
+    %test:args("sample_syriac_teixml", "86r") %test:assertXPath("count($result) = 1")
+function ct:get-transcription-and-transliteration-per-page($documentURI as xs:string,
+    $page as xs:string)
+as element(tei:TEI)+ {
+    commons:get-transcription-and-transliteration-per-page($documentURI, $page)
+};
+
+declare
     %test:assertXPath("$result = 'Add_2020'")
     %test:assertXPath("$result = 'Sachau_290_Sachau_339'")
     %test:assertXPath("$result = 'Mingana_ar_christ_93_84'")
