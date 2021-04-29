@@ -822,7 +822,7 @@ as element() {
 
 declare function local:get-reference-file()
 as element() {
-    <xhtml:div xmlns:xhtml="http://www.w3.org/1999/xhtml" id="" class="body syc">
+    <xhtml:div xmlns:xhtml="http://www.w3.org/1999/xhtml" id="" dir="rtl" class="body syc">
         <xhtml:h1 id="N4.4.2.6.4.8" class="head">
             <xhtml:span id="N4.4.2.6.4.8.2" class="hi red">܀ܪܹܫܵܐ ܩܕܡܝܵܐ ܕܬܫܥܝܼܬܼܵܐ
                 <xhtml:span id="N4.4.2.6.4.8.2.3" class="persName">ܕܐܲܚܝܼܩܲܪ܀</xhtml:span>
