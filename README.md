@@ -71,10 +71,12 @@ ant -f exist-app/build.xml xar
 GITLAB_TOKEN=""
 curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/9882/jobs/artifacts/develop/download?job=build" --output frontend.zip
 unzip frontend.zip -d docker/frontend
-mv docker/frontend/Qviewer/dist/spa/* docker/frontend && rm -rf docker/frontend/Qviewer
+mv docker/frontend/Qviewer/dist/* docker/frontend && rm -rf docker/frontend/Qviewer
 ```
 
-### Environment variables
+**Note:** You have to have at least a `Developer` role in the repository in order to do this.
+
+#### Environment variables
 
 To pass credentials to the container, we use the file `ahikar.env` which is not part of this repository. For loading data from TextGrid, this file MUST contain the following parameters:
 
@@ -94,17 +96,26 @@ In addition we use a `.env` file for passing parameters to docker-compose and se
 
 `APP_NAME` will be set here as well. This is used to determine the deployed container (docker-compose APP_NAME) but CAN be used to determine the eXist-db application to load in the environment as the app is named in accordance to this value.
 
-### Building All Docker Container Images
+#### Building All Docker Container Images
 
 ```bash
 docker-compose --env-file docker/.env --file docker/docker-compose.yml build
 ```
 
-### Start the Backend
+#### Start the Backend
 
 ```bash
 docker-compose --env-file docker/.env --file docker/docker-compose.yml up --detach
 ```
+
+**Attention**: Before you execute this command you have to be logged in to the repository's container registry.
+Otherwise Docker won't be able to pull the respective images.
+
+In order to get to eXist-db's dashboard, execute the following steps:
+
+1. `cd docker`
+2. `docker-compose ps`
+3. The port mapped to `8080` is the one mapped to eXist-db. So when the output is `0.0.0.0:49157->8079/tcp,:::49157->8079/tcp, 0.0.0.0:49156->8080/tcp,:::49156->8080/tcp, 8443/tcp`, the correct port for eXist's dashboard is `0.0.0.0:49156`.
 
 ## Architecture
 
