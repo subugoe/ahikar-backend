@@ -21,6 +21,7 @@ declare variable $commons:json := $commons:tg-collection || "/json/";
 declare variable $commons:appHome := "/db/apps/ahikar";
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
+declare variable $commons:anno-ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
 declare variable $commons:responseHeader200 :=
     <rest:response>
@@ -73,6 +74,26 @@ as xs:string* {
                 $unprefixed-uri
             else
                 ()
+};
+
+declare function commons:get-page-fragments($teixml-uri as xs:string,
+    $page as xs:string)
+as element()+ {
+    let $nodeURI := commons:get-document($teixml-uri, "data")/base-uri()
+    let $langs := local:get-languages($teixml-uri)
+    return
+        if ($langs = "karshuni") then
+            (commons:get-page-fragment($nodeURI, $page, "transcription"),
+            commons:get-page-fragment($nodeURI, $page, "transliteration"))
+        else
+            commons:get-page-fragment($nodeURI, $page, "transcription")
+};
+
+declare function local:get-languages($teixml-uri as xs:string)
+as xs:string+ {
+    let $xml-doc := commons:open-tei-xml($teixml-uri)
+    return
+        $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
 };
 
 (:~
