@@ -5,6 +5,85 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.11.2] - 2021-04-29
+
+### Changed
+
+- the ant based approach for installing this project now gets eXist-db from GitHub (and not Bintray).
+
+## [5.11.1] - 2021-04-27
+
+### Removed
+
+- The changes made in [5.11.0](#5110-2021-04-27) have been removed due to performance issues.
+
+## [5.11.0] - 2021-04-27
+
+### Added
+
+- the variants have been added to the AnnotationAPI.
+
+## [5.10.0] - 2021-04-22
+
+### Changed
+
+- introduced a simple collction at `/textapi/http-status-test/collection/collection.json` that has items which return the HTTP status codes `403`, `404`, `405`, `500` and `503`, respectively.
+For this, the unused end points introduced at [5.8.0](#580-2021-04-15) have been removed.
+
+## [5.9.1] - 2021-04-22
+
+### Fixed
+
+- the `Person` and `Place` annotations now provide the actual person/place name in the annotation body instead of a dummy string.
+
+## [5.9.0] - 2021-04-14
+
+### Added
+
+- the license ID for manifests now contains a link to the legal code of the license.
+
+## [5.8.0] - 2021-04-15
+
+### Added
+
+- temporarily added the end points "/http-403", "/http-404", "/http-500", "/http-503" for testing TIDO's behavior when getting these status codes.
+
+## [5.7.1] - 2021-04-13
+
+### Fixed
+
+- the CSS file now updated when changes have been made in ahiqar-tido.
+
+## [5.7.0] - 2021-03-23
+
+### Added
+
+- the editorial comments as well as the references have been added to the AnnotationAPI.
+
+## [5.6.1] - 2021-03-29
+
+### Fixed
+
+- consider encoding for Harvard 80 and references works in tokenization
+
+## [5.6.0] - 2021-03-26
+
+### Changed
+
+- adapt ID/IDNO handling in the JSON creation to how they are handled during the tokenization.
+
+## [5.5.3] - 2021-03-23
+
+### Fixed
+
+- sample data is no longer considered when creating the JSON files needed for the collation.
+
+## [5.5.2] - 2021-03-23
+
+### Fixed
+
+- the HTML creation now reacts gracefully to variations in the rendition attribute for the rubrication.
+
 ## [5.5.1] - 2021-03-22
 
 ### Fixed

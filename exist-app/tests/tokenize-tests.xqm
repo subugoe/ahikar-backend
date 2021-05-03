@@ -20,16 +20,6 @@ function t:main() {
         deep-equal(tokenize:main($src-TEI), $target-TEI)
 };
 
-declare
-    %test:assertXPath("$result = 'Add_2020'")
-    %test:assertXPath("$result = 'Sachau_290_Sachau_339'")
-    %test:assertXPath("$result = 'Mingana_ar_christ_93_84'")
-function t:get-id-prefix()
-as xs:string+ {
-    let $TEIs := (local:get-sample-tei(), local:get-tei-header-1(), local:get-tei-header-2())
-    for $TEI in $TEIs return
-        tokenize:get-id-prefix($TEI)
-};
 
 declare
     %test:assertXPath("$result/local-name() = 'ab' and count($result//text()) = 2 ")

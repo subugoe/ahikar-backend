@@ -5,183 +5,113 @@
     `src/statics/support.css` in the *viewer repo.
 */
 body {
-    background-color: transparent; }
-  
-  .ab {
-    display: block; }
-  
-  .ab .header {
-    font-size: 24px;
-    text-align: center; }
-  
-  .ab .margin-top {
-    margin-top: 16px; }
-  
-  .abbr {
-    color: #0645ad; }
-  
-  .add {
-    color: #003366; }
-  
+  background-color: transparent; }
+
+.ab {
+  display: block; }
+
+.ab .margin-top {
+  margin-top: 16px; }
+
+.ab .header {
+  font-size: 133%;
+  text-align: center; }
+
+.body {
+  text-align: right;
+  width: 100%; }
+
+.catchwords {
+  color: #9D205E; }
+
+.cb {
+  column-span: all; }
+
+.g {
+  color: #400000; }
+
+.gap {
+  color: #714C13; }
+
+.head {
+  font-size: 133%; }
+
+.hi.red {
+  color: #B30000; }
+
+.l {
+  padding-left: 8px; }
+
+.label {
+  margin-right: 8px; }
+
+.no-break,
+.no_break {
+  text-align: center; }
+
+.no-break::before {
+  content: '( '; }
+
+.no_break::after {
+  content: ' )'; }
+
+.lg {
+  padding-left: 8px; }
+
+.note {
+  background: none;
+  color: #0645ad;
+  text-decoration: none; }
+
+.quote {
+  font-style: italic; }
+
+.ref {
+  color: #0645ad; }
+
+.surplus {
+  text-align: center; }
+
+.surplus::before {
+  content: '{ '; }
+
+.surplus::after {
+  content: ' }'; }
+
+.seg {
+  color: #071C40; }
+
+.supplied::before {
+  content: '[ '; }
+
+.supplied::after {
+  content: ' ]'; }
+
+.quote.colophon {
+  color: #700000; }
+
+.lg.colophon {
+  color: #005194; }
+
+.vacant-page {
+  font-style: italic; }
+
+@media (prefers-color-scheme: dark) {
   .catchwords {
-    color: #9D205E; }
-  
-  .cb {
-    column-span: all; }
-  
-  .damage {
-    color: #AD0000; }
-  
-  .del {
-    text-decoration: line-through; }
-  
-  .expan {
-    color: #0645ad;
-    text-decoration: underline; }
-  
-  .g {
-    color: #400000; }
-  
+    color: #EF9AC4; }
   .gap {
-    color: #714C13; }
-  
-  .head {
-    font-size: 24px; }
-  
-  .hi.underline {
-    text-decoration: underline; }
-  
+    color: #D5F72B; }
   .hi.red {
-    color: #B30000; }
-  
-  .hi.italic {
-    font-style: italic; }
-  
-  .l {
-    padding-left: 8px; }
-  
-  .label {
-    margin-right: 8px; }
-  
-  .no-break,
-  .no_break {
-    font-size: 24px;
-    text-align: center; }
-  
-  .no-break::before {
-    content: '( '; }
-  
-  .no_break::after {
-    content: ' )'; }
-  
-  .lg {
-    padding-left: 8px; }
-  
-  /* .milestone {
-  
-  } */
+    color: #F23A3A; }
   .note {
     background: none;
-    color: #0645ad;
+    color: #619EFF;
     text-decoration: none; }
-  
-  .orig {
-    text-decoration: underline 2px solid #0645ad; }
-  
-  /* .pb {
-  
-  } */
-  .quote {
-    font-style: italic; }
-  
   .ref {
-    color: #0645ad; }
-  
+    color: #5895F9; }
   .seg {
-    color: #071C40; }
-  
-  .sic {
-    color: #0645ad; }
-  
-  .supplied {
-    font-size: 24px;
-    text-align: center; }
-  
-  .supplied::before {
-    content: '[ '; }
-  
-  .supplied::after {
-    content: ' ]'; }
-  
-  .persName {
-    background: none;
-    color: #0645ad;
-    text-decoration: none; }
-  
-  .placeName {
-    color: #1E5313; }
-  
-  .surplus {
-    font-size: 24px;
-    text-align: center; }
-  
-  .surplus::before {
-    content: '{ '; }
-  
-  .surplus::after {
-    content: ' }'; }
-  
-  .unclear {
-    border-bottom: 1px dotted #000;
-    text-decoration: none; }
-  
+    color: #FFFFFF; }
   .quote.colophon {
-    color: #700000; }
-  
+    color: #FF6161; }
   .lg.colophon {
-    color: #005194; }
-  
-  .vacant-page {
-    font-style: italic; }
-  
-  @media (prefers-color-scheme: dark) {
-    .abbr {
-      color: #619EFF; }
-    .add {
-      color: #C39928; }
-    .catchwords {
-      color: #EF9AC4; }
-    .damage {
-      color: #F86D6D; }
-    .expan {
-      color: #75A6F5;
-      text-decoration: underline; }
-    .g {
-      color: #61FFFC; }
-    .gap {
-      color: #D5F72B; }
-    .hi.red {
-      color: #F23A3A; }
-    .note {
-      background: none;
-      color: #619EFF;
-      text-decoration: none; }
-    .orig {
-      text-decoration: underline 2px solid #619EFF; }
-    .ref {
-      color: #5895F9; }
-    .seg {
-      color: #FFFFFF; }
-    .sic {
-      color: #5895F9; }
-    .persName {
-      background: none;
-      color: #619EFF;
-      text-decoration: none; }
-    .placeName {
-      color: #47B329; }
-    .quote.colophon {
-      color: #FF6161; }
-    .lg.colophon {
-      color: #1F9AFF; } }
-      
+    color: #1F9AFF; } }

@@ -49,58 +49,58 @@ declare variable $tei2json:milestone-types :=
 declare variable $tei2json:lines-of-transmission :=
     [
         [
-            "Sachau 336",
+            "Sachau_336",
             "433"
         ],
         [
-            "Ar 7/229",
-            "Sachau 162", 
+            "Ar_7/229",
+            "Sachau_162", 
             "162",
-            "Or. 2313", 
-            "Add. 7200", 
-            "Add. 2020",
-            "Sado no. 9",
-            "Manuscrit 4122",
-            "Syr 80"
+            "Or_2313", 
+            "Add_7200", 
+            "Add_2020",
+            "Sado_no_9",
+            "Manuscrit_4122",
+            "Syr_80"
         ],
         [
-            "syr. 434",
-            "syr. 422",
+            "syr_434",
+            "syr_422",
             "430",
-            "syr. 612", 
-            "syr. 611",
+            "syr_612", 
+            "syr_611",
             "Unknown"
         ],
         [
-            "Sbath 25",
-            "Vat. sir. 424", 
-            "Vat. sir. 199"
+            "Sbath_25",
+            "Vat_sir_424", 
+            "Vat_sir_199"
         ],
         [
-            "Vat. ar. 74 (Scandar 40)"
+            "Vat_ar_74_Scandar_40"
         ],
         [
-            "Brit. Mus. Add. 7209", 
-            "Vat. sir. 159", 
-            "Mingana Syr. 258", 
-            "Cod. Arab. 236", 
-            "DFM 00614", 
-            "Sachau 290 (=Sachau 339)", 
-            "Brit. Libr. Or. 9321"
+            "Brit_Mus_Add_7209", 
+            "Vat_sir_159", 
+            "Mingana_Syr_258", 
+            "Cod_Arab_236", 
+            "DFM_00614", 
+            "Sachau_290_Sachau_339", 
+            "Brit_Libr_Or_9321"
         ],
         [
-            "Paris. Arabe 3637", 
-            "Paris Arabe 3656", 
-            "Camb. Add. 2886", 
-            "Mingana ar. christ. 93[84]", 
-            "Mingana syr. 133", 
-            "Vat. ar. 2054", 
-            "GCAA 00486", 
+            "Paris_Arabe_3637", 
+            "Paris_Arabe_3656", 
+            "Camb_Add_2886", 
+            "Mingana_ar_christ_93_84", 
+            "Mingana_syr_133", 
+            "Vat_ar_2054", 
+            "GCAA_00486", 
             "Salhani", 
-            "Borg. ar. 201", 
-            "Or. 1292b", 
-            "Gotha 2652", 
-            "Cambrigde Add. 3497"
+            "Borg_ar_201", 
+            "Or_1292b", 
+            "Ms_orient_A_2652", 
+            "Cambrigde_Add_3497"
         ]
     ];
 
@@ -131,7 +131,7 @@ as element(tei:TEI)+ {
 
 declare function tei2json:get-teis()
 as element(tei:TEI)* {
-    collection($commons:data)//tei:TEI
+    collection($commons:data)[not(contains(base-uri(.), "sample"))]//tei:TEI
 };
 
 
@@ -185,7 +185,14 @@ as xs:string+ {
 declare function tei2json:get-relevant-text($tokenized-teis as element(tei:TEI)+,
     $id as xs:string)
 as element(tei:text)* {
-    let $relevant-text := $tokenized-teis[descendant::tei:msIdentifier/tei:idno = $id or matches(descendant::tei:editor, $id)]
+    let $relevant-text := 
+        for $tei in $tokenized-teis return
+            let $idno := commons:make-id-from-idno($tei)
+            return
+                if ($idno = $id or matches($tei/descendant::tei:editor, $id)) then
+                    $tei
+                else
+                    ()
     let $texts-with-milestone := $relevant-text//tei:text[tei2json:has-text-milestone(.)]
     return
         (: karshuni :)
@@ -251,7 +258,7 @@ as map() {
     (: only the relevant next nodes have been tokenized and enclosed by a tei:w,
      : so no need for filtering them again. :)
     let $tokens := $chunk//tei:w
-    let $witness-id := $text/ancestor::tei:TEI//tei:msIdentifier/tei:idno/string()
+    let $witness-id := commons:make-id-from-idno($text/ancestor::tei:TEI)
     return
         tei2json:make-map-per-witness($witness-id, $tokens)
 };

@@ -29,8 +29,7 @@ function t:create-json-collection-if-not-available() {
 };
 
 declare
-    %test:assertXPath("count($result) gt 1")
-    %test:assertXPath("$result/local-name() = 'TEI'")
+    %test:assertXPath("count($result) = 0") (: in the test environment we only have sample data which should be excluded :)
 function t:get-teis() {
     tei2json:get-teis()
 };
@@ -135,7 +134,7 @@ as xs:boolean {
 };
 
 declare
-    %test:assertXPath("map:get($result, 'id') = 'Borg. ar. 201'")
+    %test:assertXPath("map:get($result, 'id') = 'Borg_ar_201'")
 function t:make-json-per-section()
 as map() {
     let $text := local:get-tokenized-tei-sample-arabic()//tei:text[@xml:lang = "ara" and @type = "transcription"]
@@ -145,7 +144,7 @@ as map() {
 };
 
 declare
-    %test:args("Borg. ar. 201") %test:assertXPath("$result/@type = 'transcription'")
+    %test:args("Borg_ar_201") %test:assertXPath("$result/@type = 'transcription'")
 function t:get-relevant-text-arabic($id as xs:string)
 as element(tei:text)+ {
     let $tokenized-teis := local:get-tokenized-tei-sample-arabic()
@@ -154,7 +153,7 @@ as element(tei:text)+ {
 };
 
 declare
-    %test:args("Borg. ar. 201") %test:assertXPath("$result/@type = 'transcription'")
+    %test:args("Borg_ar_201") %test:assertXPath("$result/@type = 'transcription'")
 function t:get-relevant-text-syriac($id as xs:string)
 as element(tei:text)+ {
     let $tokenized-teis := local:get-tokenized-tei-sample-syriac()
@@ -163,7 +162,7 @@ as element(tei:text)+ {
 };
 
 declare
-    %test:args("Borg. ar. 201") %test:assertXPath("$result/@type = 'transliteration'")
+    %test:args("Borg_ar_201") %test:assertXPath("$result/@type = 'transliteration'")
 function t:get-relevant-text-karshuni($id as xs:string)
 as element(tei:text)+ {
     let $tokenized-teis := local:get-tokenized-tei-sample-karshuni()

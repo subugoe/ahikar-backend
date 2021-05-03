@@ -149,7 +149,7 @@ as array(*) {
                     let $target := $tei-xml//tei:licence/@target
                     return
                         if ($target = "https://creativecommons.org/licenses/by-sa/4.0/") then
-                            "CC-BY-SA-4.0"
+                            "CC-BY-SA-4.0 (https://creativecommons.org/licenses/by-sa/4.0/legalcode)"
                         else
                             "no license provided"
         }
