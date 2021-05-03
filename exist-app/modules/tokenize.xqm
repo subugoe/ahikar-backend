@@ -49,7 +49,7 @@ as node()* {
             ()
             
         case processing-instruction() return
-            ()
+            $node
             
         default return
             element {QName("http://www.tei-c.org/ns/1.0", $node/local-name())} {
