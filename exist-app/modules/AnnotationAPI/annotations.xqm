@@ -18,8 +18,7 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
 import module namespace functx = "http://www.functx.com";
-
-declare variable $anno:ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
+import module namespace motifs="http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs" at "motifs.xqm";
 
 declare variable $anno:annotationElements := 
     (
@@ -189,7 +188,7 @@ as map() {
             "annotationCollection":
                 map {
                     "@context": "http://www.w3.org/ns/anno.jsonld",
-                    "id":       $anno:ns || "/annotationCollection/" || $collection,
+                    "id":       $commons:anno-ns || "/annotationCollection/" || $collection,
                     "type":     "AnnotationCollection",
                     "label":    "Ahikar annotations for textgrid:" || $collection || ": " || $title,
                     "x-creator":  anno:get-creator($collection),
@@ -264,16 +263,17 @@ as map() {
     let $annotations :=
         for $xml in $xmls return
             for $page in anno:get-pages-in-TEI($xml)return
-                anno:get-annotations($xml, $page)
+                (anno:get-annotations($xml, $page),
+                motifs:get-motifs($xml, $page))
     
     return
         map {
             "annotationPage":
                 map {
                     "@context":     "http://www.w3.org/ns/anno.jsonld",
-                    "id":           $anno:ns || "/annotationPage/" || $collection || "/" || $document,
+                    "id":           $commons:anno-ns || "/annotationPage/" || $collection || "/" || $document,
                     "partOf":       map {
-                                        "id": $anno:ns || "/annotationCollection/" || $collection,
+                                        "id": $commons:anno-ns || "/annotationCollection/" || $collection,
                                         "label": "Ahikar annotations for " || $collection,
                                         "total": anno:get-total-no-of-annotations($collection)
                                     },
@@ -313,7 +313,7 @@ as map() {
             "annotationCollection":
                 map {
                     "@context": "http://www.w3.org/ns/anno.jsonld",
-                    "id":       $anno:ns || "/annotationCollection/" || $document || "/" || $page,
+                    "id":       $commons:anno-ns || "/annotationCollection/" || $document || "/" || $page,
                     "type":     "AnnotationCollection",
                     "label":    "Ahikar annotations for textgrid:" || $document || ": " || $title || ", page " || $page,
                     "x-creator":  anno:get-creator($document),
@@ -364,17 +364,17 @@ as map() {
             "annotationPage":
                 map {
                     "@context":     "http://www.w3.org/ns/anno.jsonld",
-                    "id":           $anno:ns || "/annotationPage/" || $collection || "/" || $document || "-" || $page,
+                    "id":           $commons:anno-ns || "/annotationPage/" || $collection || "/" || $document || "-" || $page,
                     "type":         "AnnotationPage",
                     "partOf":       map {
-                                        "id": $anno:ns || "/annotationCollection/" || $document,
+                                        "id": $commons:anno-ns || "/annotationCollection/" || $document,
                                         "label": "Ahikar annotations for textgrid:" || $document || ": " || $docTitle,
                                         "total": anno:get-total-no-of-annotations($document)
                                     },
                     "next":         $nextPageURL,
                     "prev":         $prevPageURL,
                     "startIndex":   anno:determine-start-index-for-page($document, $page),
-                    "items":        anno:get-annotations($xml, $page)
+                    "items":        (anno:get-annotations($xml, $page), motifs:get-motifs($xml, $page))
                 }
         }
 };
@@ -392,18 +392,9 @@ as map() {
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
 as map()* {
-    let $xml-doc := commons:open-tei-xml($teixml-uri)
-    let $langs := $xml-doc//tei:text[@xml:lang[. = ("syc", "ara", "karshuni")]]/@xml:lang/string()
-    let $pageChunks := 
-        if ($langs = "karshuni") then
-            (anno:get-page-fragment($teixml-uri, $page, "transcription"),
-            anno:get-page-fragment($teixml-uri, $page, "transliteration"))
-        else
-            anno:get-page-fragment($teixml-uri, $page, "transcription")
-
-    
+    let $pages := commons:get-page-fragments($teixml-uri, $page)
     let $annotation-elements := 
-        for $chunk in $pageChunks return
+        for $chunk in $pages return
             for $name in $anno:annotationElements return
                 $chunk//*[name(.) = $name]
     
@@ -411,28 +402,11 @@ as map()* {
         let $id := string( $annotation/@id ) (: get the predefined ID from the in-memory TEI with IDs :)
         return
             map {
-                "id": $anno:ns || "/" || $teixml-uri || "/annotation-" || $id,
+                "id": $commons:anno-ns || "/" || $teixml-uri || "/annotation-" || $id,
                 "type": "Annotation",
                 "body": anno:get-body-object($annotation),
                 "target": anno:get-target-information($annotation, $teixml-uri, $id)
             }
-};
-
-
-(:~
- : Returns a single page from a TEI resource, i.e. all content from the given $page
- : up to the next page break.
- : 
- : @param $documentURI The resource's URI. Attention: This refers to the TEI file itself!
- : @param $page The page to be returned as tei:pb/@n/string()
- :)
-declare function anno:get-page-fragment($documentURI as xs:string,
-    $page as xs:string,
-    $text-type as xs:string)
-as element(tei:TEI)? {
-    let $nodeURI := commons:get-document($documentURI, "data")/base-uri()
-    return
-        commons:get-page-fragment($nodeURI, $page, $text-type)
 };
 
 (:~
@@ -608,7 +582,7 @@ declare function anno:get-target-information($annotation as node(),
     $id as xs:string)
 as map(*) {
     map {
-        "id": $anno:ns || "/" || $documentURI || "/"|| $id,
+        "id": $commons:anno-ns || "/" || $documentURI || "/"|| $id,
         "format": "text/xml",
         "language": $annotation/ancestor-or-self::*[@xml:lang][1]/@xml:lang/string()
     }

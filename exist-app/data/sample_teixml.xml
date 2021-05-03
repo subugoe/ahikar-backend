@@ -352,7 +352,8 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <ab>...</ab>
                <pb n="84a"/>
                <ab>some test text</ab>
-               <ab>some test<persName>ܢܕܢ܂</persName></ab>
+               <ab>some test<persName>ܢܕܢ܂</persName>
+                    </ab>
             </body>
          </text>
 
@@ -380,6 +381,9 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                      </choice> ܟܿܬܒܢܐ ܩܲܠܝܼܠ ܡܼܢ ܡ̈ܬܼܠܐ <persName>ܕܐܚܝܼܩܲܪ܆</persName>
                   </hi>
                     </head>
+               <ab>الحكيم الماهر <persName>حيقار</persName> الفارسي.
+                  <?oxy_comment_start author="aelrefa" timestamp="20200625T101505+0200" comment="successful_courtier"?>وكان</ab>
+               <ab>كاتب الملك ومتقدم عنده جدًا<?oxy_comment_end?>.</ab>
                <ab>ܢܒܬܕܝ ܒܥܘܢ ܐܠܒܐܪܝ<add place="interlinear">اختبار</add> ܬܥܐܠܝ ܓܠ ܐܣܡܗ</ab>
                <ab>
                         <lb break="no"/>ܘܬܥܐܠܝ ܕܟܪܗ ܐܠܝ ܐܠܐܒܕ. ܘܢܟܬܒ ܟܒܪ</ab>
@@ -818,7 +822,7 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                <ab> ܘܗܦܟܬ ܛܥܢܬ ܐܰܒܵܪܐ ܘܠܐ ܐܝܼܩܰܪ ܥܠܝ <add place="sidelong">ܐܝܟ</add>
                </ab>
                
-               <pb facs="textgrid:3r85r" n="84a"/>
+               <pb facs="textgrid:3r1nz" n="84a"/>
                <ab>some test text</ab>
               <ab>some test<persName>ܢܕܢ܂</persName>
                     </ab>
