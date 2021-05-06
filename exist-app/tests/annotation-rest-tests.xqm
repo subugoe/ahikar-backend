@@ -155,7 +155,7 @@ declare
     %test:assertTrue
 function art:is-item-annotationPage-endpoint-http200()
 as xs:boolean {
-    let $url := $tc:server || "/annotations/ahikar/arabic-karshuni/sample_edition_karshuni/83a/annotationPage.json"
+    let $url := $tc:server || "/annotations/ahikar/syriac/sample_edition/83a/annotationPage.json"
     return
         tc:is-endpoint-http200($url)
 };
