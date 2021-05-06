@@ -19,8 +19,20 @@ function t:get-motifs()
 as xs:integer {
     let $teixml-uri := "sample_teixml"
     let $page := "82a"
+    let $pages := commons:get-page-fragments($teixml-uri, $page)
     return
-        motifs:get-motifs($teixml-uri, $page)
+        motifs:get-motifs($pages, $teixml-uri)
+        => count()
+};
+
+declare
+    %test:assertEquals("1")
+function t:get-all-motifs-in-document()
+as xs:integer {
+    let $teixml-uri := "sample_teixml"
+    let $xml-doc := commons:open-tei-xml($teixml-uri)
+    return
+        motifs:get-all-motifs-in-document($xml-doc, $teixml-uri)
         => count()
 };
 
