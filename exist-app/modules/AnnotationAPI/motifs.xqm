@@ -13,23 +13,35 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
 
 
-declare function motifs:get-motifs($teixml-uri as xs:string,
-    $page as xs:string)
+declare function motifs:get-motifs($pages as element(tei:TEI)+,
+    $teixml-uri as xs:string)
 as map(*)* {
-    let $pages := commons:get-page-fragments($teixml-uri, $page)
     let $motifs := 
         for $page in $pages return
             $page//processing-instruction('oxy_comment_start')
     for $motif in $motifs return
-        let $id := generate-id($motif)
-        return
-            map {
-                "id": $commons:anno-ns || "/" || $teixml-uri || "/annotation-" || $id,
-                "type": "Annotation",
-                "body": motifs:get-body-object($motif),
-                "target": motifs:get-target-information($teixml-uri, $motif)
-            }
+        motifs:make-map($motif, $teixml-uri)
+};
 
+declare function motifs:get-all-motifs-in-document($xml-doc as document-node(),
+    $teixml-uri as xs:string)
+as map(*)* {
+    let $motifs := $xml-doc/descendant::processing-instruction('oxy_comment_start')
+    for $motif in $motifs return
+        motifs:make-map($motif, $teixml-uri)
+};
+
+declare function motifs:make-map($motif as processing-instruction(),
+    $teixml-uri as xs:string)
+as map(*) {
+    let $id := generate-id($motif)
+    return
+        map {
+            "id": $commons:anno-ns || "/" || $teixml-uri || "/annotation-" || $id,
+            "type": "Annotation",
+            "body": motifs:get-body-object($motif),
+            "target": motifs:get-target-information($teixml-uri, $motif)
+        }
 };
 
 declare function motifs:get-body-object($motif as processing-instruction())

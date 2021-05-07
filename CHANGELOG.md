@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - the HTML serialization now provides a `@dir="rtl"` attribute.
 
+## [5.12.1] - 2021-05-06
+
+### Changed
+
+- `annotation.xqm` has been refactored to separate concerns and to speed the process up by avoiding duplicate function calls.
+
 ## [5.12.0] - 2021-05-03
 
 ### Added

@@ -17,21 +17,9 @@ declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
+import module namespace edit="http://ahikar.sub.uni-goettingen.de/ns/annotations/editorial" at "editorial.xqm";
 import module namespace functx = "http://www.functx.com";
 import module namespace motifs="http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs" at "motifs.xqm";
-
-declare variable $anno:annotationElements := 
-    (
-        "placeName",
-        "persName",
-        "add",
-        "del",
-        "damage",
-        "choice",
-        "unclear",
-        "cit",
-        "surplus"
-    );
 
 (:
  : Determines the correct language aggregations.
@@ -99,30 +87,32 @@ declare function anno:make-annotationCollection($collection as xs:string,
     $document as xs:string?,
     $server as xs:string)
 as map() {
-    (: if $document is a collection then its value in $anno:uris is a map containing the aggregated manifests.
-    at this point it is relevant if $document is actually a manifest or a collection.
-    we have to create different paths containing $first and $last for the two of them,
-    namely
-        $server || "/annotations/ahikar/" || $document || "/" || $first || "/annotationPage.json" for $document being a collection
-        $server || "/annotations/ahikar/" || $collection || "/" || $document || "/" || $first || "/annotationPage.json" for $document being a manifest :)
-    if ($document and anno:find-in-map($anno:uris, $document) instance of map()) then
-        anno:get-information-for-collection-object($document, $server)
-    
-    (: if $document is a manifest then its value in $anno:uris are xs:string representations of the edition's URIs
-    since we are on the lowest level of the map. :)
-    else if($document) then
-        let $tei := anno:find-in-map($anno:uris, $document)
-        let $pages := anno:get-pages-in-TEI($tei)
-        let $title := anno:get-metadata-title($document)
-        let $first-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $pages[1] || "/annotationPage.json"
-        let $last-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $pages[last()] || "/annotationPage.json"
-    
-        return
-            anno:make-annotationCollection-map($document, $title, $first-entry, $last-entry)
-                    
-    (: in case we only have $collection and $document isn't set :)
-    else
-        anno:get-information-for-collection-object($collection, $server)
+    let $total-no-of-annos-in-collection := anno:get-total-number-of-annotations($collection)
+    return
+        (: if $document is a collection then its value in $anno:uris is a map containing the aggregated manifests.
+        at this point it is relevant if $document is actually a manifest or a collection.
+        we have to create different paths containing $first and $last for the two of them,
+        namely
+            $server || "/annotations/ahikar/" || $document || "/" || $first || "/annotationPage.json" for $document being a collection
+            $server || "/annotations/ahikar/" || $collection || "/" || $document || "/" || $first || "/annotationPage.json" for $document being a manifest :)
+        if ($document and anno:find-in-map($anno:uris, $document) instance of map()) then
+            anno:get-information-for-collection-object($document, $server, $total-no-of-annos-in-collection)
+        
+        (: if $document is a manifest then its value in $anno:uris are xs:string representations of the edition's URIs
+        since we are on the lowest level of the map. :)
+        else if($document) then
+            let $tei := anno:find-in-map($anno:uris, $document)
+            let $pages := anno:get-pages-in-TEI($tei)
+            let $title := anno:get-metadata-title($document)
+            let $first-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $pages[1] || "/annotationPage.json"
+            let $last-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $pages[last()] || "/annotationPage.json"
+            let $total-no-of-annos-in-document := anno:get-total-number-of-annotations($document)
+            return
+                anno:make-annotationCollection-map($document, $title, $first-entry, $last-entry, $total-no-of-annos-in-document)
+                        
+        (: in case we only have $collection and $document isn't set :)
+        else
+            anno:get-information-for-collection-object($collection, $server, $total-no-of-annos-in-collection)
 };
 
 
@@ -137,7 +127,8 @@ as map() {
  : @return A map with all information necessary for the Annotation Collection
  :)
 declare function anno:get-information-for-collection-object($collection-type as xs:string,
-    $server as xs:string)
+    $server as xs:string,
+    $total-no-of-annos-in-collection as xs:integer)
 as map() {
     let $child-keys := anno:find-in-map($anno:uris, $collection-type) => map:keys()
     let $first := $child-keys[1]
@@ -147,7 +138,7 @@ as map() {
     let $last-entry := $server || "/api/annotations/ahikar/" || $collection-type || "/" || $last || "/annotationPage.json"
 
     return
-        anno:make-annotationCollection-map($collection-type, $title, $first-entry, $last-entry)
+        anno:make-annotationCollection-map($collection-type, $title, $first-entry, $last-entry, $total-no-of-annos-in-collection)
 };
 
 declare function anno:make-collection-object-title($collection-type as xs:string)
@@ -182,7 +173,8 @@ as xs:string {
 declare function anno:make-annotationCollection-map($collection as xs:string,
     $title as xs:string,
     $first-entry as xs:string,
-    $last-entry as xs:string)
+    $last-entry as xs:string,
+    $total-no-of-annos as xs:integer)
 as map() {
         map {
             "annotationCollection":
@@ -192,7 +184,7 @@ as map() {
                     "type":     "AnnotationCollection",
                     "label":    "Ahikar annotations for textgrid:" || $collection || ": " || $title,
                     "x-creator":  anno:get-creator($collection),
-                    "total":    anno:get-total-no-of-annotations($collection),
+                    "total":    $total-no-of-annos,
                     "first":    $first-entry,
                     "last":     $last-entry
                 }
@@ -255,16 +247,17 @@ as map() {
     let $nextPage := anno:get-prev-or-next-annotationPage-ID($collection, $document, "next")
     let $prevPage := anno:get-prev-or-next-annotationPage-ID($collection, $document, "prev")
 
-    let $xmls :=
+    let $xml-uris :=
         if(anno:is-resource-edition($anno:uris, $document)) then
             anno:find-in-map($anno:uris, $document)
         else
-            anno:find-in-map($anno:uris, $document) => anno:get-all-xml-uris-for-submap()
+            anno:find-in-map($anno:uris, $document)
+            => anno:get-all-xml-uris-for-submap()
     let $annotations :=
-        for $xml in $xmls return
-            for $page in anno:get-pages-in-TEI($xml)return
-                (anno:get-annotations($xml, $page),
-                motifs:get-motifs($xml, $page))
+        for $teixml-uri in $xml-uris return
+            (: TODO :)
+            for $page in anno:get-pages-in-TEI($teixml-uri) return
+                anno:get-annotations($teixml-uri, $page)
     
     return
         map {
@@ -275,7 +268,7 @@ as map() {
                     "partOf":       map {
                                         "id": $commons:anno-ns || "/annotationCollection/" || $collection,
                                         "label": "Ahikar annotations for " || $collection,
-                                        "total": anno:get-total-no-of-annotations($collection)
+                                        "total": anno:get-total-number-of-annotations($document)
                                     },
                     "next":         anno:get-prev-or-next-annotationPage-url($collection, $nextPage, (), $server),
                     "prev":         anno:get-prev-or-next-annotationPage-url($collection, $prevPage, (), $server),
@@ -317,7 +310,7 @@ as map() {
                     "type":     "AnnotationCollection",
                     "label":    "Ahikar annotations for textgrid:" || $document || ": " || $title || ", page " || $page,
                     "x-creator":  anno:get-creator($document),
-                    "total":    anno:get-total-no-of-annotations($page),
+                    "total":    anno:get-total-number-of-annotations($document),
                     "first":    $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $page || "/annotationPage.json"
                 }
         }
@@ -369,180 +362,23 @@ as map() {
                     "partOf":       map {
                                         "id": $commons:anno-ns || "/annotationCollection/" || $document,
                                         "label": "Ahikar annotations for textgrid:" || $document || ": " || $docTitle,
-                                        "total": anno:get-total-no-of-annotations($document)
+                                        "total": anno:get-total-number-of-annotations($document)
                                     },
                     "next":         $nextPageURL,
                     "prev":         $prevPageURL,
                     "startIndex":   anno:determine-start-index-for-page($document, $page),
-                    "items":        (anno:get-annotations($xml, $page), motifs:get-motifs($xml, $page))
+                    "items":        anno:get-annotations($xml, $page)
                 }
         }
 };
 
-
-(:~
- : Gets the annotations for a given page for both possible text types
- : (transcription and transliteration, if present).
- : 
- : At this stage, TEI files are scraped for person and place names.
- : 
- : @param $teixml-uri The XML's URI.
- : @param $page The page within an XML file, i.e. a tei:pb/@n within a TEI resource
- :)
 declare function anno:get-annotations($teixml-uri as xs:string,
     $page as xs:string)
-as map()* {
+as item()* {
     let $pages := commons:get-page-fragments($teixml-uri, $page)
-    let $annotation-elements := 
-        for $chunk in $pages return
-            for $name in $anno:annotationElements return
-                $chunk//*[name(.) = $name]
-    
-    for $annotation in $annotation-elements return
-        let $id := string( $annotation/@id ) (: get the predefined ID from the in-memory TEI with IDs :)
-        return
-            map {
-                "id": $commons:anno-ns || "/" || $teixml-uri || "/annotation-" || $id,
-                "type": "Annotation",
-                "body": anno:get-body-object($annotation),
-                "target": anno:get-target-information($annotation, $teixml-uri, $id)
-            }
-};
-
-(:~
- : Returns the Body Object for an annotation.
- : 
- : @see https://www.w3.org/TR/annotation-model/#embedded-textual-body
- : @see https://subugoe.pages.gwdg.de/ahiqar/api-documentation/page/annotation-api-specs/#body-object
- : 
- : @param $annotation The node which serves as a basis for the annotation
- : @return A map representing the embedded textual body of the annotation.
- :)
-declare function anno:get-body-object($annotation as node())
-as map() {
-    map {
-        "type": "TextualBody",
-        "value": anno:get-body-value($annotation),
-        "format": "text/plain",
-        "x-content-type": anno:get-annotation-type($annotation)
-    }
-};
-
-
-(:~
- : Returns the body's value for an annotation.
- : 
- : @see https://www.w3.org/TR/annotation-model/#embedded-textual-body
- : 
- : @param $annotation The node which serves as a basis for the annotation
- : @return The value of the annotation.
- :)
-declare function anno:get-body-value($annotation as node())
-as xs:string {
-    let $value :=
-        typeswitch ( $annotation )
-        case element(tei:persName) return
-            $annotation/string()
-            
-        case element(tei:placeName) return
-            $annotation/string()
-            
-        case element(tei:add) return
-            "an addition. text: " || $annotation || ", place: " || $annotation/@place
-            
-        case element(tei:del) return
-            "text deleted by the scribe: " || $annotation
-            
-        case element(tei:damage) return
-            if ($annotation/tei:choice/tei:orig and $annotation/tei:choice/tei:supplied) then
-                "a damaged passage. original: " || $annotation/tei:orig || ", supplied text: " || $annotation/tei:supplied
-            else if ($annotation/tei:choice/tei:orig and $annotation/tei:choice/tei:corr) then
-                "a damaged passage. original: " || $annotation/tei:orig || ", corrected text: " || $annotation/tei:corr
-            else if ($annotation/text()[matches(., "[\w]")]) then
-                "a damaged passage. legible text: " || $annotation
-            else if ($annotation/tei:g) then
-                if ($annotation/tei:g[@type = "quotation-mark"]) then
-                    "a damaged passage. legible text: quotation mark"
-                else
-                    ()
-            else
-                let $text := string-join($annotation/descendant::text(), " ")
-                return
-                    "a damaged passage. legible text: " || $text
-                    
-        case element(tei:choice) return
-            if($annotation/tei:sic) then 
-                "correction of faulty text. original: " || $annotation/tei:sic || ", corrected text: " || $annotation/tei:corr 
-            else
-                "an abbreviation. original: " || $annotation/tei:abbr || ", expanded text: " || $annotation/tei:expan 
-                
-        case element(tei:unclear) return
-            if ($annotation/@reason) then
-                "a passage where the writing cannot be fully deciphered. text: " || $annotation || ", reason: " || replace($annotation/@reason, "_", " ")
-            else
-                "a passage where the writing cannot be fully deciphered. text: " || $annotation
-        
-        case element(tei:cit) return
-            if ($annotation/@type = 'verbatim') then
-                $annotation || ": a quote of " || $annotation/tei:bibl
-            else
-                $annotation || ": a reference to " || $annotation/tei:bibl || ". original phrase: " || $annotation/tei:note
-        
-        case element(tei:surplus) return
-            $annotation || ": surplus text"
-        default return
-            ()
-
-        return
-            normalize-space($value)
-};
-
-
-(:~
- : Returns the type of an annotation.
- : 
- : @see https://www.w3.org/TR/annotation-model/#string-body
- : 
- : @param $annotation The node which serves as a basis for the annotation
- : @return The content of bodyValue.
- :)
-declare function anno:get-annotation-type($annotation as node())
-as xs:string {
-    switch ($annotation/local-name())
-        case "persName" return "Person"
-        case "placeName" return "Place"
-        case "cit" return "Reference"
-        default return "Editorial Comment"
-};
-
-
-(:~
- : Returns the number of annotations belonging to a given $uri. In case this $uri is
- : a collection, all TEI files belonging to this collection are considered for the
- : computation.
- : 
- : @param $uri The resource's URI
- : @return The number of annotations that are associated with the $uri
- :)
-declare function anno:get-total-no-of-annotations($uri as xs:string)
-as xs:integer {
-    let $map-entry-for-uri := anno:find-in-map($anno:uris, $uri)
-    
-    let $xmls :=
-        if (anno:is-resource-edition($anno:uris, $uri)) then
-            $map-entry-for-uri
-        else
-            anno:get-all-xml-uris-for-submap($map-entry-for-uri)
-            
-    let $annotation-no-per-xml :=
-        for $xml in $xmls return
-            let $doc := commons:get-document($xml, "data")
-            let $noOfElementsEach :=
-                for $element in $anno:annotationElements return
-                    count($doc//tei:text//*[name(.) = $element])
-            return
-                sum($noOfElementsEach)
-    return sum($annotation-no-per-xml)
+    return
+        (edit:get-annotations($pages, $teixml-uri),
+        motifs:get-motifs($pages, $teixml-uri))
 };
 
 
@@ -566,26 +402,6 @@ as xs:string* {
             $value
         else
             ()
-};
-
-
-(:~
- : Returns the target segment for an annotation.
- : 
- : @param $annotation The node which serves as a basis for the annotation
- : @param $documentURI The resource's URI to which the $annotation belongs to
- : @param $id The node ID of the annotation. It is equivalent to generate-id($annotation)
- : @return A map containing the target information
- :)
-declare function anno:get-target-information($annotation as node(),
-    $documentURI as xs:string,
-    $id as xs:string)
-as map(*) {
-    map {
-        "id": $commons:anno-ns || "/" || $documentURI || "/"|| $id,
-        "format": "text/xml",
-        "language": $annotation/ancestor-or-self::*[@xml:lang][1]/@xml:lang/string()
-    }
 };
 
 
@@ -851,19 +667,14 @@ as xs:integer {
                     replace($collURI, "textgrid:", "")
             let $noOfAnnotationsPerCollection :=
                 for $collURI in $prevCollections return
-                    anno:get-total-no-of-annotations($collURI)
+                    anno:get-total-number-of-annotations($collURI)
             return
                 sum($noOfAnnotationsPerCollection)
         else
             let $prevXMLs := anno:get-xmls-prev-in-collection($uri)
             let $noOfAnnotationsPerXML :=
                 for $xml in $prevXMLs return
-                    let $doc := commons:get-document($xml, "data")
-                    let $noOfAnnotationsPerElement :=
-                        for $name in $anno:annotationElements return
-                            count($doc//tei:text//*[name(.) = $name])
-                    return
-                        sum($noOfAnnotationsPerElement)
+                    anno:get-total-number-of-annotations($xml)
             return
                 sum($noOfAnnotationsPerXML)
 };
@@ -886,9 +697,30 @@ as xs:integer {
     let $xml := anno:find-in-map($anno:uris, $uri)
     let $doc := commons:get-document($xml, "data")
     let $currentPb := $doc//tei:pb[@n = $page and @facs]
-    let $noOfAnnotationsPerElement :=
-        for $name in $anno:annotationElements return
-            count($doc//*[name(.) = $name][.[ancestor::tei:text[1] = $currentPb/ancestor::tei:text[1]] << $currentPb])
+    let $previous-pages := $currentPb/preceding::tei:pb
+    let $previous-annotations :=
+        for $prev-page in $previous-pages return
+            anno:get-annotations($xml, $prev-page/@n)
     return
-        sum($noOfAnnotationsPerElement)
+        count($previous-annotations)
+};
+
+declare function anno:get-total-number-of-annotations($collection-type-or-manifest-uri as xs:string) {
+    let $map-entry-for-uri := anno:find-in-map($anno:uris, $collection-type-or-manifest-uri)
+    
+    let $xml-uris :=
+        if (anno:is-resource-edition($anno:uris, $collection-type-or-manifest-uri)) then
+            $map-entry-for-uri
+        else
+            anno:get-all-xml-uris-for-submap($map-entry-for-uri)
+    let $annotations-per-xml :=
+        for $xml-uri in $xml-uris return
+            let $doc := commons:get-document($xml-uri, "data")
+            let $annotations := 
+                (motifs:get-all-motifs-in-document($doc, $xml-uri),
+                edit:get-all-annos-in-document($doc, $xml-uri))
+            return
+                $annotations
+    return 
+        count($annotations-per-xml)
 };

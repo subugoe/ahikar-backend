@@ -21,7 +21,7 @@ as xs:boolean {
 };
 
 declare
-    %test:args("sample_teixml") %test:assertXPath("count($result) = 5")
+    %test:args("sample_teixml") %test:assertXPath("count($result) = 6")
     %test:args("sample_teixml") %test:assertXPath("$result = '82a'")
 function at:get-pages-in-TEI($uri as xs:string)
 as xs:string+ {
@@ -85,46 +85,6 @@ as xs:string {
 };
 
 declare
-    %test:assertEquals("ܐܬܘܪ")
-function at:anno-get-body-value()
-as xs:string {
-    let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
-    return
-        anno:get-body-value($annotation)
-};
-
-declare
-    %test:assertEquals("Person")
-function at:get-annotation-type-person()
-as xs:string {
-    let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:persName[1]
-    return
-        anno:get-annotation-type($annotation)
-};
-
-declare
-    %test:assertEquals("Place")
-function at:get-annotation-type-place()
-as xs:string {
-    let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
-    return
-        anno:get-annotation-type($annotation)
-};
-
-declare
-    %test:args("sample_teixml", "N1.2.3.4")
-    %test:assertXPath("map:get($result, 'id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/N1.2.3.4'")
-    %test:assertXPath("map:get($result, 'format') = 'text/xml'")
-    %test:assertXPath("map:get($result, 'language') = 'karshuni'")
-function at:get-target-information($documentURI as xs:string,
-    $id as xs:string)
-as map() {
-    let $annotation := $at:sample-doc//tei:text[@type = "transcription"]/descendant::tei:placeName[1]
-    return
-        anno:get-target-information($annotation, $documentURI, $id)
-};
-
-declare
     %test:args("syriac", "sample_edition", "82a", "http://localhost:8080")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/annotationCollection/sample_edition/82a'")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('type') = 'AnnotationCollection'")
@@ -137,13 +97,6 @@ as map() {
     anno:make-annotationCollection-for-manifest($collection, $document, $page, $server)
 };
 
-declare
-    %test:args("sample_main_edition") %test:assertEquals("477")
-    %test:args("syriac") %test:assertEquals("186")
-    %test:args("arabic-karshuni") %test:assertEquals("291")
-function at:get-total-no-of-annotations($uri as xs:string) {
-    anno:get-total-no-of-annotations($uri)
-};
 
 declare
     %test:assertEquals("sample_teixml")
@@ -237,15 +190,17 @@ declare
     %test:args("sample_edition", 
         "Beispieledition", 
         "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/82a/annotationPage.json", 
-        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/83b/annotationPage.json")
+        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/83b/annotationPage.json",
+        "12")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:sample_edition: Beispieledition'")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('x-creator') = 'Simon Birol, Aly Elrefaei'")
 function at:make-annotationCollection-map($uri as xs:string,
     $title as xs:string,
     $first-entry as xs:string,
-    $last-entry as xs:string)
+    $last-entry as xs:string,
+    $total-no-of-annos as xs:integer)
 as map() {
-    anno:make-annotationCollection-map($uri, $title, $first-entry, $last-entry)
+    anno:make-annotationCollection-map($uri, $title, $first-entry, $last-entry, $total-no-of-annos)
 };
 
 declare
@@ -260,53 +215,8 @@ as map() {
 };
 
 declare
-    %test:args("sample_teixml", "83b") %test:assertXPath("count($result) = 80")
-    %test:args("sample_syriac_teixml", "86r") %test:assertXPath("count($result) = 9")
-function at:get-annotations($teixml-uri as xs:string,
-    $page as xs:string)
-as map()+ {
-    anno:get-annotations($teixml-uri, $page)
-};
-
-declare
-    %test:args("sample_teixml", "84a")
-    %test:assertXPath("map:get($result, 'value') = 'ܢܕܢ܂'")
-function at:get-annotations-detailed-body($teixml-uri as xs:string,
-    $page as xs:string)
-as map() {
-    let $result-map := anno:get-annotations($teixml-uri, $page)[1]
-    let $bodyValue := map:get($result-map, "body")
-    return
-        $bodyValue
-};
-
-declare
-    %test:args("sample_teixml", "84a")
-    %test:assertXPath("$result = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/annotation-N4.4.2.4.4.358.2'")
-function at:get-annotations-detailed-id($teixml-uri as xs:string,
-    $page as xs:string)
-as xs:string {
-    let $result-map := anno:get-annotations($teixml-uri, $page)[1]
-    let $id := map:get($result-map, "id")
-    return
-        $id
-};
-
-declare
-    %test:args("sample_teixml", "84a")
-    %test:assertXPath("$result instance of map()")
-function at:get-annotations-detailed-target($teixml-uri as xs:string,
-    $page as xs:string)
-as map() {
-    let $result-map := anno:get-annotations($teixml-uri, $page)[1]
-    let $target := map:get($result-map, "target")
-    return
-        $target
-};
-
-declare
-    %test:args("sample_edition", "82a") %test:assertEquals("0")
-    %test:args("sample_edition", "82b") %test:assertEquals("23")
+    %test:args("sample_edition", "82a") %test:assertEquals("148")
+    %test:args("sample_edition", "82b") %test:assertEquals("192")
 function at:determine-start-index-for-page($uri as xs:string,
     $page as xs:string)
 as xs:integer {
@@ -377,12 +287,13 @@ as xs:string {
 };
 
 declare
-    %test:args("syriac", "http://localhost:8080")
+    %test:args("syriac", "http://localhost:8080", "12")
     %test:assertEquals("http://localhost:8080/api/annotations/ahikar/syriac/sample_edition/annotationPage.json")
 function at:get-information-for-collection-object($collection-type as xs:string,
-    $server as xs:string)
+    $server as xs:string,
+    $no-of-annos as xs:integer)
 as xs:string {
-    let $result := anno:get-information-for-collection-object($collection-type, $server)
+    let $result := anno:get-information-for-collection-object($collection-type, $server, $no-of-annos)
     return
         map:get($result, "annotationCollection")
         => map:get("first")
@@ -439,4 +350,12 @@ declare
 function at:determine-uris-for-collection($collection as xs:string)
 as xs:string+ {
     anno:determine-uris-for-collection($collection)
+};
+
+declare
+    %test:args("sample_edition") %test:assertEquals("148")
+    %test:args("syriac") %test:assertEquals("192")
+function at:get-total-number-of-annotations($key as xs:string)
+as xs:integer {
+    anno:get-total-number-of-annotations($key)
 };

@@ -483,6 +483,8 @@ Ideas (or parts of ideas) that have bee marked with LC refer to the Leiden Conve
                         <seg xml:lang="ara">هذا حيث ينتهي النص.</seg>
                     </ab>
                 <milestone unit="examples"/>
+                
+                <pb n="297v" facs="textgrid:3r85q"/>
 
                <!-- @@@@ The following encoding has been taken directly from the source
                   material. In case there are Arabic passages, tei:seg with/or @xml:id has been added 
