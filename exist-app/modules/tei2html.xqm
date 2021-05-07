@@ -38,7 +38,7 @@ as node()* {
             
         case element(tei:body) return
             if (tei2html:has-page-content($node)) then
-                tei2html:make-default-return($node)
+                tei2html:transform-body($node)
             else
                 tei2html:make-vacant-page()
             
@@ -70,6 +70,18 @@ declare function tei2html:has-page-content($body as element(tei:body))
 as xs:boolean {
     $body/descendant::*
     and $body/descendant::text()[matches(., "[\w]")]
+};
+
+declare function tei2html:transform-body($node as node()*)
+as element(xhtml:div) {
+    element xhtml:div {
+        attribute id {$node/@id},
+        attribute dir {"rtl"},
+        attribute class {
+            tei2html:make-class-attribute-values($node)
+        },
+        tei2html:transform($node/node())
+    }
 };
 
 declare function tei2html:make-default-return($node as node()*)
