@@ -10,6 +10,7 @@ stages:
 
 include: 
   - '/ci-scripts/.api_tests.yml'
+  - '/ci-scripts/.unit_integration_tests.yml'
 
 ## TEMPLATES:
 .ssh-config: &ssh
@@ -49,40 +50,8 @@ include:
 
 ## JOBS
 
-test_exist_app:
-  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
-  stage: unit_tests
-  before_script:
-    - apt install libxml2-utils
-  script:
-    - ant -f exist-app/build.xml test
-    - bash exist-app/test/bin/startup.sh | tee output.log &
-    - while [ $(curl --head --silent http://localhost:8080 | grep -c "200 OK") == 0 ]; do sleep 1s; done
-    - header=$(curl --head -s http://localhost:8080/exist/restxq/trigger-tests)
-    - status=$(echo $header | head -n 1 | cut -d" " -f 2)
-    - echo "Current HTTP status is $status."
-    - if [[ "$status" != "200" ]]; then exit 1; fi
-    - curl http://localhost:8080/exist/restxq/trigger-tests
-    - bash exist-app/test/bin/shutdown.sh
-    - failures=$(bash ci-scripts/get-unit-test-failures-and-errors.sh)
-    - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
-    - if [[ "$failures" -gt 0 || ! -f "exist-app/test/ahikar-test-results.xml" ]]; then exit 1; else exit 0; fi
-  artifacts:
-    when: always
-    paths:
-      - exist-app/test/ahikar-test-results.xml
-      - exist-app/test/logs/*.log
-    reports:
-      junit: exist-app/test/ahikar-test-results.xml
-  cache:
-    key: exist-dependencies
-    paths:
-      - exist-app/build/dependencies/openapi-latest.xar
-      - exist-app/build/dependencies/tg-connect-standalone.xar
-      - exist-app/build/eXist*.xar
-
 build_exist_app:
-  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
   stage: build
   script:
     - cd exist-app
@@ -186,7 +155,7 @@ deploy_docker-main:
   dependencies: []
 
 deploy_app-test:
-  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
   stage: deploy_app
   except:
     - main

@@ -15,7 +15,6 @@ import module namespace rest="http://exquery.org/ns/restxq";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
 import module namespace at="http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" at "../tests/annotation-tests.xqm";
-import module namespace art="http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" at "../tests/annotation-rest-tests.xqm";
 import module namespace ct="http://ahikar.sub.uni-goettingen.de/ns/commons-tests" at "../tests/commons-tests.xqm";
 import module namespace et="http://ahikar.sub.uni-goettingen.de/ns/annotations/editorial/tests" at "../tests/editorial-tests.xqm";
 import module namespace mt="http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs/tests" at "../tests/motifs-tests.xqm";
@@ -24,7 +23,6 @@ import module namespace thtmlt="http://ahikar.sub.uni-goettingen.de/ns/tapi/html
 import module namespace timgt="http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests" at "../tests/tapi-img-tests.xqm";
 import module namespace titemt="http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests" at "../tests/tapi-item-tests.xqm";
 import module namespace tmt="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" at "../tests/tapi-manifest-tests.xqm";
-import module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" at "../tests/tapi-tests.xqm";
 import module namespace ttnt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" at "../tests/tapi-txt-normalization-tests.xqm";
 import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" at "../tests/tei2html-tests.xqm";
 import module namespace t2jt="http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests" at "../tests/tei2json-tests.xqm";
@@ -46,7 +44,7 @@ import module namespace ctc="http://ahikar.sub.uni-goettingen.de/ns/commons-test
 declare
   %rest:GET
   %rest:HEAD
-  %rest:path("/trigger-tests")
+  %rest:path("/trigger-unit-tests")
   %rest:query-param("token", "{$token}")
 function testtrigger:trigger($token)
 as item()? {
@@ -73,7 +71,6 @@ as element()+ {
     let $test-results :=
     (
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/commons-tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests")),
@@ -84,7 +81,6 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/editorial/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests")),
-        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests")),
@@ -119,7 +115,6 @@ as element()+ {
 declare function local:get-human-readable-pkg-name($package as xs:string)
 as xs:string? {
     switch ($package)
-        case "http://ahikar.sub.uni-goettingen.de/ns/tapi/tests" return "TextAPI general"
         case "http://ahikar.sub.uni-goettingen.de/ns/commons-tests" return "Commons"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/collection/tests" return "TextAPI Collections"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" return "TextAPI Manifests"
@@ -132,7 +127,6 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs/tests" return "Annotations: Motifs"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/editorial/tests" return "Annotations: Editorial comments"
-        case "http://ahikar.sub.uni-goettingen.de/ns/annotations/rest/tests" return "AnnotationAPI REST"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests" return "Image Sections"
         case "http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" return "Tokenize"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests/credentials" return "TextAPI Items (credentials needed)"
