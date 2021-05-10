@@ -11,7 +11,7 @@ module namespace motifs="http://ahikar.sub.uni-goettingen.de/ns/annotations/moti
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
-
+import module namespace me="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion" at "/db/apps/ahikar/modules/motifs-expansion.xqm";
 
 declare function motifs:get-motifs($pages as element(tei:TEI)+,
     $teixml-uri as xs:string)
@@ -34,14 +34,12 @@ as map(*)* {
 declare function motifs:make-map($motif as processing-instruction(),
     $teixml-uri as xs:string)
 as map(*) {
-    let $id := generate-id($motif)
-    return
-        map {
-            "id": $commons:anno-ns || "/" || $teixml-uri || "/annotation-" || $id,
-            "type": "Annotation",
-            "body": motifs:get-body-object($motif),
-            "target": motifs:get-target-information($teixml-uri, $motif)
-        }
+    map {
+        "id": $commons:anno-ns || "/" || $teixml-uri || "/annotation-" || motifs:make-id($motif),
+        "type": "Annotation",
+        "body": motifs:get-body-object($motif),
+        "target": motifs:get-target-information($teixml-uri, $motif)
+    }
 };
 
 declare function motifs:get-body-object($motif as processing-instruction())
@@ -93,8 +91,20 @@ declare function motifs:get-target-information($teixml-uri as xs:string,
     $motif as processing-instruction())
 as map(*) {
     map {
-        "id": $commons:anno-ns || "/" || $teixml-uri || "/"|| generate-id($motif),
+        "id": $commons:anno-ns || "/" || $teixml-uri || "/"|| motifs:make-id($motif),
         "format": "text/xml",
         "language": $motif/ancestor-or-self::*[@xml:lang][1]/@xml:lang/string()
     }
+};
+
+declare function motifs:make-id($motif as processing-instruction())
+as xs:string {
+    let $node-id := generate-id($motif)
+    return
+        if (me:is-motif-one-liner($motif)) then
+            $node-id
+        (: this is the first part of a motif spanning several lines, 
+        thus the suffix "-1" :)
+        else
+            $node-id || "-1"
 };

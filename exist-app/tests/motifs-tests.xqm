@@ -94,7 +94,7 @@ as map(*) {
 
 declare
     %test:assertXPath("map:get($result, 'format') = 'text/xml'")
-    %test:assertXPath("map:get($result, 'id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/N4.4.2.4.4.10.4'")
+    %test:assertXPath("map:get($result, 'id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/N4.4.2.4.4.10.4-1'")
     %test:assertXPath("map:get($result, 'language') = 'karshuni'")
 function t:get-target-information()
 as map(*) {

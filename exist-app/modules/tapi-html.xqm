@@ -6,6 +6,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
+import module namespace me="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion" at "/db/apps/ahikar/modules/motifs-expansion.xqm";
 import module namespace tei2html="http://ahikar.sub.uni-goettingen.de/ns/tei2html" at "tei2html.xqm";
 
 (:~
@@ -23,6 +24,7 @@ as element(div) {
     let $fragment :=
         if ($page) then
             commons:get-page-fragment($tei-xml-base-uri, $page, $text-type)
+            => me:main()
         else
             doc($tei-xml-base-uri)/*
     return

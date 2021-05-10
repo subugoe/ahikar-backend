@@ -790,32 +790,37 @@ as element() {
     <body xmlns="http://www.tei-c.org/ns/1.0" xml:lang="syc">
         <head id="N4.4.2.6.4.8">
             <hi id="N4.4.2.6.4.8.2" rend="color(red)">܀ܪܹܫܵܐ ܩܕܡܝܵܐ ܕܬܫܥܝܼܬܼܵܐ
-                <persName id="N4.4.2.6.4.8.2.3">ܕܐܲܚܝܼܩܲܪ܀</persName>
+                    <persName id="N4.4.2.6.4.8.2.3">ܕܐܲܚܝܼܩܲܪ܀</persName>
             </hi>
         </head>
-        <ab id="N4.4.2.6.4.22">ܟܕ ܡܝܼܬܼ <persName id="N4.4.2.6.4.22.2">ܣܢܚܪܝܼܒܼ</persName> ܡܠܟܐ <placeName id="N4.4.2.6.4.22.4">ܕܐܵܬܼܘܪ</placeName></ab>
+        <ab id="N4.4.2.6.4.22">ܟܕ ܡܝܼܬܼ <persName id="N4.4.2.6.4.22.2">ܣܢܚܪܝܼܒܼ</persName> ܡܠܟܐ <placeName id="N4.4.2.6.4.22.4">ܕܐܵܬܼܘܪ</placeName>
+        </ab>
         <ab id="N4.4.2.6.4.24">
             <seg id="N4.4.2.6.4.24.1" xml:id="seg_1" next="#seg_2">
                 <hi id="N4.4.2.6.4.24.1.4" rend="color(red)">
                     <g id="N4.4.2.6.4.24.1.4.2">]</g>
                 </hi>
-                ܒܫܢܬܼ ܫܹܬܡܵܐܐ ܘܬܲܫܥ ܘܫܒܥܝܼܢ
-            </seg>
+                    ܒܫܢܬܼ ܫܹܬܡܵܐܐ ܘܬܲܫܥ ܘܫܒܥܝܼܢ
+                </seg>
         </ab>
         <ab id="N4.4.2.6.4.26">
-            <seg id="N4.4.2.6.4.26.2" xml:id="seg_2" prev="#seg_1">ܩܕܼܡ
-                <persName id="N4.4.2.6.4.26.2.4">ܡܫܝܼܚܵܐ܂</persName>
-                <hi id="N4.4.2.6.4.26.2.6" rend="color(red)">
-                    <g id="N4.4.2.6.4.26.2.6.2">[</g>
-                </hi>
-            </seg>
-            <add id="N4.4.2.6.4.26.4" place="margin">
-                <ref id="N4.4.2.6.4.26.4.3" target="#seg_1 #seg2">ܠܝܬܿ ܒܐܨܚܬܵܐ ܚܕܐܵ ܣܝܩܘܡܵܐ</ref>
-            </add>܂ ܛܒܼ ܣܓܝܼ<add id="N4.4.2.6.4.26.6" place="inline">ܐܹܢܵܐ</add>
+            <span id="N1.5.2-1" type="motif" n="loyal_obligation_gods" next="#N1.5.2-2">
+                <seg id="N4.4.2.6.4.26.2" xml:id="seg_2" prev="#seg_1">ܩܕܼܡ
+                    <persName id="N4.4.2.6.4.26.2.4">ܡܫܝܼܚܵܐ܂</persName>
+                    <hi id="N4.4.2.6.4.26.2.6" rend="color(red)">
+                        <g id="N4.4.2.6.4.26.2.6.2">[</g>
+                    </hi>
+                </seg>
+                <add id="N4.4.2.6.4.26.4" place="margin">
+                    <ref id="N4.4.2.6.4.26.4.3" target="#seg_1 #seg2">ܠܝܬܿ ܒܐܨܚܬܵܐ ܚܕܐܵ ܣܝܩܘܡܵܐ</ref>
+                </add>܂ ܛܒܼ ܣܓܝܼ<add id="N4.4.2.6.4.26.6" place="inline">ܐܹܢܵܐ</add>
+            </span>
         </ab>
-        <ab id="N4.4.2.6.4.44">ܐܹܢܵܐ
-            <persName id="N4.4.2.6.4.44.2">ܐܚܝܼܩܪ</persName><?oxy_comment_start author="simon" timestamp="20200829T213631+0200" comment="loyal_obligation_gods"?>
-            ܐܸܙܹܿܠܬܼ ܘܩܲܪܒܹܬܼ ܕܒܼܚܹ̈ܐ <catchwords id="N4.4.2.6.4.44.5">ܠܐܠܗܐ</catchwords>
+        <ab id="N4.4.2.6.4.44">
+            <span id="N1.5.2-2" type="motif" n="loyal_obligation_gods">ܐܹܢܵܐ
+                <persName id="N4.4.2.6.4.44.2">ܐܚܝܼܩܪ</persName>
+            </span>
+                ܐܸܙܹܿܠܬܼ ܘܩܲܪܒܹܬܼ ܕܒܼܚܹ̈ܐ <catchwords id="N4.4.2.6.4.44.5">ܠܐܠܗܐ</catchwords>
         </ab>
     </body>
 };
@@ -825,34 +830,37 @@ as element() {
     <xhtml:div xmlns:xhtml="http://www.w3.org/1999/xhtml" id="" dir="rtl" class="body syc">
         <xhtml:h1 id="N4.4.2.6.4.8" class="head">
             <xhtml:span id="N4.4.2.6.4.8.2" class="hi red">܀ܪܹܫܵܐ ܩܕܡܝܵܐ ܕܬܫܥܝܼܬܼܵܐ
-                <xhtml:span id="N4.4.2.6.4.8.2.3" class="persName">ܕܐܲܚܝܼܩܲܪ܀</xhtml:span>
+                        <xhtml:span id="N4.4.2.6.4.8.2.3" class="persName">ܕܐܲܚܝܼܩܲܪ܀</xhtml:span>
             </xhtml:span>
         </xhtml:h1>
-        <xhtml:div id="N4.4.2.6.4.22" class="ab">
-            ܟܕ ܡܝܼܬܼ <xhtml:span id="N4.4.2.6.4.22.2" class="persName">ܣܢܚܪܝܼܒܼ</xhtml:span> ܡܠܟܐ <xhtml:span id="N4.4.2.6.4.22.4" class="placeName">ܕܐܵܬܼܘܪ</xhtml:span>
+        <xhtml:div id="N4.4.2.6.4.22" class="ab">ܟܕ ܡܝܼܬܼ <xhtml:span id="N4.4.2.6.4.22.2" class="persName">ܣܢܚܪܝܼܒܼ</xhtml:span> ܡܠܟܐ <xhtml:span id="N4.4.2.6.4.22.4" class="placeName">ܕܐܵܬܼܘܪ</xhtml:span>
         </xhtml:div>
         <xhtml:div id="N4.4.2.6.4.24" class="ab">
             <xhtml:a id="N4.4.2.6.4.24.1" class="seg" href="#N4.4.2.6.4.26.2">
                 <xhtml:span id="N4.4.2.6.4.24.1.4" class="hi red">
                     <xhtml:span id="N4.4.2.6.4.24.1.4.2" class="g">]</xhtml:span>
                 </xhtml:span>
-                ܒܫܢܬܼ ܫܹܬܡܵܐܐ ܘܬܲܫܥ ܘܫܒܥܝܼܢ
-            </xhtml:a>
+                        ܒܫܢܬܼ ܫܹܬܡܵܐܐ ܘܬܲܫܥ ܘܫܒܥܝܼܢ
+                    </xhtml:a>
         </xhtml:div>
         <xhtml:div id="N4.4.2.6.4.26" class="ab">
-            <xhtml:a id="N4.4.2.6.4.26.2" class="seg" href="#N4.4.2.6.4.24.1">ܩܕܼܡ
-                <xhtml:span id="N4.4.2.6.4.26.2.4" class="persName">ܡܫܝܼܚܵܐ܂</xhtml:span>
-                <xhtml:span id="N4.4.2.6.4.26.2.6" class="hi red">
-                    <xhtml:span id="N4.4.2.6.4.26.2.6.2" class="g">[</xhtml:span>
-                </xhtml:span>
-            </xhtml:a>
-            <xhtml:span id="N4.4.2.6.4.26.4" class="add margin">
-                <xhtml:a id="N4.4.2.6.4.26.4.3" class="ref" href="#N4.4.2.6.4.24.1">ܠܝܬܿ ܒܐܨܚܬܵܐ ܚܕܐܵ ܣܝܩܘܡܵܐ</xhtml:a>
-            </xhtml:span>܂ ܛܒܼ ܣܓܝܼ<xhtml:span id="N4.4.2.6.4.26.6" class="add inline">ܐܹܢܵܐ</xhtml:span>
+            <xhtml:span id="N1.5.2-1" type="loyal_obligation_gods" class="motif" data-next="#N1.5.2-2">
+                <xhtml:a id="N4.4.2.6.4.26.2" class="seg" href="#N4.4.2.6.4.24.1">ܩܕܼܡ
+                        <xhtml:span id="N4.4.2.6.4.26.2.4" class="persName">ܡܫܝܼܚܵܐ܂</xhtml:span>
+                    <xhtml:span id="N4.4.2.6.4.26.2.6" class="hi red">
+                        <xhtml:span id="N4.4.2.6.4.26.2.6.2" class="g">[</xhtml:span>
+                    </xhtml:span>
+                </xhtml:a>
+                <xhtml:span id="N4.4.2.6.4.26.4" class="add margin">
+                    <xhtml:a id="N4.4.2.6.4.26.4.3" class="ref" href="#N4.4.2.6.4.24.1">ܠܝܬܿ ܒܐܨܚܬܵܐ ܚܕܐܵ ܣܝܩܘܡܵܐ</xhtml:a>
+                </xhtml:span>܂ ܛܒܼ ܣܓܝܼ<xhtml:span id="N4.4.2.6.4.26.6" class="add inline">ܐܹܢܵܐ</xhtml:span>
+            </xhtml:span>
         </xhtml:div>
-        <xhtml:div id="N4.4.2.6.4.44" class="ab">ܐܹܢܵܐ
-            <xhtml:span id="N4.4.2.6.4.44.2" class="persName">ܐܚܝܼܩܪ</xhtml:span>
-            ܐܸܙܹܿܠܬܼ ܘܩܲܪܒܹܬܼ ܕܒܼܚܹ̈ܐ <xhtml:span id="N4.4.2.6.4.44.5" class="catchwords">ܠܐܠܗܐ</xhtml:span>
+        <xhtml:div id="N4.4.2.6.4.44" class="ab">
+            <xhtml:span id="N1.5.2-2" type="loyal_obligation_gods" class="motif">ܐܹܢܵܐ
+                    <xhtml:span id="N4.4.2.6.4.44.2" class="persName">ܐܚܝܼܩܪ</xhtml:span>
+            </xhtml:span>
+                    ܐܸܙܹܿܠܬܼ ܘܩܲܪܒܹܬܼ ܕܒܼܚܹ̈ܐ <xhtml:span id="N4.4.2.6.4.44.5" class="catchwords">ܠܐܠܗܐ</xhtml:span>
         </xhtml:div>
     </xhtml:div>
 };
