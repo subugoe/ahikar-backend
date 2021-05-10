@@ -66,8 +66,10 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 (let $path := $target || "/modules/deploy.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
-(: set owner and mode for testtrigger module :)
+(: set owner and mode for test modules :)
 (let $path := $target || "/modules/testtrigger.xqm"
+return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
+(let $path := $target || "/modules/apitesttrigger.xqm"
 return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
 
 (: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
