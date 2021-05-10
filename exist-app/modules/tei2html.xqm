@@ -62,6 +62,20 @@ as node()* {
                 text{" "}
             )
             
+        case element(tei:span) return
+            (
+                element xhtml:span {
+                    attribute id {$node/@id},
+                    attribute type {$node/@n},
+                    attribute class {"motif"},
+                    if ($node/@next) then
+                        attribute data-next {$node/@next}
+                    else
+                        (),
+                    tei2html:transform($node/node())
+                }
+            )            
+            
         default return
             tei2html:make-default-return($node)
 };

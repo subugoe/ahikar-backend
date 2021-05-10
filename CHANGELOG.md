@@ -5,7 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [5.13.0] - 2021-05-03
+## [5.14.0] - 2021-05-07
+
+### Added
+
+- an intermediate format that transforms simple (i.e. non-nested) motifs (encoded as processing instructions) into TEI elements.
+This new intermediate format serves as a basis for the HTML creation in which the simple motifs are now considered, too.
+
+### Changed
+
+- the ID creation within `motifs.xqm` has been altered to fit the new intermediate format.
+
+## [5.13.0] - 2021-05-07
 
 ### Added
 

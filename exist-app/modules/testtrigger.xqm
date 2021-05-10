@@ -25,6 +25,7 @@ import module namespace titemt="http://ahikar.sub.uni-goettingen.de/ns/tapi/item
 import module namespace tmt="http://ahikar.sub.uni-goettingen.de/ns/tapi/manifest/tests" at "../tests/tapi-manifest-tests.xqm";
 import module namespace ttnt="http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" at "../tests/tapi-txt-normalization-tests.xqm";
 import module namespace t2ht="http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" at "../tests/tei2html-tests.xqm";
+import module namespace met="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion/tests" at "../tests/motifs-expansion-tests.xqm";
 import module namespace t2jt="http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests" at "../tests/tei2json-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
 import module namespace tokt="http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" at "../tests/tokenize-tests.xqm";
@@ -77,6 +78,7 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/html/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/annotations/editorial/tests")),
@@ -123,6 +125,7 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-tests" return "TEI2HTML transformation"
         case "http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests" return "TEI2JSON transformation"
         case "http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" return "TEI2HTML text processing"
+        case "http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion/tests" return "Motifs expansion"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/txt/normalization/tests" return "TXT normalization"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/tests" return "AnnotationAPI"
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs/tests" return "Annotations: Motifs"
