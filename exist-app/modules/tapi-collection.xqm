@@ -127,14 +127,18 @@ as element(sequence)+ {
     let $aggregations := tapi-coll:get-aggregations($uris)
     let $allowed-manifest-uris := tapi-coll:get-allowed-manifest-uris($aggregations)
     for $manifest-uri in $allowed-manifest-uris return
-        let $manifest-metadata :=  commons:get-metadata-file($manifest-uri)
-        let $id := tapi-coll:make-id($server, $collection-type, $manifest-uri)
-        let $type := tapi-coll:make-format-type($manifest-metadata)
-        return
-            <sequence>
-                <id>{$id}</id>
-                <type>{$type}</type>
-            </sequence>
+        try {
+            let $manifest-metadata :=  commons:get-metadata-file($manifest-uri)
+            let $id := tapi-coll:make-id($server, $collection-type, $manifest-uri)
+            let $type := tapi-coll:make-format-type($manifest-metadata)
+            return
+                <sequence>
+                    <id>{$id}</id>
+                    <type>{$type}</type>
+                </sequence>
+        } catch * {
+            util:log("warn", "COLLWARN01: An error occured while processing the manifest with the URI " || $manifest-uri)
+        }
 };
 
 declare function tapi-coll:make-id($server as xs:string,
