@@ -65,7 +65,7 @@ build_exist_app:
   dependencies: []
   
 load_frontend-all:
-  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: build
   variables:
     FRONTEND_REPO_ID: "9882"
@@ -73,6 +73,7 @@ load_frontend-all:
     - *git
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
     - unzip frontend.zip
+    - bash ci-scripts/set-entrypoint.sh
     - mkdir -p docker/frontend
     - cp Qviewer/dist/* docker/frontend/
     - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
@@ -109,7 +110,7 @@ build_docker-all:
     - load_frontend-all
 
 deploy_docker-test:
-  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
   except:
     - main
@@ -129,7 +130,7 @@ deploy_docker-test:
   dependencies: []
 
 deploy_docker-dev:
-  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
   only:
     - develop
@@ -142,7 +143,7 @@ deploy_docker-dev:
   dependencies: []
 
 deploy_docker-main:
-  image: docker.gitlab.gwdg.de/fontane-notizbuecher/build:latest
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
   only:
     - main

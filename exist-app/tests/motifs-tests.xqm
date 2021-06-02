@@ -6,6 +6,7 @@ declare namespace http = "http://expath.org/ns/http-client";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
+import module namespace me="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion" at "/db/apps/ahikar/modules/motifs-expansion.xqm";
 import module namespace motifs="http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs" at "../modules/AnnotationAPI/motifs.xqm";
 import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "test-commons.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
@@ -30,7 +31,7 @@ declare
 function t:get-all-motifs-in-document()
 as xs:integer {
     let $teixml-uri := "sample_teixml"
-    let $xml-doc := commons:open-tei-xml($teixml-uri)
+    let $xml-doc := commons:open-tei-xml($teixml-uri)//tei:TEI => me:main()
     return
         motifs:get-all-motifs-in-document($xml-doc, $teixml-uri)
         => count()
@@ -75,7 +76,7 @@ declare
     %test:assertEquals("Parable (plants)")
 function t:get-body-value()
 as xs:string {
-    let $motif := processing-instruction oxy_comment_start {'comment="parable_plants"'}
+    let $motif := <span xmlns="http://www.tei-c.org/ns/1.0" id="N1.4.2.4.4.8.4-1" type="motif" n="parable_plants" next="#N1.4.2.4.4.8.4-2"/>
     return
         motifs:get-body-value($motif)
 };
@@ -87,20 +88,21 @@ declare
     %test:assertXPath("map:get($result, 'x-content-type') = 'Motif'")
 function t:get-body-object()
 as map(*) {
-    let $motif := processing-instruction oxy_comment_start {'comment="parable_plants"'}
+    let $motif := <span xmlns="http://www.tei-c.org/ns/1.0" id="N1.4.2.4.4.8.4-1" type="motif" n="parable_plants" next="#N1.4.2.4.4.8.4-2"/>
     return
         motifs:get-body-object($motif)
 };
 
 declare
     %test:assertXPath("map:get($result, 'format') = 'text/xml'")
-    %test:assertXPath("map:get($result, 'id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/N4.4.2.4.4.10.4-1'")
+    %test:assertXPath("map:get($result, 'id') = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/N1.4.2.4.4.8.4-1'")
     %test:assertXPath("map:get($result, 'language') = 'karshuni'")
 function t:get-target-information()
 as map(*) {
     let $teixml-uri := "sample_teixml"
-    let $doc := commons:open-tei-xml($teixml-uri)
-    let $motif := $doc//processing-instruction('oxy_comment_start')[1]
+    let $tei-xml-base-uri := $commons:data || "sample_teixml.xml"
+    let $doc := commons:get-page-fragment($tei-xml-base-uri, "82a", "transcription")
+    let $motif := $doc/descendant::tei:span[@type = "motif"][1]
     return
         motifs:get-target-information($teixml-uri, $motif)
 };

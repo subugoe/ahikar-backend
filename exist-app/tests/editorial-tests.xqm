@@ -86,7 +86,7 @@ as map() {
 
 declare
     %test:args("sample_teixml", "84a")
-    %test:assertXPath("$result = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/annotation-N4.4.2.4.4.360.2'")
+    %test:assertXPath("$result = 'http://ahikar.sub.uni-goettingen.de/ns/annotations/sample_teixml/annotation-N1.4.2.4.4.205.2'")
 function t:get-annotations-detailed-id($teixml-uri as xs:string,
     $page as xs:string)
 as xs:string {

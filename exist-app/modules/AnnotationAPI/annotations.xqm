@@ -19,6 +19,7 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
 import module namespace edit="http://ahikar.sub.uni-goettingen.de/ns/annotations/editorial" at "editorial.xqm";
 import module namespace functx = "http://www.functx.com";
+import module namespace me="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion" at "/db/apps/ahikar/modules/motifs-expansion.xqm";
 import module namespace motifs="http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs" at "motifs.xqm";
 
 (:
@@ -717,7 +718,7 @@ declare function anno:get-total-number-of-annotations($collection-type-or-manife
         for $xml-uri in $xml-uris return
             let $doc := commons:get-document($xml-uri, "data")
             let $annotations := 
-                (motifs:get-all-motifs-in-document($doc, $xml-uri),
+                (motifs:get-all-motifs-in-document($doc//tei:TEI => me:main(), $xml-uri),
                 edit:get-all-annos-in-document($doc, $xml-uri))
             return
                 $annotations

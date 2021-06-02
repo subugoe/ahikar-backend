@@ -17,6 +17,7 @@ docker/frontend
 *.sh
 !get-unit-test-failures-and-errors.sh
 !ci-scripts/update-css.sh
+!ci-scripts/set-entrypoint.sh
 
 # exlude data for commitizen
 node_modules
