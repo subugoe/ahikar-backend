@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [5.14.1] -2021-05-17
+## [5.14.2] - 2021-05-21
+
+### Fixed
+
+- the serialization of simple motifs is now able to deal with motifs spanning over a page's end.
+Motifs that encompass more than one line are connected via a `data-next` attribute in HTML.
+The AnnotationAPI exposes the first part of a motif available on a page.
+- the entry point of the front end is set correctly during the CI pipelines (depending on the branch executing them).
+
+### Changed
+
+- the processing instructions which represent the motifs are transformed to XML elements to simplify processing the data.
+- some of the Docker images in the CI config have been exchanged with smaller versions.
+
+## [5.14.1] - 2021-05-17
 
 ### Added
 

@@ -8,6 +8,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
+import module namespace me="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion" at "/db/apps/ahikar/modules/motifs-expansion.xqm";
 import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize" at "tokenize.xqm";
 
 declare variable $commons:expath-pkg := doc("../expath-pkg.xml");
@@ -112,6 +113,7 @@ declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
 as element() {
     if (local:has-text-content($tei-xml-base-uri, $page, $text-type)) then
         let $node := doc($tei-xml-base-uri)/tei:TEI
+            => me:main()
             => commons:add-IDs()
             => tokenize:main(),
             $start-node := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
@@ -152,6 +154,19 @@ as node()* {
             
         case processing-instruction() return
             $node
+        
+        (: motifs are encoded as tei:span and get their IDs during the motif
+        expansion process if they span more than one line. Therefore some tei:spans
+        already have an ID while others don't. :)    
+        case element(tei:span) return
+            element {QName("http://www.tei-c.org/ns/1.0", local-name($node))} {
+                if ($node/@id) then
+                    ()
+                else
+                    attribute id {generate-id($node)},
+                $node/@*,
+                commons:add-IDs($node/node())
+            }
             
         default return
             element {QName("http://www.tei-c.org/ns/1.0", local-name($node))} {

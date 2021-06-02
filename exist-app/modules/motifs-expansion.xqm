@@ -12,7 +12,46 @@ xquery version "3.1";
 module namespace me="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-declare function me:main($nodes as node()*)
+declare function me:main($pages as node()+)
+as node()+ {
+    me:transform-pis($pages)
+    => me:expand()
+};
+
+declare function me:transform-pis($nodes as node()*)
+as node()* {
+    for $node in $nodes return
+        typeswitch ($node)
+        
+        case text() return
+            $node
+            
+        case comment() return
+            ()
+            
+        case processing-instruction() return
+            element {QName("http://www.tei-c.org/ns/1.0", "motif")} {
+                if ($node[not(me:get-motif-type($node) = "")]) then
+                    (attribute type {"start"},
+                    attribute n {me:get-motif-type($node)})
+                else
+                    attribute type {"end"}
+            }
+            
+        default return
+            element {QName("http://www.tei-c.org/ns/1.0", local-name($node))} {
+                $node/@*,
+                me:transform-pis($node/node())
+            }
+};
+
+declare function me:get-motif-type($motif as processing-instruction())
+as xs:string {
+    substring-after($motif, "comment=""")
+    => substring-before("""")
+};
+
+declare function me:expand($nodes as node()*)
 as node()* {
     for $node in $nodes return
         typeswitch ($node)
@@ -23,21 +62,21 @@ as node()* {
             else
                 $node
         
-        case processing-instruction() return
+        case element(tei:motif) return
             (: motifs starting and ending in the same line :)
-            if ($node[self::processing-instruction('oxy_comment_start')]
+            if ($node/@type = "start"
             and me:is-motif-one-liner($node)) then
                 element {QName("http://www.tei-c.org/ns/1.0","span")} {
                     attribute type {"motif"},
-                    attribute n {me:get-motif-type($node)},
+                    $node/@n,
                     let $comment-end := me:get-next-motif-end($node)
                     let $nodes-inbetween := $node/following-sibling::node()[. >> $node and . << $comment-end]
                     return
                         $nodes-inbetween
                 }
             
-            (: the first line of a motifs encompassing mulitple lines :)
-            else if($node[self::processing-instruction('oxy_comment_start')]
+            (: the first line of a motifs encompassing multiple lines :)
+            else if($node/@type = "start"
             and not(me:is-motif-one-liner($node))) then
                 element {QName("http://www.tei-c.org/ns/1.0","span")} {
                     attribute id {generate-id($node) || "-" || me:determine-motif-part($node)},
@@ -49,8 +88,8 @@ as node()* {
                         $nodes-of-line-in-motif
                 }
             
-            (: the last line of a motifs encompassing mulitple lines :)
-            else if($node[self::processing-instruction('oxy_comment_end')]) then
+            (: the last line of a motifs encompassing multiple lines :)
+            else if($node/@type = "end") then
                 let $comment-start := me:get-previous-motif-start($node)
                 return
                     if (not(me:is-motif-one-liner($comment-start))) then
@@ -69,7 +108,7 @@ as node()* {
                 ()
                 
         case element(tei:ab) return
-            (: one of the middles lines of a motifs encompassing mulitple lines :)
+            (: one of the middles lines of a motifs encompassing multiple lines :)
             if (me:is-node-in-motif($node)) then
                 let $previous-comment-start := me:get-previous-motif-start($node)
                 let $motif-id := generate-id($previous-comment-start)
@@ -85,6 +124,11 @@ as node()* {
                     }
             else
                 me:copy-node($node)
+                
+        case element(tei:pb) return
+            element {QName("http://www.tei-c.org/ns/1.0", local-name($node))} {
+                $node/@*
+            }
             
         default return
             me:copy-node($node)
@@ -94,20 +138,28 @@ declare function me:is-node-in-motif($node as node())
 as xs:boolean {
     let $previous-motif-start := me:get-previous-motif-start($node)
     let $previous-motif-end := me:get-previous-motif-end($node)
+    let $next-motif-start := me:get-next-motif-start($node)
     let $next-motif-end :=  me:get-next-motif-end($node)
-    return
+    let $are-basic-conditions-fulfilled :=
         $previous-motif-start
-        and
-        (
-            ($previous-motif-end
-            and $previous-motif-start[. >> $previous-motif-end and $node << .])
-            or
-            (not($previous-motif-end)
-            and $node[. >> $previous-motif-start and . << $next-motif-end])
-        )
+        and not($node/descendant::tei:motif[@type = "start"])
+        and $node[. >> $previous-motif-start and . << $next-motif-end]
+    
+    return
+        if ($next-motif-start and $previous-motif-end) then
+            $are-basic-conditions-fulfilled
+            and $next-motif-start[. >> $next-motif-end]
+            and $previous-motif-end[. << $previous-motif-start]
+            
+        else if($next-motif-start) then
+            $are-basic-conditions-fulfilled
+            and $next-motif-start[. >> $next-motif-end]
+            
+        else
+            $are-basic-conditions-fulfilled
 };
 
-declare function me:is-motif-one-liner($node as processing-instruction())
+declare function me:is-motif-one-liner($node as element(tei:motif))
 as xs:boolean {
     let $comment-end := me:get-next-motif-end($node)
     return
@@ -120,39 +172,38 @@ declare function me:copy-node($node as node()*) {
     else
         element {QName("http://www.tei-c.org/ns/1.0", local-name($node))} {
             $node/@*,
-            me:main($node/node())
+            me:expand($node/node())
         }
 };
 
 declare function me:get-previous-motif-start($node as node())
-as processing-instruction()? {
-    $node/preceding::processing-instruction('oxy_comment_start')[1]
+as element(tei:motif)? {
+    $node/preceding::tei:motif[@type = "start"][1]
 };
 
 declare function me:get-previous-motif-end($node as node())
-as processing-instruction()? {
-    $node/preceding::processing-instruction('oxy_comment_end')[1]
+as element(tei:motif)? {
+    $node/preceding::tei:motif[@type = "end"][1]
 };
 
 declare function me:get-next-motif-end($node as node())
-as processing-instruction()? {
-    $node/following::processing-instruction('oxy_comment_end')[1]
+as element(tei:motif)? {
+    $node/following::tei:motif[@type = "end"][1]
 };
 
-declare function me:get-motif-type($motif as processing-instruction())
-as xs:string {
-    substring-after($motif, "comment=""")
-    => substring-before("""")
+declare function me:get-next-motif-start($node as node())
+as element(tei:motif)? {
+    $node/following::tei:motif[@type = "start"][1]
 };
 
 declare function me:determine-motif-part($node as node())
 as xs:integer {
-    if ($node[self::processing-instruction('oxy_comment_start')]) then
+    if ($node/@type = "start") then
         1
     else
         let $motif-start := me:get-previous-motif-start($node)
         let $motif-line := $motif-start/ancestor::tei:ab
-        let $current-line := $node/ancestor::tei:ab
+        let $current-line := $node/ancestor-or-self::tei:ab
         return
             (: we have to add 2 here because neither $current-line nor $motif-line
             are considered in the computation :)
@@ -165,8 +216,8 @@ as attribute() {
     attribute next {"#" || $motif-id || "-" || (me:determine-motif-part($node) + 1)}
 };
 
-declare function me:make-core-attributes($motif-start as processing-instruction())
+declare function me:make-core-attributes($motif-start as element(tei:motif))
 as attribute()+ {
     attribute type {"motif"},
-    attribute n {me:get-motif-type($motif-start)}
+    $motif-start/@n
 };
