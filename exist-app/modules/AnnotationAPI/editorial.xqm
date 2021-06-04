@@ -147,7 +147,11 @@ as xs:string {
             if ($annotation/@type = 'verbatim') then
                 $annotation || ": a quote of " || $annotation/tei:bibl
             else
-                $annotation || ": a reference to " || $annotation/tei:bibl || ". original phrase: " || $annotation/tei:note
+                let $references-strings :=
+                    for $bibl in $annotation/tei:bibl return
+                        "a reference to " || $bibl || ". original phrase: " || $bibl/preceding-sibling::tei:note[1]
+                return        
+                    $annotation || ": " || string-join($references-strings, "; ")
         
         case element(tei:surplus) return
             $annotation || ": surplus text"

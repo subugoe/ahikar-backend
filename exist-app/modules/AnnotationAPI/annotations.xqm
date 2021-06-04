@@ -256,9 +256,8 @@ as map() {
             => anno:get-all-xml-uris-for-submap()
     let $annotations :=
         for $teixml-uri in $xml-uris return
-            (: TODO :)
             for $page in anno:get-pages-in-TEI($teixml-uri) return
-                anno:get-annotations($teixml-uri, $page)
+                anno:get-saved-items($document, $page)
     
     return
         map {
@@ -338,7 +337,6 @@ declare function anno:make-annotationPage-for-manifest($collection as xs:string,
     $server as xs:string)
 as map() {
     let $docTitle := anno:get-metadata-title($document)
-    let $xml := anno:find-in-map($anno:uris, $document)
     let $prevPage := anno:get-prev-or-next-page($document, $page, "prev")
     let $nextPage := anno:get-prev-or-next-page($document, $page, "next")
     
@@ -368,18 +366,19 @@ as map() {
                     "next":         $nextPageURL,
                     "prev":         $prevPageURL,
                     "startIndex":   anno:determine-start-index-for-page($document, $page),
-                    "items":        anno:get-annotations($xml, $page)
+                    "items":        anno:get-saved-items($document, $page)
                 }
         }
 };
 
-declare function anno:get-annotations($teixml-uri as xs:string,
-    $page as xs:string)
-as item()* {
-    let $pages := commons:get-page-fragments($teixml-uri, $page)
+declare function anno:get-saved-items($manifest as xs:string,
+    $page as xs:string) {
+    let $filename := $commons:json || $manifest || "-" || commons:format-page-number($page) || "-items.json"
     return
-        (edit:get-annotations($pages, $teixml-uri),
-        motifs:get-motifs($pages, $teixml-uri))
+        util:binary-doc($filename)
+        => util:base64-decode()
+        => parse-json()
+        => map:get("items")
 };
 
 
@@ -701,9 +700,15 @@ as xs:integer {
     let $previous-pages := $currentPb/preceding::tei:pb
     let $previous-annotations :=
         for $prev-page in $previous-pages return
-            anno:get-annotations($xml, $prev-page/@n)
+            try {
+                let $prev-annotations := anno:get-saved-items($uri, $prev-page/@n)
+                return
+                    array:size($prev-annotations)
+            } catch * {
+                0
+            }
     return
-        count($previous-annotations)
+        sum($previous-annotations)
 };
 
 declare function anno:get-total-number-of-annotations($collection-type-or-manifest-uri as xs:string) {
