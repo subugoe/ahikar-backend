@@ -58,19 +58,16 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
             exrest:register-module(xs:anyURI($uri))
 ),
 
-(: set owner and mode for RestXq module :)
-(let $path := $target || "/modules/tapi.xqm"
-return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
-
-(: set owner and mode for deployment module :)
-(let $path := $target || "/modules/deploy.xqm"
-return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
-
-(: set owner and mode for test modules :)
-(let $path := $target || "/modules/testtrigger.xqm"
-return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
-(let $path := $target || "/modules/apitesttrigger.xqm"
-return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
+(: set owner and mode for modules :)
+(
+    (
+        $target || "/modules/tapi.xqm",
+        $target || "/modules/deploy.xqm",
+        $target || "/modules/testtrigger.xqm",
+        $target || "/modules/apitesttrigger.xqm",
+        $target || "/modules/AnnotationAPI/save-annotations.xqm"
+    ) ! (sm:chown(., "admin"), sm:chmod(., "rwsrwxr-x"))
+),
 
 (: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
 ( 
@@ -98,4 +95,26 @@ return (sm:chown($path, "admin"), sm:chmod($path, "rwsrwxr-x"))),
         xmldb:move($target, "/db/apps/openapi", "openapi-config.xml"))
     else
         ()
+),
+
+(: create trigger config.
+ : simply moving the file from one place to the other doesn't cause eXist-db to recognize the
+ : config. neither does reindexing after moving the file.
+ : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection.xconf. :)
+(
+    if (xmldb:collection-available("/db/system/config/db/data/textgrid/data")) then
+        (
+            let $contents := doc("/db/apps/ahikar/collection.xconf")/*
+            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
+            return
+                xmldb:remove("/db/apps/ahikar", "collection.xconf")
+        )
+    else
+        (
+            xmldb:create-collection("/db/system/config/db/", "data/textgrid/data"),
+            let $contents := doc("/db/apps/ahikar/collection.xconf")/*
+            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
+            return
+                xmldb:remove("/db/apps/ahikar", "collection.xconf")          
+        )
 )

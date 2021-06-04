@@ -336,3 +336,8 @@ as xs:string {
         => normalize-space()
         => replace(" ", "_")
 };
+
+declare function commons:format-page-number($pb as xs:string) {
+    replace($pb, " ", "")
+    => replace("[^a-zA-Z0-9]", "")
+};

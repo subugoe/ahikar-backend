@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.15.0] - 2021-06-03
+
+### Added
+
+- annotation items are now preprocessed and stored to the database.
+When an application wants to access an Annotation Page, the database retrieves the items from the stored files while the rest of the Page is created dynamically.
+Also, a database trigger has been added that updated the stored annotation items for a TEI document each time is updated in the `data` collection.
+
 ## [5.14.2] - 2021-05-21
 
 ### Fixed
