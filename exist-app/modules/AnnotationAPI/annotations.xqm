@@ -104,7 +104,7 @@ as map() {
         since we are on the lowest level of the map. :)
         else if($document) then
             let $tei := anno:find-in-map($anno:uris, $document)
-            let $pages := anno:get-pages-in-TEI($tei)
+            let $pages := commons:get-pages-in-TEI($tei)
             let $title := anno:get-metadata-title($document)
             let $first-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $pages[1] || "/annotationPage.json"
             let $last-entry := $server || "/api/annotations/ahikar/" || $collection || "/" || $document || "/" || $pages[last()] || "/annotationPage.json"
@@ -257,7 +257,7 @@ as map() {
             => anno:get-all-xml-uris-for-submap()
     let $annotations :=
         for $teixml-uri in $xml-uris return
-            for $page in anno:get-pages-in-TEI($teixml-uri) return
+            for $page in commons:get-pages-in-TEI($teixml-uri) return
                 anno:get-saved-items($document, $page)
     
     return
@@ -544,17 +544,6 @@ as xs:boolean {
 };
 
 (:~
- : Returns all page break numbers for a given TEI resource.
- : 
- : @param $documentURI The TEI resource's URI
- : @return A sequence of all page breaks occuring in the resource
- :)
-declare function anno:get-pages-in-TEI($documentURI as xs:string) as xs:string+ {
-    commons:get-document($documentURI, "data")//tei:pb[@facs]/@n/string()
-};
-
-
-(:~
  : Returns the previous or next @n of a tei:pb seen from a given tei:pb which is
  : denoted in $page.
  : 
@@ -567,7 +556,7 @@ declare function anno:get-prev-or-next-page($manifest-uri as xs:string,
     $type as xs:string)
 as xs:string? {
     let $tei := anno:find-in-map($anno:uris, $manifest-uri)
-    let $pages := anno:get-pages-in-TEI($tei)
+    let $pages := commons:get-pages-in-TEI($tei)
     return
         anno:get-prev-or-next($pages, $page, $type)
 };

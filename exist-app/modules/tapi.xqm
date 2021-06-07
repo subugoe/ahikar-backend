@@ -156,6 +156,7 @@ as item()+ {
  :
  : Sample call to API: /content/3rbmb-1a.html
  :
+ : @param $text-type The text type ("transcription" or "transliteration")
  : @param $tei-xml-uri The unprefixed TextGrid URI of a TEI/XML, e.g. '3rbmb'
  : @param $page The page to be rendered. This has to be the string value of a tei:pb/@n in the given document, e.g. '1a'
  : @return A response header as well as the rendered HTML page
@@ -163,15 +164,15 @@ as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/content/{$html-type}/{$tei-xml-uri}-{$page}.html")
+    %rest:path("/content/{$text-type}/{$tei-xml-uri}-{$page}.html")
     %output:method("xml")
     %output:indent("no")
 function tapi:endpoint-html($tei-xml-uri as xs:string,
-    $html-type as xs:string,
+    $text-type as xs:string,
     $page as xs:string)
 as item()+ {
     $commons:responseHeader200,
-    tapi-html:get-html($tei-xml-uri, $page, $html-type)
+    doc($commons:html || $tei-xml-uri || "-" || commons:format-page-number($page) || "-" || $text-type || ".html")/*
 };
 
 (:~

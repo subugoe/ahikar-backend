@@ -98,6 +98,14 @@ as xs:string+ {
         commons:make-id-from-idno($TEI)
 };
 
+declare
+    %test:args("sample_teixml") %test:assertXPath("count($result) = 6")
+    %test:args("sample_teixml") %test:assertXPath("$result = '82a'")
+function ct:get-pages-in-TEI($uri as xs:string)
+as xs:string+ {
+    commons:get-pages-in-TEI($uri)
+};
+
 declare function local:get-sample-tei()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
