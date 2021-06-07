@@ -37,6 +37,7 @@ unit_tests:
   <<: *job_definition
   script:
     - *start_db
+    - curl --head -s http://localhost:8080/exist/restxq/textapi/html/save
     - curl --head -s http://localhost:8080/exist/restxq/annotations/save
     - header=$(curl --head -s http://localhost:8080/exist/restxq/trigger-unit-tests)
     - *evaluate_results
@@ -46,6 +47,7 @@ integration_tests:
   <<: *job_definition
   script:
     - *start_db
+    - curl --head -s http://localhost:8080/exist/restxq/textapi/html/save
     - curl --head -s http://localhost:8080/exist/restxq/annotations/save
     - header=$(curl --head -s http://localhost:8080/exist/restxq/trigger-api-tests)
     - *evaluate_results

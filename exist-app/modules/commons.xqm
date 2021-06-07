@@ -19,6 +19,7 @@ declare variable $commons:meta := $commons:tg-collection || "/meta/";
 declare variable $commons:agg := $commons:tg-collection || "/agg/";
 declare variable $commons:tile := $commons:tg-collection || "/tile/";
 declare variable $commons:json := $commons:tg-collection || "/json/";
+declare variable $commons:html := $commons:tg-collection || "/html/";
 declare variable $commons:appHome := "/db/apps/ahikar";
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
@@ -81,16 +82,22 @@ declare function commons:get-page-fragments($teixml-uri as xs:string,
     $page as xs:string)
 as element()+ {
     let $nodeURI := commons:get-document($teixml-uri, "data")/base-uri()
-    let $langs := local:get-languages($teixml-uri)
-    return
-        if ($langs = "karshuni") then
-            (commons:get-page-fragment($nodeURI, $page, "transcription"),
-            commons:get-page-fragment($nodeURI, $page, "transliteration"))
-        else
-            commons:get-page-fragment($nodeURI, $page, "transcription")
+    let $text-types := commons:get-text-types($teixml-uri)
+    for $type in $text-types return
+        commons:get-page-fragment($nodeURI, $page, $type)
 };
 
-declare function local:get-languages($teixml-uri as xs:string)
+declare function commons:get-text-types($teixml-uri as xs:string)
+as xs:string+ {
+    let $langs := commons:get-languages($teixml-uri)
+    return
+        if ($langs = "karshuni") then
+            ("transcription", "transliteration")
+        else
+            "transcription"
+};
+
+declare function commons:get-languages($teixml-uri as xs:string)
 as xs:string+ {
     let $xml-doc := commons:open-tei-xml($teixml-uri)
     return
@@ -335,6 +342,22 @@ as xs:string {
         => replace("[\(\)=\[\]]", " ")
         => normalize-space()
         => replace(" ", "_")
+};
+
+(:~
+ : Returns all page break numbers for a given TEI resource.
+ : 
+ : @param $documentURI The TEI resource's URI
+ : @return A sequence of all page breaks occuring in the resource
+ :)
+declare function commons:get-pages-in-TEI($uri as xs:string)
+as xs:string+ {
+    commons:get-document($uri, "data")//tei:pb[@facs]/@n/string()
+};
+
+declare function commons:get-pages-for-text-type($uri as xs:string, 
+    $type as xs:string) {
+    commons:get-document($uri, "data")//tei:text[@type = $type]//tei:pb/@n/string()
 };
 
 declare function commons:format-page-number($pb as xs:string) {

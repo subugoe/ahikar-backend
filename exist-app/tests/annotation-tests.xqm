@@ -21,14 +21,6 @@ as xs:boolean {
 };
 
 declare
-    %test:args("sample_teixml") %test:assertXPath("count($result) = 6")
-    %test:args("sample_teixml") %test:assertXPath("$result = '82a'")
-function at:get-pages-in-TEI($uri as xs:string)
-as xs:string+ {
-    anno:get-pages-in-TEI($uri)
-};
-
-declare
     %test:assertTrue
 function at:are-resources-available-true()
 as xs:boolean {

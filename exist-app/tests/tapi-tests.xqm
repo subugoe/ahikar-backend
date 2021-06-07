@@ -12,6 +12,7 @@ module namespace tt="http://ahikar.sub.uni-goettingen.de/ns/tapi/tests";
 declare namespace http = "http://expath.org/ns/http-client";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
+import module namespace sh="http://ahikar.sub.uni-goettingen.de/ns/tapi/html/save" at "/db/apps/ahikar/modules/save-html.xqm";
 import module namespace tapi="http://ahikar.sub.uni-goettingen.de/ns/tapi" at "../modules/tapi.xqm";
 import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "test-commons.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
@@ -106,6 +107,7 @@ declare
      : the underlying function. :)
     %test:assertXPath("$result//*[@class = 'tei_body']")
 function tt:content-transliteration-rest() as document-node() {
+    sh:save-html("/db/data/textgrid/data/sample_teixml.xml"),
     let $url := $tc:server || "/content/transliteration/sample_teixml-82a.html"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]
@@ -117,6 +119,7 @@ declare
      : the underlying function. :)
     %test:assertXPath("$result//*[@class = 'tei_body']")
 function tt:content-transcription-rest() as document-node() {
+    sh:save-html("/db/data/textgrid/data/sample_teixml.xml"),
     let $url := $tc:server || "/content/transcription/sample_teixml-82a.html"
     let $req := tc:make-request($url)
     return http:send-request($req)[2]
