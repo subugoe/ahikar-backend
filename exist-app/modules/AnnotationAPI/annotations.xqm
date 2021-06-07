@@ -13,6 +13,7 @@ xquery version "3.1";
 module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace ore="http://www.openarchives.org/ore/terms/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
@@ -372,7 +373,8 @@ as map() {
 };
 
 declare function anno:get-saved-items($manifest as xs:string,
-    $page as xs:string) {
+    $page as xs:string)
+as array(*)? {
     let $filename := $commons:json || $manifest || "-" || commons:format-page-number($page) || "-items.json"
     return
         util:binary-doc($filename)
@@ -711,7 +713,8 @@ as xs:integer {
         sum($previous-annotations)
 };
 
-declare function anno:get-total-number-of-annotations($collection-type-or-manifest-uri as xs:string) {
+declare function anno:get-total-number-of-annotations($collection-type-or-manifest-uri as xs:string)
+as xs:integer {
     let $map-entry-for-uri := anno:find-in-map($anno:uris, $collection-type-or-manifest-uri)
     
     let $xml-uris :=
@@ -721,12 +724,24 @@ declare function anno:get-total-number-of-annotations($collection-type-or-manife
             anno:get-all-xml-uris-for-submap($map-entry-for-uri)
     let $annotations-per-xml :=
         for $xml-uri in $xml-uris return
+            let $manifest :=
+                for $manifest in collection($commons:agg) return
+                    if (matches($manifest//ore:aggregates/@rdf:resource, $xml-uri)) then
+                        $manifest//rdf:Description/@rdf:about/string()
+                        => substring-after("textgrid:")
+                        => substring-before(".")
+                    else
+                        ()
             let $doc := commons:get-document($xml-uri, "data")
-            let $annotations := 
-                (motifs:get-all-motifs-in-document($doc//tei:TEI => me:main(), $xml-uri),
-                edit:get-all-annos-in-document($doc, $xml-uri))
-            return
-                $annotations
+            let $pages := $doc//tei:pb/@n/string()
+            for $page in $pages return
+                try {
+                    let $annotations := anno:get-saved-items($manifest, $page)
+                    return
+                        array:size($annotations)
+                } catch * {
+                    0
+                }
     return 
-        count($annotations-per-xml)
+        sum($annotations-per-xml)
 };
