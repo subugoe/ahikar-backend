@@ -353,8 +353,8 @@ as xs:string+ {
 };
 
 declare
-    %test:args("sample_edition") %test:assertEquals("148")
-    %test:args("syriac") %test:assertEquals("192")
+    %test:args("sample_edition") %test:assertEquals("296")
+    %test:args("syriac") %test:assertEquals("342")
 function at:get-total-number-of-annotations($key as xs:string)
 as xs:integer {
     anno:get-total-number-of-annotations($key)
