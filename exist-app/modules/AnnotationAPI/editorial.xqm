@@ -125,8 +125,15 @@ as xs:string {
                     "a damaged passage. legible text: " || $text
                     
         case element(tei:choice) return
-            if($annotation/tei:sic) then 
-                "correction of faulty text. original: " || $annotation/tei:sic || ", corrected text: " || $annotation/tei:corr 
+            if($annotation/tei:sic) then
+                let $resp :=
+                    if ($annotation/tei:corr/@resp) then
+                        "by the editors"
+                    else
+                        "by the scribe"
+                return
+                    "correction of faulty text. original: " || $annotation/tei:sic || 
+                    ", corrected " || $resp || " to: " || $annotation/tei:corr 
             else
                 "an abbreviation. original: " || $annotation/tei:abbr || ", expanded text: " || $annotation/tei:expan 
                 

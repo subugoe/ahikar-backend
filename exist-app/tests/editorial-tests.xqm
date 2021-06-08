@@ -20,6 +20,33 @@ as xs:string {
 };
 
 declare
+    %test:assertEquals("correction of faulty text. original: errror, corrected by the scribe to: error")
+function t:anno-get-body-value-scribe()
+as xs:string {
+    let $annotation :=
+        <choice xmlns="http://www.tei-c.org/ns/1.0">
+            <sic>errror</sic>
+            <corr>error</corr>
+        </choice>
+    return
+        edit:get-body-value($annotation)
+};
+
+declare
+    %test:assertEquals("correction of faulty text. original: errror, corrected by the editors to: error")
+function t:anno-get-body-value-editor()
+as xs:string {
+    let $annotation :=
+        <choice xmlns="http://www.tei-c.org/ns/1.0">
+            <sic>errror</sic>
+            <corr resp="#sb">error</corr>
+        </choice>
+    return
+        edit:get-body-value($annotation)
+};
+
+
+declare
     %test:assertEquals("Person")
 function t:get-annotation-type-person()
 as xs:string {
