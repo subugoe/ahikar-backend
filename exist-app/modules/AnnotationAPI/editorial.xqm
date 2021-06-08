@@ -50,13 +50,6 @@ as map()* {
         edit:make-map($annotation, $teixml-uri)
 };
 
-declare function edit:get-all-annos-in-document($xml-doc as document-node(),
-    $teixml-uri as xs:string) {
-    let $annos := $xml-doc/descendant::tei:text/descendant::*[local-name(.) = $edit:annotationElements]
-    for $annotation in $annos return
-        edit:make-map($annotation, $teixml-uri)
-};
-
 declare function edit:make-map($annotation as element(),
     $teixml-uri as xs:string)
 as map(*) {

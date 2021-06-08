@@ -182,17 +182,15 @@ declare
     %test:args("sample_edition", 
         "Beispieledition", 
         "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/82a/annotationPage.json", 
-        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/83b/annotationPage.json",
-        "12")
+        "http://localhost:8080/api/annotations/ahikar/sample_lang_aggregation_syriac/sample_edition/83b/annotationPage.json")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('label') = 'Ahikar annotations for textgrid:sample_edition: Beispieledition'")
     %test:assertXPath("map:get($result, 'annotationCollection') => map:get('x-creator') = 'Simon Birol, Aly Elrefaei'")
 function at:make-annotationCollection-map($uri as xs:string,
     $title as xs:string,
     $first-entry as xs:string,
-    $last-entry as xs:string,
-    $total-no-of-annos as xs:integer)
+    $last-entry as xs:string)
 as map() {
-    anno:make-annotationCollection-map($uri, $title, $first-entry, $last-entry, $total-no-of-annos)
+    anno:make-annotationCollection-map($uri, $title, $first-entry, $last-entry)
 };
 
 declare
@@ -205,25 +203,6 @@ function at:make-annotationPage($collection as xs:string,
 as map() {
     anno:make-annotationPage($collection, $manifest, $server)
 };
-
-declare
-    %test:args("sample_edition", "82a") %test:assertEquals("148")
-    %test:args("sample_edition", "82b") %test:assertEquals("192")
-function at:determine-start-index-for-page($uri as xs:string,
-    $page as xs:string)
-as xs:integer {
-    anno:determine-start-index-for-page($uri, $page)
-};
-
-declare
-    %test:args("sample_lang_aggregation_syriac") %test:assertEquals("0")
-    %test:args("sample_edition") %test:assertEquals("0")
-    %test:args("sample_teixml") %test:assertEquals("0")
-function at:determine-start-index($uri as xs:string)
-as xs:integer {
-    anno:determine-start-index($uri)
-};
-
 
 declare
     %test:args("next", "1r") %test:assertEquals("1v")
@@ -279,13 +258,12 @@ as xs:string {
 };
 
 declare
-    %test:args("syriac", "http://localhost:8080", "12")
+    %test:args("syriac", "http://localhost:8080")
     %test:assertEquals("http://localhost:8080/api/annotations/ahikar/syriac/sample_edition/annotationPage.json")
 function at:get-information-for-collection-object($collection-type as xs:string,
-    $server as xs:string,
-    $no-of-annos as xs:integer)
+    $server as xs:string)
 as xs:string {
-    let $result := anno:get-information-for-collection-object($collection-type, $server, $no-of-annos)
+    let $result := anno:get-information-for-collection-object($collection-type, $server)
     return
         map:get($result, "annotationCollection")
         => map:get("first")
@@ -301,21 +279,6 @@ function at:make-annotationCollection($collection as xs:string,
     $server as xs:string)
 as map() {
     anno:make-annotationCollection($collection, $document, $server)
-};
-
-declare
-    %test:args("sample_teixml") %test:assertEmpty
-function at:get-prev-xml-uris($uri as xs:string)
-as xs:string* {
-    anno:get-prev-xml-uris($uri)
-};
-
-declare
-    %test:args("sample_teixml") %test:assertEmpty
-    %test:args("sample_edition") %test:assertEmpty
-function at:get-xmls-prev-in-collection($uri as xs:string)
-as xs:string* {
-    anno:get-xmls-prev-in-collection($uri)
 };
 
 declare
@@ -342,12 +305,4 @@ declare
 function at:determine-uris-for-collection($collection as xs:string)
 as xs:string+ {
     anno:determine-uris-for-collection($collection)
-};
-
-declare
-    %test:args("sample_edition") %test:assertEquals("296")
-    %test:args("syriac") %test:assertEquals("342")
-function at:get-total-number-of-annotations($key as xs:string)
-as xs:integer {
-    anno:get-total-number-of-annotations($key)
 };

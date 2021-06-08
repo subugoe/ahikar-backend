@@ -27,17 +27,6 @@ as xs:integer {
 };
 
 declare
-    %test:assertEquals("1")
-function t:get-all-motifs-in-document()
-as xs:integer {
-    let $teixml-uri := "sample_teixml"
-    let $xml-doc := commons:open-tei-xml($teixml-uri)//tei:TEI => me:main()
-    return
-        motifs:get-all-motifs-in-document($xml-doc, $teixml-uri)
-        => count()
-};
-
-declare
     %test:assertTrue
 function t:is-annotationPage-endpoint-http200()
 as xs:boolean {
@@ -45,7 +34,6 @@ as xs:boolean {
     return
         tc:is-endpoint-http200($url)
 };
-
 
 declare
     (: check if all parts are present.

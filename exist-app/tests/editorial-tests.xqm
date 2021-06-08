@@ -62,16 +62,6 @@ as map()+ {
 };
 
 declare
-    %test:args("sample_teixml") %test:assertXPath("count($result) = 147")
-    %test:args("sample_syriac_teixml") %test:assertXPath("count($result) = 39")
-function t:get-all-annos-in-document($teixml-uri as xs:string)
-as map()+ {
-    let $doc := commons:open-tei-xml($teixml-uri)
-    return
-        edit:get-all-annos-in-document($doc, $teixml-uri)
-};
-
-declare
     %test:args("sample_teixml", "84a")
     %test:assertXPath("map:get($result, 'value') = 'ܢܕܢ܂'")
 function t:get-annotations-detailed-body($teixml-uri as xs:string,
