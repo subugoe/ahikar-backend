@@ -28,14 +28,6 @@ as element(tei:span)* {
     $page//tei:span[@type = "motif"][not(matches(preceding::tei:span[@type = "motif"][1]/@next, @id))]
 };
 
-declare function motifs:get-all-motifs-in-document($xml-doc as element(tei:TEI),
-    $teixml-uri as xs:string)
-as map(*)* {
-    let $motifs := $xml-doc/descendant::tei:span[@type = "motif"][functx:substring-after-last(@id, "-") = ("", "1")]
-    for $motif in $motifs return
-        motifs:make-map($motif, $teixml-uri)
-};
-
 declare function motifs:make-map($motif as element(tei:span),
     $teixml-uri as xs:string)
 as map(*) {

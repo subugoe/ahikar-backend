@@ -34,7 +34,6 @@ declare
     (: check if all parts are present.
      : no further tests are needed since the content has been tested while testing
      : the underlying function. :)
-    %test:assertXPath("map:contains($result, 'total')")
     %test:assertXPath("map:contains($result, 'first')")
     %test:assertXPath("map:contains($result, 'label')")
     %test:assertXPath("map:contains($result, 'last')")
@@ -70,7 +69,6 @@ declare
      : the underlying function. :)
     %test:assertXPath("map:contains($result, 'partOf')")
     %test:assertXPath("map:contains($result, 'items')")
-    %test:assertXPath("map:contains($result, 'startIndex')")
     %test:assertXPath("map:contains($result, 'prev')")
     %test:assertXPath("map:contains($result, 'next')")
     %test:assertXPath("map:contains($result, 'id')")
@@ -99,7 +97,6 @@ declare
     (: check if all parts are present.
      : no further tests are needed since the content has been tested while testing
      : the underlying function. :)
-    %test:assertXPath("map:contains($result, 'total')")
     %test:assertXPath("map:contains($result, 'first')")
     %test:assertXPath("map:contains($result, 'label')")
     %test:assertXPath("map:contains($result, 'last')")
@@ -132,7 +129,6 @@ declare
     (: check if all parts are present.
      : no further tests are needed since the content has been tested while testing
      : the underlying function. :)
-    %test:assertXPath("map:contains($result, 'total')")
     %test:assertXPath("map:contains($result, 'first')")
     %test:assertXPath("map:contains($result, 'label')")
     %test:assertXPath("map:contains($result, 'x-creator')")
@@ -166,7 +162,6 @@ declare
      : the underlying function. :)
     %test:assertXPath("map:contains($result, 'partOf')")
     %test:assertXPath("map:contains($result, 'items')")
-    %test:assertXPath("map:contains($result, 'startIndex')")
     %test:assertXPath("map:contains($result, 'prev')")
     %test:assertXPath("map:contains($result, 'next')")
     %test:assertXPath("map:contains($result, 'id')")
