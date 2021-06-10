@@ -14,7 +14,7 @@
   - echo "Current HTTP status is $status."
   - if [[ "$status" != "200" ]]; then exit 1; fi
   - ash exist-app/test/bin/shutdown.sh
-  - failures=$(ash ci-scripts/get-unit-test-failures-and-errors.sh)
+  - failures=$(xmllint --xpath 'count(/tests/PROBLEM)' exist-app/test/ahikar-test-results.xml)
   - echo -e "\033[1;33mThere is/are currently $failures failures or errors.\033[0m"
   - if [[ "$failures" -gt 0 || ! -f "exist-app/test/ahikar-test-results.xml" ]]; then exit 1; else exit 0; fi
 
@@ -33,22 +33,15 @@
       - exist-app/build/dependencies/tg-connect-standalone.xar
       - exist-app/build/eXist*.xar
 
-unit_tests:
+unit_and_integration_tests:
   <<: *job_definition
   script:
     - *start_db
-    - curl --head -s http://localhost:8080/exist/restxq/textapi/html/save
-    - curl --head -s http://localhost:8080/exist/restxq/annotations/save
+    - curl --head -s http://localhost:8080/exist/restxq/prepare-unit-tests
     - header=$(curl --head -s http://localhost:8080/exist/restxq/trigger-unit-tests)
+    - echo "Evalutate unit tests…"
     - *evaluate_results
-  <<: *artifact_definition
-
-integration_tests:
-  <<: *job_definition
-  script:
-    - *start_db
-    - curl --head -s http://localhost:8080/exist/restxq/textapi/html/save
-    - curl --head -s http://localhost:8080/exist/restxq/annotations/save
     - header=$(curl --head -s http://localhost:8080/exist/restxq/trigger-api-tests)
+    - echo "Evaluate integration tests…"
     - *evaluate_results
   <<: *artifact_definition
