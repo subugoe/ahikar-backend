@@ -65,6 +65,7 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
         $target || "/modules/deploy.xqm",
         $target || "/modules/testtrigger.xqm",
         $target || "/modules/apitesttrigger.xqm",
+        $target || "/modules/prepare-unit-tests.xqm",
         $target || "/modules/AnnotationAPI/save-annotations.xqm"
     ) ! (sm:chown(., "admin"), sm:chmod(., "rwsrwxr-x"))
 ),

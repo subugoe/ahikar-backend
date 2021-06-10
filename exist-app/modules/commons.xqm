@@ -10,6 +10,7 @@ declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 import module namespace fragment="https://wiki.tei-c.org/index.php?title=Milestone-chunk.xquery" at "fragment.xqm";
 import module namespace me="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion" at "/db/apps/ahikar/modules/motifs-expansion.xqm";
 import module namespace tokenize="http://ahikar.sub.uni-goettingen.de/ns/tokenize" at "tokenize.xqm";
+import module namespace functx="http://www.functx.com" at "/db/system/repo/functx-1.0.1/functx/functx.xq";
 
 declare variable $commons:expath-pkg := doc("../expath-pkg.xml");
 declare variable $commons:version := $commons:expath-pkg/*/@version;
@@ -363,4 +364,9 @@ declare function commons:get-pages-for-text-type($uri as xs:string,
 declare function commons:format-page-number($pb as xs:string) {
     replace($pb, " ", "")
     => replace("[^a-zA-Z0-9]", "")
+};
+
+declare function commons:extract-uri-from-base-uri($base-uri as xs:string) {
+    functx:substring-after-last($base-uri, "/")
+    => substring-before(".xml")
 };

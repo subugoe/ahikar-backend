@@ -8,7 +8,7 @@ declare namespace xhtml="http://www.w3.org/1999/xhtml";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "../modules/tapi-html.xqm";
-
+import module namespace tc="http://ahikar.sub.uni-goettingen.de/ns/tests/commons" at "/db/apps/ahikar/tests/test-commons.xqm";
 
 
 declare
@@ -27,5 +27,9 @@ function thtmlt:get-html($tei-xml-uri as xs:string,
     $page as xs:string,
     $text-type as xs:string)
 as element(div) {
-    tapi-html:get-html($tei-xml-uri, $page, $text-type)
+    let $fragments :=
+        map:get(tc:get-fragments(), $text-type)
+        => map:get($page)
+    return
+        tapi-html:get-html($tei-xml-uri, $page, $fragments)
 };

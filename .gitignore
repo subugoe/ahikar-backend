@@ -15,7 +15,6 @@ docker/frontend
 
 # exclude local scripts
 *.sh
-!get-unit-test-failures-and-errors.sh
 !ci-scripts/update-css.sh
 !ci-scripts/set-entrypoint.sh
 

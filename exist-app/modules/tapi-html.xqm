@@ -17,12 +17,12 @@ import module namespace tei2html="http://ahikar.sub.uni-goettingen.de/ns/tei2htm
  :)
 declare function tapi-html:get-html($tei-xml-uri as xs:string,
     $page as xs:string,
-    $text-type as xs:string)
+    $page-fragment as element(tei:TEI))
 as element(div) {
     let $tei-xml-base-uri := $commons:data || $tei-xml-uri || ".xml"
     let $fragment :=
         if ($page) then
-            commons:get-page-fragment($tei-xml-base-uri, $page, $text-type)
+            $page-fragment
         else
             doc($tei-xml-base-uri)/*
     return
