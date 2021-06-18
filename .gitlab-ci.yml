@@ -127,7 +127,7 @@ build_docker-all:
     - build_exist_app
     - load_frontend-all
 
-# deploys the Docker container to ahikar-test.
+# deploys the Docker container on ahikar-test.
 deploy_docker-test:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -148,7 +148,7 @@ deploy_docker-test:
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
   dependencies: []
 
-# deploys the Docker container to ahikar-dev.
+# deploys the Docker container on ahikar-dev.
 deploy_docker-dev:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -162,7 +162,7 @@ deploy_docker-dev:
     - *deploy
   dependencies: []
 
-# deploys the Docker container to ahikar.
+# deploys the Docker container on ahikar.
 deploy_docker-main:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -176,7 +176,7 @@ deploy_docker-main:
     - *deploy
   dependencies: []
 
-# deploys the Ahiqar app to the database an ahikar-test.
+# deploys the Ahiqar app to the database at ahikar-test.
 deploy_app-test:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
   stage: deploy_app
@@ -195,7 +195,7 @@ deploy_app-test:
     - *http-status
   dependencies: []
 
-# deploys the Ahiqar app to the database an ahikar-dev.
+# deploys the Ahiqar app to the database at ahikar-dev.
 deploy_app-dev:
   image: curlimages/curl
   stage: deploy_app
@@ -208,7 +208,7 @@ deploy_app-dev:
     - *http-status
   dependencies: []
 
-# deploys the Ahiqar app to the database an ahikar.
+# deploys the Ahiqar app to the database at ahikar.
 deploy_app-main:
   image: curlimages/curl
   stage: deploy_app
