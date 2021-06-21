@@ -173,7 +173,7 @@ as map(*)+ {
     for $doc in collection("/db/data/resources/fonts") return
         map {
             "type": "font",
-            "mime": "font/otf",
+            "mime": "font/woff",
             "url": $server || "/api/content/" || functx:substring-after-last(base-uri($doc), "/")
         }
 };

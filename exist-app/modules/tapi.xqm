@@ -250,13 +250,12 @@ function tapi:endpoint-json() as item()+ {
 declare
     %rest:GET
     %rest:HEAD
-    %rest:path("/content/{$font}.otf")
-    %output:method("text")
-    %output:media-type("font/otf")
+    %rest:path("/content/{$font}.woff")
+    %output:method("binary")
+    %output:media-type("font/woff")
 function tapi:endpoint-fonts($font as xs:string) as item()+ {
     $commons:responseHeader200,
-    util:binary-doc(concat("/db/data/resources/css/", $font, ".css"))
-    => util:base64-decode()
+    util:binary-doc(concat("/db/data/resources/fonts/", $font, ".woff"))
 };
 
 declare

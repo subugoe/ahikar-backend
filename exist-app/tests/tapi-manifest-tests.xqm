@@ -281,8 +281,8 @@ as item() {
 };
 
 declare
-    %test:assertXPath("count($result) = 4")
-    %test:assertXPath("contains(map:get($result[1], 'url'), '/api/content/SyrCOMJerusalem') ")
+    %test:assertXPath("count($result) = 3")
+    %test:assertXPath("contains(map:get($result[1], 'url'), '/api/content/syrcomjerusalem') ")
 function tmt:make-fonts()
 as item()+ {
     tapi-mani:make-fonts($tc:server)

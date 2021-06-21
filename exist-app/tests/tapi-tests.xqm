@@ -217,8 +217,8 @@ function tt:is-css-endpoint-http200() {
 
 declare
     %test:assertTrue
-function tt:is-css-endpoint-http200() {
-    let $url := $tc:server || "/content/SyrCOMJerusalemOutline.otf"
+function tt:is-font-endpoint-http200() {
+    let $url := $tc:server || "/content/syrcomjerusalem.woff"
     return
         tc:is-endpoint-http200($url)
 };
