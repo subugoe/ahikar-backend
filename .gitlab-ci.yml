@@ -75,11 +75,11 @@ load_frontend-all:
     - unzip frontend.zip
     - bash ci-scripts/set-entrypoint.sh
     - mkdir -p docker/frontend
-    - cp Qviewer/dist/* docker/frontend/
+    - cp tido/dist/* docker/frontend/
     - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
-    - cp Qviewer/dist/* docker/frontend/syriac
+    - cp tido/dist/* docker/frontend/syriac
     - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
-    - cp Qviewer/dist/* docker/frontend/arabic-karshuni
+    - cp tido/dist/* docker/frontend/arabic-karshuni
     - bash ci-scripts/update-css.sh
   artifacts:
     paths:

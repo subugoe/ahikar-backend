@@ -71,7 +71,7 @@ ant -f exist-app/build.xml xar
 GITLAB_TOKEN=""
 curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.gwdg.de/api/v4/projects/9882/jobs/artifacts/develop/download?job=build" --output frontend.zip
 unzip frontend.zip -d docker/frontend
-mv docker/frontend/Qviewer/dist/* docker/frontend && rm -rf docker/frontend/Qviewer
+mv docker/frontend/tido/dist/* docker/frontend && rm -rf docker/frontend/tido
 ```
 
 **Note:** You have to have at least a `Developer` role in the repository in order to do this.
@@ -129,7 +129,7 @@ The corresponding frontend for the Ahiqar backend is [Ahiqar's version of the TI
 In order to connect the back end with the viewer, the former simply has to expose a REST API that complies to the specification of the [SUB's generic TextAPI](https://subugoe.pages.gwdg.de/emo/text-api/).
 The specification of the project specific API can be found at the [API's documentation page](https://subugoe.pages.gwdg.de/ahiqar/api-documentation/).
 
-The frontend takes care of the data transfer as described in [TIDO's README](https://gitlab.gwdg.de/subugoe/emo/Qviewer/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
+The frontend takes care of the data transfer as described in [TIDO's README](https://gitlab.gwdg.de/subugoe/emo/tido/-/blob/develop/README.md#connecting-the-viewer-with-a-backend).
 
 ## Tests
 
