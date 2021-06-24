@@ -1,5 +1,5 @@
 #!/bin/bash
-#  this script sets the entrypoint for the TIDO that depends on the
+#  this script sets the entrypoint for TIDO that depends on the
 #  branch it is build from.
 
 
