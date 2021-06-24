@@ -610,7 +610,7 @@ We didn't before and that caused an error while assigning IDs to elements.
 ### Added
 
 - the AnnotationAPI which is compliant to the W3C Annotation Model.
-With this API, we can expose annotations to the QViewer which can then be serialized in different ways.
+With this API, we can expose annotations to TIDO which can then be serialized in different ways.
 
 ### Changed
 
