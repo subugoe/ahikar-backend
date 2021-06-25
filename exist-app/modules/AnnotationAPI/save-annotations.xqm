@@ -40,7 +40,7 @@ as item()+ {
                         } catch * {
                             ""
                         }
-                    let $result := map { "items": $items } => serialize(map{"method": "json"})
+                    let $result := map { "items": array{$items} } => serialize(map{"method": "json"})
                     let $resource-name := $manifest || "-" || commons:format-page-number($page) || "-items.json"
                     return
                         xmldb:store-as-binary($commons:json, $resource-name, $result),
@@ -72,7 +72,7 @@ declare function san:make-items-for-TEI($teixml-uri as xs:string,
                 } catch * {
                     util:log("INFO", "Annotations couldn't be created for " || $teixml-uri)
                 }
-            let $result := map { "items": $items } => serialize(map{"method": "json"})
+            let $result := map { "items": array{$items} } => serialize(map{"method": "json"})
             let $resource-name := $manifest-uri || "-" || commons:format-page-number($page) || "-items.json"
             return
                 xmldb:store-as-binary($commons:json, $resource-name, $result),
