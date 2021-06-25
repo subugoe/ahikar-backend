@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.2.3] - 2021-06-25
+
+### Fixed
+
+- annotation items that are stored during the creation/update of a document are now always stored in an array.
+Before this fix a singular item on an AnnotationPage has been provided as object which caused errors in TIDO.
+
 ## [6.2.2] - 2021-06-25
 
 ### Fixed
