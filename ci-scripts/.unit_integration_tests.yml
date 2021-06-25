@@ -1,3 +1,7 @@
+# this config file defines the unit and integration tests which run as a first stage.
+# to execute them, eXist-db is built and started once.
+# if one of the test fails, the complete pipeline fails.
+
 # Templates
 
 .job_definition: &job_definition

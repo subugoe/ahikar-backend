@@ -1,3 +1,14 @@
+# this file defines the CI/CD stages for Ahiqar's back end.
+# in some cases they invoke scripts provided at ci-scripts order to
+# keep this file slim and clear. please have a look at these scripts for
+# information that goes beyond the documentation of the single stages.
+#
+
+# this config uses custom Docker images to keep the pipelines fast.
+# see https://gitlab.gwdg.de/mrodzis/docker-images/ for more 
+# info about them.
+
+
 stages:
   - unit_tests
   - collation
@@ -49,7 +60,8 @@ include:
 - if [[ "$STATUS" != "200" ]]; then exit 1; fi
 
 ## JOBS
-
+# build the Ahiqar application and uploads it to the DARIAH package repository.
+# the XAR file is downloaded from there later during the deployment.
 build_exist_app:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
   stage: build
@@ -64,6 +76,11 @@ build_exist_app:
       - exist-app/build/dependencies/*.xar
   dependencies: []
   
+# gets the current front end from  https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido.
+# in this stage we also create two instances of the front end for the Syriac and the
+# Arabic/Karshuni collection each.
+# this stage also detects if the CSS files of the front end have been updated and commits
+# them to this repo if necessary.
 load_frontend-all:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: build
@@ -86,6 +103,7 @@ load_frontend-all:
       - docker/frontend/
   dependencies: []
 
+# builds and pushes the ci-docker image to the registry.
 build_docker-all:
   image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker
   services:
@@ -109,6 +127,7 @@ build_docker-all:
     - build_exist_app
     - load_frontend-all
 
+# deploys the Docker container on ahikar-test.
 deploy_docker-test:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -129,6 +148,7 @@ deploy_docker-test:
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
   dependencies: []
 
+# deploys the Docker container on ahikar-dev.
 deploy_docker-dev:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -142,6 +162,7 @@ deploy_docker-dev:
     - *deploy
   dependencies: []
 
+# deploys the Docker container on ahikar.
 deploy_docker-main:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -155,6 +176,7 @@ deploy_docker-main:
     - *deploy
   dependencies: []
 
+# deploys the Ahiqar app to the database at ahikar-test.
 deploy_app-test:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
   stage: deploy_app
@@ -173,6 +195,7 @@ deploy_app-test:
     - *http-status
   dependencies: []
 
+# deploys the Ahiqar app to the database at ahikar-dev.
 deploy_app-dev:
   image: curlimages/curl
   stage: deploy_app
@@ -185,6 +208,7 @@ deploy_app-dev:
     - *http-status
   dependencies: []
 
+# deploys the Ahiqar app to the database at ahikar.
 deploy_app-main:
   image: curlimages/curl
   stage: deploy_app
@@ -230,6 +254,8 @@ deploy_app-main:
     paths:
       - gitlab-release.json
 
+# this job is triggered by a pipeline on the 'main' branch of https://gitlab.gwdg.de/subugoe/ahiqar/collatex.
+# it retrieves the latest collation results from there and commits it to this repository.
 get-collation-results:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: collation
