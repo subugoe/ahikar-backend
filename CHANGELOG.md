@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.2.2] - 2021-06-25
+
+### Fixed
+
+- refined XPath to main title of the project.
+In the Salhani print we have several main titles which hasn't been considered when selecting the element for displaying the main title of the project.
+
 ## [6.2.1] - 2021-06-21
 
 ### Fixed
