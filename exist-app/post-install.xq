@@ -4,6 +4,7 @@ import module namespace functx="http://www.functx.com";
 
 (: the target collection into which the app is deployed :)
 declare variable $target external; (: := "/db/apps/ahikar"; :)
+declare variable $appsTarget := '/' || tokenize($target, '/')[position() lt last()] => string-join('/');
 declare variable $tg-base := "/db/data/textgrid";
 
 declare function local:move-and-rename($filename as xs:string) as item()* {
@@ -91,9 +92,9 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
 
 (: make Ahikar specific OpenAPI config available to the OpenAPI app :)
 ( 
-    if (xmldb:collection-available("/db/apps/openapi")) then
-        (xmldb:remove("/db/apps/openapi", "openapi-config.xml"),
-        xmldb:move($target, "/db/apps/openapi", "openapi-config.xml"))
+    if (xmldb:collection-available($appsTarget || "/openapi")) then
+        (xmldb:remove($appsTarget || "/openapi", "openapi-config.xml"),
+        xmldb:move($target, $appsTarget || "/openapi", "openapi-config.xml"))
     else
         ()
 ),
