@@ -105,17 +105,17 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
 (
     if (xmldb:collection-available("/db/system/config/db/data/textgrid/data")) then
         (
-            let $contents := doc("/db/apps/ahikar/collection.xconf")/*
+            let $contents := doc($target || "/collection.xconf")/*
             let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
             return
-                xmldb:remove("/db/apps/ahikar", "collection.xconf")
+                xmldb:remove($target, "collection.xconf")
         )
     else
         (
             xmldb:create-collection("/db/system/config/db/", "data/textgrid/data"),
-            let $contents := doc("/db/apps/ahikar/collection.xconf")/*
+            let $contents := doc($target || "/collection.xconf")/*
             let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
             return
-                xmldb:remove("/db/apps/ahikar", "collection.xconf")          
+                xmldb:remove($target, "collection.xconf")          
         )
 )
