@@ -48,6 +48,15 @@ as xs:string+ {
 };
 
 declare
+    %test:args("sample_teixml") %test:assertEquals("sample_edition")
+    %test:args("sample_edition") %test:assertEquals("sample_lang_aggregation_syriac")
+    %test:args("sample_main_edition") %test:assertEmpty
+function ct:get-parent-aggregation($uri as xs:string)
+as xs:string? {
+    commons:get-parent-aggregation($uri)
+};
+
+declare
     %test:assertXPath("$result//@id = 'N4'")
 function ct:add-IDs()
 as node()+ {
