@@ -208,13 +208,15 @@ as xs:string? {
 };
 
 declare
-    %test:args("syriac", "sample_edition", "next") %test:assertEmpty
-    %test:args("syriac", "sample_edition", "prev") %test:assertEquals("sample_edition_syriac")
+    %test:args("syriac", "sample_edition", "next") %test:assertTrue
+    %test:args("syriac", "sample_edition", "prev") %test:assertTrue
 function at:get-prev-or-next-annotationPage-ID($collection as xs:string,
     $document as xs:string,
     $type as xs:string)
-as xs:string? {
-    anno:get-prev-or-next-annotationPage-ID($collection, $document, $type)
+as xs:boolean {
+    let $result := anno:get-prev-or-next-annotationPage-ID($collection, $document, $type)
+    return
+        $result = "sample_edition_syriac" or empty($result)
 };
 
 declare
@@ -249,14 +251,16 @@ as xs:string {
 
 declare
     %test:args("syriac", "http://localhost:8080")
-    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/syriac/sample_edition_syriac/annotationPage.json")
+    %test:assertTrue
 function at:get-information-for-collection-object($collection-type as xs:string,
     $server as xs:string)
-as xs:string {
+as xs:boolean {
     let $result := anno:get-information-for-collection-object($collection-type, $server)
-    return
+    let $first :=
         map:get($result, "annotationCollection")
         => map:get("first")
+    return
+        matches($first, "http://localhost:8080/api/annotations/ahikar/syriac/sample_edition(_syriac)?/annotationPage.json")
 };
 
 declare
