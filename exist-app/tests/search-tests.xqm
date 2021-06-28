@@ -8,20 +8,22 @@ import module namespace search="http://ahikar.sub.uni-goettingen.de/ns/search" a
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
 declare
-    %test:assertEquals("The Story and Proverbs of Ahiqar the Wise", 2)
+    %test:assertEquals("Beispieldatei zum Testen", 3, "true")
 function st:search() {
-    let $body :=
-        '{
-          "query": {
-            "simple_query_string": {
-              "query": "Erfa*"  }
-          },
-          "from": 1,
-          "size": 1,
-          "kwicsize": 20
-        }' => util:base64-encode()
-    
-    return
-        (search:main($body)("hits")("hits")?*("title"),
-        search:main($body)("hits")("total")("value"))
+    let $body := 
+    '{
+      "query": {
+        "simple_query_string": {
+          "query": "ܘܐ*"  }
+      },
+      "from": 0,
+      "size": 3,
+      "kwicsize": 20
+    }'  => util:base64-encode()
+
+    return (
+        search:main($body)("hits")("hits")?1("label"),
+        search:main($body)("hits")("hits")?* => array:size(),
+        search:main($body)("hits")("total")("value") gt 60
+    )
 };
