@@ -9,7 +9,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile-exist
-    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb:${TAG}
+    image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/existdb/5-3-0:${TAG}
     entrypoint:
       - java
       - -javaagent:/prometheus/jmx_prometheus_javaagent-0.12.0.jar=8079:/prometheus/jmx_prometheus_config.yaml
