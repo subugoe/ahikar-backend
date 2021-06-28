@@ -9,8 +9,8 @@ import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/h
 declare function sh:prepare-unit-tests($fragments as map(*))
 as item()+ {
     let $uris :=
-        for $doc in collection($commons:data)[ends-with(base-uri(.), ".xml")] return
-            base-uri($doc)
+        for $uri in xmldb:get-child-resources($commons:data)[ends-with(., ".xml")] return
+            $commons:data || $uri
     
     for $uri in $uris return
         sh:save-html($uri, $fragments)
