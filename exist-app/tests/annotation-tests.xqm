@@ -6,7 +6,6 @@ declare namespace http = "http://expath.org/ns/http-client";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../modules/commons.xqm";
-import module namespace map="http://www.w3.org/2005/xpath-functions/map";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "../modules/AnnotationAPI/annotations.xqm";
 
@@ -61,6 +60,8 @@ declare
     %test:args("sample_teixml", "82b", "prev") %test:assertEquals("82a")
     %test:args("sample_teixml", "83b", "next") %test:assertEmpty
     %test:args("sample_teixml", "82a", "prev") %test:assertEmpty
+    %test:args("sample_edition", "82a", "prev") %test:assertEmpty
+    %test:args("sample_edition", "82b", "prev") %test:assertEquals("82a")
     %test:pending
 function at:get-prev-or-next-page($documentURI as xs:string,
     $page as xs:string, 
@@ -158,17 +159,6 @@ function at:is-resource-edition($uri as xs:string) {
 };
 
 declare
-    %test:args("sample_edition", "82a", "next") %test:assertEquals("82b")
-    %test:args("sample_edition", "82a", "prev") %test:assertEmpty
-    %test:args("sample_edition", "82b", "prev") %test:assertEquals("82a")
-function at:get-prev-or-next-page($manifest-uri as xs:string,
-    $page as xs:string, 
-    $type as xs:string)
-as xs:string? {
-    anno:get-prev-or-next-page($manifest-uri, $page, $type)
-};
-
-declare
     %test:args("sample_teixml") %test:assertEquals("Simon Birol, Aly Elrefaei")
     %test:args("sample_edition") %test:assertEquals("Simon Birol, Aly Elrefaei")
     %test:args("syriac") %test:assertEquals("Simon Birol, Aly Elrefaei")
@@ -220,7 +210,7 @@ as xs:string? {
 declare
     %test:args("sample_lang_aggregation_syriac", "sample_edition", "next") %test:assertEmpty
     %test:args("sample_lang_aggregation_syriac", "sample_edition", "prev") %test:assertEmpty
-function anno:get-prev-or-next-annotationPage-ID($collection as xs:string,
+function at:get-prev-or-next-annotationPage-ID($collection as xs:string,
     $document as xs:string,
     $type as xs:string)
 as xs:string? {
