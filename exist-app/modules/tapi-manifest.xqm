@@ -170,10 +170,10 @@ as array(*) {
 
 declare function tapi-mani:make-fonts($server as xs:string)
 as map(*)+ {
-    for $doc in collection("/db/data/resources/fonts") return
+    for $uri in xmldb:get-child-resources("/db/data/resources/fonts") return
         map {
             "type": "font",
             "mime": "font/woff",
-            "url": $server || "/api/content/" || functx:substring-after-last(base-uri($doc), "/")
+            "url": $server || "/api/content/" || $uri
         }
 };
