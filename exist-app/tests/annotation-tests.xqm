@@ -208,8 +208,8 @@ as xs:string? {
 };
 
 declare
-    %test:args("sample_lang_aggregation_syriac", "sample_edition", "next") %test:assertEmpty
-    %test:args("sample_lang_aggregation_syriac", "sample_edition", "prev") %test:assertEmpty
+    %test:args("syriac", "sample_edition", "next") %test:assertEmpty
+    %test:args("syriac", "sample_edition", "prev") %test:assertEquals("sample_edition_syriac")
 function at:get-prev-or-next-annotationPage-ID($collection as xs:string,
     $document as xs:string,
     $type as xs:string)
@@ -249,7 +249,7 @@ as xs:string {
 
 declare
     %test:args("syriac", "http://localhost:8080")
-    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/syriac/sample_edition/annotationPage.json")
+    %test:assertEquals("http://localhost:8080/api/annotations/ahikar/syriac/sample_edition_syriac/annotationPage.json")
 function at:get-information-for-collection-object($collection-type as xs:string,
     $server as xs:string)
 as xs:string {
