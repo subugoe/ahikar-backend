@@ -14,7 +14,7 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 declare
     %test:assertTrue
 function t:main() {
-    let $src-TEI := local:get-sample-tei()
+    let $src-TEI := t:create-and-store-test-data()
     let $target-TEI := local:get-sample-result()
     return
         deep-equal(tokenize:main($src-TEI), $target-TEI)
@@ -62,7 +62,7 @@ as element(tei:w)+ {
         tokenize:add-id-to-text($node/text(), $id-prefix)
 };
 
-declare function local:get-sample-tei()
+declare function t:create-and-store-test-data()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
@@ -103,7 +103,7 @@ as element(tei:TEI) {
     </TEI>
 };
 
-declare function local:get-tei-header-1()
+declare function t:create-and-store-test-data-1()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
@@ -121,7 +121,7 @@ as element(tei:TEI) {
     </TEI>
 };
 
-declare function local:get-tei-header-2()
+declare function t:create-and-store-test-data-2()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
