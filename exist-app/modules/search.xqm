@@ -1,4 +1,11 @@
 xquery version "3.1";
+(:~
+ : This is the module preparing the SearchAPI as described
+ : at https://subugoe.pages.gwdg.de/ahiqar/api-documentation/
+ : @version 0.1.0
+ : @since 6.3.0
+ :)
+
 
 module namespace search="http://ahikar.sub.uni-goettingen.de/ns/search";
 
