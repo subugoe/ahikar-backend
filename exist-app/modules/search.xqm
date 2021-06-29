@@ -31,7 +31,7 @@ let $returnStart := $body('from')
 let $collectionWithIndexes := '/db/data/textgrid/data'
 let $options :=
         <options>
-            <default-operator>and</default-operator>
+            <default-operator>yes</default-operator>
             <phrase-slop>3</phrase-slop>
             <leading-wildcard>yes</leading-wildcard>
             <filter-rewrite>no</filter-rewrite>
@@ -50,7 +50,7 @@ let $hits :=
         let $n as xs:string := string($hit/preceding::tei:pb[1]/@n)
     
         let $score as xs:float := ft:score($hit)
-    (:    let $kwic := kwic:summarize($hit, <config width="{$kwicSize}"/>)//span:)
+    (:    let $kwic := kwic:summarize($hit, <config width="{$kwicSize}"/>)//span :)
         
         order by $score descending
         return
@@ -58,7 +58,7 @@ let $hits :=
     (:        "_id": $baseUri,:)
     (:        "_index": tokenize($baseUri, "/")[last() -1],:)
     (:        "title": string($hit/root()//tei:title),:)
-    
+
             "label": $label,
             "n": $n,
             "item": '/api/textapi/ahikar/' || $collection || '/' || $edition || '-' || $n || '/latest/item.json' (: = id w/o base-url :)
@@ -73,7 +73,7 @@ let $hits :=
     
         }
     } catch * {
-        false()
+        ()
     }
 
 let $count as xs:integer := count($hits)
