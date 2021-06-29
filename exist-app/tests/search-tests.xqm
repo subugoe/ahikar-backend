@@ -23,7 +23,7 @@ function st:search() {
 
     return (
         search:main($body)("hits")("hits")?1("label"),
-        search:main($body)("hits")("hits")?* => array:size(),
+        search:main($body)("hits")("hits")?* => count(),
         search:main($body)("hits")("total")("value") gt 60
     )
 };
