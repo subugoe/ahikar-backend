@@ -29,7 +29,7 @@ function search:main($body)
 as map(*) {
     let $body := util:base64-decode($body) => parse-json()
     let $searchExpression := $body("query")("simple_query_string")("query")
-    let $validateQuery := local:validate-query($validateQuery)
+    let $validateQuery := local:validate-query($searchExpression)
     let $returnSize := $body("size")
     let $returnStart := $body("from")
     let $options :=
