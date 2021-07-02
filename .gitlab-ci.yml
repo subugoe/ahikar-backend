@@ -140,12 +140,12 @@ deploy_docker-test:
   script:
     - *ssh
     - *env
-    - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/ahikar.env
-    - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/tg.env
-    - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
-    - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/.env
+    - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/test/ahikar.env
+    - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/test/tg.env
+    - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/test/docker-compose.yml
+    - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/test/.env
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
-    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
+    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd test; docker-compose pull && docker-compose down && docker-compose up -d"
   dependencies: []
 
 # deploys the Docker container on ahikar-dev.

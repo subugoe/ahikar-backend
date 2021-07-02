@@ -93,7 +93,7 @@ declare
     %test:assertXPath("$result = 'Mingana_ar_christ_93_84'")
 function ct:make-id-from-idno()
 as xs:string+ {
-    let $TEIs := (local:get-sample-tei(), local:get-tei-header-1(), local:get-tei-header-2())
+    let $TEIs := (ct:create-and-store-test-data(), ct:create-and-store-test-data-1(), ct:create-and-store-test-data-2())
     for $TEI in $TEIs return
         commons:make-id-from-idno($TEI)
 };
@@ -106,7 +106,7 @@ as xs:string+ {
     commons:get-pages-in-TEI($uri)
 };
 
-declare function local:get-sample-tei()
+declare function ct:create-and-store-test-data()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
@@ -147,7 +147,7 @@ as element(tei:TEI) {
     </TEI>
 };
 
-declare function local:get-tei-header-1()
+declare function ct:create-and-store-test-data-1()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
@@ -165,7 +165,7 @@ as element(tei:TEI) {
     </TEI>
 };
 
-declare function local:get-tei-header-2()
+declare function ct:create-and-store-test-data-2()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
