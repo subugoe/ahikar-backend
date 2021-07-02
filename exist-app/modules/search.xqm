@@ -6,7 +6,6 @@ xquery version "3.1";
  : @since 6.3.0
  :)
 
-
 module namespace search="http://ahikar.sub.uni-goettingen.de/ns/search";
 
 declare namespace exist="http://exist.sourceforge.net/NS/exist";
@@ -43,7 +42,7 @@ as map(*) {
 
 let $hits :=
     try {
-        for $hit at in collection($commons:data)//tei:ab[ft:query(., $searchExpression, $options)]
+        for $hit in collection($commons:data)//tei:ab[ft:query(., $searchExpression, $options)]
             let $baseUri := $hit/base-uri()
             let $textgridUri := commons:extract-uri-from-base-uri($baseUri)
             let $edition := commons:get-parent-aggregation($textgridUri)
@@ -90,7 +89,7 @@ declare function local:validate-query($query as xs:string)
 as xs:boolean {
     if(string-length($query) eq 0) then
         error(QName("search", "empty-query"), "got empty query string")
-    if(contains($query, "script")) then
+    else if(contains($query, "script")) then
         error(QName("search", "script"), "query contains not allowed string: script")
     else
         true()
