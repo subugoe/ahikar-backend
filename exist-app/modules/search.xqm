@@ -28,17 +28,14 @@ declare
     %rest:produces("application/json")
 function search:main($body)
 as map(*) {
-let $body := util:base64-decode($body) => parse-json()
-let $searchExpression := $body('query')('simple_query_string')('query')
-(: validate query string :)
-let $kwicSize := $body('kwicsize')
-let $returnSize := $body('size')
-let $returnStart := $body('from')
-
-let $collectionWithIndexes := '/db/data/textgrid/data'
-let $options :=
+    let $body := util:base64-decode($body) => parse-json()
+    let $searchExpression := $body("query")("simple_query_string")("query")
+    let $validateQuery := local:validate-query($validateQuery)
+    let $returnSize := $body("size")
+    let $returnStart := $body("from")
+    let $options :=
         <options>
-            <default-operator>yes</default-operator>
+            <default-operator>and</default-operator>
             <phrase-slop>3</phrase-slop>
             <leading-wildcard>yes</leading-wildcard>
             <filter-rewrite>no</filter-rewrite>
@@ -46,44 +43,28 @@ let $options :=
 
 let $hits :=
     try {
-        for $hit at $pos in collection($collectionWithIndexes)//tei:ab[ft:query(., $searchExpression, $options)]
-        let $baseUri := $hit/base-uri()
-        
-        let $textgridUri := tokenize($baseUri, "/")[last()] => substring-before('.xml')
-        let $edition := commons:get-parent-aggregation($textgridUri)
-        let $collection := commons:get-parent-aggregation($edition)
+        for $hit at in collection($commons:data)//tei:ab[ft:query(., $searchExpression, $options)]
+            let $baseUri := $hit/base-uri()
+            let $textgridUri := commons:extract-uri-from-base-uri($baseUri)
+            let $edition := commons:get-parent-aggregation($textgridUri)
+            let $collection := commons:get-parent-aggregation($edition)
+            let $label := tapi-mani:get-manifest-title($textgridUri)
+            let $n := string($hit/preceding::tei:pb[1]/@n)
+            let $score := ft:score($hit)
 
-        let $label as xs:string := tapi-mani:get-manifest-title($textgridUri)
-        let $n as xs:string := string($hit/preceding::tei:pb[1]/@n)
-    
-        let $score as xs:float := ft:score($hit)
-    (:    let $kwic := kwic:summarize($hit, <config width="{$kwicSize}"/>)//span :)
-        
         order by $score descending
         return
             map{
-    (:        "_id": $baseUri,:)
-    (:        "_index": tokenize($baseUri, "/")[last() -1],:)
-    (:        "title": string($hit/root()//tei:title),:)
-
             "label": $label,
             "n": $n,
-            "item": '/api/textapi/ahikar/' || $collection || '/' || $edition || '-' || $n || '/latest/item.json' (: = id w/o base-url :)
-    
-    (:        "parent": $textgridAggregation, :)
-    (:        "hit": $hit => util:node-id():)
-    (:        "score": $score :)
-    (:        "kwic": map{ :)
-    (:            "prev": $kwic[1] => string(), :)
-    (:            "hit": $kwic[2] => string(), :)
-    (:            "following": $kwic[3] => string()} :)
-    
+            "item": "/api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $n || "/latest/item.json", (: = textapi: "id" w/o base-url :)
+            "match": string-join($hit//exist:match)
         }
     } catch * {
         ()
     }
 
-let $count as xs:integer := count($hits)
+let $count := count($hits)
 
 let $timing := util:system-dateTime()
 let $took := (current-dateTime() - $timing) => seconds-from-duration() * 1000 (: milliseconds :)
@@ -103,4 +84,14 @@ return
             }
         }
     }
+};
+
+declare function local:validate-query($query as xs:string)
+as xs:boolean {
+    if(string-length($query) eq 0) then
+        error(QName("search", "empty-query"), "got empty query string")
+    if(contains($query, "script")) then
+        error(QName("search", "script"), "query contains not allowed string: script")
+    else
+        true()
 };
