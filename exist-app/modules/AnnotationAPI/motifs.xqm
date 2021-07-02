@@ -11,7 +11,6 @@ module namespace motifs="http://ahikar.sub.uni-goettingen.de/ns/annotations/moti
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "../commons.xqm";
-import module namespace functx="http://www.functx.com" at "/db/system/repo/functx-1.0.1/functx/functx.xq";
 
 declare function motifs:get-motifs($pages as element(tei:TEI)+,
     $teixml-uri as xs:string)
