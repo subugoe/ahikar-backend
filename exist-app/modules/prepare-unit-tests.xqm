@@ -19,7 +19,7 @@ as item()+ {
         (
             dbt:prepare-collections-for-triggers(),
             let $uris :=
-                for $uri in xmldb:get-child-resources($commons:data)[matches(., "^sample_")] return
+                for $uri in xmldb:get-child-resources($commons:data)[starts-with(., "sample_")] return
                     $commons:data || $uri
             
             for $uri in $uris return
