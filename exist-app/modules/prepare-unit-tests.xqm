@@ -2,8 +2,8 @@ xquery version "3.1";
 
 module namespace pu="http://ahikar.sub.uni-goettingen.de/ns/prepare-unit-tests";
 
-import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "/db/apps/ahikar/modules/commons.xqm";
-import module namespace dbt="http://ahikar.sub.uni-goettingen.de/ns/database-triggers" at "/db/apps/ahikar/triggers/trigger.xql";
+import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
+import module namespace dbt="http://ahikar.sub.uni-goettingen.de/ns/database-triggers" at "../triggers/trigger.xqm";
 import module namespace rest="http://exquery.org/ns/restxq";
 
 declare
@@ -19,8 +19,8 @@ as item()+ {
         (
             dbt:prepare-collections-for-triggers(),
             let $uris :=
-                for $doc in collection($commons:data)[contains(base-uri(.), "/sample_")] return
-                    base-uri($doc)
+                for $uri in xmldb:get-child-resources($commons:data)[starts-with(., "sample_")] return
+                    $commons:data || $uri
             
             for $uri in $uris return
                 dbt:process-triggers($uri)

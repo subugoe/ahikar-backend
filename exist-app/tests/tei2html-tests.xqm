@@ -194,7 +194,7 @@ as element() {
 declare
     %test:assertXPath("$result/*[local-name(.) = 'span']")
     %test:assertXPath("$result//*/@class = 'catchwords'")
-function t2ht:catchwords()
+function t2ht:catchwords-1()
 as element() {
     let $element :=
         <ab xmlns="http://www.tei-c.org/ns/1.0">
@@ -207,7 +207,7 @@ as element() {
 declare
     %test:assertXPath("$result/*[local-name(.) = 'div']")
     %test:assertXPath("$result//*/@class = 'cb 1'")
-function t2ht:catchwords()
+function t2ht:catchwords-2()
 as element() {
     let $element :=
         <ab xmlns="http://www.tei-c.org/ns/1.0">

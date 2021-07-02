@@ -10,7 +10,7 @@ declare
     %test:setUp
 function ttnt:_test-setup() {
     xmldb:create-collection("/db", "tmp"),
-    local:create-and-store-test-data()
+    ttnt:create-and-store-test-data()
 };
 
 
@@ -56,7 +56,7 @@ function ttnt:get-txt-without-diacritics() {
 
 
 
-declare function local:create-and-store-test-data() {
+declare function ttnt:create-and-store-test-data() {
     let $txt := "Some text."
     let $txt-cps := string-to-codepoints($txt)
     

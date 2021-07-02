@@ -2,11 +2,11 @@
 <!-- this configuration will be applied to /db/data/textgrid/data -->
     <triggers>
 		<trigger event="update" class="org.exist.collections.triggers.XQueryTrigger">
-			<parameter name="url" value="xmldb:exist:///db/apps/ahikar/triggers/trigger.xql"/>
+			<parameter name="url" value="xmldb:exist:///db/apps/ahikar/triggers/trigger.xqm"/>
 		</trigger>
 		
 		<trigger event="create" class="org.exist.collections.triggers.XQueryTrigger">
-			<parameter name="url" value="xmldb:exist:///db/apps/ahikar/triggers/trigger.xql"/>
+			<parameter name="url" value="xmldb:exist:///db/apps/ahikar/triggers/trigger.xqm"/>
 		</trigger>
     </triggers>
 

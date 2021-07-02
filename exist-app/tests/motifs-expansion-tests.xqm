@@ -46,7 +46,7 @@ function t:simple-annotations-multiple-lines() {
 
 declare
     %test:assertTrue
-function t:get-test-data-simple-spanning-over-pages() {
+function t:simple-spanning-over-pages() {
     let $result := t:get-test-data-simple-spanning-over-pages()
         => me:main()
         => local:prepare-for-comparison()

@@ -105,9 +105,9 @@ as element()+ {
     let $results := for $result in $test-results return
         if ($result//@failures = 0
         and $result//@errors = 0) then
-            <OK name="{local:get-human-readable-pkg-name($result//@package)}" package="{$result//@package}"/>
+            <OK name="{testtrigger:create-and-store-test-data($result//@package)}" package="{$result//@package}"/>
         else
-            <PROBLEM name="{local:get-human-readable-pkg-name($result//@package)}"
+            <PROBLEM name="{testtrigger:create-and-store-test-data($result//@package)}"
                 package="{$result//@package}"
                 errors="{$result//@errors}"
                 failures="{$result//@failures}">
@@ -119,7 +119,7 @@ as element()+ {
         $result
 };
 
-declare function local:get-human-readable-pkg-name($package as xs:string)
+declare function testtrigger:create-and-store-test-data($package as xs:string)
 as xs:string? {
     switch ($package)
         case "http://ahikar.sub.uni-goettingen.de/ns/commons-tests" return "Commons"

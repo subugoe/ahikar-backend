@@ -35,6 +35,17 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
 };
 
+(:~
+ : get absolute path to all resources (xml and binary) in a collection, recursively.
+ : @param $target path to a collection as xs:string
+ : @return sequence of all resources as xs:string
+ :)
+declare function local:get-child-resources-recursive($target as xs:string)
+as xs:string* {
+    xmldb:get-child-resources($target) ! ($target || "/" || .),
+    xmldb:get-child-collections($target) ! local:get-child-resources-recursive($target || "/" || .) 
+};
+
 (:  set admin password on deployment. Convert to string
     so local development will not fail because of missing
     env var. :)
@@ -51,10 +62,9 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
 
 ( 
     (: register REST APIs :)
-    for $uri at $pos in (collection($target)/base-uri())[ends-with(., ".xqm")]
+    for $uri in local:get-child-resources-recursive($target)[ends-with(., ".xqm")]
         let $content := $uri => util:binary-doc() => util:base64-decode()
-        let $isRest := if(contains($content, "%rest:")) then true() else false()
-        where $isRest
+        where contains($content, "%rest:")
         return
             exrest:register-module(xs:anyURI($uri))
 ),
