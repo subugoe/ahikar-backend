@@ -2,8 +2,6 @@ xquery version "3.1";
 
 import module namespace functx="http://www.functx.com";
 
-declare namespace conf = "http://exist-db.org/Configuration";
-
 (: the target collection into which the app is deployed :)
 declare variable $target external; (: := "/db/apps/ahikar"; :)
 declare variable $appsTarget := '/' || tokenize($target, '/')[position() lt last()] => string-join('/');
@@ -53,23 +51,13 @@ as xs:string* {
     env var. :)
 
 (
-    let $adminDoc := doc('/db/system/security/exist/accounts/admin.xml')
-    return
-        if(environment-variable("EXIST_ADMIN_PW_RIPEMD160"))
-        then
-            (update replace $adminDoc//conf:password/text() with text{ replace(environment-variable("EXIST_ADMIN_PW_RIPEMD160"), '"', '') },
-            if($adminDoc//conf:digestPassword) then
-                update replace $adminDoc//conf:digestPassword/text() with text{ string(environment-variable("EXIST_ADMIN_PW_DIGEST")) }
-            else
-                let $element := 
-                    element conf:digestPassword { 
-                        text { string(environment-variable("EXIST_ADMIN_PW_DIGEST")) }
-                    }
-                return
-                    update insert $element into $adminDoc/conf:account
-            )
-        else (: we do not have the env vars available, so we leave the configuration as it is :) 
-            true()
+    if(environment-variable("EXIST_ADMIN_PW_RIPEMD160"))
+    then
+        (update replace doc('/db/system/security/exist/accounts/admin.xml')//*:password/text() with text{ string(environment-variable("EXIST_ADMIN_PW_RIPEMD160")) },
+         update replace doc('/db/system/security/exist/accounts/admin.xml')//*:digestPassword/text() with text{ string(environment-variable("EXIST_ADMIN_PW_DIGEST")) })
+    else (: we do not have the env vars available, so we leave the configuration as it is :) 
+        true() 
+
 ),
 
 ( 
