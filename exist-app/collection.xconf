@@ -13,7 +13,7 @@
 	<index xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0">
         <fulltext default="none" attributes="false"/>
         <lucene>
-            <text qname="tei:ab"/>
+            <text qname="tei:text"/>
         </lucene>
     </index>
 
