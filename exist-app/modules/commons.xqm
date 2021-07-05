@@ -79,6 +79,23 @@ as xs:string* {
                 ()
 };
 
+(:~
+ : Return the parent aggregation of a given URI.
+ : 
+ : @param $uri The resource's URI
+ : @return The URI of the given resource's parent aggregation
+ :)
+declare function commons:get-parent-aggregation($uri as xs:string)
+as xs:string? {
+    if (collection($commons:agg)[.//@rdf:resource = "textgrid:" || $uri]) then
+        collection($commons:agg)[.//@rdf:resource = "textgrid:" || $uri]
+        => base-uri()
+        => substring-after("agg/")
+        => substring-before(".xml")
+    else
+        ()
+};
+
 declare function commons:get-page-fragments($teixml-uri as xs:string,
     $page as xs:string)
 as element()+ {
