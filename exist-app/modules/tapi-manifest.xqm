@@ -12,7 +12,6 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
-import module namespace functx="http://www.functx.com";
 
 
 declare function tapi-mani:get-json($collection-type as xs:string,
@@ -170,10 +169,10 @@ as array(*) {
 
 declare function tapi-mani:make-fonts($server as xs:string)
 as map(*)+ {
-    for $doc in collection("/db/data/resources/fonts") return
+    for $uri in xmldb:get-child-resources("/db/data/resources/fonts") return
         map {
             "type": "font",
             "mime": "font/woff",
-            "url": $server || "/api/content/" || functx:substring-after-last(base-uri($doc), "/")
+            "url": $server || "/api/content/" || $uri
         }
 };

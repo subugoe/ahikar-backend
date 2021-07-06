@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [6.3.0] - 2021-07-02
+## [6.6.0] - 2021-07-02
 
 ### Changed
 
-- the collection title now contains information about the type of manuscripts the collection contains.
+- the collection title now provides information about the type of manuscripts the collection contains.
+
+## [6.5.0] - 2021-06-25
+
+### Added
+
+- basic search api and lucene configuration
 
 ## [6.2.3] - 2021-06-25
 

@@ -550,19 +550,3 @@ as xs:string? {
         anno:get-prev-or-next($pages, $page, $type)
 };
 
-(:~
- : Return the parent aggregation of a given URI.
- : 
- : @param $uri The resource's URI
- : @return The URI of the given resource's parent aggregation
- :)
-declare function anno:get-parent-aggregation($uri as xs:string)
-as xs:string? {
-    if (collection($commons:agg)[.//@rdf:resource = "textgrid:" || $uri]) then
-        collection($commons:agg)[.//@rdf:resource = "textgrid:" || $uri]
-        => base-uri()
-        => substring-after("agg/")
-        => substring-before(".xml")
-    else
-        ()
-};

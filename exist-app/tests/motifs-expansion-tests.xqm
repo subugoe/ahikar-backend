@@ -4,7 +4,6 @@ module namespace t="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion/test
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-import module namespace functx="http://www.functx.com" at "/db/system/repo/functx-1.0.1/functx/functx.xq";
 import module namespace me="http://ahikar.sub.uni-goettingen.de/ns/motifs-expansion" at "../modules/motifs-expansion.xqm";
 import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:org/exist/xquery/lib/xqsuite/xqsuite.xql";
 
@@ -46,7 +45,7 @@ function t:simple-annotations-multiple-lines() {
 
 declare
     %test:assertTrue
-function t:get-test-data-simple-spanning-over-pages() {
+function t:simple-spanning-over-pages() {
     let $result := t:get-test-data-simple-spanning-over-pages()
         => me:main()
         => local:prepare-for-comparison()

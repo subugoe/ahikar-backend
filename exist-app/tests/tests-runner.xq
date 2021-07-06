@@ -5,7 +5,7 @@ xquery version "3.1";
  : Elevated rights (dba/admin) are required for some tests.
  :)
 
-import module namespace apitests="http://ahikar.sub.uni-goettingen.de/ns/apitests" at "/db/apps/ahikar/modules/apitesttrigger.xqm";
+import module namespace apitests="http://ahikar.sub.uni-goettingen.de/ns/apitests" at "../modules/apitesttrigger.xqm";
 import module namespace testtrigger="http://ahikar.sub.uni-goettingen.de/ns/testtrigger" at "../modules/testtrigger.xqm";
 
 apitests:execute-tests(),
