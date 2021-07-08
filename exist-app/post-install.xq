@@ -6,6 +6,7 @@ declare namespace conf = "http://exist-db.org/Configuration";
 
 (: the target collection into which the app is deployed :)
 declare variable $target external; (: := "/db/apps/ahikar"; :)
+declare variable $appsTarget := '/' || tokenize($target, '/')[position() lt last()] => string-join('/');
 declare variable $tg-base := "/db/data/textgrid";
 
 declare function local:move-and-rename($filename as xs:string) as item()* {
@@ -92,6 +93,28 @@ as xs:string* {
     ) ! (sm:chown(., "admin"), sm:chmod(., "rwsrwxr-x"))
 ),
 
+(: create trigger and index config.
+ : simply moving the file from one place to the other doesn't cause eXist-db to recognize the
+ : config. neither does reindexing after moving the file.
+ : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection.xconf. :)
+(
+    if (xmldb:collection-available("/db/system/config/db/data/textgrid/data")) then
+        (
+            let $contents := doc($target || "/collection.xconf")/*
+            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
+            return
+                xmldb:remove($target, "collection.xconf")
+        )
+    else
+        (
+            xmldb:create-collection("/db/system/config/db/", "data/textgrid/data"),
+            let $contents := doc($target || "/collection.xconf")/*
+            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
+            return
+                xmldb:remove($target, "collection.xconf")          
+        )
+),
+
 (: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
 ( 
     
@@ -113,31 +136,9 @@ as xs:string* {
 
 (: make Ahikar specific OpenAPI config available to the OpenAPI app :)
 ( 
-    if (xmldb:collection-available("/db/apps/openapi")) then
-        (xmldb:remove("/db/apps/openapi", "openapi-config.xml"),
-        xmldb:move($target, "/db/apps/openapi", "openapi-config.xml"))
+    if (xmldb:collection-available($appsTarget || "/openapi")) then
+        (xmldb:remove($appsTarget || "/openapi", "openapi-config.xml"),
+        xmldb:move($target, $appsTarget || "/openapi", "openapi-config.xml"))
     else
         ()
-),
-
-(: create trigger config.
- : simply moving the file from one place to the other doesn't cause eXist-db to recognize the
- : config. neither does reindexing after moving the file.
- : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection.xconf. :)
-(
-    if (xmldb:collection-available("/db/system/config/db/data/textgrid/data")) then
-        (
-            let $contents := doc("/db/apps/ahikar/collection.xconf")/*
-            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
-            return
-                xmldb:remove("/db/apps/ahikar", "collection.xconf")
-        )
-    else
-        (
-            xmldb:create-collection("/db/system/config/db/", "data/textgrid/data"),
-            let $contents := doc("/db/apps/ahikar/collection.xconf")/*
-            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
-            return
-                xmldb:remove("/db/apps/ahikar", "collection.xconf")          
-        )
 )

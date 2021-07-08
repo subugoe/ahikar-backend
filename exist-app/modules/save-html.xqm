@@ -3,7 +3,6 @@ xquery version "3.1";
 module namespace sh="http://ahikar.sub.uni-goettingen.de/ns/tapi/html/save";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "/db/apps/ahikar/modules/commons.xqm";
-import module namespace functx="http://www.functx.com" at "/db/system/repo/functx-1.0.1/functx/functx.xq";
 import module namespace tapi-html="http://ahikar.sub.uni-goettingen.de/ns/tapi/html" at "/db/apps/ahikar/modules/tapi-html.xqm";
 
 declare function sh:prepare-unit-tests($fragments as map(*))

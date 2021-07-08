@@ -28,8 +28,13 @@ as xs:string {
 };
 
 declare
-    %test:args("syriac") %test:assertXPath("$result//description = 'Syriac collection for the Ahiqar project. Funded by DFG, 2019–2020. University of Göttingen'")
-    %test:args("arabic-karshuni") %test:assertXPath("$result//description = 'Arabic/Karshuni collection for the Ahiqar project. Funded by DFG, 2019–2020. University of Göttingen'")
+    %test:args("syriac") 
+    %test:assertXPath("$result//description = 'Syriac collection for the Ahiqar project. Funded by DFG, 2019–2020. University of Göttingen'")
+    %test:assertXPath("$result//title = 'The Story and Proverbs of Ahikar the Wise (Syriac Manuscripts)'")
+    
+    %test:args("arabic-karshuni") 
+    %test:assertXPath("$result//description = 'Arabic/Karshuni collection for the Ahiqar project. Funded by DFG, 2019–2020. University of Göttingen'")
+    %test:assertXPath("$result//title = 'The Story and Proverbs of Ahikar the Wise (Arabic and Karshuni Manuscripts)'")
 function t:get-json($collection-type as xs:string) {
     tapi-coll:get-json($collection-type, $tc:server)
 };

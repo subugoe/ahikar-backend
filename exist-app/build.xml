@@ -59,8 +59,8 @@
 
     <target name="dependencies">
       <mkdir dir="${dependencies.dir}" />
-      <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=openapi&amp;processor=${project.processorversion}" dest="${dependencies.dir}/openapi-latest.xar" ignoreerrors="true"/>
-      <get src="https://ci.de.dariah.eu/exist-repo/find.zip?abbrev=tg-connect-standalone&amp;processor=${project.processorversion}" dest="${dependencies.dir}/tg-connect-standalone.xar" ignoreerrors="true"/>
+      <get src="https://ci.de.dariah.eu/exist-repo/find?abbrev=openapi&amp;processor=${project.processorversion}" dest="${dependencies.dir}/openapi-latest.xar" ignoreerrors="true"/>
+      <get src="https://ci.de.dariah.eu/exist-repo/find?abbrev=tg-connect-standalone&amp;processor=${project.processorversion}" dest="${dependencies.dir}/tg-connect-standalone.xar" ignoreerrors="true"/>
     </target>
 
 </project>
