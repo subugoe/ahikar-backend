@@ -29,6 +29,9 @@ import module namespace met="http://ahikar.sub.uni-goettingen.de/ns/motifs-expan
 import module namespace t2jt="http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests" at "../tests/tei2json-tests.xqm";
 import module namespace t2htextt="http://ahikar.sub.uni-goettingen.de/ns/tei2html-textprocessing-tests" at "../tests/tei2html-textprocessing-tests.xqm";
 import module namespace tokt="http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" at "../tests/tokenize-tests.xqm";
+import module namespace st="http://ahikar.sub.uni-goettingen.de/ns/search/tests" at "../tests/search-tests.xqm";
+
+
 
 (: modules that need credentials for the tests to work :)
 import module namespace titemtc="http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests/credentials" at "../tests/tapi-item-tests-credentials-needed.xqm";
@@ -86,6 +89,8 @@ as element()+ {
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests")),
         test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/tei2json/tests")),
+        test:suite(util:list-functions("http://ahikar.sub.uni-goettingen.de/ns/search/tests")),
+
         (: tests with credentials needed :)
         if (environment-variable("TGLOGIN")) then
             (
@@ -132,6 +137,7 @@ as xs:string? {
         case "http://ahikar.sub.uni-goettingen.de/ns/annotations/editorial/tests" return "Annotations: Editorial comments"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/images/tests" return "Image Sections"
         case "http://ahikar.sub.uni-goettingen.de/ns/tokenize/tests" return "Tokenize"
+        case "http://ahikar.sub.uni-goettingen.de/ns/search/tests" return "Search"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/item/tests/credentials" return "TextAPI Items (credentials needed)"
         case "http://ahikar.sub.uni-goettingen.de/ns/tapi/tests/credentials" return "TextAPI general (credentials needed)"
         case "http://ahikar.sub.uni-goettingen.de/ns/commons-tests/credentials" return "Commons (credentials needed)"

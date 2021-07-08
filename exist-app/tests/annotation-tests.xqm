@@ -47,15 +47,6 @@ as xs:boolean {
 };
 
 declare
-    %test:args("sample_teixml") %test:assertEquals("sample_edition")
-    %test:args("sample_edition") %test:assertEquals("sample_lang_aggregation_syriac")
-    %test:args("sample_main_edition") %test:assertEmpty
-function at:get-parent-aggregation($uri as xs:string)
-as xs:string? {
-    anno:get-parent-aggregation($uri)
-};
-
-declare
     %test:args("sample_teixml", "82a", "next") %test:assertEquals("82b")
     %test:args("sample_teixml", "82b", "prev") %test:assertEquals("82a")
     %test:args("sample_teixml", "83b", "next") %test:assertEmpty

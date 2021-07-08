@@ -52,7 +52,8 @@ as item()+ {
         <object>
             <textapi>{$commons:version}</textapi>
             <title>
-                <title>The Story and Proverbs of Ahikar the Wise</title>
+                <title>The Story and Proverbs of Ahikar the Wise {if (contains($collection-type, "syriac")) then "(Syriac Manuscripts)" else "(Arabic and Karshuni Manuscripts)"}
+                </title>
                 <type>main</type>
             </title>
             <!-- this empty title element is necessary to force JSON to

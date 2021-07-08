@@ -40,7 +40,7 @@ as element()? {
     then error(QName("error://1", "DEPLOY01"), "deploy token incorrect.")
   else
     let $pkgName := environment-variable("APP_NAME")
-    let $name := 'https://ci.de.dariah.eu/exist-repo/find.zip?name=' || encode-for-uri($pkgName)
+    let $name := 'https://ci.de.dariah.eu/exist-repo/find?name=' || encode-for-uri($pkgName) || '&amp;processor=' || system:get-version()
     let $request :=
         <hc:request
           method="GET"

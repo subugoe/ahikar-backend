@@ -5,7 +5,6 @@ module namespace san="http://ahikar.sub.uni-goettingen.de/ns/annotations/save";
 import module namespace anno="http://ahikar.sub.uni-goettingen.de/ns/annotations" at "/db/apps/ahikar/modules/AnnotationAPI/annotations.xqm";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "/db/apps/ahikar/modules/commons.xqm";
 import module namespace edit="http://ahikar.sub.uni-goettingen.de/ns/annotations/editorial" at "/db/apps/ahikar/modules/AnnotationAPI/editorial.xqm";
-import module namespace functx="http://www.functx.com" at "/db/system/repo/functx-1.0.1/functx/functx.xq";
 import module namespace motifs="http://ahikar.sub.uni-goettingen.de/ns/annotations/motifs" at "/db/apps/ahikar/modules/AnnotationAPI/motifs.xqm";
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
