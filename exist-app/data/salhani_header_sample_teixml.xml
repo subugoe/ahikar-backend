@@ -1,0 +1,29 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title type="main">The Story and Proverbs of Ahiqar the Wise</title>
+                <editor>Simon Birol</editor>
+                <editor xml:id="ae">Aly Elrefaei</editor>
+            </titleStmt>
+            <sourceDesc>
+                <biblStruct>
+                    <analytic>
+                        <title level="a" type="main">Tale of Haiqar the wise, vizir of Sennachrieb the king and of his sister's son Nadan</title>
+                    </analytic>
+                    <monogr>
+                        <editor>Salhani, Anton</editor>
+                        <title level="m" type="main">Ṭarāʾif fukāhāt fī arbaʿ ḥikājāt</title>
+                        <title level="m" type="alt">Contes Arabes</title>
+                        <imprint>
+                            <publisher>al-Maṭbaʿa al-kāṯūlīkīja li-l-āAbā al-jasūʿījīn</publisher>
+                            <pubPlace>Beirut</pubPlace>
+                            <date>1890</date>
+                            <biblScope>1–20</biblScope>
+                        </imprint>
+                    </monogr>
+                </biblStruct>
+            </sourceDesc>
+        </fileDesc>
+    </teiHeader>
+</TEI>
