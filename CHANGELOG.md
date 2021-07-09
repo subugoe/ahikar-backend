@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - correctly process init password from env var
 
+## [6.7.1] - 2021-07-08
+
+### Added
+
+- data import script
+
 ## [6.7.0] - 2021-07-08
 
 ### Added
