@@ -1,5 +1,12 @@
 xquery version "3.1";
 
+(:~
+ : This script removes existing (sample) data from the data collection and triggers a
+ : publish process for the main edition of the Ahiqar project with tg-connect.
+ : Can also publish any sub-collection or resource by adjusting $uri at local:publish().
+ :)
+
+
 import module namespace connect="https://sade.textgrid.de/ns/connect" at "/db/apps/textgrid-connect/modules/connect.xqm";
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "modules/commons.xqm";
 
