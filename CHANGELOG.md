@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - data import script
 
+## [6.7.0] - 2021-07-08
+
+### Added
+
+- when creating the metadata on manifest level, the Salhani print is now considered as well.
+
 ## [6.6.0] - 2021-07-02
 
 ### Changed
