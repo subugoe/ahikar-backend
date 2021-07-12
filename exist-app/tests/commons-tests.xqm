@@ -97,9 +97,9 @@ as document-node() {
 };
 
 declare
-    %test:assertXPath("$result = 'Add_2020'")
-    %test:assertXPath("$result = 'Sachau_290_Sachau_339'")
-    %test:assertXPath("$result = 'Mingana_ar_christ_93_84'")
+    %test:assertXPath("$result = 't_Add_2020'")
+    %test:assertXPath("$result = 't_Sachau_290_Sachau_339'")
+    %test:assertXPath("$result = 't_Mingana_ar_christ_93_84'")
 function ct:make-id-from-idno()
 as xs:string+ {
     let $TEIs := (ct:create-and-store-test-data(), ct:create-and-store-test-data-1(), ct:create-and-store-test-data-2())

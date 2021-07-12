@@ -5,11 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [6.7.3] - 2021-07-10
+## [6.7.6] - 2021-07-12
 
 ### Fixed
 
 - correctly process init password from env var
+
+## [6.7.5] - 2021-07-12
+
+### Changed
+
+- the ID of tokens has been enhanced with a prefix `t_` in order to have standard compliant IDs only.
+
+## [6.7.4] - 2021-07-10
+
+### Added
+
+- cache: a new collection `$commons:tmp` for temporary data (intermediate format) is introduced
+
+### Fixed
+
+- improved import performance together with the motifs expansion by factor 13 (approx.)
+
+## [6.7.2] - 2020-07-09
+
+### Removed
+
+- REST-API endpoint `deploy/version/{$number}` which wasn't in use and cause the `deploy_app` stage to fail since the update to eXist 5.3.0.
 
 ## [6.7.1] - 2021-07-08
 
