@@ -433,9 +433,9 @@ declare function commons:get-uri-from-anything($anyUriForm as xs:string) {
  : @param $uri – URI (textgrid base URI without prefix)
  : @return URI of the parent aggregation :)
 declare function commons:get-parent-uri($uri as xs:string)
-as xs:string {
+as xs:string* {
     collection($commons:agg)//*[@rdf:resource eq "textgrid:" || $uri]/base-uri()
-    => commons:extract-uri-from-base-uri()
+    ! commons:extract-uri-from-base-uri(.) (: simple map operator to filter for empty-sequence :)
 };
 
 (:~
@@ -450,7 +450,7 @@ declare function commons:get-resource-information($uri as xs:string) {
             "textgrid-uri": string($metadata/tgmd:textgridUri),
             "uri": commons:get-uri-from-anything(string($metadata/tgmd:textgridUri)),
             "format": string($metadata/tgmd:format),
-            "parent": commons:get-parent-uri($uri)
+            "parents": commons:get-parent-uri($uri)
         }
 };
 
