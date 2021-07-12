@@ -98,7 +98,7 @@ as xs:boolean {
 
 declare %private function local:get-language-collection-by-uri($teiUri as xs:string)
 as xs:string? {
-    let $langAggregation := commons:get-parent-uri($teiUri) => commons:get-resource-information()
+    let $langAggregation := commons:get-parent-uri($teiUri) => commons:get-parent-uri() => commons:get-resource-information()
     return
         switch($langAggregation("title"))
         case "arabic" return "arabic-karshuni"

@@ -447,10 +447,10 @@ declare function commons:get-resource-information($uri as xs:string) {
     let $metadata := doc($commons:meta || $uri || ".xml")
     return
         map{
-            "title": string($metadata/tgmd:title),
-            "textgrid-uri": string($metadata/tgmd:textgridUri),
-            "uri": commons:get-uri-from-anything(string($metadata/tgmd:textgridUri)),
-            "format": string($metadata/tgmd:format),
+            "title": string($metadata//tgmd:title),
+            "textgrid-uri": string($metadata//tgmd:textgridUri),
+            "uri": commons:get-uri-from-anything(string($metadata//tgmd:textgridUri)),
+            "format": string($metadata//tgmd:format),
             "parents": commons:get-parent-uri($uri)
         }
 };
