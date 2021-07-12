@@ -208,7 +208,11 @@ as xs:string? {
 declare function tei2html:find-referenced-node-id($element as element(),
     $xmlid as xs:string)
 as xs:string? {
-    $element/root()//*[@xml:id = $xmlid]/@id
+    (: 
+        todo check if positional predicate is needed when motifs expansion
+        works as expected, e.g. no duplicate nodes (that will have same xml:id)
+     :)
+    ($element/root()//*[@xml:id = $xmlid])[last()]/@id
 };
 
 declare function tei2html:get-referenced-xmlid($element as element())
