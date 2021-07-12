@@ -317,11 +317,12 @@ declare function commons:compress-to-zip($collection-uri as xs:string)
 as xs:string* {
     if (commons:does-zip-need-update()) then
         let $valid-uris := 
-            for $doc in collection($collection-uri) return
-                if (contains(base-uri($doc), "sample")) then
-                    ()
+            for $uri in xmldb:get-child-resources($collection-uri) return
+                if (starts-with($uri, "syc")
+                or starts-with($uri, "ara")) then
+                    xs:anyURI($collection-uri || $uri)
                 else
-                    xs:anyURI(base-uri($doc))
+                    ()
         let $zip := compression:zip($valid-uris, false())
         return
             ( 
