@@ -32,6 +32,10 @@ declare function local:publish($uri) {
         connect:publish($uri, $sid, $user, $password, false())
 };
 
+declare function local:log($message as xs:string) {
+    util:log-system-out( util:system-time() || " ::: " || $message )
+};
+
 (: followig lists can be copied form tglab navigator context menu :)
 let $syriac := (
 "textgrid:3r678
@@ -86,12 +90,13 @@ textgrid:3rx14"
 return
 ( 
     local:cleanup(),
-    util:log-system-out( util:system-time() || "  ::: STARTING IMPORT"), 
+    local:log("STARTING IMPORT"), 
     for $uri in ( $syriac, $karshuni, $arabic )
 (: uncomment and adjust the following line to update a single item :)
 (:    where $uri eq "textgrid:3r9dx":)
+    let $log := local:log("publishing " || $uri)
     return
         local:publish($uri),
     
-    util:log-system-out( util:system-time() || "  ::: FINISHED IMPORT")
+    local:log("FINISHED IMPORT")
 )
