@@ -34,53 +34,53 @@ declare function local:publish($uri) {
 
 (: followig lists can be copied form tglab navigator context menu :)
 let $syriac := (
-"textgrid:3r678.0
-textgrid:3r145.0
-textgrid:3r679.0
-textgrid:3r67b.0
-textgrid:3r67c.0
-textgrid:3r67d.0
-textgrid:3r67f.0
-textgrid:3r67g.0
-textgrid:3r67h.0
-textgrid:3r67j.0
-textgrid:3r84d.0
-textgrid:3r86p.0
-textgrid:3r9dx.0
-textgrid:3rck1.0
-textgrid:3rcnx.0
-textgrid:3vqkf.0
-textgrid:3vqkh.0"
+"textgrid:3r678
+textgrid:3r145
+textgrid:3r679
+textgrid:3r67b
+textgrid:3r67c
+textgrid:3r67d
+textgrid:3r67f
+textgrid:3r67g
+textgrid:3r67h
+textgrid:3r67j
+textgrid:3r84d
+textgrid:3r86p
+textgrid:3r9dx
+textgrid:3rck1
+textgrid:3rcnx
+textgrid:3vqkf
+textgrid:3vqkh"
 ) => tokenize("\n")
 
 let $karshuni := (
-"textgrid:3r176.0
-textgrid:3r17b.0
-textgrid:3r17c.0
-textgrid:3r17d.0
-textgrid:3r7nv.0
-textgrid:3r17g.0
-textgrid:3r17h.0
-textgrid:3r7tt.0"    
+"textgrid:3r176
+textgrid:3r17b
+textgrid:3r17c
+textgrid:3r17d
+textgrid:3r7nv
+textgrid:3r17g
+textgrid:3r17h
+textgrid:3r7tt"    
     ) => tokenize("\n")
 
 let $arabic := (
-"textgrid:3r177.0
-textgrid:3r178.0
-textgrid:3r7vw.0
-textgrid:3r7p1.0
-textgrid:3r7p9.0
-textgrid:3r7sk.0
-textgrid:3r7tp.0
-textgrid:3r7vd.0
-textgrid:3r179.0
-textgrid:3r7n0.0
-textgrid:3r9vn.0
-textgrid:3r9wf.0
-textgrid:3rb3z.0
-textgrid:3rbm9.0
-textgrid:3rbmc.0
-textgrid:3rx14.0"
+"textgrid:3r177
+textgrid:3r178
+textgrid:3r7vw
+textgrid:3r7p1
+textgrid:3r7p9
+textgrid:3r7sk
+textgrid:3r7tp
+textgrid:3r7vd
+textgrid:3r179
+textgrid:3r7n0
+textgrid:3r9vn
+textgrid:3r9wf
+textgrid:3rb3z
+textgrid:3rbm9
+textgrid:3rbmc
+textgrid:3rx14"
     ) => tokenize("\n")
 
 return
@@ -88,8 +88,8 @@ return
     local:cleanup(),
     util:log-system-out( util:system-time() || "  ::: STARTING IMPORT"), 
     for $uri in ( $syriac, $karshuni, $arabic )
-(:    where $uri eq "textgrid:3r9dx.0":)
-    let $log := util:log-system-out(util:system-time() || " ::: publishing " || $uri)
+(: uncomment and adjust the following line to update a single item :)
+(:    where $uri eq "textgrid:3r9dx":)
     return
         local:publish($uri),
     
