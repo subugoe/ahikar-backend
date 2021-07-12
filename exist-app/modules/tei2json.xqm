@@ -189,7 +189,7 @@ as element(tei:text)* {
         for $tei in $tokenized-teis return
             let $idno := commons:make-id-from-idno($tei)
             return
-                if ($idno = $id or matches($tei/descendant::tei:editor, $id)) then
+                if ($idno = "t_" || $id or matches($tei/descendant::tei:editor, "t_" || $id)) then
                     $tei
                 else
                     ()
