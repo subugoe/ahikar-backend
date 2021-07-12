@@ -24,7 +24,6 @@ declare function local:cleanup() {
 };
 
 declare function local:publish($uri) {
-(:    let $uri := "textgrid:3r132":)
     let $sid := commons:get-textgrid-session-id()
     let $user := "admin"
     let $password := environment-variable("EXIST_ADMIN_PW")
