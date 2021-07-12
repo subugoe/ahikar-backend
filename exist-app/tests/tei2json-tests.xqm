@@ -134,7 +134,7 @@ as xs:boolean {
 };
 
 declare
-    %test:assertXPath("map:get($result, 'id') = 'Borg_ar_201'")
+    %test:assertXPath("map:get($result, 'id') = 't_Borg_ar_201'")
 function t:make-json-per-section()
 as map() {
     let $text := local:get-tokenized-tei-sample-arabic()//tei:text[@xml:lang = "ara" and @type = "transcription"]
@@ -200,21 +200,21 @@ as element(tei:TEI) {
                     <body>
                         <milestone unit="first_narrative_section"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
                         </ab>
                         <milestone unit="sayings"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
                         </ab>
                         <milestone unit="second_narrative_section"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
                         </ab>
                     </body>
                 </text>
@@ -223,21 +223,21 @@ as element(tei:TEI) {
                     <body>
                         <milestone unit="first_narrative_section"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
                         </ab>
                         <milestone unit="sayings"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
                         </ab>
                         <milestone unit="second_narrative_section"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
                         </ab>
                     </body>
                 </text>
@@ -275,21 +275,21 @@ as element(tei:TEI) {
                     <body>
                         <milestone unit="first_narrative_section"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
                         </ab>
                         <milestone unit="sayings"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
                         </ab>
                         <milestone unit="second_narrative_section"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
                         </ab>
                     </body>
                 </text>
@@ -328,21 +328,21 @@ as element(tei:TEI) {
                     <body>
                         <milestone unit="first_narrative_section"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.4.1_1" type="token">Daß</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.4.1_2" type="token">alle</w>
                         </ab>
                         <milestone unit="sayings"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_1" type="token">Wenn</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_2" type="token">aber</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_3" type="token">gleich</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.8.1_4" type="token">alle</w>
                         </ab>
                         <milestone unit="second_narrative_section"/>
                         <ab>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
-                            <w xml:id="Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_1" type="token">Es</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_2" type="token">ist</w>
+                            <w xml:id="t_Borg_ar_201_N1.4.2.4.4.12.1_3" type="token">also</w>
                         </ab>
                     </body>
                 </text>

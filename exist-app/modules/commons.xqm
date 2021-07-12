@@ -355,11 +355,15 @@ as xs:dateTime {
 declare function commons:make-id-from-idno($TEI as element(tei:TEI))
 as xs:string {
     let $idno := $TEI//tei:sourceDesc//tei:msIdentifier/tei:idno
-    return
+    let $normalized :=
         replace($idno, "\.", "")
-        => replace("[\(\)=\[\]]", " ")
+        => replace("[\(\)=\[\]\\]", " ")
         => normalize-space()
         => replace(" ", "_")
+    return
+        (: in some cases the idno doesn't start with a letter but a digit.
+        to get a uniform ID we prepend a prefix for all tokens. :)
+        "t_" || $normalized
 };
 
 (:~
