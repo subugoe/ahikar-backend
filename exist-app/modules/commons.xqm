@@ -21,6 +21,7 @@ declare variable $commons:agg := $commons:tg-collection || "/agg/";
 declare variable $commons:tile := $commons:tg-collection || "/tile/";
 declare variable $commons:json := $commons:tg-collection || "/json/";
 declare variable $commons:html := $commons:tg-collection || "/html/";
+declare variable $commons:tmp := xmldb:create-collection($commons:tg-collection, "tmp") || "/";
 declare variable $commons:appHome := "/db/apps/ahikar";
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
@@ -137,11 +138,29 @@ declare function commons:get-page-fragment($tei-xml-base-uri as xs:string,
     $text-type as xs:string)
 as element() {
     if (local:has-text-content($tei-xml-base-uri, $page, $text-type)) then
-        let $node := doc($tei-xml-base-uri)/tei:TEI
-            => me:main()
-            => commons:add-IDs()
-            => tokenize:main(),
-            $start-node := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
+        let $uri := commons:get-uri-from-anything($tei-xml-base-uri)
+        let $node-in-cache := doc-available($commons:tmp || $uri || ".me.xml")
+        let $node := 
+            if($node-in-cache) then
+                doc($commons:tmp || $uri || ".me.xml")/*
+            else
+                let $result := 
+                    doc($tei-xml-base-uri)/tei:TEI
+                    => me:main()
+                    => commons:add-IDs()
+                    => tokenize:main()
+                let $store := xmldb:store($commons:tmp, $uri || ".me.xml", $result)
+                return
+                    $result
+        let $start-node-dry-run := $node//tei:text[@type = $text-type]//tei:pb[@n = $page],
+            $start-node := 
+            (:
+                todo remove when motif expansion is aware of this.
+                $start-node must contain a single node!
+            :)
+                if (count($start-node-dry-run) gt 1) then
+                    $start-node-dry-run[1]
+                else $start-node-dry-run,
             $end-node := commons:get-end-node($start-node),
             $wrap-in-first-common-ancestor-only := false(),
             $include-start-and-end-nodes := true(),
@@ -203,7 +222,7 @@ as node()* {
 
 declare function commons:get-end-node($start-node as element(tei:pb))
 as element() {
-    let $following-pb := $start-node/following::tei:pb[1][@facs]
+    let $following-pb := $start-node/following::tei:pb[1]
     return
         if($following-pb) then
             $following-pb
@@ -386,4 +405,53 @@ declare function commons:format-page-number($pb as xs:string) {
 declare function commons:extract-uri-from-base-uri($base-uri as xs:string) {
     functx:substring-after-last($base-uri, "/")
     => substring-before(".xml")
+};
+
+(:~ Gets the URI from base-uri() and any textgrid uri 
+ : $anyUriForm – accepts base-uri(), textgrid URI and URI (= textgrid
+ : base URI without prefix)
+ : @return URI :)
+declare function commons:get-uri-from-anything($anyUriForm as xs:string) {
+    if(contains($anyUriForm, "/") and ends-with($anyUriForm, ".xml")) then
+        $anyUriForm => commons:extract-uri-from-base-uri()
+    else if (starts-with($anyUriForm, "textgrid:") and contains($anyUriForm, ".")) then
+        $anyUriForm => substring-after(":") => substring-before(".")
+    else if (starts-with($anyUriForm, "textgrid:")) then
+        $anyUriForm => substring-after(":")
+    else
+        $anyUriForm
+};
+
+(:~
+ : Gets the parent URI of a resource.
+ : Note: in textgrid a URI can be present in multiple aggregations. Currently
+ : this feature is not used for ahikar.
+ : @param $uri – URI (textgrid base URI without prefix)
+ : @return URI of the parent aggregation :)
+declare function commons:get-parent-uri($uri as xs:string)
+as xs:string {
+    collection($commons:agg)//*[@rdf:resource eq "textgrid:" || $uri]/base-uri()
+    => commons:extract-uri-from-base-uri()
+};
+
+(:~
+ : Prepares a metadata map for a resource/collection
+ : @param $uri – URI (textgrid base URI without prefix) 
+ : @return A map with keys: title, textgrid-uri, uri, format :)
+declare function commons:get-resource-information($uri as xs:string) {
+    let $metadata := doc($commons:meta || $uri || ".xml")
+    return
+        map{
+            "title": string($metadata/tgmd:title),
+            "textgrid-uri": string($metadata/tgmd:textgridUri),
+            "uri": commons:get-uri-from-anything(string($metadata/tgmd:textgridUri)),
+            "format": string($metadata/tgmd:format),
+            "parent": commons:get-parent-uri($uri)
+        }
+};
+
+declare function commons:get-parent-collection-information($uri as xs:string)
+as map(*){
+    commons:get-parent-uri($uri)
+    => commons:get-resource-information()
 };
