@@ -384,7 +384,7 @@ as xs:string {
 (:~
  : Returns all page break numbers for a given TEI resource.
  : 
- : @param $documentURI The TEI resource`s URI
+ : @param $documentURI The TEI resource's URI
  : @return A sequence of all page breaks occuring in the resource
  :)
 declare function commons:get-pages-in-TEI($uri as xs:string)
