@@ -377,7 +377,7 @@ as xs:string {
     let $idno := $TEI//tei:sourceDesc//tei:msIdentifier/tei:idno
     let $normalized :=
         replace($idno, "\.", "")
-        => replace("[\(\)=\[\]\\]", " ")
+        => replace("[\(\)=\[\]/]", " ")
         => normalize-space()
         => replace(" ", "_")
     return

@@ -5,16 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.8.1] - 2021-07-13
+
+### Fixed
+
+- exclude `/` from IDs
+
 ## [6.8.0] - 2021-07-12
 
 ### Added
 
 - `match` field to search output
-- generic metadata getter added to `commons` module 
+- generic metadata getter added to `commons` module
 
 ### Fixed
 
-- resolve language agregation for search hits
+- resolve language aggregation for search hits
 
 ## [6.7.7] - 2021-07-12
 
