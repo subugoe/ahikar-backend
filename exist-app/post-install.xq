@@ -54,7 +54,7 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
             let $contents := doc($target || "/" || $indexFile)/*
             let $store := xmldb:store($targetCollection, "collection.xconf", $contents)
             return
-                xmldb:remove($target, "collection.xconf")
+                xmldb:remove($target, $indexFile)
         )
     else
         (
@@ -114,7 +114,7 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
 (: create trigger and index config.
  : simply moving the file from one place to the other doesn't cause eXist-db to recognize the
  : config. neither does reindexing after moving the file.
- : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection.xconf. :)
+ : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection-*.xconf. :)
 (
     local:prepare-index("/db/system/config/db/data/textgrid/data", "collection-data.xconf"),
     local:prepare-index("/db/system/config/db/data/textgrid/agg", "collection-agg.xconf")
