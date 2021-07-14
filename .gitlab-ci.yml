@@ -18,6 +18,7 @@ stages:
   - deploy_app
   - api_tests
   - release
+  - data_import
 
 include: 
   - '/ci-scripts/.api_tests.yml'
@@ -219,6 +220,44 @@ deploy_app-main:
     - HEADER=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
     - *http-status
   dependencies: []
+
+# data import
+import-test:
+  image: curlimages/curl
+  stage: import_data
+  when: manual
+  allow_failure: true
+  except:
+    - main
+    - develop
+    - tags
+  script:
+    - HEADER=$(curl https://ahikar-test.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN})
+    - *http-status
+
+import-dev:
+  image: curlimages/curl
+  stage: import_data
+  when: manual
+  allow_failure: true
+  except:
+    - develop
+  script:
+    - HEADER=$(curl https://ahikar-dev.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN})
+    - *http-status
+
+import-main:
+  image: curlimages/curl
+  stage: import_data
+  when: manual
+  allow_failure: true
+  only:
+    - main
+    - tags
+  script:
+    - HEADER=$(curl https://ahikar.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN})
+    - *http-status
+
 
 # this job is triggered by a pipeline on the 'main' branch of https://gitlab.gwdg.de/subugoe/ahiqar/collatex.
 # it retrieves the latest collation results from there and commits it to this repository.

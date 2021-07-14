@@ -10,8 +10,7 @@ declare
     %rest:HEAD
     %rest:path("/import-data")
     %rest:query-param("token", "{$token}")
-    %rest:query-param("mode", "{$mode}")  
-function import:main($token, $mode) {
+function import:main($token) {
     if( $token ne environment-variable("APP_DEPLOY_TOKEN" )) then
         error(QName("error://1", "deploy"), "Deploy token incorrect.")
     else
