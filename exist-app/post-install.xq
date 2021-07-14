@@ -108,6 +108,7 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
         $target || "/modules/deploy.xqm",
         $target || "/modules/testtrigger.xqm",
         $target || "/modules/apitesttrigger.xqm",
+        $target || "/modules/import-data-api.xqm",
         $target || "/modules/prepare-unit-tests.xqm",
         $target || "/modules/AnnotationAPI/save-annotations.xqm"
     ) ! (sm:chown(., "admin"), sm:chmod(., "rwsrwxr-x"))
@@ -122,10 +123,8 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
     local:prepare-index("/db/system/config/db/data/textgrid/agg", "collection-agg.xconf")
 ),
 
-(: move the sample XMLs to /db/data/textgrid to be available in the viewer
- : only for test instance! :)
+(: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
 (
-    if( not($isTest) ) then () else
     xmldb:get-child-resources($target || "/data")[ends-with(., ".xml")]
     ! local:move-and-rename(.)
 ),
@@ -149,19 +148,4 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
         xmldb:move($target, $appsTarget || "/openapi", "openapi-config.xml"))
     else
         ()
-),
-
-(: if we are on develop or main, we want to ensure ahikar data is present :)
-(
-    let $dataTest := xmldb:get-child-resources($tg-base || "/data") => count() gt 40 (: true when all is fine :)
-    let $sampleDataTest := xmldb:get-child-resources($tg-base || "/data")[contains(., "sample")] => count() eq 0 (: true when all is fine :)
-    
-    return
-        if( $isTest ) then
-            util:log-system-out("ahikar app deployment done for test instance.")
-        else if ( $dataTest and $sampleDataTest ) then
-            util:log-system-out("ahikar app deployment done. data is present. sample data is already removed.")
-        else (
-            util:log-system-out("ahikar app deployment done. we have to re-import the data. " || $$dataTest || " AND " || $sampleDataTest),
-            util:eval(xs:anyURI("import-data.xq"))
 )
