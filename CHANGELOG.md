@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [6.8.3] - 2021-07-14
+
+### Added
+
+- application icon 🐡
+- REST endpoint to import data
+
+### Fixed
+
+- minor fixes for the gitlab ci pipeline
+
 ## [6.8.2] - 2021-07-13
+
+### Added
 
 - index config to support queries (search approx 8× faster)
 

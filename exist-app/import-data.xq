@@ -38,7 +38,7 @@ declare function local:log($message as xs:string) {
 let $uris := ("textgrid:3r132")
 
 return
-( 
+(
     local:cleanup(),
     local:log("STARTING IMPORT"), 
     for $uri in $uris

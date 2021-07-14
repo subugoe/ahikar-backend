@@ -3,11 +3,13 @@ xquery version "3.1";
 import module namespace functx="http://www.functx.com";
 
 declare namespace conf = "http://exist-db.org/Configuration";
+declare namespace pkg="http://expath.org/ns/pkg";
 
 (: the target collection into which the app is deployed :)
 declare variable $target external; (: := "/db/apps/ahikar"; :)
 declare variable $appsTarget := '/' || tokenize($target, '/')[position() lt last()] => string-join('/');
 declare variable $tg-base := "/db/data/textgrid";
+declare variable $isTest := doc("expath-pkg.xml")/pkg:package/@abbrev => contains("-test");
 
 declare function local:move-and-rename($filename as xs:string) as item()* {
     let $data-file-path := $target || "/data/"
@@ -106,6 +108,7 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
         $target || "/modules/deploy.xqm",
         $target || "/modules/testtrigger.xqm",
         $target || "/modules/apitesttrigger.xqm",
+        $target || "/modules/import-data-api.xqm",
         $target || "/modules/prepare-unit-tests.xqm",
         $target || "/modules/AnnotationAPI/save-annotations.xqm"
     ) ! (sm:chown(., "admin"), sm:chmod(., "rwsrwxr-x"))
@@ -121,8 +124,7 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
 ),
 
 (: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
-( 
-    
+(
     xmldb:get-child-resources($target || "/data")[ends-with(., ".xml")]
     ! local:move-and-rename(.)
 ),

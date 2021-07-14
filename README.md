@@ -10,13 +10,16 @@ This aims to serve the complete backend for the Ahikar project.
   - [Build](#build)
     - [eXist-db App and Dependencies](#exist-db-app-and-dependencies)
     - [Get the Frontend](#get-the-frontend)
-  - [Environment variables](#environment-variables)
-  - [Building All Docker Container Images](#building-all-docker-container-images)
-  - [Start the Backend](#start-the-backend)
+    - [Environment variables](#environment-variables)
+    - [Building All Docker Container Images](#building-all-docker-container-images)
+    - [Start the Backend](#start-the-backend)
 - [Architecture](#architecture)
   - [Internal Workings of the Backend](#internal-workings-of-the-backend)
 - [Connecting the Backend with the Frontend](#connecting-the-backend-with-the-frontend)
 - [Tests](#tests)
+- [CI features](#ci-features)
+  - [Keywords](#keywords)
+    - [`ci-reimport-data`](#ci-reimport-data)
 - [API documentation](#api-documentation)
   - [Interplay of TextAPI and AnnotationAPI](#interplay-of-textapi-and-annotationapi)
 - [License](#license)
@@ -139,6 +142,18 @@ To enable local testing without credentials some tests that require access to Te
 These are only executed by the `testtrigger.xqm` module if the respective environment variable, `TGLOGIN` is set in `ahikar.env`.
 
 This way, tests can be executed locally via the API endpoint `/trigger-tests` or the script `tests-runner.xq` without running into authentication problems.
+
+## CI features
+GitLab CI will build, test and deploy everything.
+It creates new docker images to be deployed to the GitLab Container Registry.
+It will push the XAR package (eXist app) to the [DARIAH-DE eXist repo](https://ci.de.dariah.eu/exist-repo)
+It then triggers all updates on the server.
+This is done for all instances (test, dev, main).
+
+### Keywords
+#### `ci-reimport-data`
+- removes the docker volume on the adressed instance (test, dev, main)
+- will add a job to the pipeline for reimporting data to the adressed instance (test, dev, main)
 
 ## API documentation
 

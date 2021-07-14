@@ -7,7 +7,7 @@ xquery version "3.1";
  : @author Michelle Weidling
  : @author Mathias Göbel
  : @version 0.1.0
- : @since 0.4.0
+ : @since 0.5.0
  :)
 
 module namespace deploy="http://ahikar.sub.uni-goettingen.de/ns/deploy";
@@ -34,13 +34,18 @@ declare
   %rest:HEAD
   %rest:path("/deploy")
   %rest:query-param("token", "{$token}")
-function deploy:redeploy($token)
+  %rest:query-param("version", "{$version}")
+function deploy:redeploy($token, $version)
 as element()? {
   if(not($token = environment-variable("APP_DEPLOY_TOKEN" )))
-    then error(QName("error://1", "DEPLOY01"), "deploy token incorrect.")
+    then error(QName("http://ahikar.sub.uni-goettingen.de/ns/deploy", "DEPLOY01"), "deploy token incorrect.")
   else
     let $pkgName := environment-variable("APP_NAME")
-    let $name := 'https://ci.de.dariah.eu/exist-repo/find?name=' || encode-for-uri($pkgName) || '&amp;processor=' || system:get-version()
+    let $name :=
+        if($version) then
+          'https://ci.de.dariah.eu/exist-repo/find?name=' || encode-for-uri($pkgName) || '&amp;version=' || $version
+        else
+          'https://ci.de.dariah.eu/exist-repo/find?name=' || encode-for-uri($pkgName) || '&amp;processor=' || system:get-version()
     let $request :=
         <hc:request
           method="GET"
@@ -49,7 +54,7 @@ as element()? {
         try {
             hc:send-request($request)
         } catch * {
-            error(QName("http://ahikar.sub.uni-goettingen.de/ns/deploy", "DEPLOY1"), "Package " || $pkgName || " could not be fetched.")
+            error(QName("http://ahikar.sub.uni-goettingen.de/ns/deploy", "DEPLOY2"), "Package " || $pkgName || " could not be fetched.")
         }
     let $storeToDb := xmldb:store("/db", "ahikar-deployment.xar", $package[2], "application/zip")
     let $remove := repo:remove($pkgName)
