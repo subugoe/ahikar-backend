@@ -1,0 +1,13 @@
+<collection xmlns="http://exist-db.org/collection-config/1.0">
+    <index
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:ore="http://www.openarchives.org/ore/terms/"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        <!-- Range indexes -->
+        <range>
+            <create qname="ore:aggregates">
+                <field name="rdf-resource" match="@rdf:resource" type="xs:string" case="no"/>
+            </create>
+        </range>
+    </index>
+</collection>

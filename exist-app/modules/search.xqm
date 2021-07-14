@@ -67,7 +67,7 @@ let $hits :=
 let $count := count($hits)
 
 let $timing := util:system-dateTime()
-let $took := (current-dateTime() - $timing) => seconds-from-duration() * 1000 (: milliseconds :)
+let $took := ($timing - current-dateTime()) => seconds-from-duration() * 1000 (: milliseconds :)
 
 return
     map{

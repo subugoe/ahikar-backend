@@ -88,13 +88,12 @@ as xs:string* {
  :)
 declare function commons:get-parent-aggregation($uri as xs:string)
 as xs:string? {
-    if (collection($commons:agg)[.//@rdf:resource = "textgrid:" || $uri]) then
-        collection($commons:agg)[.//@rdf:resource = "textgrid:" || $uri]
-        => base-uri()
-        => substring-after("agg/")
-        => substring-before(".xml")
-    else
-        ()
+    let $parent := collection($commons:agg)//ore:aggregates[@rdf:resource = "textgrid:" || $uri]
+    return
+        $parent ! (.
+            => base-uri()
+            => substring-after("agg/")
+            => substring-before(".xml"))
 };
 
 declare function commons:get-page-fragments($teixml-uri as xs:string,
@@ -377,7 +376,7 @@ as xs:string {
     let $idno := $TEI//tei:sourceDesc//tei:msIdentifier/tei:idno
     let $normalized :=
         replace($idno, "\.", "")
-        => replace("[\(\)=\[\]/]", " ")
+        => replace("[\(\)=\[\]\\]", " ")
         => normalize-space()
         => replace(" ", "_")
     return
@@ -435,7 +434,7 @@ declare function commons:get-uri-from-anything($anyUriForm as xs:string) {
  : @return URI of the parent aggregation :)
 declare function commons:get-parent-uri($uri as xs:string)
 as xs:string* {
-    collection($commons:agg)//*[@rdf:resource eq "textgrid:" || $uri]/base-uri()
+    collection($commons:agg)//ore:aggregates[@rdf:resource eq "textgrid:" || $uri]/base-uri()
     ! commons:extract-uri-from-base-uri(.) (: simple map operator to filter for empty-sequence :)
 };
 
