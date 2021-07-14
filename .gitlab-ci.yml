@@ -92,7 +92,7 @@ load_frontend-all:
   stage: build
   variables:
     FRONTEND_REPO_ID: "9882"
-    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_PROJECT_PATH/CI_JOB_NAME
+    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_PROJECT_PATH/$CI_JOB_NAME
     # ↑ needed to handle concurrency - maybe subject to move to golbal var
     # see https://docs.gitlab.com/ee/ci/runners/configure_runners.html#handling-concurrency
   script:
