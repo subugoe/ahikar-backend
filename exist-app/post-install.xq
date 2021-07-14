@@ -48,6 +48,24 @@ as xs:string* {
     xmldb:get-child-collections($target) ! local:get-child-resources-recursive($target || "/" || .) 
 };
 
+declare function local:prepare-index($targetCollection as xs:string, $indexFile as xs:string) {
+        if (xmldb:collection-available($targetCollection)) then
+        (
+            let $contents := doc($target || "/" || $indexFile)/*
+            let $store := xmldb:store($targetCollection, "collection.xconf", $contents)
+            return
+                xmldb:remove($target, $indexFile)
+        )
+    else
+        (
+            xmldb:create-collection("/db/system/config/db/", substring-after($targetCollection, "/db/system/config/db/")),
+            let $contents := doc($target || "/" || $indexFile)/*
+            let $store := xmldb:store($targetCollection, "collection.xconf", $contents)
+            return
+                xmldb:remove($target, $indexFile)
+        )
+};
+
 (:  set admin password on deployment. Convert to string
     so local development will not fail because of missing
     env var. :)
@@ -96,23 +114,10 @@ as xs:string* {
 (: create trigger and index config.
  : simply moving the file from one place to the other doesn't cause eXist-db to recognize the
  : config. neither does reindexing after moving the file.
- : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection.xconf. :)
+ : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection-*.xconf. :)
 (
-    if (xmldb:collection-available("/db/system/config/db/data/textgrid/data")) then
-        (
-            let $contents := doc($target || "/collection.xconf")/*
-            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
-            return
-                xmldb:remove($target, "collection.xconf")
-        )
-    else
-        (
-            xmldb:create-collection("/db/system/config/db/", "data/textgrid/data"),
-            let $contents := doc($target || "/collection.xconf")/*
-            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
-            return
-                xmldb:remove($target, "collection.xconf")          
-        )
+    local:prepare-index("/db/system/config/db/data/textgrid/data", "collection-data.xconf"),
+    local:prepare-index("/db/system/config/db/data/textgrid/agg", "collection-agg.xconf")
 ),
 
 (: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
