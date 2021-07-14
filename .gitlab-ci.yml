@@ -234,7 +234,7 @@ import-test:
   image: curlimages/curl
   stage: data_import
   rules:
-    - if: '$CI_COMMIT_MESSAGE =~ /ci-reimport-data/ && $CI_COMMIT_REF_NAME != "develop" && $CI_COMMIT_REF_NAME != "main" && $CI_COMMIT_TAG == null'
+    - if: '$CI_COMMIT_MESSAGE =~ /ci-reimport-data/ && $CI_COMMIT_REF_NAME != "develop" && $CI_COMMIT_REF_NAME != "main" && $CI_COMMIT_TAG == null && $CI_MERGE_REQUEST_ID == null'
   script:
     - HEADER=$(curl https://ahikar-test.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN})
     - *http-status
