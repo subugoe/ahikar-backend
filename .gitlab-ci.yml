@@ -224,7 +224,7 @@ deploy_app-main:
 # data import
 import-test:
   image: curlimages/curl
-  stage: import_data
+  stage: data_import
   when: manual
   allow_failure: true
   except:
@@ -237,7 +237,7 @@ import-test:
 
 import-dev:
   image: curlimages/curl
-  stage: import_data
+  stage: data_import
   when: manual
   allow_failure: true
   except:
@@ -248,7 +248,7 @@ import-dev:
 
 import-main:
   image: curlimages/curl
-  stage: import_data
+  stage: data_import
   when: manual
   allow_failure: true
   only:
