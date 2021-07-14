@@ -22,7 +22,7 @@ declare variable $commons:tile := $commons:tg-collection || "/tile/";
 declare variable $commons:json := $commons:tg-collection || "/json/";
 declare variable $commons:html := $commons:tg-collection || "/html/";
 declare variable $commons:tmp := xmldb:create-collection($commons:tg-collection, "tmp") || "/";
-declare variable $commons:appHome := $commons:expath-pkg/*/base-uri() => substring-before("expath-pkg.xml");
+declare variable $commons:appHome := $commons:expath-pkg/*/substring-before(base-uri(), "expath-pkg.xml");
 
 declare variable $commons:ns := "http://ahikar.sub.uni-goettingen.de/ns/commons";
 declare variable $commons:anno-ns := "http://ahikar.sub.uni-goettingen.de/ns/annotations";
