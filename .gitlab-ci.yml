@@ -65,6 +65,13 @@ include:
 - echo "Current HTTP status is $STATUS."
 - if [[ "$STATUS" != "200" ]]; then exit 1; fi
 
+
+## GLOBAL VARIABLES
+variables:
+  GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_PROJECT_PATH/$CI_JOB_NAME
+  # ↑ needed to handle concurrency - maybe subject to move to golbal var
+  # see https://docs.gitlab.com/ee/ci/runners/configure_runners.html#handling-concurrency
+
 ## JOBS
 # build the Ahiqar application and uploads it to the DARIAH package repository.
 # the XAR file is downloaded from there later during the deployment.
@@ -92,9 +99,6 @@ load_frontend-all:
   stage: build
   variables:
     FRONTEND_REPO_ID: "9882"
-    GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_PROJECT_PATH/$CI_JOB_NAME
-    # ↑ needed to handle concurrency - maybe subject to move to golbal var
-    # see https://docs.gitlab.com/ee/ci/runners/configure_runners.html#handling-concurrency
   script:
     - *git
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
