@@ -3,11 +3,13 @@ xquery version "3.1";
 import module namespace functx="http://www.functx.com";
 
 declare namespace conf = "http://exist-db.org/Configuration";
+declare namespace pkg="http://expath.org/ns/pkg";
 
 (: the target collection into which the app is deployed :)
 declare variable $target external; (: := "/db/apps/ahikar"; :)
 declare variable $appsTarget := '/' || tokenize($target, '/')[position() lt last()] => string-join('/');
 declare variable $tg-base := "/db/data/textgrid";
+declare variable $isTest := doc("expath-pkg.xml")/pkg:package/@abbrev => contains("-test");
 
 declare function local:move-and-rename($filename as xs:string) as item()* {
     let $data-file-path := $target || "/data/"
@@ -120,9 +122,10 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
     local:prepare-index("/db/system/config/db/data/textgrid/agg", "collection-agg.xconf")
 ),
 
-(: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
-( 
-    
+(: move the sample XMLs to /db/data/textgrid to be available in the viewer
+ : only for test instance! :)
+(
+    if( not($isTest) ) then () else
     xmldb:get-child-resources($target || "/data")[ends-with(., ".xml")]
     ! local:move-and-rename(.)
 ),
@@ -146,4 +149,14 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
         xmldb:move($target, $appsTarget || "/openapi", "openapi-config.xml"))
     else
         ()
+),
+
+(: if we are on develop or main, we want to ensure ahikar data is present :)
+(
+    let $dataTest := xmldb:get-child-resources($tg-base || "/data") => count() gt 40 (: true when all is fine :)
+    let $sampleDataTest := xmldb:get-child-resources($tg-base || "/data")[contains(., "sample")] => count() eq 0 (: true when all is fine :)
+    
+    return
+        (: test :) if( $isTest and not($dataTest) and not($sampleDataTest) ) then util:log-system-out("ahikar app deployment done. required data is present.") else
+        util:eval(xs:anyURI("import-data.xq"))
 )
