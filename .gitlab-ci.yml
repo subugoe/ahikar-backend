@@ -44,7 +44,12 @@ include:
 - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/docker-compose.yml
 - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/.env
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
+- if [[ ${CI_COMMIT_MESSAGE} =~ "ci-reimport-data" ]]; then
+- echo "WE ARE GOING TO REMOVE THE VOLUME"
+- ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down --volumes && docker-compose up -d"
+- else
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
+- fi
 
 .git: &git
 - eval $(ssh-agent -s)
@@ -228,12 +233,8 @@ deploy_app-main:
 import-test:
   image: curlimages/curl
   stage: data_import
-  when: manual
-  allow_failure: true
-  except:
-    - main
-    - develop
-    - tags
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /ci-reimport-data/ && $CI_COMMIT_REF_NAME != "develop" && $CI_COMMIT_REF_NAME != "main" && $CI_COMMIT_TAG == null'
   script:
     - HEADER=$(curl https://ahikar-test.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN})
     - *http-status
@@ -241,10 +242,8 @@ import-test:
 import-dev:
   image: curlimages/curl
   stage: data_import
-  when: manual
-  allow_failure: true
-  except:
-    - develop
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /ci-reimport-data/ && $CI_COMMIT_REF_NAME == "develop"'
   script:
     - HEADER=$(curl https://ahikar-dev.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN})
     - *http-status
@@ -252,11 +251,8 @@ import-dev:
 import-main:
   image: curlimages/curl
   stage: data_import
-  when: manual
-  allow_failure: true
-  only:
-    - main
-    - tags
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /ci-reimport-data/ && ($CI_COMMIT_REF_NAME == "main" || $CI_COMMIT_TAG)'
   script:
     - HEADER=$(curl https://ahikar.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN})
     - *http-status
