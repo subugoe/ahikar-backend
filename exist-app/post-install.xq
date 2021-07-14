@@ -157,6 +157,11 @@ declare function local:prepare-index($targetCollection as xs:string, $indexFile 
     let $sampleDataTest := xmldb:get-child-resources($tg-base || "/data")[contains(., "sample")] => count() eq 0 (: true when all is fine :)
     
     return
-        (: test :) if( $isTest and not($dataTest) and not($sampleDataTest) ) then util:log-system-out("ahikar app deployment done. required data is present.") else
-        util:eval(xs:anyURI("import-data.xq"))
+        if( $isTest ) then
+            util:log-system-out("ahikar app deployment done for test instance.")
+        else if ( $dataTest and $sampleDataTest ) then
+            util:log-system-out("ahikar app deployment done. data is present. sample data is already removed.")
+        else (
+            util:log-system-out("ahikar app deployment done. we have to re-import the data. " || $$dataTest || " AND " || $sampleDataTest),
+            util:eval(xs:anyURI("import-data.xq"))
 )
