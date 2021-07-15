@@ -69,7 +69,7 @@ include:
 ## GLOBAL VARIABLES
 variables:
   GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_PROJECT_PATH/$CI_JOB_NAME
-  # ↑ needed to handle concurrency - maybe subject to move to golbal var
+  # ↑ needed to handle concurrency
   # see https://docs.gitlab.com/ee/ci/runners/configure_runners.html#handling-concurrency
 
 ## JOBS
