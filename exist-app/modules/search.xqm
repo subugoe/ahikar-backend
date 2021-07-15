@@ -27,8 +27,35 @@ declare
     %rest:produces("application/json")
 function search:main($body)
 as item()+ {
+    ($commons:responseHeader200,
+    search:perform(util:base64-decode($body) => parse-json())
+)};
+
+declare function local:validate-query($query as xs:string)
+as xs:boolean {
+    if(string-length($query) eq 0) then
+        error(QName("search", "empty-query"), "got empty query string")
+    else if(contains($query, "script")) then
+        error(QName("search", "script"), "query contains not allowed string: script")
+    else
+        true()
+};
+
+declare %private function local:get-language-collection-by-uri($teiUri as xs:string)
+as xs:string? {
+    let $langAggregation := commons:get-parent-uri($teiUri) => commons:get-parent-uri() => commons:get-resource-information()
+    return
+        switch($langAggregation("title"))
+        case "arabic" return "arabic-karshuni"
+        case "karshuni" return "arabic-karshuni"
+        case "syriac" return "syriac"
+        default return ""
+};
+
+declare function search:perform($parsed-json as map(*))
+as map(*) {
     let $startTiming := util:system-dateTime()
-    let $body := util:base64-decode($body) => parse-json()
+    let $body := $json
     let $searchExpression := $body("query")("simple_query_string")("query")
     let $validateQuery := local:validate-query($searchExpression)
     let $returnSize := $body("size")
@@ -41,8 +68,8 @@ as item()+ {
             <filter-rewrite>no</filter-rewrite>
         </options>
 
-let $hits :=
-    try {
+    let $hits :=
+        try {
         for $hit in collection($commons:data)//tei:body[ft:query(., $searchExpression, $options)]
             let $score := ft:score($hit)
             
@@ -76,9 +103,9 @@ let $count := count($hits)
 let $timing := util:system-dateTime()
 let $took := ($timing - $startTiming) => seconds-from-duration() (: milliseconds :)
 
-let $result := 
+return
     map{
-        "request": $body,
+        "request": serialize($body, map{"method": "json"}),
         "took": $took,
         "hits": map{
             "total": map{
@@ -91,34 +118,4 @@ let $result :=
             }
         }
     }
-
-return (
-    <rest:response>
-        <http:response xmlns:http="http://expath.org/ns/http-client" status="200">
-            <http:header name="Access-Control-Allow-Origin" value="*"/>
-            <http:header name="Access-Control-Allow-Method" value="POST, HEAD, OPTIONS"/>
-        </http:response>
-    </rest:response>,
-    $result
-)};
-
-declare function local:validate-query($query as xs:string)
-as xs:boolean {
-    if(string-length($query) eq 0) then
-        error(QName("search", "empty-query"), "got empty query string")
-    else if(contains($query, "script")) then
-        error(QName("search", "script"), "query contains not allowed string: script")
-    else
-        true()
-};
-
-declare %private function local:get-language-collection-by-uri($teiUri as xs:string)
-as xs:string? {
-    let $langAggregation := commons:get-parent-uri($teiUri) => commons:get-parent-uri() => commons:get-resource-information()
-    return
-        switch($langAggregation("title"))
-        case "arabic" return "arabic-karshuni"
-        case "karshuni" return "arabic-karshuni"
-        case "syriac" return "syriac"
-        default return ""
 };
