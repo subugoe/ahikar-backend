@@ -47,6 +47,11 @@ services:
     ports:
       - "${PORT}:80"
     restart: unless-stopped
+    volumes:
+      - type: bind
+      source: ./mod_cache-lock
+      target: /mod_cache-lock
+
 
   httpd-prometheus:
     # can be built with the submodule "apache_exporter" integrated here.
