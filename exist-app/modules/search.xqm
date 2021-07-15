@@ -26,7 +26,8 @@ declare
     %rest:consumes("application/json")
     %rest:produces("application/json")
 function search:main($body)
-as map(*) {
+as item()+ {
+    let $startTiming := util:system-dateTime()
     let $body := util:base64-decode($body) => parse-json()
     let $searchExpression := $body("query")("simple_query_string")("query")
     let $validateQuery := local:validate-query($searchExpression)
@@ -42,24 +43,30 @@ as map(*) {
 
 let $hits :=
     try {
-        for $hit in collection($commons:data)//tei:ab[ft:query(., $searchExpression, $options)]
+        for $hit in collection($commons:data)//tei:body[ft:query(., $searchExpression, $options)]
+            let $score := ft:score($hit)
+            
             let $baseUri := $hit/base-uri()
             let $textgridUri := commons:extract-uri-from-base-uri($baseUri)
             let $edition := commons:get-parent-aggregation($textgridUri)
             let $collection := local:get-language-collection-by-uri($textgridUri)
             let $label := tapi-mani:get-manifest-title($textgridUri)
-            let $n := string($hit/preceding::tei:pb[1]/@n)
-            let $match := util:expand($hit)//exist:match ! string(.)
-            let $score := ft:score($hit)
-
-        order by $score descending
-        return
-            map{
-            "label": $label,
-            "n": $n,
-            "item": "/api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $n || "/latest/item.json", (: = textapi: "id" w/o base-url :)
-            "match": $match
-        }
+            let $matches := util:expand($hit)//exist:match
+            let $pages := ($matches ! ./preceding::tei:pb[1]/string(@n)) => distinct-values()
+            let $type := string($hit/parent::tei:text/@type)
+            let $language := string($hit/parent::tei:text/@xml:lang)
+            for $page in $pages
+            order by $score descending
+            return
+                map{
+                    "type": $type,
+                    "lang": $language,
+                    "uri-tei": $baseUri,
+                    "label": $label,
+                    "n": $page,
+                    "item": "/api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $page || "/latest/item.json", (: = textapi: "id" w/o base-url :)
+                    "match": array{ $matches[./preceding::tei:pb[1]/string(@n) eq $page] ! string(.)}
+                }
     } catch * {
         ()
     }
@@ -67,9 +74,9 @@ let $hits :=
 let $count := count($hits)
 
 let $timing := util:system-dateTime()
-let $took := ($timing - current-dateTime()) => seconds-from-duration() * 1000 (: milliseconds :)
+let $took := ($timing - $startTiming) => seconds-from-duration() (: milliseconds :)
 
-return
+let $result := 
     map{
         "request": $body,
         "took": $took,
@@ -84,7 +91,16 @@ return
             }
         }
     }
-};
+
+return (
+    <rest:response>
+        <http:response xmlns:http="http://expath.org/ns/http-client" status="200">
+            <http:header name="Access-Control-Allow-Origin" value="*"/>
+            <http:header name="Access-Control-Allow-Method" value="POST, HEAD, OPTIONS"/>
+        </http:response>
+    </rest:response>,
+    $result
+)};
 
 declare function local:validate-query($query as xs:string)
 as xs:boolean {
