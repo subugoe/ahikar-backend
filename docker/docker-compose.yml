@@ -49,8 +49,8 @@ services:
     restart: unless-stopped
     volumes:
       - type: bind
-      source: ./mod_cache-lock
-      target: /mod_cache-lock
+        source: ./mod_cache-lock
+        target: /mod_cache-lock
 
 
   httpd-prometheus:
