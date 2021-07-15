@@ -52,14 +52,13 @@ as xs:string? {
         default return ""
 };
 
-declare function search:perform($parsed-json as map(*))
+declare function search:perform($parsedJson as map(*))
 as map(*) {
     let $startTiming := util:system-dateTime()
-    let $body := $json
-    let $searchExpression := $body("query")("simple_query_string")("query")
+    let $searchExpression := $parsedJson("query")("simple_query_string")("query")
     let $validateQuery := local:validate-query($searchExpression)
-    let $returnSize := $body("size")
-    let $returnStart := $body("from")
+    let $returnSize := $parsedJson("size")
+    let $returnStart := $parsedJson("from")
     let $options :=
         <options>
             <default-operator>and</default-operator>
@@ -105,7 +104,7 @@ let $took := ($timing - $startTiming) => seconds-from-duration() (: milliseconds
 
 return
     map{
-        "request": serialize($body, map{"method": "json"}),
+        "request": serialize($parsedJson, map{"method": "json"}),
         "took": $took,
         "hits": map{
             "total": map{
