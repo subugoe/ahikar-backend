@@ -87,7 +87,6 @@ as map(*) {
                 map{
                     "type": $type,
                     "lang": $language,
-                    "uri-tei": $baseUri,
                     "label": $label,
                     "n": $page,
                     "item": "/api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $page || "/latest/item.json", (: = textapi: "id" w/o base-url :)
