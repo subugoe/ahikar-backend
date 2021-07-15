@@ -378,7 +378,7 @@ as xs:string {
         replace($idno, "\.", "")
         => replace("[\(\)=\[\]\\]", " ")
         => normalize-space()
-        => replace(" ", "_")
+        => replace(" |\/", "_")
     return
         (: in some cases the idno doesn't start with a letter but a digit.
         to get a uniform ID we prepend a prefix for all tokens. :)
