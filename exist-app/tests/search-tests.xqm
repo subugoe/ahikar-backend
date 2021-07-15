@@ -23,6 +23,6 @@ function st:search() {
     return (
         search:perform($json)("hits")("hits")?1("label"),
         search:perform($json)("hits")("hits")?* => count(),
-        search:perform($json)("hits")("total")("value") gt 60
+        search:perform($json)("hits")("total")("value") gt 10
     )
 };

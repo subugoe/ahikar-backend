@@ -107,7 +107,8 @@ return
         "took": $took,
         "hits": map{
             "total": map{
-                "value": $count
+                "value": $count,
+                "relation": "eq"
             },
             "hits": array{
                 $hits
