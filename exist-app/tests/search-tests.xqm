@@ -10,20 +10,19 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 declare
     %test:assertEquals("Beispieldatei zum Testen", 3, "true")
 function st:search() {
-    let $body := 
-    '{
-      "query": {
-        "simple_query_string": {
+    let $json := map {
+      "query": map {
+        "simple_query_string": map {
           "query": "ܘܐ*"  }
       },
       "from": 0,
       "size": 3,
       "kwicsize": 20
-    }'  => util:base64-encode()
+    }
 
     return (
-        search:main($body)("hits")("hits")?1("label"),
-        search:main($body)("hits")("hits")?* => count(),
-        search:main($body)("hits")("total")("value") gt 60
+        search:perform($json)("hits")("hits")?1("label"),
+        search:perform($json)("hits")("hits")?* => count(),
+        search:perform($json)("hits")("total")("value") gt 10
     )
 };

@@ -26,65 +26,10 @@ declare
     %rest:consumes("application/json")
     %rest:produces("application/json")
 function search:main($body)
-as map(*) {
-    let $body := util:base64-decode($body) => parse-json()
-    let $searchExpression := $body("query")("simple_query_string")("query")
-    let $validateQuery := local:validate-query($searchExpression)
-    let $returnSize := $body("size")
-    let $returnStart := $body("from")
-    let $options :=
-        <options>
-            <default-operator>and</default-operator>
-            <phrase-slop>3</phrase-slop>
-            <leading-wildcard>yes</leading-wildcard>
-            <filter-rewrite>no</filter-rewrite>
-        </options>
-
-let $hits :=
-    try {
-        for $hit in collection($commons:data)//tei:ab[ft:query(., $searchExpression, $options)]
-            let $baseUri := $hit/base-uri()
-            let $textgridUri := commons:extract-uri-from-base-uri($baseUri)
-            let $edition := commons:get-parent-aggregation($textgridUri)
-            let $collection := local:get-language-collection-by-uri($textgridUri)
-            let $label := tapi-mani:get-manifest-title($textgridUri)
-            let $n := string($hit/preceding::tei:pb[1]/@n)
-            let $match := util:expand($hit)//exist:match ! string(.)
-            let $score := ft:score($hit)
-
-        order by $score descending
-        return
-            map{
-            "label": $label,
-            "n": $n,
-            "item": "/api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $n || "/latest/item.json", (: = textapi: "id" w/o base-url :)
-            "match": $match
-        }
-    } catch * {
-        ()
-    }
-
-let $count := count($hits)
-
-let $timing := util:system-dateTime()
-let $took := ($timing - current-dateTime()) => seconds-from-duration() * 1000 (: milliseconds :)
-
-return
-    map{
-        "request": $body,
-        "took": $took,
-        "hits": map{
-            "total": map{
-                "value": $count
-            },
-            "hits": array{
-                $hits
-                    [position() le $returnStart + $returnSize]
-                    [position() gt $returnStart]
-            }
-        }
-    }
-};
+as item()+ {
+    ($commons:responseHeader200,
+    search:perform(util:base64-decode($body) => parse-json())
+)};
 
 declare function local:validate-query($query as xs:string)
 as xs:boolean {
@@ -105,4 +50,71 @@ as xs:string? {
         case "karshuni" return "arabic-karshuni"
         case "syriac" return "syriac"
         default return ""
+};
+
+declare function search:perform($parsedJson as map(*))
+as map(*) {
+    let $startTiming := util:system-dateTime()
+    let $searchExpression := $parsedJson("query")("simple_query_string")("query")
+    let $validateQuery := local:validate-query($searchExpression)
+    let $returnSize := $parsedJson("size")
+    let $returnStart := $parsedJson("from")
+    let $options :=
+        <options>
+            <default-operator>and</default-operator>
+            <phrase-slop>3</phrase-slop>
+            <leading-wildcard>yes</leading-wildcard>
+            <filter-rewrite>no</filter-rewrite>
+        </options>
+
+    let $hits :=
+        try {
+        for $hit in collection($commons:data)//tei:body[ft:query(., $searchExpression, $options)]
+            let $score := ft:score($hit)
+            
+            let $baseUri := $hit/base-uri()
+            let $textgridUri := commons:extract-uri-from-base-uri($baseUri)
+            let $edition := commons:get-parent-aggregation($textgridUri)
+            let $collection := local:get-language-collection-by-uri($textgridUri)
+            let $label := tapi-mani:get-manifest-title($textgridUri)
+            let $matches := util:expand($hit)//exist:match
+            let $pages := ($matches ! ./preceding::tei:pb[1]/string(@n)) => distinct-values()
+            let $type := string($hit/parent::tei:text/@type)
+            let $language := string($hit/parent::tei:text/@xml:lang)
+            for $page in $pages
+            order by $score descending
+            return
+                map{
+                    "type": $type,
+                    "lang": $language,
+                    "label": $label,
+                    "n": $page,
+                    "item": "/api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $page || "/latest/item.json", (: = textapi: "id" w/o base-url :)
+                    "match": array{ $matches[./preceding::tei:pb[1]/string(@n) eq $page] ! string(.)}
+                }
+    } catch * {
+        ()
+    }
+
+let $count := count($hits)
+
+let $timing := util:system-dateTime()
+let $took := ($timing - $startTiming) => seconds-from-duration() (: milliseconds :)
+
+return
+    map{
+        "request": serialize($parsedJson, map{"method": "json"}),
+        "took": $took,
+        "hits": map{
+            "total": map{
+                "value": $count,
+                "relation": "eq"
+            },
+            "hits": array{
+                $hits
+                    [position() le $returnStart + $returnSize]
+                    [position() gt $returnStart]
+            }
+        }
+    }
 };
