@@ -5,6 +5,113 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [6.8.3] - 2021-07-14
+
+### Added
+
+- application icon 🐡
+- REST endpoint to import data
+
+### Fixed
+
+- minor fixes for the gitlab ci pipeline
+
+## [6.8.2] - 2021-07-13
+
+### Added
+
+- index config to support queries (search approx 8× faster)
+
+## [6.8.1] - 2021-07-13
+
+### Fixed
+
+- exclude `/` from IDs
+
+## [6.8.0] - 2021-07-12
+
+### Added
+
+- `match` field to search output
+- generic metadata getter added to `commons` module
+
+### Fixed
+
+- resolve language aggregation for search hits
+
+## [6.7.7] - 2021-07-12
+
+### Fixed
+
+- retrieving valid URIs for ZIP creation
+
+## [6.7.6] - 2021-07-12
+
+### Fixed
+
+- correctly process init password from env var
+
+## [6.7.5] - 2021-07-12
+
+### Changed
+
+- the ID of tokens has been enhanced with a prefix `t_` in order to have standard compliant IDs only.
+
+## [6.7.4] - 2021-07-10
+
+### Added
+
+- cache: a new collection `$commons:tmp` for temporary data (intermediate format) is introduced
+
+### Fixed
+
+- improved import performance together with the motifs expansion by factor 13 (approx.)
+
+## [6.7.2] - 2020-07-09
+
+### Removed
+
+- REST-API endpoint `deploy/version/{$number}` which wasn't in use and cause the `deploy_app` stage to fail since the update to eXist 5.3.0.
+
+## [6.7.1] - 2021-07-08
+
+### Added
+
+- data import script
+
+## [6.7.0] - 2021-07-08
+
+### Added
+
+- when creating the metadata on manifest level, the Salhani print is now considered as well.
+
+## [6.6.0] - 2021-07-02
+
+### Changed
+
+- the collection title now provides information about the type of manuscripts the collection contains.
+
+## [6.5.0] - 2021-06-25
+
+### Added
+
+- basic search api and lucene configuration
+
+## [6.2.3] - 2021-06-25
+
+### Fixed
+
+- annotation items that are stored during the creation/update of a document are now always stored in an array.
+Before this fix a singular item on an AnnotationPage has been provided as object which caused errors in TIDO.
+
+## [6.2.2] - 2021-06-25
+
+### Fixed
+
+- refined XPath to main title of the project.
+In the Salhani print we have several main titles which hasn't been considered when selecting the element for displaying the main title of the project.
+
 ## [6.2.1] - 2021-06-21
 
 ### Fixed

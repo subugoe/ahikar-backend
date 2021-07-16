@@ -2,9 +2,14 @@ xquery version "3.1";
 
 import module namespace functx="http://www.functx.com";
 
+declare namespace conf = "http://exist-db.org/Configuration";
+declare namespace pkg="http://expath.org/ns/pkg";
+
 (: the target collection into which the app is deployed :)
 declare variable $target external; (: := "/db/apps/ahikar"; :)
+declare variable $appsTarget := '/' || tokenize($target, '/')[position() lt last()] => string-join('/');
 declare variable $tg-base := "/db/data/textgrid";
+declare variable $isTest := doc("expath-pkg.xml")/pkg:package/@abbrev => contains("-test");
 
 declare function local:move-and-rename($filename as xs:string) as item()* {
     let $data-file-path := $target || "/data/"
@@ -34,26 +39,64 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
                 xmldb:move($data-file-path, $target-agg-collection, $filename)
 };
 
+(:~
+ : get absolute path to all resources (xml and binary) in a collection, recursively.
+ : @param $target path to a collection as xs:string
+ : @return sequence of all resources as xs:string
+ :)
+declare function local:get-child-resources-recursive($target as xs:string)
+as xs:string* {
+    xmldb:get-child-resources($target) ! ($target || "/" || .),
+    xmldb:get-child-collections($target) ! local:get-child-resources-recursive($target || "/" || .) 
+};
+
+declare function local:prepare-index($targetCollection as xs:string, $indexFile as xs:string) {
+        if (xmldb:collection-available($targetCollection)) then
+        (
+            let $contents := doc($target || "/" || $indexFile)/*
+            let $store := xmldb:store($targetCollection, "collection.xconf", $contents)
+            return
+                xmldb:remove($target, $indexFile)
+        )
+    else
+        (
+            xmldb:create-collection("/db/system/config/db/", substring-after($targetCollection, "/db/system/config/db/")),
+            let $contents := doc($target || "/" || $indexFile)/*
+            let $store := xmldb:store($targetCollection, "collection.xconf", $contents)
+            return
+                xmldb:remove($target, $indexFile)
+        )
+};
+
 (:  set admin password on deployment. Convert to string
     so local development will not fail because of missing
     env var. :)
 
 (
-    if(environment-variable("EXIST_ADMIN_PW_RIPEMD160"))
-    then
-        (update replace doc('/db/system/security/exist/accounts/admin.xml')//*:password/text() with text{ string(environment-variable("EXIST_ADMIN_PW_RIPEMD160")) },
-         update replace doc('/db/system/security/exist/accounts/admin.xml')//*:digestPassword/text() with text{ string(environment-variable("EXIST_ADMIN_PW_DIGEST")) })
-    else (: we do not have the env vars available, so we leave the configuration as it is :) 
-        true() 
-
+    let $adminDoc := doc('/db/system/security/exist/accounts/admin.xml')
+    return
+        if(environment-variable("EXIST_ADMIN_PW_RIPEMD160"))
+        then
+            (update replace $adminDoc//conf:password/text() with text{ replace(environment-variable("EXIST_ADMIN_PW_RIPEMD160"), '"', '') },
+            if($adminDoc//conf:digestPassword) then
+                update replace $adminDoc//conf:digestPassword/text() with text{ string(environment-variable("EXIST_ADMIN_PW_DIGEST")) }
+            else
+                let $element := 
+                    element conf:digestPassword { 
+                        text { string(environment-variable("EXIST_ADMIN_PW_DIGEST")) }
+                    }
+                return
+                    update insert $element into $adminDoc/conf:account
+            )
+        else (: we do not have the env vars available, so we leave the configuration as it is :) 
+            true()
 ),
 
 ( 
     (: register REST APIs :)
-    for $uri at $pos in (collection($target)/base-uri())[ends-with(., ".xqm")]
+    for $uri in local:get-child-resources-recursive($target)[ends-with(., ".xqm")]
         let $content := $uri => util:binary-doc() => util:base64-decode()
-        let $isRest := if(contains($content, "%rest:")) then true() else false()
-        where $isRest
+        where contains($content, "%rest:")
         return
             exrest:register-module(xs:anyURI($uri))
 ),
@@ -65,14 +108,23 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
         $target || "/modules/deploy.xqm",
         $target || "/modules/testtrigger.xqm",
         $target || "/modules/apitesttrigger.xqm",
+        $target || "/modules/import-data-api.xqm",
         $target || "/modules/prepare-unit-tests.xqm",
         $target || "/modules/AnnotationAPI/save-annotations.xqm"
     ) ! (sm:chown(., "admin"), sm:chmod(., "rwsrwxr-x"))
 ),
 
+(: create trigger and index config.
+ : simply moving the file from one place to the other doesn't cause eXist-db to recognize the
+ : config. neither does reindexing after moving the file.
+ : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection-*.xconf. :)
+(
+    local:prepare-index("/db/system/config/db/data/textgrid/data", "collection-data.xconf"),
+    local:prepare-index("/db/system/config/db/data/textgrid/agg", "collection-agg.xconf")
+),
+
 (: move the sample XMLs to /db/data/textgrid to be available in the viewer :)
-( 
-    
+(
     xmldb:get-child-resources($target || "/data")[ends-with(., ".xml")]
     ! local:move-and-rename(.)
 ),
@@ -91,31 +143,9 @@ declare function local:move-and-rename($filename as xs:string) as item()* {
 
 (: make Ahikar specific OpenAPI config available to the OpenAPI app :)
 ( 
-    if (xmldb:collection-available("/db/apps/openapi")) then
-        (xmldb:remove("/db/apps/openapi", "openapi-config.xml"),
-        xmldb:move($target, "/db/apps/openapi", "openapi-config.xml"))
+    if (xmldb:collection-available($appsTarget || "/openapi")) then
+        (xmldb:remove($appsTarget || "/openapi", "openapi-config.xml"),
+        xmldb:move($target, $appsTarget || "/openapi", "openapi-config.xml"))
     else
         ()
-),
-
-(: create trigger config.
- : simply moving the file from one place to the other doesn't cause eXist-db to recognize the
- : config. neither does reindexing after moving the file.
- : therefore we have to create a new file and copy the contents of /db/apps/ahikar/collection.xconf. :)
-(
-    if (xmldb:collection-available("/db/system/config/db/data/textgrid/data")) then
-        (
-            let $contents := doc("/db/apps/ahikar/collection.xconf")/*
-            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
-            return
-                xmldb:remove("/db/apps/ahikar", "collection.xconf")
-        )
-    else
-        (
-            xmldb:create-collection("/db/system/config/db/", "data/textgrid/data"),
-            let $contents := doc("/db/apps/ahikar/collection.xconf")/*
-            let $store := xmldb:store("/db/system/config/db/data/textgrid/data", "collection.xconf", $contents)
-            return
-                xmldb:remove("/db/apps/ahikar", "collection.xconf")          
-        )
 )

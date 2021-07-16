@@ -1,3 +1,14 @@
+# this file defines the CI/CD stages for Ahiqar's back end.
+# in some cases they invoke scripts provided at ci-scripts order to
+# keep this file slim and clear. please have a look at these scripts for
+# information that goes beyond the documentation of the single stages.
+#
+
+# this config uses custom Docker images to keep the pipelines fast.
+# see https://gitlab.gwdg.de/mrodzis/docker-images/ for more 
+# info about them.
+
+
 stages:
   - unit_tests
   - collation
@@ -7,6 +18,7 @@ stages:
   - deploy_app
   - api_tests
   - release
+  - data_import
 
 include: 
   - '/ci-scripts/.api_tests.yml'
@@ -32,7 +44,12 @@ include:
 - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/docker-compose.yml
 - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/$CI_COMMIT_REF_NAME/.env
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
+- if [[ ${CI_COMMIT_MESSAGE} =~ "ci-reimport-data" || $REIMPORT == "true" ]]; then
+- echo "WE ARE GOING TO REMOVE THE VOLUME"
+- ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down --volumes && docker-compose up -d"
+- else
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
+- fi
 
 .git: &git
 - eval $(ssh-agent -s)
@@ -48,8 +65,17 @@ include:
 - echo "Current HTTP status is $STATUS."
 - if [[ "$STATUS" != "200" ]]; then exit 1; fi
 
-## JOBS
+## GLOBAL VARIABLES
+variables:
+  GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_PROJECT_PATH/$CI_JOB_NAME
+  # ↑ needed to handle concurrency
+  # see https://docs.gitlab.com/ee/ci/runners/configure_runners.html#handling-concurrency
+  GIT_DEPTH: 2
+  # ↑ reduces the amount of data transfered to the runner (shallow clone)
 
+## JOBS
+# build the Ahiqar application and uploads it to the DARIAH package repository.
+# the XAR file is downloaded from there later during the deployment.
 build_exist_app:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
   stage: build
@@ -64,6 +90,11 @@ build_exist_app:
       - exist-app/build/dependencies/*.xar
   dependencies: []
   
+# gets the current front end from  https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido.
+# in this stage we also create two instances of the front end for the Syriac and the
+# Arabic/Karshuni collection each.
+# this stage also detects if the CSS files of the front end have been updated and commits
+# them to this repo if necessary.
 load_frontend-all:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: build
@@ -86,6 +117,7 @@ load_frontend-all:
       - docker/frontend/
   dependencies: []
 
+# builds and pushes the ci-docker image to the registry.
 build_docker-all:
   image: docker.gitlab.gwdg.de/subugoe/ahiqar/backend/ci-docker
   services:
@@ -109,6 +141,7 @@ build_docker-all:
     - build_exist_app
     - load_frontend-all
 
+# deploys the Docker container on ahikar-test.
 deploy_docker-test:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -121,14 +154,15 @@ deploy_docker-test:
   script:
     - *ssh
     - *env
-    - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/ahikar.env
-    - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/tg.env
-    - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/docker-compose.yml
-    - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/.env
+    - scp -o 'StrictHostKeyChecking no' docker/ahikar.env $SSH_USER@$SSH_IP:~/test/ahikar.env
+    - scp -o 'StrictHostKeyChecking no' docker/tg.env $SSH_USER@$SSH_IP:~/test/tg.env
+    - scp -o 'StrictHostKeyChecking no' docker/docker-compose.yml $SSH_USER@$SSH_IP:~/test/docker-compose.yml
+    - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/test/.env
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
-    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker-compose pull && docker-compose down && docker-compose up -d"
+    - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd test; docker-compose pull && docker-compose down && docker-compose up -d"
   dependencies: []
 
+# deploys the Docker container on ahikar-dev.
 deploy_docker-dev:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -142,6 +176,7 @@ deploy_docker-dev:
     - *deploy
   dependencies: []
 
+# deploys the Docker container on ahikar.
 deploy_docker-main:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: deploy_docker
@@ -155,6 +190,7 @@ deploy_docker-main:
     - *deploy
   dependencies: []
 
+# deploys the Ahiqar app to the database at ahikar-test.
 deploy_app-test:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
   stage: deploy_app
@@ -167,12 +203,11 @@ deploy_app-test:
   script:
     - VERSION=$(grep -E -o "project.version=[0-9]+\.[0-9]+\.[0-9]+" exist-app/build.properties | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
     - echo $VERSION
-    # switch off per-version deployment. cf. https://gitlab.gwdg.de/subugoe/ahiqar/backend/-/issues/126
-    # - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy/version/$VERSION)
-    - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
+    - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy?token=${APP_DEPLOY_TOKEN}&version=${VERSION})
     - *http-status
   dependencies: []
 
+# deploys the Ahiqar app to the database at ahikar-dev.
 deploy_app-dev:
   image: curlimages/curl
   stage: deploy_app
@@ -181,10 +216,11 @@ deploy_app-dev:
   environment:
     name: ahikar-dev
   script:
-    - HEADER=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
+    - HEADER=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy?token=${APP_DEPLOY_TOKEN})
     - *http-status
   dependencies: []
 
+# deploys the Ahiqar app to the database at ahikar.
 deploy_app-main:
   image: curlimages/curl
   stage: deploy_app
@@ -198,38 +234,33 @@ deploy_app-main:
     - *http-status
   dependencies: []
 
-# when a git flow release is made, a tag will be pushed starting this job. it
-# will keep the resulting artifact from job number one and it will set up a
-# Gitlab release at the repo. therefore the merge message starting at the release
-# branch should be written in markdown.
-.release:
-  stage: release
-  only:
-    - tags
+# data import
+import-test:
+  image: curlimages/curl
+  stage: data_import
+  rules:
+    - if: '($CI_COMMIT_MESSAGE =~ /ci-reimport-data/ || $REIMPORT == "true") && $CI_COMMIT_REF_NAME != "develop" && $CI_COMMIT_REF_NAME != "main" && $CI_COMMIT_TAG == null && $CI_MERGE_REQUEST_ID == null'
   script:
-    # get number of first job in pipeline (assuming that this will create the needed artifact)
-    # it is also possible to query for a job name by altering the jq filter
-    - 'curl --output jobs.json --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs"'
-    - CI_JOB_TARGET=$(jq ".[0].id" < jobs.json)
-    - echo $CI_JOB_TARGET
-    # keep artifact (release will link there)
-    - 'curl --request POST --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$CI_JOB_TARGET/artifacts/keep"'
-    # create release data
-    # parse commit message (markdown, lines starting with “\”)
-    - MARKDOWN=$(echo "$CI_COMMIT_MESSAGE" | sed 's=^\\==g')
-    # prepare the json file
-    - 'jq
-      ".name = \"$CI_PROJECT_PATH $CI_COMMIT_TAG\" |
-      .tag_name = \"$CI_COMMIT_TAG\" |
-      .description = \"$MARKDOWN\" |
-      .assets.links[0].name = \"package\" |
-      .assets.links[0].url = \"https://gitlab.gwdg.de/$CI_PROJECT_PATH/-/jobs/$CI_JOB_TARGET/artifacts/download\"
-      " < .gitlab/gitlab-release.json.tmpl > gitlab-release.json'
-    - 'curl --header "Content-Type: application/json" --header "PRIVATE-TOKEN: $GITLAB_TOKEN" --data @gitlab-release.json --request POST $CI_API_V4_URL/projects/$CI_PROJECT_ID/releases'
-  artifacts:
-    paths:
-      - gitlab-release.json
+    - curl https://ahikar-test.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN}
 
+import-dev:
+  image: curlimages/curl
+  stage: data_import
+  rules:
+    - if: '($CI_COMMIT_MESSAGE =~ /ci-reimport-data/ || $REIMPORT == "true") && $CI_COMMIT_REF_NAME == "develop"'
+  script:
+    - curl https://ahikar-dev.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN}
+
+import-main:
+  image: curlimages/curl
+  stage: data_import
+  rules:
+    - if: '($CI_COMMIT_MESSAGE =~ /ci-reimport-data/ || $REIMPORT == "true") && ($CI_COMMIT_REF_NAME == "main" || $CI_COMMIT_TAG)'
+  script:
+    - curl https://ahikar.sub.uni-goettingen.de/api/import-data?token=${APP_DEPLOY_TOKEN}
+
+# this job is triggered by a pipeline on the 'main' branch of https://gitlab.gwdg.de/subugoe/ahiqar/collatex.
+# it retrieves the latest collation results from there and commits it to this repository.
 get-collation-results:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: collation

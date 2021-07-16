@@ -287,3 +287,14 @@ function tmt:make-fonts()
 as item()+ {
     tapi-mani:make-fonts($tc:server)
 };
+
+declare
+    %test:assertXPath("count($result) = 3")
+    %test:assertXPath("map:get($result[1], 'value') = 'Simon Birol, Aly Elrefaei'")
+    %test:assertXPath("map:get($result[2], 'value') = 'Tale of Haiqar the wise, vizir of Sennachrieb the king and of his sister''s son Nadan'")
+    %test:assertXPath("map:get($result[3], 'value') = 'Salhani, Anton. Ṭarāʾif fukāhāt fī arbaʿ ḥikājāt (Contes Arabes). Beirut 1890, 1–20. Published by al-Maṭbaʿa al-kāṯūlīkīja li-l-āAbā al-jasūʿījīn.'")
+function tmt:make-metadata-objects-for-Salhani() {
+    let $tei-xml := doc("/db/data/textgrid/data/salhani_header_sample_teixml.xml")
+    return
+        tapi-mani:make-metadata-objects-for-Salhani($tei-xml)
+};

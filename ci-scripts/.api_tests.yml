@@ -1,5 +1,8 @@
-# Templates
+# this config file defines the tests that check if the TextAPI is available
+# after the redeployment of the application. the tests only pass if an HTTP
+# request to the TextAPI returns a status code 200.
 
+# Templates
 .job_definition: &job_definition
   image: docker.gitlab.gwdg.de/mrodzis/test
   stage: api_tests
@@ -9,9 +12,6 @@
   - status=$(echo $header | head -n 1 | cut -d" " -f 2)
   - echo "Current HTTP status is $status."
   - if [[ "$status" == "200" ]]; then exit 0; else exit 1; fi
-
-
-# TextAPI
 
 test_api_status-test:
   <<: *job_definition

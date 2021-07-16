@@ -11,7 +11,7 @@ import module namespace tapi-img="http://ahikar.sub.uni-goettingen.de/ns/tapi/im
 declare
     %test:setUp
 function t:_test-setup() {
-    local:create-and-store-test-data()
+    t:create-and-store-test-data()
 };
 
 declare
@@ -120,7 +120,7 @@ as xs:boolean {
     tapi-img:get-img-metadata($img-uri)
 };
 
-declare function local:create-and-store-test-data()
+declare function t:create-and-store-test-data()
 as xs:string+ {
     let $agg-wo-tile :=
         <rdf:RDF xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">

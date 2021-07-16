@@ -176,7 +176,7 @@ as xs:string+ {
                 array:get($tei2json:lines-of-transmission, $iii)
                 => string-join("_")
                 => replace(" ", "-")
-                => replace("[^a-zA-Z0-9-_]", "")
+                => replace("[^a-zA-Z0-9\-_]", "")
             let $filename := concat($language, "_", $transmission-string, "_", $milestone-type, ".json")
             return
                 xmldb:store-as-binary($commons:json, $filename, $json-string)
@@ -189,7 +189,7 @@ as element(tei:text)* {
         for $tei in $tokenized-teis return
             let $idno := commons:make-id-from-idno($tei)
             return
-                if ($idno = $id or matches($tei/descendant::tei:editor, $id)) then
+                if ($idno = "t_" || $id or matches($tei/descendant::tei:editor, "t_" || $id)) then
                     $tei
                 else
                     ()

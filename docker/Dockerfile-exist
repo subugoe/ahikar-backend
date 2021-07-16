@@ -1,4 +1,4 @@
-FROM existdb/existdb:release
+FROM existdb/existdb:5.3.0
 
 # copy EXPath packages
 COPY exist-app/build/*.xar /exist/autodeploy/

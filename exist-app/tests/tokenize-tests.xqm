@@ -14,7 +14,7 @@ import module namespace test="http://exist-db.org/xquery/xqsuite" at "resource:o
 declare
     %test:assertTrue
 function t:main() {
-    let $src-TEI := local:get-sample-tei()
+    let $src-TEI := t:create-and-store-test-data()
     let $target-TEI := local:get-sample-result()
     return
         deep-equal(tokenize:main($src-TEI), $target-TEI)
@@ -26,7 +26,7 @@ declare
 function t:add-ids-single-node()
 as node()* {
     let $node := <ab xmlns="http://www.tei-c.org/ns/1.0">some text</ab>
-    let $id-prefix := "Add_2020"
+    let $id-prefix := "t_Add_2020"
     return
         tokenize:add-ids($node, $id-prefix)
 };
@@ -52,17 +52,17 @@ as xs:boolean {
 declare
     %test:assertXPath("count($result) = 2 
         and $result/local-name() = 'w'
-        and $result[1]/@xml:id = 'Add_2020_N1.1_1'
-        and $result[2]/@xml:id = 'Add_2020_N1.1_2' ")
+        and $result[1]/@xml:id = 't_Add_2020_N1.1_1'
+        and $result[2]/@xml:id = 't_Add_2020_N1.1_2' ")
 function t:add-id-to-text()
 as element(tei:w)+ {
     let $node := <ab xmlns="http://www.tei-c.org/ns/1.0">some text </ab>
-    let $id-prefix := "Add_2020"
+    let $id-prefix := "t_Add_2020"
     return
         tokenize:add-id-to-text($node/text(), $id-prefix)
 };
 
-declare function local:get-sample-tei()
+declare function t:create-and-store-test-data()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
@@ -103,7 +103,7 @@ as element(tei:TEI) {
     </TEI>
 };
 
-declare function local:get-tei-header-1()
+declare function t:create-and-store-test-data-1()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
@@ -121,7 +121,7 @@ as element(tei:TEI) {
     </TEI>
 };
 
-declare function local:get-tei-header-2()
+declare function t:create-and-store-test-data-2()
 as element(tei:TEI) {
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
         <teiHeader>
@@ -165,36 +165,36 @@ declare function local:get-sample-result() {
                     <body>
                         <milestone unit="first_narrative_section"/>
                         <ab>
-                            <w xml:id="Add_2020_N1.2.1.1.3.2.1_1" type="token">Daß</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.2.1_2" type="token">alle</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.2.1_1" type="token">Daß</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.2.1_2" type="token">alle</w>
                             <sic>unsere</sic>
-                            <w xml:id="Add_2020_N1.2.1.1.3.2.3_1" type="token">Erkenntnis</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.2.3_2" type="token">mit</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.2.3_3" type="token">der</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.2.3_1" type="token">Erkenntnis</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.2.3_2" type="token">mit</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.2.3_3" type="token">der</w>
                             <surplus>einen</surplus>
-                            <w xml:id="Add_2020_N1.2.1.1.3.2.5_1" type="token">Erfahrung</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.2.5_2" type="token">anfange</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.2.5_1" type="token">Erfahrung</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.2.5_2" type="token">anfange</w>
                             <supplied>,</supplied>
-                            <w xml:id="Add_2020_N1.2.1.1.3.2.7_1" type="token">daran</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.2.7_1" type="token">daran</w>
                         </ab>
                         <milestone unit="sayings"/>
                         <ab>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.1_1" type="token">Wenn</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.1_1" type="token">Wenn</w>
                             <unclear>aber</unclear>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_1" type="token">gleich</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_2" type="token">alle</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_3" type="token">unsere</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_4" type="token">Erkenntnis</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_5" type="token">mit</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_6" type="token">der</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_7" type="token">Erfahrung</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.3_8" type="token">anhebt</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.3_1" type="token">gleich</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.3_2" type="token">alle</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.3_3" type="token">unsere</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.3_4" type="token">Erkenntnis</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.3_5" type="token">mit</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.3_6" type="token">der</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.3_7" type="token">Erfahrung</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.3_8" type="token">anhebt</w>
                             <g>,</g>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.5_1" type="token">so</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.5_2" type="token">entspringt</w>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.5_3" type="token">sie</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.5_1" type="token">so</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.5_2" type="token">entspringt</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.5_3" type="token">sie</w>
                             <note>die Erkenntnis</note>
-                            <w xml:id="Add_2020_N1.2.1.1.3.4.7_1" type="token">darum</w>
+                            <w xml:id="t_Add_2020_N1.2.1.1.3.4.7_1" type="token">darum</w>
                             <w type="colophon">doch nicht eben</w>
                         </ab>
                         <milestone unit="second_narrative_section"/>

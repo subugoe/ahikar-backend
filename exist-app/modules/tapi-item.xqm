@@ -42,14 +42,13 @@ declare function tapi-item:make-title-object($manifest-uri as xs:string)
 as array(*) {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     let $title :=
-        $tei-xml//tei:title[@type = "main"]/string()
+        $tei-xml//tei:titleStmt//tei:title[@type = "main"]/string()
         => normalize-space()
-    let $type := $tei-xml//tei:title/@type/string()
     return
         array {
             map {
                 "title": $title,
-                "type": $type
+                "type": "main"
             }
         }
 };

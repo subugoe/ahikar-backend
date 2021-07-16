@@ -12,7 +12,6 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace tgmd="http://textgrid.info/namespaces/metadata/core/2010";
 
 import module namespace commons="http://ahikar.sub.uni-goettingen.de/ns/commons" at "commons.xqm";
-import module namespace functx="http://www.functx.com";
 
 
 declare function tapi-mani:get-json($collection-type as xs:string,
@@ -25,7 +24,13 @@ as map() {
             "textapi": $commons:version/string(),
             "id": $server || "/api/textapi/ahikar/" || $collection-type || "/" || $manifest-uri || "/manifest.json",
             "label": tapi-mani:get-manifest-title($manifest-uri),
-            "metadata": tapi-mani:make-metadata-objects($tei-xml),
+            "metadata":
+                (: for the Salhani print which has slightly different metadata :)
+                if ($manifest-uri = "3rx14") then
+                    tapi-mani:make-metadata-objects-for-Salhani($tei-xml)
+                (: for the rest of the manuscripts :)
+                else
+                    tapi-mani:make-metadata-objects($tei-xml),
             "support": tapi-mani:make-support-object($server),
             "license": tapi-mani:get-license-info($tei-xml),
             "annotationCollection": $server || "/api/annotations/ahikar/" || $collection-type || "/" || $manifest-uri || "/annotationCollection.json",
@@ -170,10 +175,35 @@ as array(*) {
 
 declare function tapi-mani:make-fonts($server as xs:string)
 as map(*)+ {
-    for $doc in collection("/db/data/resources/fonts") return
+    for $uri in xmldb:get-child-resources("/db/data/resources/fonts") return
         map {
             "type": "font",
             "mime": "font/woff",
-            "url": $server || "/api/content/" || functx:substring-after-last(base-uri($doc), "/")
+            "url": $server || "/api/content/" || $uri
         }
+};
+
+declare function tapi-mani:make-metadata-objects-for-Salhani($tei-xml as document-node())
+as map()+ {
+    tapi-mani:make-editors($tei-xml),
+    map {
+        "key": "Title of the edited chapter",
+        "value": $tei-xml//tei:biblStruct//tei:title[@level = "a"]/string()
+    },
+    map {
+        "key": "Part of",
+        "value":
+            (: author :)
+            $tei-xml//tei:biblStruct/tei:monogr/tei:editor || ". " ||
+            (: title :)
+            $tei-xml//tei:biblStruct/tei:monogr/tei:title[@type = "main"] || " (" ||
+            $tei-xml//tei:biblStruct/tei:monogr/tei:title[@type = "alt"] || "). " ||
+            (: publication place and date :)
+            $tei-xml//tei:biblStruct/tei:monogr//tei:pubPlace || " " || 
+            $tei-xml//tei:biblStruct/tei:monogr//tei:date || ", " ||
+            (: pages :)
+            $tei-xml//tei:biblStruct/tei:monogr//tei:biblScope || ". " ||
+            (: publisher :)
+            "Published by " || $tei-xml//tei:biblStruct/tei:monogr//tei:publisher || "."
+    }
 };
