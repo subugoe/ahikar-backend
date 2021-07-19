@@ -206,6 +206,8 @@ deploy_app-test:
     - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy?token=${APP_DEPLOY_TOKEN}&version=${VERSION})
     - *http-status
   dependencies: []
+  retry: 2
+  # ↑ db sometimes reacts with 503, immediate retry usually works
 
 # deploys the Ahiqar app to the database at ahikar-dev.
 deploy_app-dev:
@@ -219,6 +221,7 @@ deploy_app-dev:
     - HEADER=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy?token=${APP_DEPLOY_TOKEN})
     - *http-status
   dependencies: []
+  retry: 2
 
 # deploys the Ahiqar app to the database at ahikar.
 deploy_app-main:
@@ -233,6 +236,7 @@ deploy_app-main:
     - HEADER=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
     - *http-status
   dependencies: []
+  retry: 2
 
 # data import
 import-test:
