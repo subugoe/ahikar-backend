@@ -72,7 +72,7 @@ declare function tapi-mani:get-valid-page-ids($manifest-uri as xs:string)
 as xs:string+ {
     let $tei-xml := commons:get-tei-xml-for-manifest($manifest-uri)
     return
-        $tei-xml//tei:pb[@facs]/string(@n)
+        $tei-xml//tei:text[@type="transcription"]//tei:pb[@facs]/string(@n)
 };
 
 
