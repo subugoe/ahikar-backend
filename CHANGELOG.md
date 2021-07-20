@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [6.8.4] - 2021-07-19
 
+### Changes
+
+- search output now summarizes matches
+
 ### Fixed
 
 - remove `tei:corr` and `tei:expan` from html serialization
