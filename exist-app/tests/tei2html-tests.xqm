@@ -247,20 +247,6 @@ as element() {
 
 declare
     %test:assertXPath("$result/*[local-name(.) = 'span']")
-    %test:assertXPath("$result//*/@class = 'expan'")
-function t2ht:expan()
-as element() {
-    let $element :=
-        <ab xmlns="http://www.tei-c.org/ns/1.0">
-            <expan>pqm</expan>
-        </ab>
-    return
-        tei2html:transform($element)
-};
-
-
-declare
-    %test:assertXPath("$result/*[local-name(.) = 'span']")
     %test:assertXPath("$result//*/@class = 'g'")
 function t2ht:g()
 as element() {

@@ -83,14 +83,22 @@ as map(*) {
             let $language := string($hit/parent::tei:text/@xml:lang)
             for $page in $pages
             order by $score descending
+            let $matchesStrings := $matches[./preceding::tei:pb[1]/string(@n) eq $page] ! string(.)
             return
                 map{
                     "type": $type,
                     "lang": $language,
                     "label": $label,
                     "n": $page,
-                    "item": "/api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $page || "/latest/item.json", (: = textapi: "id" w/o base-url :)
-                    "match": array{ $matches[./preceding::tei:pb[1]/string(@n) eq $page] ! string(.)}
+                    "item": string($commons:expath-pkg/*/@name) || "api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $page || "/latest/item.json", (: = textapi: "id" w/o base-url :)
+                    "matches": array{
+                        for $match in distinct-values($matchesStrings)
+                        return
+                            map{
+                                "match": $match,
+                                "occurrencesOnPage": count( $matchesStrings[. eq $match] )
+                            }
+                        }
                 }
     } catch * {
         ()

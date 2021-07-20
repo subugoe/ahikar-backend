@@ -97,12 +97,12 @@ as xs:string {
         typeswitch ( $annotation )
         case element(tei:persName) return
             $annotation/string()
-            
+
         case element(tei:placeName) return
             $annotation/string()
             
         case element(tei:add) return
-            "an addition. text: " || $annotation || ", place: " || $annotation/@place
+            "an addition, place: " || $annotation/@place || ". text: " || $annotation || "."
             
         case element(tei:del) return
             "text deleted by the scribe: " || $annotation

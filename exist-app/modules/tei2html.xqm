@@ -26,7 +26,7 @@ declare namespace xhtml="http://www.w3.org/1999/xhtml";
 import module namespace tei2html-text="http://ahikar.sub.uni-goettingen.de/ns/tei2html/textprocessing" at "tei2html-textprocessing.xqm";
 
 declare variable $tei2html:block-elements := ("ab", "body", "cb", "l", "lg");
-declare variable $tei2html:ignored-elements := ("lb", "milestone", "pb");
+declare variable $tei2html:ignored-elements := ("lb", "milestone", "pb", "corr", "expan");
 
 
 declare function tei2html:transform($nodes as node()*)

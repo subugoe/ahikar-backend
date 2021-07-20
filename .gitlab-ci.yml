@@ -50,6 +50,8 @@ include:
 - else
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
 - fi
+- while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
+
 
 .git: &git
 - eval $(ssh-agent -s)
@@ -106,7 +108,6 @@ load_frontend-all:
     - unzip frontend.zip
     - bash ci-scripts/set-entrypoint.sh
     - mkdir -p docker/frontend
-    - cp tido/dist/* docker/frontend/
     - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
     - cp tido/dist/* docker/frontend/syriac
     - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
@@ -160,6 +161,9 @@ deploy_docker-test:
     - scp -o 'StrictHostKeyChecking no' docker/.env $SSH_USER@$SSH_IP:~/test/.env
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd test; docker-compose pull && docker-compose down && docker-compose up -d"
+    # wait until db is online back again, important to have a job timeout declared
+    - while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
+  timeout: 10 minutes
   dependencies: []
 
 # deploys the Docker container on ahikar-dev.
@@ -206,6 +210,8 @@ deploy_app-test:
     - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy?token=${APP_DEPLOY_TOKEN}&version=${VERSION})
     - *http-status
   dependencies: []
+  retry: 2
+  # ↑ db sometimes reacts with 503, immediate retry usually works
 
 # deploys the Ahiqar app to the database at ahikar-dev.
 deploy_app-dev:
@@ -219,6 +225,7 @@ deploy_app-dev:
     - HEADER=$(curl --head -s https://ahikar-dev.sub.uni-goettingen.de/api/deploy?token=${APP_DEPLOY_TOKEN})
     - *http-status
   dependencies: []
+  retry: 2
 
 # deploys the Ahiqar app to the database at ahikar.
 deploy_app-main:
@@ -233,6 +240,7 @@ deploy_app-main:
     - HEADER=$(curl --head -s https://ahikar.sub.uni-goettingen.de/api/deploy?token=$APP_DEPLOY_TOKEN)
     - *http-status
   dependencies: []
+  retry: 2
 
 # data import
 import-test:
