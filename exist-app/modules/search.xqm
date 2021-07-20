@@ -90,7 +90,7 @@ as map(*) {
                     "lang": $language,
                     "label": $label,
                     "n": $page,
-                    "item": string($commons:expath-pkg/*/@name) || "/api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $page || "/latest/item.json", (: = textapi: "id" w/o base-url :)
+                    "item": string($commons:expath-pkg/*/@name) || "api/textapi/ahikar/" || $collection || "/" || $edition || "-" || $page || "/latest/item.json", (: = textapi: "id" w/o base-url :)
                     "matches": array{
                         for $match in distinct-values($matchesStrings)
                         return
