@@ -96,7 +96,7 @@ as map(*) {
                         return
                             map{
                                 "match": $match,
-                                "occurencesOnPage": count( $matchesStrings[. eq $match] )
+                                "occurrencesOnPage": count( $matchesStrings[. eq $match] )
                             }
                         }
                 }
