@@ -50,6 +50,8 @@ include:
 - else
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
 - fi
+- while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
+
 
 .git: &git
 - eval $(ssh-agent -s)
