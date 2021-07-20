@@ -105,12 +105,12 @@ load_frontend-all:
     - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
     - unzip frontend.zip
     - bash ci-scripts/set-entrypoint.sh
-    - mkdir -p docker/frontend
-    - cp tido/dist/* docker/frontend/
+    - mkdir -p docker/frontend/tmp
+    - cp tido/dist/* docker/frontend/tmp/
     - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
-    - cp tido/dist/* docker/frontend/syriac
+    - cp tido/dist/tmp/* docker/frontend/syriac
     - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
-    - cp tido/dist/* docker/frontend/arabic-karshuni
+    - cp tido/dist/tmp/* docker/frontend/arabic-karshuni
     - bash ci-scripts/update-css.sh
   artifacts:
     paths:
