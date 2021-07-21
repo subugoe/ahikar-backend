@@ -126,10 +126,10 @@ load_website-all:
   variables:
     WEBSITE_REPO_ID: "14957"
   script:
-    - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/develop/download?job=build_page-backend"'
+    - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/develop/download?job=build_page-develop-backend"'
     - unzip website.zip
     - mkdir -p docker/frontend/website
-    - cp -r src/.vuepress/dist/* docker/frontend/website
+    - cp -r public/* docker/frontend/website
   artifacts:
     paths:
       - docker/frontend/website
