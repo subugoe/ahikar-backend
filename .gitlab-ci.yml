@@ -115,8 +115,47 @@ load_frontend-all:
     - bash ci-scripts/update-css.sh
   artifacts:
     paths:
-      - docker/frontend/
+      - docker/frontend/syriac
+      - docker/frontend/arabic-karshuni
   dependencies: []
+
+
+load_website-dev:
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
+  stage: build
+  except:
+    - main
+    - tags
+  variables:
+    WEBSITE_REPO_ID: "14957"
+  script:
+    - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/develop/download?job=build_page-develop-backend"'
+    - unzip website.zip
+    - mkdir -p docker/frontend/website
+    - cp -r public/develop/* docker/frontend/website
+  artifacts:
+    paths:
+      - docker/frontend/website
+  dependencies: []
+
+
+load_website-main:
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
+  stage: build
+  only:
+    - main
+  variables:
+    WEBSITE_REPO_ID: "14957"
+  script:
+    - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/main/download?job=build_page-main-backend"'
+    - unzip website.zip
+    - mkdir -p docker/frontend/website
+    - cp -r public/main/* docker/frontend/website
+  artifacts:
+    paths:
+      - docker/frontend/website
+  dependencies: []
+
 
 # builds and pushes the ci-docker image to the registry.
 build_docker-all:
@@ -138,9 +177,6 @@ build_docker-all:
   except:
     - tags
   timeout: 5m
-  dependencies:
-    - build_exist_app
-    - load_frontend-all
 
 # deploys the Docker container on ahikar-test.
 deploy_docker-test:
