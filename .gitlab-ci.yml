@@ -132,7 +132,7 @@ load_website-dev:
     - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/develop/download?job=build_page-develop-backend"'
     - unzip website.zip
     - mkdir -p docker/frontend/website
-    - cp -r public/* docker/frontend/website
+    - cp -r public/develop/* docker/frontend/website
   artifacts:
     paths:
       - docker/frontend/website
@@ -150,7 +150,7 @@ load_website-main:
     - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/main/download?job=build_page-main-backend"'
     - unzip website.zip
     - mkdir -p docker/frontend/website
-    - cp -r public/* docker/frontend/website
+    - cp -r public/main/* docker/frontend/website
   artifacts:
     paths:
       - docker/frontend/website
