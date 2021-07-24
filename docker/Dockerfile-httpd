@@ -2,7 +2,6 @@ FROM httpd
 
 COPY ./httpd/httpd-reverse-proxy.conf /usr/local/apache2/conf/httpd.conf
 COPY ./httpd/vhosts/*.conf /usr/local/apache2/conf/sites/
-COPY ./frontend /usr/local/apache2/htdocs/frontend
 
 EXPOSE 80
 

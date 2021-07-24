@@ -4,10 +4,6 @@
 
 # Templates
 
-.job_definition: &job_definition
-  image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-unit-tests
-  stage: unit_tests
-
 .start_db: &start_db
   - ant -f exist-app/build.xml test
   - ash exist-app/test/bin/startup.sh | tee output.log &
@@ -38,7 +34,8 @@
       - exist-app/build/eXist*.xar
 
 unit_and_integration_tests:
-  <<: *job_definition
+  image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-unit-tests
+  stage: test_build
   script:
     - *start_db
     - curl --head -s http://localhost:8080/exist/restxq/prepare-unit-tests

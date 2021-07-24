@@ -8,12 +8,10 @@
 # see https://gitlab.gwdg.de/mrodzis/docker-images/ for more 
 # info about them.
 
-
 stages:
-  - unit_tests
-  - collation
-  - build
+  - test_build
   - package
+  - collation
   - deploy_docker
   - deploy_app
   - api_tests
@@ -50,7 +48,7 @@ include:
 - else
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
 - fi
-- while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
+- sleep 20; while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
 
 
 .git: &git
@@ -80,7 +78,7 @@ variables:
 # the XAR file is downloaded from there later during the deployment.
 build_exist_app:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
-  stage: build
+  stage: test_build
   script:
     - cd exist-app
     - ant -propertyfile ${CI_COMMIT_REF_NAME}.build.properties prepare
@@ -91,70 +89,6 @@ build_exist_app:
       - exist-app/build/*.xar
       - exist-app/build/dependencies/*.xar
   dependencies: []
-  
-# gets the current front end from  https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido.
-# in this stage we also create two instances of the front end for the Syriac and the
-# Arabic/Karshuni collection each.
-# this stage also detects if the CSS files of the front end have been updated and commits
-# them to this repo if necessary.
-load_frontend-all:
-  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
-  stage: build
-  variables:
-    FRONTEND_REPO_ID: "9882"
-  script:
-    - *git
-    - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
-    - unzip frontend.zip
-    - bash ci-scripts/set-entrypoint.sh
-    - mkdir -p docker/frontend
-    - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
-    - cp tido/dist/* docker/frontend/syriac
-    - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
-    - cp tido/dist/* docker/frontend/arabic-karshuni
-    - bash ci-scripts/update-css.sh
-  artifacts:
-    paths:
-      - docker/frontend/syriac
-      - docker/frontend/arabic-karshuni
-  dependencies: []
-
-
-load_website-dev:
-  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
-  stage: build
-  except:
-    - main
-    - tags
-  variables:
-    WEBSITE_REPO_ID: "14957"
-  script:
-    - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/develop/download?job=build_page-develop-backend"'
-    - unzip website.zip
-    - mkdir -p docker/frontend/website
-    - cp -r public/develop/* docker/frontend/website
-  artifacts:
-    paths:
-      - docker/frontend/website
-  dependencies: []
-
-
-load_website-main:
-  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
-  stage: build
-  only:
-    - main
-  variables:
-    WEBSITE_REPO_ID: "14957"
-  script:
-    - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/main/download?job=build_page-main-backend"'
-    - unzip website.zip
-    - mkdir -p docker/frontend/website
-    - cp -r public/main/* docker/frontend/website
-  artifacts:
-    paths:
-      - docker/frontend/website
-  dependencies: []
 
 
 # builds and pushes the ci-docker image to the registry.
@@ -163,6 +97,8 @@ build_docker-all:
   services:
     - docker:dind
   stage: package
+  dependencies:
+    - build_exist_app
   script:
     - *ssh
     - *env
@@ -198,7 +134,7 @@ deploy_docker-test:
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd test; docker-compose pull && docker-compose down && docker-compose up -d"
     # wait until db is online back again, important to have a job timeout declared
-    - while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
+    - sleep 20s; while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
   timeout: 10 minutes
   dependencies: []
 
@@ -246,8 +182,8 @@ deploy_app-test:
     - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy?token=${APP_DEPLOY_TOKEN}&version=${VERSION})
     - *http-status
   dependencies: []
+  # ↓ db sometimes reacts with 503, immediate retry usually works
   retry: 2
-  # ↑ db sometimes reacts with 503, immediate retry usually works
 
 # deploys the Ahiqar app to the database at ahikar-dev.
 deploy_app-dev:
