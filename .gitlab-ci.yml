@@ -8,7 +8,6 @@
 # see https://gitlab.gwdg.de/mrodzis/docker-images/ for more 
 # info about them.
 
-
 stages:
   - test_build
   - collation
