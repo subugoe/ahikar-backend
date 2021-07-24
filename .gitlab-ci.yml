@@ -10,6 +10,7 @@
 
 stages:
   - test_build
+  - package
   - collation
   - deploy_docker
   - deploy_app
