@@ -10,7 +10,7 @@
 
 
 stages:
-  - test-build
+  - test_build
   - collation
   - deploy_docker
   - deploy_app
@@ -78,7 +78,7 @@ variables:
 # the XAR file is downloaded from there later during the deployment.
 build_exist_app:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
-  stage: test-build
+  stage: test_build
   script:
     - cd exist-app
     - ant -propertyfile ${CI_COMMIT_REF_NAME}.build.properties prepare
@@ -88,77 +88,6 @@ build_exist_app:
     paths:
       - exist-app/build/*.xar
       - exist-app/build/dependencies/*.xar
-  dependencies: []
-  
-
-
-# we are moving this to the ahiqar-tido repo and want to scp all the data to a bind mount
-# remove the following job after 20210901
-#
-# gets the current front end from  https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido.
-# in this stage we also create two instances of the front end for the Syriac and the
-# Arabic/Karshuni collection each.
-# this stage also detects if the CSS files of the front end have been updated and commits
-# them to this repo if necessary.
-.load_frontend-all:
-  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
-  stage: build
-  variables:
-    FRONTEND_REPO_ID: "9882"
-  script:
-    - *git
-    - 'curl --output frontend.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$FRONTEND_REPO_ID/jobs/artifacts/develop/download?job=build"'
-    - unzip frontend.zip
-    - bash ci-scripts/set-entrypoint.sh
-    - mkdir -p docker/frontend
-    - mkdir docker/frontend/syriac && mkdir docker/frontend/arabic-karshuni
-    - cp tido/dist/* docker/frontend/syriac
-    - sed -i 's/textapi\/ahikar\/arabic-karshuni/textapi\/ahikar\/syriac/' docker/frontend/syriac/index.html
-    - cp tido/dist/* docker/frontend/arabic-karshuni
-    - bash ci-scripts/update-css.sh
-  artifacts:
-    paths:
-      - docker/frontend/syriac
-      - docker/frontend/arabic-karshuni
-  dependencies: []
-
-
-# we are moving this to the website repo and want to scp all the data to a bind mount
-# remove the following job after 20210901
-.load_website-dev:
-  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
-  stage: build
-  except:
-    - main
-    - tags
-  variables:
-    WEBSITE_REPO_ID: "14957"
-  script:
-    - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/develop/download?job=build_page-develop-backend"'
-    - unzip website.zip
-    - mkdir -p docker/frontend/website
-    - cp -r public/develop/* docker/frontend/website
-  artifacts:
-    paths:
-      - docker/frontend/website
-  dependencies: []
-
-
-.load_website-main:
-  image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
-  stage: build
-  only:
-    - main
-  variables:
-    WEBSITE_REPO_ID: "14957"
-  script:
-    - 'curl --output website.zip --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$CI_API_V4_URL/projects/$WEBSITE_REPO_ID/jobs/artifacts/main/download?job=build_page-main-backend"'
-    - unzip website.zip
-    - mkdir -p docker/frontend/website
-    - cp -r public/main/* docker/frontend/website
-  artifacts:
-    paths:
-      - docker/frontend/website
   dependencies: []
 
 

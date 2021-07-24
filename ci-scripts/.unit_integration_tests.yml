@@ -6,7 +6,7 @@
 
 .job_definition: &job_definition
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-unit-tests
-  stage: test-build
+  stage: test_build
 
 .start_db: &start_db
   - ant -f exist-app/build.xml test
