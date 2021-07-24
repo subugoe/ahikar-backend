@@ -50,7 +50,7 @@ include:
 - else
 - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd ~/$CI_COMMIT_REF_NAME; docker-compose pull && docker-compose down && docker-compose up -d"
 - fi
-- while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
+- sleep 20; while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
 
 
 .git: &git
@@ -92,12 +92,17 @@ build_exist_app:
       - exist-app/build/dependencies/*.xar
   dependencies: []
   
+
+
+# we are moving this to the ahiqar-tido repo and want to scp all the data to a bind mount
+# remove the following job after 20210901
+#
 # gets the current front end from  https://gitlab.gwdg.de/subugoe/ahiqar/ahiqar-tido.
 # in this stage we also create two instances of the front end for the Syriac and the
 # Arabic/Karshuni collection each.
 # this stage also detects if the CSS files of the front end have been updated and commits
 # them to this repo if necessary.
-load_frontend-all:
+.load_frontend-all:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: build
   variables:
@@ -120,7 +125,9 @@ load_frontend-all:
   dependencies: []
 
 
-load_website-dev:
+# we are moving this to the website repo and want to scp all the data to a bind mount
+# remove the following job after 20210901
+.load_website-dev:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: build
   except:
@@ -198,7 +205,7 @@ deploy_docker-test:
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY"
     - ssh -o 'StrictHostKeyChecking no' $SSH_USER@$SSH_IP "cd test; docker-compose pull && docker-compose down && docker-compose up -d"
     # wait until db is online back again, important to have a job timeout declared
-    - while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
+    - sleep 20s; while [ $(curl --head --silent https://ahikar-test.sub.uni-goettingen.de/exist/rest/ | grep -c "200 OK") == 0 ]; do sleep 3s; done
   timeout: 10 minutes
   dependencies: []
 

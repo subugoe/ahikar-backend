@@ -49,6 +49,9 @@ services:
     restart: unless-stopped
     volumes:
       - type: bind
+        source: ./frontend
+        target: /usr/local/apache2/htdocs/frontend
+      - type: bind
         source: ./mod_cache-lock
         target: /mod_cache-lock
 
