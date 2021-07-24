@@ -10,10 +10,8 @@
 
 
 stages:
-  - unit_tests
+  - test-build
   - collation
-  - build
-  - package
   - deploy_docker
   - deploy_app
   - api_tests
@@ -80,7 +78,7 @@ variables:
 # the XAR file is downloaded from there later during the deployment.
 build_exist_app:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/alpine-exist-upload
-  stage: build
+  stage: test-build
   script:
     - cd exist-app
     - ant -propertyfile ${CI_COMMIT_REF_NAME}.build.properties prepare
@@ -146,7 +144,7 @@ build_exist_app:
   dependencies: []
 
 
-load_website-main:
+.load_website-main:
   image: docker.gitlab.gwdg.de/mrodzis/docker-images/debian
   stage: build
   only:
@@ -170,6 +168,8 @@ build_docker-all:
   services:
     - docker:dind
   stage: package
+  dependencies:
+    - build_exist_app
   script:
     - *ssh
     - *env
@@ -253,8 +253,8 @@ deploy_app-test:
     - HEADER=$(curl --head -s https://ahikar-test.sub.uni-goettingen.de/api/deploy?token=${APP_DEPLOY_TOKEN}&version=${VERSION})
     - *http-status
   dependencies: []
+  # ↓ db sometimes reacts with 503, immediate retry usually works
   retry: 2
-  # ↑ db sometimes reacts with 503, immediate retry usually works
 
 # deploys the Ahiqar app to the database at ahikar-dev.
 deploy_app-dev:
